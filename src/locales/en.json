@@ -1,0 +1,82 @@
+{
+  "common": {
+    "coming_soon": "🚧 This feature is coming soon, stay tuned!",
+    "error": {
+      "unexpected": "❌ Unexpected Error: {msg}",
+      "unknown": "❌ Unknown error occurred",
+      "internal": "❌ Internal Error [{code}]: {msg}",
+      "cancel": "🚫 {msg}"
+    }
+  },
+  "init": {
+    "desc": "Initialize Architext Framework, configure editor rules and document skeleton",
+    "editor": "Target IDE, multiple selection is supported, separated by commas",
+    "lang": "Rules and document skeleton language",
+    "doc": "Custom document path, default is .architext",
+    "failed": "Initialization failed"
+  },
+  "update": {
+    "desc": "Sync latest rules, update editor rules and document skeleton",
+    "dry_run": "Dry run, do not actually execute the update operation, only display the update content",
+    "failed": "Update failed",
+    "dry_run_msg": "🔍 Dry run mode enabled.",
+    "construction": "Update feature is under construction..."
+  },
+  "uninstall": {
+    "desc": "Remove Architext framework and generated files"
+  },
+  "doctor": {
+    "desc": "System check, check Architext environment is normal",
+    "fix": "Auto fix, fix problems in Architext environment",
+    "failed": "System check failed",
+    "success": "System Check: All Good"
+  },
+  "scaffold": {
+    "fallback": "Template for {lang} not found, falling back to 'zh'",
+    "step_docs": "Scaffolding documentation structure...",
+    "step_rules": "Installing core rules...",
+    "step_ide": "Distributing IDE rules...",
+    "step_processing": "Processing {group}...",
+    "complete": "Scaffold complete."
+  },
+  "templates": {
+    "error": {
+      "root_not_found": "Templates directory not found. Searched in: {paths}"
+    }
+  },
+  "command": {
+    "init": {
+      "title": "Initialize Architext Framework for deploying standardized AI context protocols & IDE rules.",
+      "select_editor": "Select target editors",
+      "select_lang": "Select documentation language",
+      "select_doc_dir": "Enter documentation directory",
+      "config_exists": "Existing config (architext.json) detected. Overwrite?",
+      "config_saved": "Config saved to architext.json",
+      "conflict_title": "⚠️  File Conflict Detected",
+      "conflict_msg": "The following files already exist. How to proceed?",
+      "conflict_more": "  ... ({count} more files)",
+      "conflict_overwrite": "Overwrite",
+      "conflict_skip": "Skip",
+      "conflict_cancel": "Cancel",
+      "installing": "Copying files...",
+      "cancel": "Initialization cancelled",
+      "failed": "Initialization failed",
+      "success": "Architext initialized successfully! 🚀"
+    },
+    "uninstall": {
+      "desc": "Remove Architext framework and generated files",
+      "title": "Architext Uninstall Wizard",
+      "confirm_title": "⚠️  Danger Zone",
+      "confirm_msg": "This will PERMANENTLY delete the following. Continue?",
+      "files_to_delete": "Files/Directories to be deleted:",
+      "done": "Uninstall done",
+      "success": "Architext successfully removed.",
+      "error": "Uninstall error occurred.",
+      "cancel": "Uninstall cancelled.",
+      "not_found": "Configuration (.architext/architext.json) not found. Cannot auto-uninstall.",
+      "cleaning": "Cleaning up..."
+    },
+    "update": {},
+    "doctor": {}
+  }
+}

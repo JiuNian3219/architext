@@ -1,0 +1,82 @@
+{
+  "common": {
+    "coming_soon": "🚧 該功能正在開發中，敬請期待！",
+    "error": {
+      "unexpected": "❌ 非預期錯誤: {msg}",
+      "unknown": "❌ 發生未知錯誤",
+      "internal": "❌ 內部錯誤 [{code}]: {msg}",
+      "cancel": "🚫 {msg}"
+    }
+  },
+  "init": {
+    "desc": "初始化 Architext 框架，配置編輯器規則和檔案骨架",
+    "editor": "框架目標 IDE，可多選，逗號分隔",
+    "lang": "規則與檔案骨架語言",
+    "doc": "自定義檔案路徑，預設使用.architext",
+    "failed": "初始化失敗"
+  },
+  "update": {
+    "desc": "同步最新規則，更新編輯器規則和檔案骨架",
+    "dry_run": "預演模式，不實際執行更新操作，僅顯示更新內容",
+    "failed": "升級失敗",
+    "dry_run_msg": "🔍 預演模式已啟用。",
+    "construction": "更新功能正在建設中..."
+  },
+  "uninstall": {
+    "desc": "移除 Architext 框架及其生成的檔案"
+  },
+  "doctor": {
+    "desc": "環境自檢，檢查 Architext 環境是否正常",
+    "fix": "自動修復，修復 Architext 環境中的問題",
+    "failed": "環境自檢失敗",
+    "success": "系統檢查通過：一切正常"
+  },
+  "scaffold": {
+    "fallback": "未找到 {lang} 模板，回退使用 'zh'",
+    "step_docs": "正在初始化檔案骨架...",
+    "step_rules": "正在安裝核心規則...",
+    "step_ide": "正在分發 IDE 規則...",
+    "step_processing": "正在處理 {group}...",
+    "complete": "腳手架生成完成。"
+  },
+  "templates": {
+    "error": {
+      "root_not_found": "未找到模板目錄。已搜索路徑: {paths}"
+    }
+  },
+  "command": {
+    "init": {
+      "title": "初始化 Architext 框架，用於部署標準化的 AI 上下文協議與 IDE 規則。",
+      "select_editor": "請選擇您的目標編輯器",
+      "select_lang": "請選擇專案文件語言",
+      "select_doc_dir": "請輸入文件目錄",
+      "config_exists": "檢測到現有設定檔 (architext.json)。是否覆蓋？",
+      "config_saved": "設定已儲存到 architext.json",
+      "conflict_title": "⚠️  檢測到檔案衝突",
+      "conflict_msg": "以下檔案已存在，將如何處理？",
+      "conflict_more": "  ... (還有 {count} 個檔案)",
+      "conflict_overwrite": "覆蓋",
+      "conflict_skip": "跳過",
+      "conflict_cancel": "取消",
+      "installing": "正在複製檔案...",
+      "cancel": "已取消初始化",
+      "failed": "初始化失敗",
+      "success": "Architext 初始化成功！ 🚀"
+    },
+    "uninstall": {
+      "desc": "移除 Architext 框架及其生成的檔案",
+      "title": "Architext 卸載嚮導",
+      "confirm_title": "⚠️  危險操作警告",
+      "confirm_msg": "此操作將永久刪除以下內容，是否繼續？",
+      "files_to_delete": "將刪除的檔案/目錄：",
+      "done": "卸載完成",
+      "success": "Architext 已成功移除。",
+      "error": "卸載過程中發生錯誤。",
+      "cancel": "已取消卸載。",
+      "not_found": "未找到設定檔 (.architext/architext.json)，無法自動卸載。",
+      "cleaning": "正在清理..."
+    },
+    "update": {},
+    "doctor": {}
+  }
+}

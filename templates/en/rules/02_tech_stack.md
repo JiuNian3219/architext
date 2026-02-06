@@ -1,0 +1,150 @@
+---
+description: Technical Standards & Technology Stack. Contains language versions, framework choices, coding conventions, naming rules, and forbidden patterns. Consult when writing code.
+globs: **/*
+applyTo: **/*
+alwaysApply: false
+---
+
+# Tech Stack & Engineering Standards: [Project Name]
+
+> **Role:** The "Law" of the codebase. Defines tools, structure, and engineering workflows.
+> **Status:** [Active]
+> **Note:** This is a template file. Needs to be filled with specific content based on project type (Web/CLI/Backend/Library/Mobile, etc.).
+> Certain sections (like UI Protocol) apply only to UI projects and should be adjusted or removed as needed.
+
+## 1. Global Mandates
+
+* **No Hardcoding:** All secrets and API addresses must use environment variables. Hardcoding is strictly forbidden.
+* **No Dead Code:** Committed code must be clean. Commented-out code blocks or useless `TODO`s are strictly forbidden.
+* **Comments for Why:** Comments explain "Why" (business context), not just "What".
+
+---
+
+## 2. Technology Selection
+
+### Core Stack
+* **Framework:** [e.g. Next.js 14 (App Router) / NestJS / Express / FastAPI / Gin]
+* **Language:** [e.g. TypeScript (Strict Mode) / Python 3.11+ / Rust / Go 1.21+]
+* **Styling** (if project has UI): [e.g. TailwindCSS + Shadcn/UI / CSS Modules / Styled Components]
+* **State** (if project has frontend state management): [e.g. Zustand (Client) + React Query (Server) / Redux / MobX]
+* **Database** (if project has data layer): [e.g. PostgreSQL + Prisma ORM / MongoDB / SQLite / Redis]
+
+### Infrastructure
+* **Package Manager:** [e.g. pnpm / npm / yarn / cargo / go mod / pip]
+* **Runtime:** [e.g. Node.js 20+ / Python 3.11+ / Rust / Go 1.21+ / Bun]
+* **Build Tool:** [e.g. tsup / vite / webpack / cargo / go build]
+
+---
+
+## 3. Coding & Naming Standards
+
+### Naming Conventions
+* **Files:** [e.g. `kebab-case` (e.g., `user-profile.ts` / `user_profile.py` / `user_profile.rs`)]
+* **Components/Classes:** [e.g. `PascalCase` (e.g., `UserProfile` / `UserService` / `UserRepository`)]
+* **Functions/Methods:** [e.g. `camelCase` (e.g., `handleSubmit`) or `snake_case` (Python/Rust)]
+* **Constants:** [e.g. `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY` / `MAX_RETRY_COUNT`)]
+* **Private Members:** [e.g. `_privateMethod` (JavaScript) / `__private` (Python) / `private_field` (Rust)]
+
+### Code Patterns
+* **Export Style:** [e.g. Must use Named Export (`export const`), Default Export is strictly forbidden.]
+* **Type Definitions:** [e.g. Must use `interface` for objects, `type` for unions.]
+* **Error Handling:** [e.g. Must use Result type (Rust) / Exception handling (Python/Java) / Error return (Go)]
+* **Async Patterns:** [e.g. Prefer Async/Await, avoid `.then()` chains.]
+
+---
+
+## 4. UI Protocol: ITP v3.0 (Atomic Standard) [Optional - Only for UI Projects]
+<!-- Core UI Description Protocol, all .ui.md files must follow this DSL -->
+> **Note:** If project has no UI (e.g. CLI, Backend API, Library), remove this section.
+
+### 4.1 Naming (PrefixFunction)
+Component naming must follow `Prefix+Function` format, arbitrary naming is forbidden:
+* **Btn**: Button (e.g., `BtnSubmit`)
+* **Inp**: Input (e.g., `InpEmail`)
+* **Txt**: Text/Label (e.g., `TxtTitle`)
+* **Box**: Container/Div (e.g., `BoxHeader`)
+* **Img**: Image/Icon (e.g., `ImgAvatar`)
+* **List/Card/Modal**: As named.
+
+### 4.2 Syntax Structure
+* **Definition**: `Name [Layout] (Style/Content) -> #Interaction`
+* **Layout Keywords**: `[Row]`, `[Col]`, `[Center]`, `[Between]`, `[Fill]`, `[Grid]`
+* **Example**:
+```
+
+    BoxHeader [Row, Between]
+      TxtTitle [H2] (Text: "Login")
+      BtnClose [Ghost] (Icon: X) -> #CloseModal
+
+```
+
+### 4.3 Delta Syntax
+* **Usage**: Used to modify existing UI snapshots (`pages/*.md`).
+* **Format**: `@Locator { + Add, ~ Modify, - Remove }`
+
+---
+
+## 5. Testing Strategy
+
+### Unit Testing
+* **Tool:** [e.g. Vitest / Jest / pytest / cargo test / go test / unittest]
+* **Scope:** [e.g. Cover all Utils functions, complex business logic, core algorithms.]
+* **Rule:** [e.g. Must Mock all external dependencies (API, Database, File System). Snapshot testing for volatile UI is forbidden (if applicable).]
+
+### Integration Testing
+* **Tool:** [e.g. Vitest + Testcontainers / pytest + Docker / go test + testcontainers]
+* **Scope:** [e.g. Test full write flow from API to Database / Full execution flow of CLI commands.]
+
+### E2E Testing [Optional - Only for projects with UI]
+* **Tool:** [e.g. Playwright / Cypress / Selenium]
+* **Scope:** [e.g. Cover only Critical User Journeys, like Login, Payment.]
+
+---
+
+## 6. Deployment & Release
+
+### CI Pipeline
+* **Pre-commit:** [e.g. Must pass Linter and Formatter checks (ESLint/Prettier / ruff/black / clippy / golangci-lint).]
+* **Merge Gate:** [e.g. PR must pass all Unit/Integration tests before merge.]
+* **Build Check:** [e.g. Must pass build check (`npm run build` / `cargo build` / `go build`).]
+
+### Environment
+* **Secrets:** [e.g. Production secrets must be configured via CI platform, strictly forbidden to commit `.env` / `.env.local`.]
+* **Database Ops** (if project has DB): [e.g. Schema changes must use Migration files, manual modification of production DB is forbidden.]
+* **Binary Distribution** (if project is CLI/Library): [e.g. Use GitHub Releases to publish binaries, support multi-platform builds.]
+
+---
+
+## 3. Architecture & File Placement Strategy
+
+### Repository Architecture
+* **Strategy:** [e.g. Monorepo (Turborepo) or Single Repo]
+* **Workspace:** [e.g. pnpm workspaces, shared dependencies hoisted to Root.]
+
+### Directory Structure
+* **Pattern:** [Architecture Pattern Name]
+* **Philosophy**: [Architecture Philosophy]
+* **Key Paths**:
+    * `[Path_1]`: [Description]
+    * `[Path_2]`: [Description]
+* **Constraint**: [Architecture Constraints]
+
+### File Placement Rules
+> *Context*: Defines where different types of files (Tests, Types, Interfaces, Styles) should be created.
+
+| File Type | Placement Strategy | Example |
+| :--- | :--- | :--- |
+| **Unit Tests** | [e.g. Colocation (`foo.test.ts` next to `foo.ts`) or Centralized (`__tests__`)] | `src/utils/date.test.ts` |
+| **Interfaces/Types** | [e.g. Near usage or Global `types/`] | `src/types/user.d.ts` |
+| **Assets/Images** | [e.g. Public folder or Module assets] | `public/images` |
+| **Styles** | [e.g. CSS Modules next to component or Global CSS] | `components/Button.module.css` |
+| **DTOs/Models** | [e.g. Domain folder or Shared folder] | `src/domain/user/dto` |
+
+---
+
+## 8. Anti-Patterns
+* **No [Tech 1]:** [e.g. No Redux - This project is too heavy, do not use.]
+* **No [Tech 2]:** [e.g. No Raw SQL - Must use ORM to prevent injection.]
+* **No [Pattern 1]:** [e.g. Forbidden to fetch data directly inside components, must encapsulate in Service layer.]
+* **No [Pattern 2]:** [e.g. Forbidden to use `any` type (TypeScript) / Forbidden to use `unsafe` code (Rust).]
+* **No [Pattern 3]:** [e.g. Forbidden to use `console.log` in production code, must use unified Logger.]
