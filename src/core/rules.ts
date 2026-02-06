@@ -44,11 +44,7 @@ export const LANGUAGE_CONFIGS = {
 } as const;
 
 export const EDITOR_CONFIGS: Record<SupportedEditor, EditorRuleConfig> = {
-  trae: {
-    label: "Trae",
-    targetDir: ".trae/rules",
-    targetExt: ".md",
-  },
+  
   cursor: {
     label: "Cursor",
     targetDir: ".cursor/rules",
@@ -57,6 +53,11 @@ export const EDITOR_CONFIGS: Record<SupportedEditor, EditorRuleConfig> = {
   windsurf: {
     label: "Windsurf",
     targetDir: ".windsurf/rules",
+    targetExt: ".md",
+  },
+  trae: {
+    label: "Trae",
+    targetDir: ".trae/rules",
     targetExt: ".md",
   },
   vscode: {
