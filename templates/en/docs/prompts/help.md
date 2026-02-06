@@ -40,6 +40,14 @@
     │   ├── 90_custom_rules.mdc     # User House Rules - Team Custom Constraints
     │   └── 99_context_glue.mdc     # Context Bridge - Code & Docs Association
     │
+    ├── .cursor/commands/           # Cursor IDE commands directory (Cursor only)
+    │   ├── archi.start.md          # /archi.start command definition
+    │   ├── archi.plan.md           # /archi.plan command definition
+    │   ├── archi.code.md           # /archi.code command definition
+    │   ├── archi.fix.md            # /archi.fix command definition
+    │   ├── archi.edit.md           # /archi.edit command definition
+    │   └── archi.help.md           # /archi.help command definition
+    │
     ├── .trae/rules/                # Trae IDE rules directory (same as above, extension is .md)
     │   └── ...
     │
@@ -79,8 +87,9 @@
 
     **Note**:
     - **IDE Rules Directory**: Rules files are copied to the corresponding directory (`.cursor/rules/`, `.trae/rules/`, etc.) based on the selected IDE.
+    - **IDE Commands Directory**: Cursor only. Command files are generated to `.cursor/commands/` directory, with filename format `archi.{command}.md`.
     - **Docs Directory**: Defaults to `.architext/`, configurable to other names via `architext.json`.
-    - **Extension Diff**: Cursor uses `.mdc`, other IDEs use `.md`.
+    - **Extension Diff**: Cursor rules files use `.mdc`, other IDEs use `.md`.
 
     ---
 

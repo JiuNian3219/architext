@@ -53,7 +53,9 @@ export async function resolveFilesToDelete(cwd: string): Promise<string[]> {
           .filter((f) => f.endsWith(".md"))
           .map((f) => path.basename(f, ".md"));
       }
-    } catch {}
+    } catch {
+      // 如果无法读取模板目录，忽略错误，使用回退列表
+    }
 
     if (ruleBaseNames.length === 0) {
       ruleBaseNames = FALLBACK_RULE_FILES.map((f) => path.basename(f, ".md"));
@@ -70,6 +72,47 @@ export async function resolveFilesToDelete(cwd: string): Promise<string[]> {
             const filePath = path.join(editorDir, fileName);
             if (await fs.pathExists(filePath)) {
               filesToDelete.push(filePath);
+            }
+          }
+        }
+
+        // 处理 Commands 文件（如果编辑器配置了 commands）
+        if (editorConfig.commands) {
+          const commandsDir = path.resolve(
+            cwd,
+            editorConfig.commands.targetDir,
+          );
+          if (await fs.pathExists(commandsDir)) {
+            // 从 prompts 目录读取文件列表，删除对应的 commands 文件
+            try {
+              const templateRoot = await TemplateManager.getRoot();
+              // 使用 'zh' 作为文件名来源的基准（所有语言的 prompts 文件名相同）
+              const promptsSource = path.join(
+                templateRoot,
+                "zh",
+                GLOBAL_RULES.PATHS.PROMPTS_SOURCE,
+              );
+              if (await fs.pathExists(promptsSource)) {
+                const promptFiles = await fs.readdir(promptsSource);
+                for (const promptFile of promptFiles) {
+                  if (promptFile.endsWith(".md")) {
+                    const baseName = path.basename(promptFile, ".md");
+                    const commandFileName = `archi.${baseName}.md`;
+                    const commandFilePath = path.join(
+                      commandsDir,
+                      commandFileName,
+                    );
+                    if (await fs.pathExists(commandFilePath)) {
+                      filesToDelete.push(commandFilePath);
+                    }
+                  }
+                }
+              }
+            } catch {
+              // 如果无法读取模板，尝试删除整个 commands 目录
+              if (await fs.pathExists(commandsDir)) {
+                filesToDelete.push(commandsDir);
+              }
             }
           }
         }

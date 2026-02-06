@@ -40,6 +40,14 @@
     │   ├── 90_custom_rules.mdc     # 用户家规 - 团队自定义约束
     │   └── 99_context_glue.mdc     # 上下文桥梁 - 代码与文档关联
     │
+    ├── .cursor/commands/           # Cursor IDE 命令目录 (仅 Cursor)
+    │   ├── archi.start.md          # /archi.start 命令定义
+    │   ├── archi.plan.md           # /archi.plan 命令定义
+    │   ├── archi.code.md           # /archi.code 命令定义
+    │   ├── archi.fix.md            # /archi.fix 命令定义
+    │   ├── archi.edit.md           # /archi.edit 命令定义
+    │   └── archi.help.md           # /archi.help 命令定义
+    │
     ├── .trae/rules/                # Trae IDE 规则目录 (同上，扩展名为 .md)
     │   └── ...
     │
@@ -79,8 +87,9 @@
 
     **说明**:
     - **IDE Rules 目录**: 根据选择的 IDE，规则文件会被复制到对应目录 (`.cursor/rules/`, `.trae/rules/` 等)
+    - **IDE Commands 目录**: 仅 Cursor 支持，命令文件会被生成到 `.cursor/commands/` 目录，文件名格式为 `archi.{命令名}.md`
     - **文档目录**: 默认使用 `.architext/`，可通过 `architext.json` 配置为其他名称
-    - **扩展名差异**: Cursor 使用 `.mdc`，其他 IDE 使用 `.md`
+    - **扩展名差异**: Cursor 规则文件使用 `.mdc`，其他 IDE 使用 `.md`
 
     ---
 

@@ -85,6 +85,44 @@ export class Scaffolder {
       }
     }
 
+    // 处理 Commands 文件（仅支持 Cursor 等配置了 commands 的编辑器）
+    // 从 prompts 目录读取所有文件，为每个文件生成对应的 commands 文件
+    const promptsSource = path.join(
+      sourceDir,
+      GLOBAL_RULES.PATHS.PROMPTS_SOURCE,
+    );
+    if (await fs.pathExists(promptsSource)) {
+      const allPromptFiles = await fs.readdir(promptsSource);
+      const promptFiles = allPromptFiles.filter((f) => f.endsWith(".md"));
+
+      for (const editor of editors) {
+        const config = EDITOR_CONFIGS[editor];
+        if (!config?.commands) continue;
+
+        const commandsTargetDir = path.join(
+          process.cwd(),
+          config.commands.targetDir,
+        );
+
+        // 为每个 prompt 文件生成对应的 commands 文件
+        // 文件名格式: archi.{原文件名}，例如 start.md -> archi.start.md
+        for (const promptFile of promptFiles) {
+          const srcPath = path.join(promptsSource, promptFile);
+          const baseName = path.basename(promptFile, ".md");
+          const targetFileName = `archi.${baseName}.md`;
+          const destPath = path.join(commandsTargetDir, targetFileName);
+
+          operations.push({
+            src: srcPath,
+            dest: destPath,
+            type: FileOpType.Template,
+            replacements,
+            group: "ide",
+          });
+        }
+      }
+    }
+
     // 处理文件冲突
     const finalOperations = await ConflictResolver.resolve(operations);
 

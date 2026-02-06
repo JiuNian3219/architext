@@ -15,6 +15,14 @@ export type LocaleLang = "zh" | "zh-Hant" | "en";
 export type SupportedEditor = "trae" | "cursor" | "windsurf" | "vscode";
 
 /**
+ * Commands 配置（用于支持编辑器的自定义命令功能）
+ */
+export interface EditorCommandsConfig {
+  /** Commands 目标目录 (相对于项目根目录) */
+  targetDir: string;
+}
+
+/**
  * 编辑器规则映射配置
  */
 export interface EditorRuleConfig {
@@ -24,6 +32,10 @@ export interface EditorRuleConfig {
   targetExt: string;
   /** 编辑器名称标识 */
   label: string;
+  /** 编辑器描述 */
+  description?: string;
+  /** Commands 配置（可选，仅部分编辑器支持） */
+  commands?: EditorCommandsConfig;
 }
 
 /**

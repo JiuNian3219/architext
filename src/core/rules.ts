@@ -22,6 +22,7 @@ export const GLOBAL_RULES = {
     DOCS_SOURCE: "docs",
     RULES_SOURCE: "rules",
     RULES_TARGET: "rules",
+    PROMPTS_SOURCE: "docs/prompts",
   },
 
   // 占位符定义
@@ -44,11 +45,13 @@ export const LANGUAGE_CONFIGS = {
 } as const;
 
 export const EDITOR_CONFIGS: Record<SupportedEditor, EditorRuleConfig> = {
-  
   cursor: {
     label: "Cursor",
     targetDir: ".cursor/rules",
     targetExt: ".mdc",
+    commands: {
+      targetDir: ".cursor/commands",
+    },
   },
   windsurf: {
     label: "Windsurf",
