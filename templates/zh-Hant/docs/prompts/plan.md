@@ -11,10 +11,13 @@
     <principles>
       1.  **Global First**: 局部功能的誕生必須伴隨著全域索引 (Map/Data/Dict) 的更新。
       2.  **Option-Based**: 訪談必須提供具體的 A/B/C/D/E/F 實現路徑（至少 6 個選項），而非開放式問答。
-      3.  **Rich Context**: 每個選項必須包含：簡述、適用場景、Pros/Cons、技術影響。
-      4.  **Audit-Gated**: 只有通過了虛擬審計員檢查的文件，才能交付給使用者。
-      5.  **Frontmatter Preservation**: 嚴禁刪除或修改現有檔案的 YAML Frontmatter。
-      6.  **Project-Type Adaptive**: 問題和選項必須根據專案類型（Web/CLI/Backend/Library/Mobile 等）動態調整。
+      3.  **Flexible Interaction**: 
+          - 選項僅為**啟發式建議**。
+          - 明確告知使用者支援 **多選 (A+B)**、**混合 (A但使用B的...)** 或 **完全自定義**。
+          - 也就是：**不要機械填空，而是以此為起點進行設計。**
+      4.  **Rich Context**: 每個選項必須包含：簡述、適用場景、Pros/Cons、技術影響。
+      5.  **Audit-Gated**: 只有通過了虛擬審計員檢查的文件，才能交付給使用者。
+      6.  **Frontmatter Preservation**: 嚴禁刪除或修改現有檔案的 YAML Frontmatter。
     </principles>
 </meta>
 
@@ -37,153 +40,126 @@
     **Action**: 基於 `[ctx]` 和專案現狀，拋出 5 個維度的**實現方案選擇題**。
     **Constraint**: 
     - 每個問題必須提供 **A/B/C/D/E/F** 六個具體選項 + **Z** (自定義)。
-    - 每個選項必須包含：**簡述** | **適用場景** | **Pros** | **Cons** | **技術影響**。
-    - 問題必須根據專案類型動態調整（不適用的問題可跳過或替換）。
-
+    - **Anti-Redundancy**: 嚴禁詢問 `02_tech_stack.md` 中已經鎖定的技術棧問題（如"用什麼資料庫"）。**只問"如何使用"該技術**。
+    
     ---
     
-    **Q1. Data & Logic Architecture (資料與邏輯架構)**
-    > *Context*: 決定功能的核心資料結構和業務邏輯組織方式。
+    **Q1. Data Model & Schema Strategy (資料模型策略)**
+    > *Context*: 基於已選定的資料庫（Tech Stack），決定此功能的資料結構。
     
     **Web/Backend 專案範例**:
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Flat Table** | 單表扁平結構 | 簡單 CRUD，無複雜關聯 | 查詢簡單，效能好 | 難以擴充複雜關係 | 無需 ORM 進階特性 |
-    | **B. Relational** | 關聯式多表設計 | 有明確實體關係 | 資料完整性，可擴充 | 查詢複雜，需 JOIN | 需要 Migration 工具 |
-    | **C. Nested/Tree** | 遞迴樹狀結構 | 評論、分類、組織架構 | 支援層級關係 | 遞迴查詢效能 | 需要 CTE 或 Adjacency List |
-    | **D. Event Sourcing** | 事件溯源 | 需要完整審計、撤銷 | 完整歷史，可回溯 | 複雜度高，儲存成本 | 需要 Event Store |
-    | **E. Document/NoSQL** | 文件型/JSON 儲存 | 半結構化資料，靈活 Schema | 靈活，無 Migration | 一致性弱，查詢受限 | MongoDB/DynamoDB |
-    | **F. Hybrid** | 混合方案 | 核心關聯式 + 擴充文件 | 兼顧兩者優勢 | 複雜度最高 | 多資料來源管理 |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
+    - **[A] Flat / Single Entity**: 單一實體表。*適用*: 獨立資源，無複雜關聯。*影響*: 簡單 CRUD。
+      > **Pros**: 開發快，無 Join | **Cons**: 擴充性低
+    - **[B] 1:N Relation (Parent-Child)**: 標準父子關係。*適用*: 評論、訂單項。*影響*: 外鍵約束。
+      > **Pros**: 資料完整性 | **Cons**: 需要關聯查詢
+    - **[C] M:N Relation (Junction)**: 多對多關聯。*適用*: 標籤、關注、收藏。*影響*: 需要中間表。
+      > **Pros**: 靈活 | **Cons**: 查詢複雜，寫入需事務
+    - **[D] Recursive / Tree**: 樹形/遞迴結構。*適用*: 目錄、組織架構、多級回覆。*影響*: CTE 查詢或閉包表。
+      > **Pros**: 層級無限 | **Cons**: 遞迴效能開銷
+    - **[E] JSON / EAV (Flexible)**: 動態欄位/JSON列。*適用*: 使用者設定、多態屬性。*影響*: 索引困難。
+      > **Pros**: Schema 靈活 | **Cons**: 資料一致性弱
+    - **[F] Virtual / Computed**: 虛擬/計算屬性。*適用*: 統計報表、聚合視圖。*影響*: 資料庫視圖或即時計算。
+      > **Pros**: 無需儲存 | **Cons**: 計算壓力大
+    - **[Z] 自定義**: (請描述)
 
     **CLI/Library 專案範例**:
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. In-Memory** | 純記憶體資料結構 | 無狀態命令，一次性執行 | 簡單，無依賴 | 無持久化 | 僅需 std 庫 |
-    | **B. Config File** | 設定檔儲存 | 使用者設定、狀態持久化 | 簡單持久化 | 併發問題，格式限制 | TOML/YAML/JSON 解析 |
-    | **C. SQLite Embedded** | 嵌入式資料庫 | 複雜查詢，大量資料 | 完整 SQL 支援 | 增加二進位體積 | 需要 SQLite 綁定 |
-    | **D. Key-Value Store** | 鍵值儲存 | 簡單快取，快速尋找 | 極簡 API | 不支援複雜查詢 | RocksDB/sled/redb |
-    | **E. Plugin System** | 外掛化資料來源 | 支援多種後端 | 可擴充，靈活 | 介面設計複雜 | Trait/Interface 抽象 |
-    | **F. External Service** | 外部服務依賴 | 需要遠端資料 | 資料集中管理 | 網路依賴，需處理離線 | HTTP Client/gRPC |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
+    - **[A] Transient (In-Memory)**: 瞬時記憶體物件。*適用*: 一次性命令。*影響*: 程式結束即銷毀。
+    - **[B] Serialized File**: 序列化文件 (JSON/YAML)。*適用*: 簡單持久化。*影響*: IO 開銷。
+    - **[C] SQLite (Embedded)**: 嵌入式 SQL。*適用*: 複雜本地查詢。*影響*: 依賴 Native 綁定。
+    - ... (根據場景生成其他選項)
 
     ---
 
-    **Q2. Interface & Presentation (介面與展示層)** 
-    > *Context*: 決定功能如何與使用者/外部系統互動。
-    > **Note**: 根據專案類型，此問題的含義不同。
+    **Q2. Interaction & Presentation Pattern (互動模式)** 
+    > *Context*: 決定使用者如何操作此功能。
+    
+    **Web/UI 專案**:
+    - **[A] CRUD Table / List**: 標準增刪改查列表。*適用*: 管理後台、資源列表。
+      > **Pros**: 效率高，標準 | **Cons**: 枯燥
+    - **[B] Wizard / Stepper**: 分步嚮導。*適用*: 複雜表單、Onboarding。
+      > **Pros**: 降低認知負荷 | **Cons**: 互動路徑長
+    - **[C] Dashboard / Kanban**: 看板/卡片視圖。*適用*: 任務管理、狀態流轉。
+      > **Pros**: 直觀，拖曳友好 | **Cons**: 螢幕空間要求高
+    - **[D] Modal / Drawer Drill-down**: 彈窗/抽屜鑽取。*適用*: 保持上下文的輕量操作。
+      > **Pros**: 不離開當前頁 | **Cons**: 深度有限
+    - **[E] Infinite Scroll / Feed**: 資訊流。*適用*: 社交、瀏覽。
+      > **Pros**: 沉浸感 | **Cons**: 定位困難
+    - **[F] Editor / Canvas**: 編輯器/畫布。*適用*: 創作、排版。
+      > **Pros**: 自由度高 | **Cons**: 實現極複雜
+    - **[Z] 自定義**: (請描述)
 
-    **Web 專案 (UI)** - 元件拆分與佈局:
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Inline Block** | 嵌入式元件 | 功能作為頁面一部分 | 直觀，上下文完整 | 佔用頁面空間 | 無額外路由 |
-    | **B. Modal/Dialog** | 彈窗覆蓋層 | 臨時操作，不離開當前頁 | 焦點集中，輕量 | 遮擋內容，體驗中斷 | 需要彈窗管理 |
-    | **C. Drawer/Sidebar** | 側邊滑出面板 | 詳情展示，不離開主視圖 | 保持上下文 | 響應式設計複雜 | 需要佈局系統支援 |
-    | **D. Full Page** | 獨立頁面 | 複雜流程，需要專注 | 完整空間，獨立 URL | 需要導航，跳轉成本 | 需要路由配置 |
-    | **E. Split View** | 左右/上下分欄 | 對比、預覽場景 | 同時展示多資訊 | 螢幕空間要求高 | 響應式複雜 |
-    | **F. Tab/Accordion** | 標籤頁/折疊面板 | 多面板切換 | 節省空間 | 隱藏內容不可見 | Tab 元件依賴 |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
-
-    **CLI 專案** - 輸出與互動方式:
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Plain Text** | 純文字輸出 | 簡單資訊，可管道處理 | 通用，可腳本化 | 資訊層次不清 | 無額外依賴 |
-    | **B. Colored Output** | 彩色文字 | 人類可讀，區分資訊級別 | 可讀性好 | 不支援無色終端 | chalk/picocolors |
-    | **C. Table/Grid** | 表格展示 | 結構化資料展示 | 整齊，對齊 | 寬度限制 | cli-table/tty-table |
-    | **D. Interactive TUI** | 互動式終端 UI | 複雜互動，多步驟 | 豐富體驗 | 開發複雜 | ink/blessed/ratatui |
-    | **E. Progress/Spinner** | 進度指示器 | 長時間操作 | 使用者回饋好 | 增加複雜度 | ora/indicatif |
-    | **F. Structured Output** | JSON/YAML 輸出 | 機器消費，API 整合 | 可解析，整合友好 | 人類不友好 | 序列化庫 |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
-
-    **Backend/API 專案** - 介面協議:
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. REST API** | 標準 RESTful 介面 | 通用場景，第三方整合 | 標準化，工具豐富 | 過度獲取/獲取不足 | OpenAPI 文件 |
-    | **B. GraphQL** | 靈活查詢語言 | 複雜資料關係，多客戶端 | 精確獲取，類型安全 | 學習曲線，N+1 問題 | GraphQL Server |
-    | **C. gRPC** | 高效能 RPC | 微服務通訊，低延遲 | 高效能，類型安全 | 偵錯困難，瀏覽器受限 | Protobuf 定義 |
-    | **D. WebSocket** | 即時雙向通訊 | 即時更新，聊天，協作 | 即時推送 | 連線管理複雜 | WS 伺服器支援 |
-    | **E. Message Queue** | 非同步訊息佇列 | 解耦，削峰，最終一致 | 高可用，可擴充 | 延遲，複雜度 | RabbitMQ/Kafka |
-    | **F. Server-Sent Events** | 伺服器推送 | 單向即時更新 | 簡單，HTTP 相容 | 僅單向，連線限制 | SSE 支援 |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
-
-    **Library 專案** - API 設計風格:
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Builder Pattern** | 鏈式建構器 | 複雜物件配置 | 可讀性好，漸進式 | 程式碼量增加 | 需要額外類型 |
-    | **B. Fluent API** | 流式調用 | DSL 風格介面 | 表達力強 | 偵錯困難 | 方法返回 self |
-    | **C. Functional** | 函數式 API | 無狀態，可組合 | 可測試，無副作用 | 學習曲線 | 高階函數支援 |
-    | **D. Object-Oriented** | 傳統 OOP | 熟悉模式，封裝狀態 | 直觀，IDE 支援好 | 繼承複雜度 | 類別/介面設計 |
-    | **E. Macro/DSL** | 巨集/領域語言 | 減少樣板，提高表達力 | 簡潔，專用 | 偵錯困難，編譯時間 | 巨集系統支援 |
-    | **F. Callback/Event** | 回調/事件驅動 | 非同步處理，擴充點 | 靈活，可擴充 | 回調地獄風險 | 事件系統設計 |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
+    **CLI 專案**:
+    - **[A] Arguments & Flags**: 參數一次性輸入。*適用*: 腳本化調用。
+    - **[B] Interactive Prompts**: 互動式問答。*適用*: 引導使用者。
+    - **[C] TUI (Text UI)**: 全螢幕終端 UI。*適用*: 複雜監控、管理。
+    - ...
 
     ---
 
-    **Q3. State & Data Flow (狀態與資料流)**
-    > *Context*: 決定資料如何在系統中流動、快取和同步。
+    **Q3. State Sync & Data Flow (資料流轉策略)**
+    > *Context*: 資料如何在客戶端、服務端和儲存之間同步。
 
-    **Web 專案**:
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Server-Only** | 純服務端狀態 | 簡單 CRUD，SEO 優先 | 簡單，無客戶端複雜度 | 互動回應慢 | SSR/MPA 架構 |
-    | **B. Client Cache** | 客戶端快取 | 頻繁讀取，減少請求 | 回應快，減輕伺服器 | 一致性問題 | React Query/SWR |
-    | **C. Optimistic UI** | 樂觀更新 | 寫操作多，體驗優先 | 即時回饋，體驗好 | 復原複雜 | 狀態復原邏輯 |
-    | **D. Real-time Sync** | 即時同步 | 協作、聊天、通知 | 資料即時 | 連線管理，成本高 | WebSocket/Firebase |
-    | **E. Local-First** | 本地優先 | 離線支援，PWA | 離線可用，快速 | 衝突解決複雜 | IndexedDB/CRDT |
-    | **F. Hybrid** | 混合策略 | 按場景選擇 | 靈活，最佳化 | 複雜度最高 | 多策略管理 |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
-
-    **CLI/Backend/Library 專案**:
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Stateless** | 無狀態 | 純函數，每次獨立執行 | 簡單，可平行 | 無法快取計算 | 純函數設計 |
-    | **B. Thread-Local** | 執行緒本地狀態 | 多執行緒，隔離狀態 | 執行緒安全 | 跨執行緒共享困難 | TLS/執行緒池 |
-    | **C. Shared Mutable** | 共享可變狀態 | 需要跨元件共享 | 直接，簡單 | 競態風險 | Mutex/RwLock |
-    | **D. Actor Model** | Actor 模型 | 高併發，訊息傳遞 | 無鎖，可擴充 | 學習曲線 | Tokio/Actix |
-    | **E. Immutable** | 不可變狀態 | 函數式，無副作用 | 執行緒安全，可推理 | 效能（複製） | 持久化資料結構 |
-    | **F. Global Singleton** | 全域單例 | 設定、日誌、連線池 | 簡單訪問 | 測試困難，耦合 | 懶載入/OnceCell |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
+    - **[A] Standard REST/Request**: 標準請求/回應。*適用*: 絕大多數場景。
+      > **Pros**: 簡單，無狀態 | **Cons**: 非即時
+    - **[B] Optimistic UI**: 樂觀更新。*適用*: 點贊、收藏等高頻小操作。
+      > **Pros**: 極致流暢 | **Cons**: 需處理回滾
+    - **[C] Polling / SWR**: 輪詢/SWR。*適用*: 準即時狀態（如構建進度）。
+      > **Pros**: 易實現 | **Cons**: 浪費頻寬
+    - **[D] Realtime (Socket/SSE)**: 即時推送。*適用*: 聊天、協作、通知。
+      > **Pros**: 即時 | **Cons**: 連線維護成本
+    - **[E] Local-First / Offline**: 本地優先/離線。*適用*: 筆記、編輯器。
+      > **Pros**: 離線可用 | **Cons**: 衝突解決極難
+    - **[F] Background Job / Async**: 非同步任務。*適用*: 匯出、AI 生成、耗時操作。
+      > **Pros**: 不阻塞 UI | **Cons**: 需任務佇列管理
+    - **[Z] 自定義**: (請描述)
 
     ---
 
-    **Q4. Error Handling & Resilience (錯誤處理與彈性)**
-    > *Context*: 決定系統如何處理異常、失敗和邊界情況。
+    **Q4. Edge Cases & Error Handling (邊界與容錯)**
+    > *Context*: 此功能特有的失敗模式處理。
 
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Exception-Based** | 異常拋出 | 傳統語言，簡單流程 | 直觀，跳出控制流 | 隱式控制流，效能 | try/catch/throw |
-    | **B. Result Type** | Result/Either 類型 | 顯式錯誤處理，類型安全 | 強制處理，類型安全 | 程式碼冗長 | Rust Result/TS fp-ts |
-    | **C. Error Code** | 錯誤碼返回 | C 風格，底層庫 | 效能好，簡單 | 易忽略，語意弱 | 錯誤碼列舉定義 |
-    | **D. Fallback/Default** | 降級預設值 | 非關鍵路徑，容錯優先 | 不中斷，使用者友好 | 隱藏問題 | 預設值策略 |
-    | **E. Retry with Backoff** | 重試與退避 | 網路請求，臨時故障 | 自癒能力 | 延遲，複雜度 | 重試庫/指數退避 |
-    | **F. Circuit Breaker** | 熔斷器 | 微服務，防級聯故障 | 快速失敗，保護下游 | 配置複雜 | 熔斷器庫 |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
+    - **[A] Fail Fast / Toast**: 快速失敗並提示。*適用*: 普通操作。
+    - **[B] Form Validation**: 表單級校驗。*適用*: 輸入錯誤。
+    - **[C] Retry Mechanism**: 自動重試。*適用*: 網路波動。
+    - **[D] Fallback UI / Skeleton**: 骨架屏/降級UI。*適用*: 載入中或局部掛掉。
+    - **[E] Draft / Auto-save**: 草稿/自動保存。*適用*: 長內容編輯，防止丟失。
+    - **[F] Undo / Redo**: 撤銷/重做。*適用*: 複雜編輯操作。
+    - **[Z] 自定義**: (請描述)
 
     ---
 
-    **Q5. Security & Authorization (安全與權限)**
-    > *Context*: 決定功能的存取控制和安全策略。
+    **Q5. Access Control (權限控制)**
+    > *Context*: 誰能做這個操作？(基於 Tech Stack 中的 Auth 體系)
 
-    | Option | 簡述 | 適用場景 | Pros | Cons | 技術影響 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Public/Open** | 完全開放 | 公開資源，無敏感資料 | 簡單，無鑑權開銷 | 無存取控制 | 無需鑑權中介軟體 |
-    | **B. API Key** | API 金鑰認證 | 服務間調用，簡單場景 | 簡單實現 | 金鑰洩露風險 | 金鑰管理 |
-    | **C. Session-Based** | 會話認證 | 傳統 Web 應用 | 成熟，控制力強 | 服務端狀態，擴充難 | Session 儲存 |
-    | **D. JWT Token** | JWT 無狀態令牌 | 分散式，微服務 | 無狀態，可擴充 | Token 撤銷困難 | JWT 庫/驗證 |
-    | **E. OAuth2/OIDC** | OAuth2/OpenID | 第三方登入，SSO | 標準化，安全 | 複雜，學習曲線 | OAuth Provider |
-    | **F. RBAC/ABAC** | 角色/屬性權限 | 複雜權限控制 | 細粒度控制 | 設計複雜 | 權限模型設計 |
-    | **Z. 自定義** | (請描述) | - | - | - | - |
+    - **[A] Public**: 公開。*適用*: 落地頁、公開部落格。
+    - **[B] Authenticated**: 登入使用者。*適用*: 一般功能。
+    - **[C] Owner Only**: 僅資源擁有者。*適用*: 編輯/刪除自己的內容。
+    - **[D] Role Based (RBAC)**: 特定角色(Admin/Editor)。*適用*: 管理功能。
+    - **[E] Shared / Team**: 團隊成員可見。*適用*: 協作資源。
+    - **[F] Tier / Subscription**: 付費/訂閱限制。*適用*: 高級功能。
+    - **[Z] 自定義**: (請描述)
 
     ---
 
     **Goal**: 鎖定 `1.spec` (邏輯), `2.ui` (視覺，如適用), `04_data` (Schema，如適用) 的具體內容。
-    **Bridge**: "✅ Options Generated. 請架構師（使用者）根據上述詳細對比做出決策..."
+    **Bridge**: "✅ Options Generated. 這是一個**互動式設計過程**，請告訴我您的選擇..."
     
-    **⌨️ INPUT (管道回覆)**:
-    > **格式**: `Q1 | Q2 | Q3 | Q4 | Q5`
-    > **範例**: `B | A | C | B | D`
-    > **自定義範例**: `B | Z="命令行 + JSON 雙輸出" | C | B | A`
+    **⌨️ INPUT (靈活回覆)**:
+    - **單選**: `A | B | C | D | E`
+    - **多選**: `A+B | ...`
+    - **修改**: `A (但改為...) | ...`
+    - **追問**: `Q2 我不太確定，請展開講講 B 和 C 的區別` (觸發第二輪問答)
 </step_2_interview>
+
+<step_2_5_refinement>
+    **Trigger**: 使用者回覆包含 "不確定"、"區別"、"建議" 或明顯的邏輯衝突。
+    **Role**: 諮詢顧問
+    **Action**: 
+    1.  **不生成文件**。
+    2.  解釋使用者的疑惑點，對比選項優劣。
+    3.  提出新的、更具體的建議。
+    4.  等待使用者再次確認。
+</step_2_5_refinement>
 
 <step_3_global_sync>
     **Role**: 系統管理員 (System Admin)
@@ -193,5 +169,134 @@
     1.  **Update `01_map.md`**:
         - 在 `3. Directory Mapping` 註冊 `[[__DOCS_DIR__]]/features/<ID>_<Name>`。
         - 在 `4. Logical Topology` 定義模組職責與依賴。
+    2.  **Update `02_dictionary.md`**:
+        - 提取訪談中的新術語填入表格。
+        - 註冊新發現的公共元件/模組。
+    3.  **Update `04_data_snapshot.md`** (如專案有數據層):
+        - 根據 Q1 的選擇，新增或修改 Table/Schema 定義。**嚴禁**僅僅寫 "待定"，必須寫出欄位名稱和類型。
+    4.  **Update `05_error_codes.md`**:
+        - 根據 Q4 的選擇，註冊新的業務錯誤碼。
+
+    **Output**: 展示上述檔案的變更 Diff (簡要)。
+    **Bridge**: "✅ Global Docs Synced. 正在生成功能文件..."
 </step_3_global_sync>
+
+<step_4_generate>
+    **Role**: 文件工程師
+    **Input**: 訪談結果 + 已更新的全域上下文。
+    **Action**: 在 `[[__DOCS_DIR__]]/features/<ID>_<Name>/` 下生成標準文件。
+
+    **1. Generate `1.spec.md`** (必須):
+    - **Template**: 使用 `templates/spec.template.md`.
+    - **Content**: 將 Q1 (資料邏輯) 和 Q4 (錯誤處理) 轉化為 **Gherkin Scenarios**。
+    - **Rule**: 引用 `04_data_snapshot.md` 中的表名/結構和 `05_error_codes.md` 中的錯誤碼（如適用）。
+
+    **2. Generate `2.ui.md`** (如專案有 UI):
+    - **Role**: UI/UX 設計師 (Designer Mode)
+    - **Action**: 
+        - 引入 **Designer Mode**：模擬專業設計師視角，不僅考慮功能，更考慮美學、佈局平衡和互動體驗。
+        - 參考 `03_design_tokens.md` 進行設計。
+    - **Template**: 使用 `templates/ui.template.md`.
+    - **Content**: 將 Q2 (介面展示) 轉化為 **ITP v3.0** 描述或對應的 CLI 輸出規範。
+    - **Rule**: 
+        - 嚴禁硬編碼顏色/尺寸值，必須使用 `03_design_tokens.md` 中的 Token（如適用）。
+        - **Aesthetics**: 避免「工程師審美」，注重留白、層級和視覺引導。
+
+
+    **3. Generate `3.plan.md`** (必須):
+    - **Template**: 使用 `templates/plan.template.md`.
+    - **Content**: 根據專案類型動態調整 Phase 劃分：
+      - **Web 專案**: Phase 1 (API/Data), Phase 2 (UI), Phase 3 (Integration)
+      - **CLI 專案**: Phase 1 (Core Logic), Phase 2 (Interface/Output), Phase 3 (Testing)
+      - **Backend 專案**: Phase 1 (Domain), Phase 2 (API), Phase 3 (Integration)
+      - **Library 專案**: Phase 1 (Core API), Phase 2 (Implementations), Phase 3 (Docs & Examples)
+    - **Rule**: 每一個 Checkbox 必須是可測量的原子任務。
+
+    **Bridge**: "✅ Feature Docs Generated. 正在進行合規性審計..."
+</step_4_generate>
+
+<step_5_audit>
+    **Role**: 🔴 首席審計官 (Chief Auditor)
+    **Goal**: 攔截不合規的文件，強制自我修正。
+
+    **Checklist (根據專案類型動態調整)**:
+    1.  **Tech Consistency (技術一致性)**:
+        - 掃描所有生成文件。
+        - 檢查是否使用了 `02_tech_stack.md` 中未聲明的技術。
+        - ❌ 發現違規：自動修正或警告。
+    2.  **Visual Compliance (視覺合規，如專案有 UI)**: 
+        - 掃描 `2.ui.md`。
+        - ❌ 發現: 硬編碼的顏色值、像素值。
+        - ✅ 要求: 必須使用 Design Tokens。
+    3.  **Data Integrity (資料完整性，如專案有數據層)**:
+        - 掃描 `1.spec.md`。
+        - 檢查 Scenario 中的資料變更是否引用了 `04_data` 中真實存在的表/結構。
+    4.  **Error Handling Check (錯誤處理檢查)**:
+        - 掃描 `1.spec.md` 和 `3.plan.md`。
+        - 檢查是否覆蓋了 Q4 選擇的錯誤處理策略。
+    5.  **SOTA Pattern Check (技術先進性)**:
+        - 掃描所有生成程式碼/偽代碼。
+        - 檢查是否符合 `02_tech_stack.md` 中定義的最佳實踐。
+        - ❌ 發現違反反模式（如 `02_tech_stack.md` §8 Anti-Patterns）。
+    6.  **Accessibility (無障礙，如專案有 UI)**:
+        - 掃描 `2.ui.md`。
+        - 檢查是否規劃了必要的無障礙屬性。
+
+    **Action**: 
+    - 如果發現問題，**靜默修正 (Auto-Fix)** 文件內容。
+    - 如果問題嚴重（如邏輯衝突），在輸出中標記 `⚠️ Risk Warning`。
+    
+    **Bridge**: "✅ Audit Passed. 正在完成最終輸出..."
+</step_5_audit>
+
+<step_6_signoff>
+    **Action**: 
+    1. 更新 `[[__DOCS_DIR__]]/global/00_roadmap.md` 狀態為 `🟢 In Progress`，並添加 Docs 連結。
+    2. 輸出總結。
+
+    **Constraint**:
+    - **State Recovery**: 即使經過多輪對話，最終輸出**必須包含且僅包含**以下標準塊。不要輸出"好的，這是最終結果"等廢話。
+
+    **Output Template**:
+    ```markdown
+    ## ✅ Feature Definition Complete
+
+    **Feature ID**: `<ID>`
+    **Feature Name**: `<Name>`
+    **Project Type**: `<Web/CLI/Backend/Library/Mobile>`
+
+    ### 📋 Decisions Summary
+    | Question | Choice | Key Impact |
+    |:---|:---|:---|
+    | Q1. Data Model | [選項] | [簡述影響] |
+    | Q2. Interaction | [選項] | [簡述影響] |
+    | Q3. Data Flow | [選項] | [簡述影響] |
+    | Q4. Resilience | [選項] | [簡述影響] |
+    | Q5. Access | [選項] | [簡述影響] |
+
+    ### 📂 Global Updates
+    * Map: Registered `features/<ID>_<Name>` (`01_map`)
+    * Schema: [Added/Modified] (如適用) (`04_data`)
+    * Error Codes: [Added] (如適用) (`05_error`)
+
+    ### 📄 Local Docs Generated
+    * 📄 `[[__DOCS_DIR__]]/features/<ID>_<Name>/1.spec.md`
+    * 🎨 `[[__DOCS_DIR__]]/features/<ID>_<Name>/2.ui.md` (如適用)
+    * 🗓️ `[[__DOCS_DIR__]]/features/<ID>_<Name>/3.plan.md`
+
+    ### 🧭 Next Steps (下一步操作)
+
+    | 場景 | 推薦操作 | 說明 |
+    |:---|:---|:---|
+    | **開始實現** | `/archi.code <ID>` | 開始程式碼實現，按照 `3.plan.md` 中的任務清單執行 |
+    | **檢查文件** | 查看生成的 `1.spec.md` 和 `2.ui.md` | 確認文件是否符合預期 |
+    | **需要調整** | `/archi.edit <ID> [變更描述]` | 如果發現需求需要修改，更新 Spec/UI 文件 |
+    | **規劃新功能** | `/archi.plan [新的 Feature_ID]` | 如果還有其他功能需要規劃 |
+    | **查看幫助** | `/archi.help` | 顯示完整指令手冊 |
+
+    > 💡 **推薦**: 運行 `/archi.code <ID>` 開始程式碼實現。
+    ```
+
+</step_6_signoff>
+
 </protocol_plan>

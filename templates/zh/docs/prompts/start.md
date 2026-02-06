@@ -10,12 +10,13 @@
       1.  **Structure over Chat**: 输出必须像一个结构化的"配置面板" (Dashboard)，严禁聊天废话。
       2.  **User Agency First**: 优先提取 `[context]` 中的显式需求，直接标记为 `✅ Core` (无需用户再次选择)。
       3.  **Rich Menu (丰富菜单)**: 针对领域类型，**必须生成 6-10 个** 有价值的"扩展功能"供用户勾选 (A-J)。
-      4.  **Maximize Options (最大化选项)**: 每个战略决策问题 **必须提供 6 个选项 (A-F)**，严禁只有 A/B/C/D 四个。
-      5.  **Rich Context (丰富上下文)**: 每个选项必须包含：**简述** | **适用场景** | **Pros** | **Cons** | **后续影响**。
-      6.  **Proactive Analysis (主动分析)**: 如果用户上下文模糊，AI 必须通过分析隐式需求来生成针对性的选项，而不是泛泛而谈。
+      4.  **Flexible Interaction**: 
+          - 选项支持 **多选 (A+B)**、**混合** 或 **自定义**。
+          - 如果用户意图不明，**主动发起第二轮询问** (Clarification Mode)。
+      5.  **Rich Context (丰富上下文)**: 每个选项必须包含：简述、适用场景、Pros/Cons、后续影响。
+      6.  **Proactive Analysis (主动分析)**: 如果用户上下文模糊，AI 必须通过分析隐式需求来生成针对性的选项。
       7.  **Option Z Everywhere**: 扩展菜单和所有决策项都必须包含 `[Z] 自定义`。
       8.  **Pipeline Input**: 引导用户使用 `|` 分隔符进行高效回复 (e.g. `A B Z="MyIdea" | A | B`)。
-      9.  **Clear Next Steps**: 每个步骤结束后必须明确告知用户下一步操作和可能的分支情况。
     </principles>
     
     <output_template>
@@ -37,10 +38,14 @@
 
       ### ⚙️ STRATEGIC DECISIONS (战略决策 ADR)
       **[Q1] 决策标题**
-      | Option | 简述 | 适用场景 | Pros | Cons | 后续影响 |
-      |:---|:---|:---|:---|:---|:---|
-      | [A] | ... | ... | ... | ... | ... |
-      | [Z] | 自定义 | - | - | - | - |
+      - **[A] ...**
+        - **简述**: ...
+        - **适用场景**: ...
+        - **Pros**: ...
+        - **Cons**: ...
+        - **后续影响**: ...
+      - **[Z] 自定义**
+        - ...
 
       **[Q2] ...**
       **[Q3] ...**
@@ -92,59 +97,59 @@
     **Action 3: Strategic Gap Analysis (战略查漏)**
     - 生成 4 个关键战略问题 (ID 为 `Q1`, `Q2`, `Q3`, `Q4`)。
     - **每个问题必须提供 6 个选项 (A-F) + Z (自定义)**。
-    - **每个选项必须包含完整的决策信息表格**。
+    - **每个选项必须包含完整的决策信息列表**。
 
     ---
 
-    **[Q1] 产品基因 (Product DNA)** - 核心价值与目标用户
-    | Option | 简述 | 适用场景 | Pros | Cons | 后续影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] 纯粹工具** | 极致效率，无广告，无社交，用完即走 | 效率工具、开发者工具 | 聚焦核心，开发快 | 增长受限，无粘性 | 无需用户系统、无需后端（可选） |
-    | **[B] 社区驱动** | 强调分享和排行榜，社交裂变 | UGC 平台、兴趣社区 | 自传播，粘性高 | 运营压力，冷启动难 | 需要用户系统、通知、分享 |
-    | **[C] 商业化导向** | 追求变现效率，广告/内购 | 消费级 App、SaaS | 收入可期 | 用户体验让步 | 需支付集成、订阅系统 |
-    | **[D] 教育探索** | 面向初学者，强调引导和趣味 | 学习平台、儿童应用 | 用户友好，差异化 | 专业用户觉得啰嗦 | 需要引导系统、教程模块 |
-    | **[E] 企业级** | B2B/内部工具，强调稳定和合规 | SaaS、企业应用 | 高客单价，长周期 | 销售复杂，定制多 | 需要 RBAC、审计日志、SSO |
-    | **[F] 开源驱动** | 开源优先，社区贡献 | 开发者工具、基础设施 | 生态增长，信任度高 | 商业化挑战 | 需要 CI/CD、文档、贡献指南 |
-    | **[Z] 自定义** | (请描述) | - | - | - | - |
-
-    **[Q2] 视觉/交互风格 (Visual/Interaction Style)**
-    > *Context*: 决定用户的第一印象和整体体验基调。
+    **[Q1] Product DNA & Target Audience (产品基因)**
+    > *Context*: 产品的核心价值观是什么？它为谁服务？
     
-    | Option | 简述 | 适用场景 | Pros | Cons | 后续影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] Minimalist** | 极简风格，大量留白，克制的色彩 | 效率工具、高端品牌 | 简洁，加载快 | 可能显得冷淡 | Design Tokens 以中性色为主 |
-    | **[B] Playful** | 活泼风格，圆角、动画、丰富色彩 | 消费应用、社交产品 | 吸引眼球，体验活跃 | 可能不够专业 | 需要动画系统、Illustration |
-    | **[C] Corporate** | 商务风格，稳重、专业、信任感 | B2B、金融、企业应用 | 专业可信 | 可能显得无聊 | 需要图表库、表格组件 |
-    | **[D] Dashboard** | 数据驱动，图表为主，信息密集 | 后台管理、数据平台 | 信息丰富 | 学习成本高 | 需要图表库、Grid 布局 |
-    | **[E] CLI/Terminal** | 命令行风格，ASCII、Monospace | CLI 工具、开发者产品 | 极客感，无UI负担 | 非开发者难用 | 使用 Chalk/Picocolors |
-    | **[F] Immersive** | 沉浸式，全屏、动效、音效 | 游戏、创意应用 | 体验独特 | 开发成本高 | 需要 Canvas/WebGL/音频 |
-    | **[Z] 自定义** | (请描述) | - | - | - | - |
+    - **[A] Pure Tool**: 极致效率，无广告，无社交，用完即走。*适用*: 效率工具、开发者工具。*影响*: 无需用户系统、无需后端（可选）。
+      > **Pros**: 聚焦核心，开发快 | **Cons**: 增长受限，无粘性
+    - **[B] Community / Social**: 强调连接、分享和互动。*适用*: 社区、协作平台。*影响*: 需要强大的用户系统、通知、Feed。
+      > **Pros**: 自传播，粘性高 | **Cons**: 冷启动难，运营重
+    - **[C] Commercial / SaaS**: 追求商业变现，订阅或付费。*适用*: B2B/B2C SaaS。*影响*: 需集成支付、订阅管理、多租户。
+      > **Pros**: 收入模型清晰 | **Cons**: 对稳定性/体验要求极高
+    - **[D] Content / Media**: 内容分发与消费。*适用*: 博客、新闻、流媒体。*影响*: 需要 CMS、CDN、SEO 优化。
+      > **Pros**: 流量导向 | **Cons**: 版权与审核成本
+    - **[E] Enterprise / Internal**: 内部效能、合规与管控。*适用*: OA、ERP、Admin。*影响*: 需要 RBAC、审计日志、SSO。
+      > **Pros**: 需求明确 | **Cons**: 交互体验往往被忽视
+    - **[F] Open Source / DevKit**: 开发者生态、可扩展性。*适用*: 框架、插件系统。*影响*: 需要优秀的文档、CI/CD、贡献指南。
+      > **Pros**: 技术影响力 | **Cons**: 商业化路径长
+    - **[Z] 自定义**: (请描述)
 
-    **[Q3] 核心体验维度 (Core Experience Dimension)**
-    > *Context*: 产品最注重的体验指标，决定技术选型的优先级。
+    **[Q2] Visual & Interaction Personality (视觉与交互个性)**
+    > *Context*: 用户的第一印象。不是选颜色，而是选“性格”。
     
-    | Option | 简述 | 适用场景 | Pros | Cons | 后续影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] Speed** | 极致响应速度，毫秒级交互 | 搜索、实时工具 | 体验流畅 | 架构复杂 | 需要缓存、边缘计算、优化 |
-    | **[B] Animation** | 流畅动效，60fps 过渡 | 消费应用、品牌展示 | 视觉吸引 | 性能开销 | 需要动画库、GPU 加速 |
-    | **[C] Reliability** | 稳定性优先，零崩溃 | 企业应用、关键系统 | 用户信任 | 开发周期长 | 需要错误边界、监控、降级 |
-    | **[D] Offline-First** | 离线可用，弱网友好 | 移动应用、PWA | 随时可用 | 同步复杂 | 需要 Service Worker/CRDT |
-    | **[E] Security** | 安全优先，数据保护 | 金融、医疗、合规领域 | 合规，用户信任 | 体验让步 | 需要加密、审计、2FA |
-    | **[F] Extensibility** | 可扩展性，插件/API | 平台型产品、开发者工具 | 生态发展 | 架构复杂 | 需要插件系统、SDK 设计 |
-    | **[Z] 自定义** | (请描述) | - | - | - | - |
+    - **[A] Minimalist / Clean**: 极简，留白，克制。*适用*: 高端品牌、效率工具。*影响*: 设计克制，注重排版。
+    - **[B] Playful / Gamified**: 活泼，高饱和度，微交互。*适用*: C 端应用、学习、游戏。*影响*: 需要动画库、Gamification 机制。
+    - **[C] Professional / Data-Dense**: 密集，冷静，信息量大。*适用*: 仪表盘、交易终端。*影响*: 需要高性能 Grid、图表库。
+    - **[D] Developer / Terminal**: 极客，暗色，等宽字体。*适用*: 开发者工具。*影响*: 代码高亮、键盘优先。
+    - **[E] Brutalist / Neo**: 粗野主义，高对比，反常规。*适用*: 潮流品牌、艺术。*影响*: 独特的 UI 组件库。
+    - **[F] Native / System**: 原生风格，融入系统。*适用*: 工具类 App。*影响*: 使用平台原生组件。
+    - **[Z] 自定义**: (请描述)
 
-    **[Q4] 产品规模预估 (Scale Estimation)**
-    > *Context*: 决定架构复杂度和基础设施选型。
+    **[Q3] The "Iron Triangle" Trade-off (核心权衡)**
+    > *Context*: 资源有限，你必须在以下维度中做取舍。
     
-    | Option | 简述 | 适用场景 | Pros | Cons | 后续影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] MVP/原型** | <1000 用户，单机/Serverless | 验证想法、个人项目 | 最快上线 | 扩展性差 | Vercel/Cloudflare/单体 |
-    | **[B] 初创/Growth** | 1k-10k 用户 | 初创产品、早期增长 | 平衡性好 | 需要些许架构 | 基础缓存、数据库索引 |
-    | **[C] 规模化/Scale** | 10k-100k 用户 | 成熟产品、规模化 | 可扩展 | 架构复杂 | 负载均衡、读写分离 |
-    | **[D] 大规模** | 100k+ 用户 | 大型平台 | 高可用 | 运维成本高 | 微服务、分布式缓存 |
-    | **[E] 企业/Enterprise** | 多租户、SSO、审计 | SaaS、企业部署 | 高客单价 | 开发周期长 | 租户隔离、SSO 集成 |
-    | **[F] 无服务器/Serverless** | 按需扩展，无状态 | 流量波动大、成本敏感 | 弹性，低成本 | 冷启动、供应商锁定 | Lambda/Edge Functions |
-    | **[Z] 自定义** | (请描述) | - | - | - | - |
+    - **[A] Velocity First (MVP)**: 速度至上。代码脏一点没关系，先上线。*影响*: 选全栈框架 (Next.js/Rails)，单体架构。
+    - **[B] Performance First**: 极致性能。毫秒级响应。*影响*: 选 Rust/Go，WASM，边缘计算，复杂缓存。
+    - **[C] Stability / Quality First**: 零 Bug，高测试覆盖率。*适用*: 金融/医疗。*影响*: 强类型 (Rust/Strict TS)，TDD，慢迭代。
+    - **[D] Scalability First**: 预备百万并发。*适用*: 预期爆发增长。*影响*: 微服务，消息队列，复杂运维。
+    - **[E] UX / Animation First**: 体验至上。*适用*: 消费级产品。*影响*: 客户端渲染，乐观更新，动画调优。
+    - **[F] Cost First**: 成本最低。*适用*: 个人项目。*影响*: Serverless，免费层级，SQLite。
+    - **[Z] 自定义**: (请描述)
+
+    **[Q4] Scale & Infrastructure (规模预估)**
+    > *Context*: 这决定了我们“杀鸡用什么刀”。
+    
+    - **[A] Hobby / Prototype**: <1k 用户。单机/Serverless。*影响*: SQLite/JSON DB，Vercel 部署。
+    - **[B] Startup / Growth**: 10k-100k 用户。标准 Web 架构。*影响*: Postgres/MySQL，Redis 缓存，Docker 部署。
+    - **[C] High Traffic**: 100k+ 用户 / 高并发。*影响*: 读写分离，负载均衡，CDN。
+    - **[D] Data Heavy**: 海量数据存储/分析。*影响*: 需要 OLAP (ClickHouse/Snowflake)，分库分表。
+    - **[E] Offline / Local**: 本地运行，偶尔同步。*影响*: 客户端数据库 (PouchDB/RxDB)，CRDT。
+    - **[F] Enterprise Deployment**: 私有化部署，多环境。*影响*: K8s，Helm Charts，Terraform。
+    - **[Z] 自定义**: (请描述)
 
     ---
     
@@ -157,8 +162,8 @@
     
     ---
     **Interaction Flow (交互衔接)**:
-    - Bridge: "✅ 战略配置已接收！接下来进入技术深潜环节，我将根据您的选择生成针对性的技术选型问题..."
-    - 如果用户选择有歧义或冲突，**主动询问澄清**。
+    - **Clarification**: 如果用户选择存在明显逻辑冲突（如 "E. Enterprise" + "A. MVP"），**不要直接生成**，进入 `Clarification Mode` 询问用户意图。
+    - **Bridge**: 如果一切清晰，则输出: "✅ 战略配置已接收！接下来进入技术深潜环节..."
 </step_1_strategy>
 
 <step_2_tech_gate>
@@ -184,25 +189,29 @@
       - AI 必须基于 Step 1 识别出的 **[领域类型]** (Web/CLI/Mobile/Backend 等)，动态生成 8 个最关键的技术选型问题。
       - **严禁使用预设的问题模板**，必须根据实际领域进行适配。
       - **每个问题必须提供 6 个选项 (A-F) + Z (自定义)**。
-      - **每个选项必须包含完整的决策信息表格**。
+      - **每个选项必须包含完整的决策信息列表**。
 
     ---
 
     **Required Question Categories (必须包含的决策维度)**:
     > **注意**: Q1-Q6 为通用维度，Q7-Q8 为 AI 根据领域动态生成的特定维度。
 
-    **[Q1] 核心语言与运行时 (Language & Runtime)**
-    | Option | 简述 | 适用场景 | Pros | Cons | 后续影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] TypeScript/Node** | JS 生态，全栈可用 | Web、Node 服务 | 生态丰富，全栈 | 性能非顶级 | npm 生态 |
-    | **[B] TypeScript/Bun** | 现代 JS 运行时 | 高性能 Node 替代 | 更快，内置工具 | 生态较新 | Bun 专属 API |
-    | **[C] Rust** | 系统级语言 | CLI、高性能服务 | 极致性能，安全 | 学习曲线陡 | Cargo 生态 |
-    | **[D] Go** | 简洁高效 | 后端服务、CLI | 简单，并发好 | 泛型较新 | Go Modules |
-    | **[E] Python** | 快速开发 | AI/ML、脚本、后端 | 生态丰富，易学 | 性能较差 | pip/conda |
-    | **[F] Java/Kotlin** | 企业级 | 大型后端、Android | 成熟稳定 | 较重，启动慢 | Maven/Gradle |
-    | **[Z] 自定义** | (请描述) | - | - | - | - |
+    **[Q1] Core Language & Runtime (语言与运行时)**
+    - **[A] TypeScript/Node**: JS 生态，全栈可用。*适用*: Web、Node 服务。*影响*: npm 生态。
+      > **Pros**: 生态丰富，全栈 | **Cons**: 性能非顶级
+    - **[B] TypeScript/Bun**: 现代 JS 运行时。*适用*: 高性能 Node 替代。*影响*: Bun 专属 API。
+      > **Pros**: 更快，内置工具 | **Cons**: 生态较新
+    - **[C] Rust**: 系统级语言。*适用*: CLI、高性能服务。*影响*: Cargo 生态。
+      > **Pros**: 极致性能，安全 | **Cons**: 学习曲线陡
+    - **[D] Go**: 简洁高效。*适用*: 后端服务、CLI。*影响*: Go Modules。
+      > **Pros**: 简单，并发好 | **Cons**: 泛型较新
+    - **[E] Python**: 快速开发。*适用*: AI/ML、脚本、后端。*影响*: pip/conda。
+      > **Pros**: 生态丰富，易学 | **Cons**: 性能较差
+    - **[F] Java/Kotlin**: 企业级。*适用*: 大型后端、Android。*影响*: Maven/Gradle。
+      > **Pros**: 成熟稳定 | **Cons**: 较重，启动慢
+    - **[Z] 自定义**: (请描述)
 
-    **[Q2] 核心框架/生态 (Core Framework)**
+    **[Q2] Core Framework/Eco (核心框架)**
     > *Context*: 决定项目的骨架。根据 Q1 语言和项目类型动态调整选项。
     
     *示例 (Web)*: Next.js / Remix / Nuxt / SvelteKit / Astro / Fresh
@@ -210,49 +219,57 @@
     *示例 (Backend)*: NestJS / Express / Fastify / Gin / Actix / FastAPI
     *示例 (Mobile)*: React Native / Flutter / SwiftUI / Jetpack Compose
     
-    **[必须提供 6 选项表格，格式同上]**
+    **[必须提供 6 选项列表，格式同上]**
 
-    **[Q3] 数据持久化与状态 (Data & State)**
+    **[Q3] Data Persistence & State (数据与状态)**
     > *Context*: 决定数据如何存储与流转。
     
     *示例 (有后端)*: PostgreSQL / MySQL / MongoDB / SQLite / Supabase / PlanetScale
     *示例 (无后端)*: LocalStorage / IndexedDB / File System / SQLite (Embedded)
     *示例 (状态管理)*: Zustand / Jotai / Redux / Pinia / MobX
     
-    **[必须提供 6 选项表格，格式同上]**
+    **[必须提供 6 选项列表，格式同上]**
 
-    **[Q4] 交互接口与通信 (Interface & Comm)**
+    **[Q4] Interface & Comm (接口与通信)**
     > *Context*: 系统如何与外部交互。
     
     *示例 (Web UI)*: Tailwind CSS / Shadcn/UI / MUI / Ant Design / Chakra
     *示例 (API)*: REST / GraphQL / tRPC / gRPC / WebSocket
     *示例 (CLI)*: @clack/prompts / Ink / Blessed / Ratatui / Bubble Tea
     
-    **[必须提供 6 选项表格，格式同上]**
+    **[必须提供 6 选项列表，格式同上]**
 
-    **[Q5] 质量保障体系 (Quality & Testing)**
-    | Option | 简述 | 适用场景 | Pros | Cons | 后续影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] Vitest** | 现代 Vite 测试框架 | Vite 项目 | 快，HMR 支持 | Vite 绑定 | Vitest config |
-    | **[B] Jest** | 成熟测试框架 | React、通用 JS | 生态丰富 | 配置较重 | Jest config |
-    | **[C] Pytest** | Python 测试 | Python 项目 | 简洁，插件多 | 仅 Python | pytest.ini |
-    | **[D] Go Test** | Go 内置测试 | Go 项目 | 无依赖，标准化 | 功能基础 | *_test.go |
-    | **[E] Rust Test** | Cargo 内置测试 | Rust 项目 | 无依赖，集成 | 功能基础 | #[test] |
-    | **[F] Playwright/Cypress** | E2E 测试 | Web 应用 | 真实浏览器 | 慢，资源重 | E2E 配置 |
-    | **[Z] 自定义** | (请描述) | - | - | - | - |
+    **[Q5] Quality Assurance System (质量保障)**
+    - **[A] Vitest**: 现代 Vite 测试框架。*适用*: Vite 项目。*影响*: Vitest config。
+      > **Pros**: 快，HMR 支持 | **Cons**: Vite 绑定
+    - **[B] Jest**: 成熟测试框架。*适用*: React、通用 JS。*影响*: Jest config。
+      > **Pros**: 生态丰富 | **Cons**: 配置较重
+    - **[C] Pytest**: Python 测试。*适用*: Python 项目。*影响*: pytest.ini。
+      > **Pros**: 简洁，插件多 | **Cons**: 仅 Python
+    - **[D] Go Test**: Go 内置测试。*适用*: Go 项目。*影响*: *_test.go。
+      > **Pros**: 无依赖，标准化 | **Cons**: 功能基础
+    - **[E] Rust Test**: Cargo 内置测试。*适用*: Rust 项目。*影响*: #[test]。
+      > **Pros**: 无依赖，集成 | **Cons**: 功能基础
+    - **[F] Playwright/Cypress**: E2E 测试。*适用*: Web 应用。*影响*: E2E 配置。
+      > **Pros**: 真实浏览器 | **Cons**: 慢，资源重
+    - **[Z] 自定义**: (请描述)
 
-    **[Q6] 基础设施与版本控制 (Infra & Git)**
-    | Option | 简述 | 适用场景 | Pros | Cons | 后续影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] GitHub Actions** | GitHub CI/CD | GitHub 托管 | 集成好，免费额度 | GitHub 绑定 | .github/workflows |
-    | **[B] GitLab CI** | GitLab CI/CD | GitLab/自托管 | 私有部署好 | 配置较重 | .gitlab-ci.yml |
-    | **[C] Docker + K8s** | 容器编排 | 大规模部署 | 可扩展 | 运维复杂 | Dockerfile, k8s 配置 |
-    | **[D] Vercel/Netlify** | Serverless 部署 | 前端/全栈 | 极简部署 | 供应商锁定 | vercel.json |
-    | **[E] Trunk-Based** | 主干开发 | 小团队，快速迭代 | 简单，减少冲突 | 需要好的 CI | 分支策略 |
-    | **[F] Git Flow** | 分支工作流 | 大团队，发布节奏 | 清晰，可追溯 | 分支复杂 | 分支命名规范 |
-    | **[Z] 自定义** | (请描述) | - | - | - | - |
+    **[Q6] Infrastructure & Git (基建与流)**
+    - **[A] GitHub Actions**: GitHub CI/CD。*适用*: GitHub 托管。*影响*: .github/workflows。
+      > **Pros**: 集成好，免费额度 | **Cons**: GitHub 绑定
+    - **[B] GitLab CI**: GitLab CI/CD。*适用*: GitLab/自托管。*影响*: .gitlab-ci.yml。
+      > **Pros**: 私有部署好 | **Cons**: 配置较重
+    - **[C] Docker + K8s**: 容器编排。*适用*: 大规模部署。*影响*: Dockerfile, k8s 配置。
+      > **Pros**: 可扩展 | **Cons**: 运维复杂
+    - **[D] Vercel/Netlify**: Serverless 部署。*适用*: 前端/全栈。*影响*: vercel.json。
+      > **Pros**: 极简部署 | **Cons**: 供应商锁定
+    - **[E] Trunk-Based**: 主干开发。*适用*: 小团队，快速迭代。*影响*: 分支策略。
+      > **Pros**: 简单，减少冲突 | **Cons**: 需要好的 CI
+    - **[F] Git Flow**: 分支工作流。*适用*: 大团队，发布节奏。*影响*: 分支命名规范。
+      > **Pros**: 清晰，可追溯 | **Cons**: 分支复杂
+    - **[Z] 自定义**: (请描述)
 
-    **[Q7] 领域特定决策 A (Domain Specific A)**
+    **[Q7] Domain Specific Decision A (领域特定决策 A)**
     > *Trigger*: AI 必须识别该领域最核心的一个痛点或分支。
     
     *示例 (Web)*: CSR vs SSR vs SSG vs ISR (渲染策略)
@@ -261,9 +278,9 @@
     *示例 (AI Agent)*: Local LLM vs Cloud API
     *示例 (Game)*: 2D vs 3D Engine
     
-    **[必须提供 6 选项表格，格式同上]**
+    **[必须提供 6 选项列表，格式同上]**
 
-    **[Q8] 领域特定决策 B (Domain Specific B)**
+    **[Q8] Domain Specific Decision B (领域特定决策 B)**
     > *Trigger*: AI 识别的次级重要决策。
     
     *示例 (SaaS)*: Multi-Tenant Strategy (Schema vs Database)
@@ -271,7 +288,7 @@
     *示例 (CLI)*: Config Format (TOML vs YAML vs JSON)
     *示例 (Backend)*: Monolith vs Microservices
     
-    **[必须提供 6 选项表格，格式同上]**
+    **[必须提供 6 选项列表，格式同上]**
 
     ---
     
@@ -325,7 +342,7 @@
             - `[UI]`: User Interface (Components, Pages, Styles)
             - `[INT]`: Integration (Wiring UI+API)
             - `[FEAT]`: Business Feature (Full Stack Value Unit)
-          - **Critical Rule**: **严禁将"测试"拆分为独立阶段**。测试必须内建于每个任务的 Definition of Done (Goal) 中。
+          - **Critical Rule**: **严禁将"测试"拆分为独立阶段**。测试必须内建于每个任务的 Definition of Done (Goal) of each task.
           - **Visualization**: 必须生成 mermaid graph TD 代码块，展示任务依赖关系。
             - **Node Format**: `ID[ID: Name]` (e.g., `INF-101[INF-101: Init Repo]`)，确保 ID 在图中清晰可见。
         - **Format**: 使用 `[ ] ⏳ **[ID] Name**` 格式。
@@ -367,6 +384,9 @@
 
 <step_5_signoff>
     **Action**: 输出最终确认和明确的下一步指引。
+
+    **Constraint**:
+    - **State Recovery**: 即使经过多轮对话，最终输出**必须包含且仅包含**以下标准块。不要输出"好的，这是最终结果"等废话。
 
     **Output Template**:
     ```markdown

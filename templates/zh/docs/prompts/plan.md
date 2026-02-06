@@ -10,11 +10,14 @@
     <language>简体中文</language>
     <principles>
       1.  **Global First**: 局部功能的诞生必须伴随着全局索引 (Map/Data/Dict) 的更新。
-      2.  **Option-Based**: 访谈必须提供具体的 A/B/C/D/E/F 实现路径（至少 6 个选项），而非开放式问答。
-      3.  **Rich Context**: 每个选项必须包含：简述、适用场景、Pros/Cons、技术影响。
-      4.  **Audit-Gated**: 只有通过了虚拟审计员检查的文档，才能交付给用户。
-      5.  **Frontmatter Preservation**: 严禁删除或修改现有文件的 YAML Frontmatter。
-      6.  **Project-Type Adaptive**: 问题和选项必须根据项目类型（Web/CLI/Backend/Library/Mobile 等）动态调整。
+      2.  **Option-Based**: 访谈必须提供具体的 A/B/C/D/E/F 实现路径，而非开放式问答。
+      3.  **Flexible Interaction**: 
+          - 选项仅为**启发式建议**。
+          - 明确告知用户支持 **多选 (A+B)**、**混合 (A但使用B的...)** 或 **完全自定义**。
+          - 也就是：**不要机械填空，而是以此为起点进行设计。**
+      4.  **Rich Context**: 每个选项必须包含：简述、适用场景、Pros/Cons、技术影响。
+      5.  **Audit-Gated**: 只有通过了虚拟审计员检查的文档，才能交付给用户。
+      6.  **Frontmatter Preservation**: 严禁删除或修改现有文件的 YAML Frontmatter。
     </principles>
 </meta>
 
@@ -37,153 +40,126 @@
     **Action**: 基于 `[ctx]` 和项目现状，抛出 5 个维度的**实现方案选择题**。
     **Constraint**: 
     - 每个问题必须提供 **A/B/C/D/E/F** 六个具体选项 + **Z** (自定义)。
-    - 每个选项必须包含：**简述** | **适用场景** | **Pros** | **Cons** | **技术影响**。
-    - 问题必须根据项目类型动态调整（不适用的问题可跳过或替换）。
-
+    - **Anti-Redundancy**: 严禁询问 `02_tech_stack.md` 中已经锁定的技术栈问题（如"用什么数据库"）。**只问"如何使用"该技术**。
+    
     ---
     
-    **Q1. Data & Logic Architecture (数据与逻辑架构)**
-    > *Context*: 决定功能的核心数据结构和业务逻辑组织方式。
+    **Q1. Data Model & Schema Strategy (数据模型策略)**
+    > *Context*: 基于已选定的数据库（Tech Stack），决定此功能的数据结构。
     
     **Web/Backend 项目示例**:
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Flat Table** | 单表扁平结构 | 简单 CRUD，无复杂关联 | 查询简单，性能好 | 难以扩展复杂关系 | 无需 ORM 高级特性 |
-    | **B. Relational** | 关系型多表设计 | 有明确实体关系 | 数据完整性，可扩展 | 查询复杂，需 JOIN | 需要 Migration 工具 |
-    | **C. Nested/Tree** | 递归树形结构 | 评论、分类、组织架构 | 支持层级关系 | 递归查询性能 | 需要 CTE 或 Adjacency List |
-    | **D. Event Sourcing** | 事件溯源 | 需要完整审计、撤销 | 完整历史，可回溯 | 复杂度高，存储成本 | 需要 Event Store |
-    | **E. Document/NoSQL** | 文档型/JSON 存储 | 半结构化数据，灵活 Schema | 灵活，无 Migration | 一致性弱，查询受限 | MongoDB/DynamoDB |
-    | **F. Hybrid** | 混合方案 | 核心关系型 + 扩展文档 | 兼顾两者优势 | 复杂度最高 | 多数据源管理 |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
+    - **[A] Flat / Single Entity**: 单一实体表。*适用*: 独立资源，无复杂关联。*影响*: 简单 CRUD。
+      > **Pros**: 开发快，无 Join | **Cons**: 扩展性低
+    - **[B] 1:N Relation (Parent-Child)**: 标准父子关系。*适用*: 评论、订单项。*影响*: 外键约束。
+      > **Pros**: 数据完整性 | **Cons**: 需要关联查询
+    - **[C] M:N Relation (Junction)**: 多对多关联。*适用*: 标签、关注、收藏。*影响*: 需要中间表。
+      > **Pros**: 灵活 | **Cons**: 查询复杂，写入需事务
+    - **[D] Recursive / Tree**: 树形/递归结构。*适用*: 目录、组织架构、多级回复。*影响*: CTE 查询或闭包表。
+      > **Pros**: 层级无限 | **Cons**: 递归性能开销
+    - **[E] JSON / EAV (Flexible)**: 动态字段/JSON列。*适用*: 用户配置、多态属性。*影响*: 索引困难。
+      > **Pros**: Schema 灵活 | **Cons**: 数据一致性弱
+    - **[F] Virtual / Computed**: 虚拟/计算属性。*适用*: 统计报表、聚合视图。*影响*: 数据库视图或实时计算。
+      > **Pros**: 无需存储 | **Cons**: 计算压力大
+    - **[Z] 自定义**: (请描述)
 
     **CLI/Library 项目示例**:
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. In-Memory** | 纯内存数据结构 | 无状态命令，一次性执行 | 简单，无依赖 | 无持久化 | 仅需 std 库 |
-    | **B. Config File** | 配置文件存储 | 用户配置、状态持久化 | 简单持久化 | 并发问题，格式限制 | TOML/YAML/JSON 解析 |
-    | **C. SQLite Embedded** | 嵌入式数据库 | 复杂查询，大量数据 | 完整 SQL 支持 | 增加二进制体积 | 需要 SQLite 绑定 |
-    | **D. Key-Value Store** | 键值存储 | 简单缓存，快速查找 | 极简 API | 不支持复杂查询 | RocksDB/sled/redb |
-    | **E. Plugin System** | 插件化数据源 | 支持多种后端 | 可扩展，灵活 | 接口设计复杂 | Trait/Interface 抽象 |
-    | **F. External Service** | 外部服务依赖 | 需要远程数据 | 数据集中管理 | 网络依赖，需处理离线 | HTTP Client/gRPC |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
+    - **[A] Transient (In-Memory)**: 瞬时内存对象。*适用*: 一次性命令。*影响*: 进程结束即销毁。
+    - **[B] Serialized File**: 序列化文件 (JSON/YAML)。*适用*: 简单持久化。*影响*: IO 开销。
+    - **[C] SQLite (Embedded)**: 嵌入式 SQL。*适用*: 复杂本地查询。*影响*: 依赖 Native 绑定。
+    - ... (根据场景生成其他选项)
 
     ---
 
-    **Q2. Interface & Presentation (接口与展示层)** 
-    > *Context*: 决定功能如何与用户/外部系统交互。
-    > **Note**: 根据项目类型，此问题的含义不同。
+    **Q2. Interaction & Presentation Pattern (交互模式)** 
+    > *Context*: 决定用户如何操作此功能。
+    
+    **Web/UI 项目**:
+    - **[A] CRUD Table / List**: 标准增删改查列表。*适用*: 管理后台、资源列表。
+      > **Pros**: 效率高，标准 | **Cons**: 枯燥
+    - **[B] Wizard / Stepper**: 分步向导。*适用*: 复杂表单、Onboarding。
+      > **Pros**: 降低认知负荷 | **Cons**: 交互路径长
+    - **[C] Dashboard / Kanban**: 看板/卡片视图。*适用*: 任务管理、状态流转。
+      > **Pros**: 直观，拖拽友好 | **Cons**: 屏幕空间要求高
+    - **[D] Modal / Drawer Drill-down**: 弹窗/抽屉钻取。*适用*: 保持上下文的轻量操作。
+      > **Pros**: 不离开当前页 | **Cons**: 深度有限
+    - **[E] Infinite Scroll / Feed**: 信息流。*适用*: 社交、浏览。
+      > **Pros**: 沉浸感 | **Cons**: 定位困难
+    - **[F] Editor / Canvas**: 编辑器/画布。*适用*: 创作、排版。
+      > **Pros**: 自由度高 | **Cons**: 实现极复杂
+    - **[Z] 自定义**: (请描述)
 
-    **Web 项目 (UI)** - 组件拆分与布局:
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Inline Block** | 嵌入式组件 | 功能作为页面一部分 | 直观，上下文完整 | 占用页面空间 | 无额外路由 |
-    | **B. Modal/Dialog** | 弹窗覆盖层 | 临时操作，不离开当前页 | 焦点集中，轻量 | 遮挡内容，体验中断 | 需要弹窗管理 |
-    | **C. Drawer/Sidebar** | 侧边滑出面板 | 详情展示，不离开主视图 | 保持上下文 | 响应式设计复杂 | 需要布局系统支持 |
-    | **D. Full Page** | 独立页面 | 复杂流程，需要专注 | 完整空间，独立 URL | 需要导航，跳转成本 | 需要路由配置 |
-    | **E. Split View** | 左右/上下分栏 | 对比、预览场景 | 同时展示多信息 | 屏幕空间要求高 | 响应式复杂 |
-    | **F. Tab/Accordion** | 标签页/折叠面板 | 多面板切换 | 节省空间 | 隐藏内容不可见 | Tab 组件依赖 |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
-
-    **CLI 项目** - 输出与交互方式:
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Plain Text** | 纯文本输出 | 简单信息，可管道处理 | 通用，可脚本化 | 信息层次不清 | 无额外依赖 |
-    | **B. Colored Output** | 彩色文本 | 人类可读，区分信息级别 | 可读性好 | 不支持无色终端 | chalk/picocolors |
-    | **C. Table/Grid** | 表格展示 | 结构化数据展示 | 整齐，对齐 | 宽度限制 | cli-table/tty-table |
-    | **D. Interactive TUI** | 交互式终端 UI | 复杂交互，多步骤 | 丰富体验 | 开发复杂 | ink/blessed/ratatui |
-    | **E. Progress/Spinner** | 进度指示器 | 长时间操作 | 用户反馈好 | 增加复杂度 | ora/indicatif |
-    | **F. Structured Output** | JSON/YAML 输出 | 机器消费，API 集成 | 可解析，集成友好 | 人类不友好 | 序列化库 |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
-
-    **Backend/API 项目** - 接口协议:
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. REST API** | 标准 RESTful 接口 | 通用场景，第三方集成 | 标准化，工具丰富 | 过度获取/获取不足 | OpenAPI 文档 |
-    | **B. GraphQL** | 灵活查询语言 | 复杂数据关系，多客户端 | 精确获取，类型安全 | 学习曲线，N+1 问题 | GraphQL Server |
-    | **C. gRPC** | 高性能 RPC | 微服务通信，低延迟 | 高性能，类型安全 | 调试困难，浏览器受限 | Protobuf 定义 |
-    | **D. WebSocket** | 实时双向通信 | 实时更新，聊天，协作 | 实时推送 | 连接管理复杂 | WS 服务器支持 |
-    | **E. Message Queue** | 异步消息队列 | 解耦，削峰，最终一致 | 高可用，可扩展 | 延迟，复杂度 | RabbitMQ/Kafka |
-    | **F. Server-Sent Events** | 服务器推送 | 单向实时更新 | 简单，HTTP 兼容 | 仅单向，连接限制 | SSE 支持 |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
-
-    **Library 项目** - API 设计风格:
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Builder Pattern** | 链式构建器 | 复杂对象配置 | 可读性好，渐进式 | 代码量增加 | 需要额外类型 |
-    | **B. Fluent API** | 流式调用 | DSL 风格接口 | 表达力强 | 调试困难 | 方法返回 self |
-    | **C. Functional** | 函数式 API | 无状态，可组合 | 可测试，无副作用 | 学习曲线 | 高阶函数支持 |
-    | **D. Object-Oriented** | 传统 OOP | 熟悉模式，封装状态 | 直观，IDE 支持好 | 继承复杂度 | 类/接口设计 |
-    | **E. Macro/DSL** | 宏/领域语言 | 减少样板，提高表达力 | 简洁，专用 | 调试困难，编译时间 | 宏系统支持 |
-    | **F. Callback/Event** | 回调/事件驱动 | 异步处理，扩展点 | 灵活，可扩展 | 回调地狱风险 | 事件系统设计 |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
+    **CLI 项目**:
+    - **[A] Arguments & Flags**: 参数一次性输入。*适用*: 脚本化调用。
+    - **[B] Interactive Prompts**: 交互式问答。*适用*: 引导用户。
+    - **[C] TUI (Text UI)**: 全屏终端 UI。*适用*: 复杂监控、管理。
+    - ...
 
     ---
 
-    **Q3. State & Data Flow (状态与数据流)**
-    > *Context*: 决定数据如何在系统中流动、缓存和同步。
+    **Q3. State Sync & Data Flow (数据流转策略)**
+    > *Context*: 数据如何在客户端、服务端和存储之间同步。
 
-    **Web 项目**:
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Server-Only** | 纯服务端状态 | 简单 CRUD，SEO 优先 | 简单，无客户端复杂度 | 交互响应慢 | SSR/MPA 架构 |
-    | **B. Client Cache** | 客户端缓存 | 频繁读取，减少请求 | 响应快，减轻服务器 | 一致性问题 | React Query/SWR |
-    | **C. Optimistic UI** | 乐观更新 | 写操作多，体验优先 | 即时反馈，体验好 | 回滚复杂 | 状态回滚逻辑 |
-    | **D. Real-time Sync** | 实时同步 | 协作、聊天、通知 | 数据实时 | 连接管理，成本高 | WebSocket/Firebase |
-    | **E. Local-First** | 本地优先 | 离线支持，PWA | 离线可用，快速 | 冲突解决复杂 | IndexedDB/CRDT |
-    | **F. Hybrid** | 混合策略 | 按场景选择 | 灵活，最优化 | 复杂度最高 | 多策略管理 |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
-
-    **CLI/Backend/Library 项目**:
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Stateless** | 无状态 | 纯函数，每次独立执行 | 简单，可并行 | 无法缓存计算 | 纯函数设计 |
-    | **B. Thread-Local** | 线程本地状态 | 多线程，隔离状态 | 线程安全 | 跨线程共享困难 | TLS/线程池 |
-    | **C. Shared Mutable** | 共享可变状态 | 需要跨组件共享 | 直接，简单 | 竞态风险 | Mutex/RwLock |
-    | **D. Actor Model** | Actor 模型 | 高并发，消息传递 | 无锁，可扩展 | 学习曲线 | Tokio/Actix |
-    | **E. Immutable** | 不可变状态 | 函数式，无副作用 | 线程安全，可推理 | 性能（复制） | 持久化数据结构 |
-    | **F. Global Singleton** | 全局单例 | 配置、日志、连接池 | 简单访问 | 测试困难，耦合 | 懒加载/OnceCell |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
+    - **[A] Standard REST/Request**: 标准请求/响应。*适用*: 绝大多数场景。
+      > **Pros**: 简单，无状态 | **Cons**: 非实时
+    - **[B] Optimistic UI**: 乐观更新。*适用*: 点赞、收藏等高频小操作。
+      > **Pros**: 极致流畅 | **Cons**: 需处理回滚
+    - **[C] Polling / SWR**: 轮询/SWR。*适用*: 准实时状态（如构建进度）。
+      > **Pros**: 易实现 | **Cons**: 浪费带宽
+    - **[D] Realtime (Socket/SSE)**: 实时推送。*适用*: 聊天、协作、通知。
+      > **Pros**: 实时 | **Cons**: 连接维护成本
+    - **[E] Local-First / Offline**: 本地优先/离线。*适用*: 笔记、编辑器。
+      > **Pros**: 离线可用 | **Cons**: 冲突解决极难
+    - **[F] Background Job / Async**: 异步任务。*适用*: 导出、AI 生成、耗时操作。
+      > **Pros**: 不阻塞 UI | **Cons**: 需任务队列管理
+    - **[Z] 自定义**: (请描述)
 
     ---
 
-    **Q4. Error Handling & Resilience (错误处理与弹性)**
-    > *Context*: 决定系统如何处理异常、失败和边界情况。
+    **Q4. Edge Cases & Error Handling (边界与容错)**
+    > *Context*: 此功能特有的失败模式处理。
 
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Exception-Based** | 异常抛出 | 传统语言，简单流程 | 直观，跳出控制流 | 隐式控制流，性能 | try/catch/throw |
-    | **B. Result Type** | Result/Either 类型 | 显式错误处理，类型安全 | 强制处理，类型安全 | 代码冗长 | Rust Result/TS fp-ts |
-    | **C. Error Code** | 错误码返回 | C 风格，底层库 | 性能好，简单 | 易忽略，语义弱 | 错误码枚举定义 |
-    | **D. Fallback/Default** | 降级默认值 | 非关键路径，容错优先 | 不中断，用户友好 | 隐藏问题 | 默认值策略 |
-    | **E. Retry with Backoff** | 重试与退避 | 网络请求，临时故障 | 自愈能力 | 延迟，复杂度 | 重试库/指数退避 |
-    | **F. Circuit Breaker** | 熔断器 | 微服务，防级联故障 | 快速失败，保护下游 | 配置复杂 | 熔断器库 |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
+    - **[A] Fail Fast / Toast**: 快速失败并提示。*适用*: 普通操作。
+    - **[B] Form Validation**: 表单级校验。*适用*: 输入错误。
+    - **[C] Retry Mechanism**: 自动重试。*适用*: 网络波动。
+    - **[D] Fallback UI / Skeleton**: 骨架屏/降级UI。*适用*: 加载中或局部挂掉。
+    - **[E] Draft / Auto-save**: 草稿/自动保存。*适用*: 长内容编辑，防止丢失。
+    - **[F] Undo / Redo**: 撤销/重做。*适用*: 复杂编辑操作。
+    - **[Z] 自定义**: (请描述)
 
     ---
 
-    **Q5. Security & Authorization (安全与权限)**
-    > *Context*: 决定功能的访问控制和安全策略。
+    **Q5. Access Control (权限控制)**
+    > *Context*: 谁能做这个操作？(基于 Tech Stack 中的 Auth 体系)
 
-    | Option | 简述 | 适用场景 | Pros | Cons | 技术影响 |
-    |:---|:---|:---|:---|:---|:---|
-    | **A. Public/Open** | 完全开放 | 公开资源，无敏感数据 | 简单，无鉴权开销 | 无访问控制 | 无需鉴权中间件 |
-    | **B. API Key** | API 密钥认证 | 服务间调用，简单场景 | 简单实现 | 密钥泄露风险 | 密钥管理 |
-    | **C. Session-Based** | 会话认证 | 传统 Web 应用 | 成熟，控制力强 | 服务端状态，扩展难 | Session 存储 |
-    | **D. JWT Token** | JWT 无状态令牌 | 分布式，微服务 | 无状态，可扩展 | Token 撤销困难 | JWT 库/验证 |
-    | **E. OAuth2/OIDC** | OAuth2/OpenID | 第三方登录，SSO | 标准化，安全 | 复杂，学习曲线 | OAuth Provider |
-    | **F. RBAC/ABAC** | 角色/属性权限 | 复杂权限控制 | 细粒度控制 | 设计复杂 | 权限模型设计 |
-    | **Z. 自定义** | (请描述) | - | - | - | - |
+    - **[A] Public**: 公开。*适用*: 落地页、公开博客。
+    - **[B] Authenticated**: 登录用户。*适用*: 一般功能。
+    - **[C] Owner Only**: 仅资源拥有者。*适用*: 编辑/删除自己的内容。
+    - **[D] Role Based (RBAC)**: 特定角色(Admin/Editor)。*适用*: 管理功能。
+    - **[E] Shared / Team**: 团队成员可见。*适用*: 协作资源。
+    - **[F] Tier / Subscription**: 付费/订阅限制。*适用*: 高级功能。
+    - **[Z] 自定义**: (请描述)
 
     ---
 
     **Goal**: 锁定 `1.spec` (逻辑), `2.ui` (视觉，如适用), `04_data` (Schema，如适用) 的具体内容。
-    **Bridge**: "✅ Options Generated. 请架构师（用户）根据上述详细对比做出决策..."
+    **Bridge**: "✅ Options Generated. 这是一个**交互式设计过程**，请告诉我您的选择..."
     
-    **⌨️ INPUT (管道回复)**:
-    > **格式**: `Q1 | Q2 | Q3 | Q4 | Q5`
-    > **示例**: `B | A | C | B | D`
-    > **自定义示例**: `B | Z="命令行 + JSON 双输出" | C | B | A`
+    **⌨️ INPUT (灵活回复)**:
+    - **单选**: `A | B | C | D | E`
+    - **多选**: `A+B | ...`
+    - **修改**: `A (但改为...) | ...`
+    - **追问**: `Q2 我不太确定，请展开讲讲 B 和 C 的区别` (触发第二轮问答)
 </step_2_interview>
+
+<step_2_5_refinement>
+    **Trigger**: 用户回复包含 "不确定"、"区别"、"建议" 或明显的逻辑冲突。
+    **Role**: 咨询顾问
+    **Action**: 
+    1.  **不生成文档**。
+    2.  解释用户疑惑的点，对比选项优劣。
+    3.  提出新的、更具体的建议。
+    4.  等待用户再次确认。
+</step_2_5_refinement>
 
 <step_3_global_sync>
     **Role**: 系统管理员 (System Admin)
@@ -278,6 +254,9 @@
     1. 更新 `[[__DOCS_DIR__]]/global/00_roadmap.md` 状态为 `🟢 In Progress`，并添加 Docs 链接。
     2. 输出总结。
 
+    **Constraint**:
+    - **State Recovery**: 即使经过多轮对话，最终输出**必须包含且仅包含**以下标准块。不要输出"好的，这是最终结果"等废话。
+
     **Output Template**:
     ```markdown
     ## ✅ Feature Definition Complete
@@ -289,11 +268,11 @@
     ### 📋 Decisions Summary
     | Question | Choice | Key Impact |
     |:---|:---|:---|
-    | Q1. Data Architecture | [选项] | [简述影响] |
-    | Q2. Interface/Presentation | [选项] | [简述影响] |
-    | Q3. State/Data Flow | [选项] | [简述影响] |
-    | Q4. Error Handling | [选项] | [简述影响] |
-    | Q5. Security | [选项] | [简述影响] |
+    | Q1. Data Model | [选项] | [简述影响] |
+    | Q2. Interaction | [选项] | [简述影响] |
+    | Q3. Data Flow | [选项] | [简述影响] |
+    | Q4. Resilience | [选项] | [简述影响] |
+    | Q5. Access | [选项] | [简述影响] |
 
     ### 📂 Global Updates
     * Map: Registered `features/<ID>_<Name>` (`01_map`)

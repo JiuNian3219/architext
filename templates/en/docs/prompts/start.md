@@ -10,12 +10,13 @@
       1.  **Structure over Chat**: Output must be like a structured "Dashboard", strictly NO chatty filler.
       2.  **User Agency First**: Prioritize extracting explicit requirements from `[context]`, mark as `✅ Core` directly (No need for user to re-select).
       3.  **Rich Menu**: Generate **6-10** valuable "Extension Features" (A-J) based on domain type for user to check.
-      4.  **Maximize Options**: Each strategic decision question **MUST provide 6 options (A-F)**, strictly NO just A/B/C/D.
-      5.  **Rich Context**: Each option must include: **Brief** | **Use Case** | **Pros** | **Cons** | **Subsequent Impact**.
-      6.  **Proactive Analysis**: If user context is vague, AI must generate targeted options by analyzing implicit needs, not generic talk.
+      4.  **Flexible Interaction**: 
+          - Options support **Multi-select (A+B)**, **Hybrid** or **Custom**.
+          - If user intent is unclear, **Proactively ask 2nd round questions** (Clarification Mode).
+      5.  **Rich Context**: Each option must include: Brief, Use Case, Pros/Cons, Subsequent Impact.
+      6.  **Proactive Analysis**: If user context is vague, AI must generate targeted options by analyzing implicit needs.
       7.  **Option Z Everywhere**: Extension menu and all decision items must include `[Z] Custom`.
       8.  **Pipeline Input**: Guide user to use `|` separator for efficient reply (e.g. `A B Z="MyIdea" | A | B`).
-      9.  **Clear Next Steps**: Must explicitly inform user of next steps and possible branches after each step.
     </principles>
     
     <output_template>
@@ -37,10 +38,14 @@
 
       ### ⚙️ STRATEGIC DECISIONS (ADR)
       **[Q1] Decision Title**
-      | Option | Brief | Use Case | Pros | Cons | Impact |
-      |:---|:---|:---|:---|:---|:---|
-      | [A] | ... | ... | ... | ... | ... |
-      | [Z] | Custom | - | - | - | - |
+      - **[A] ...**
+        - **Brief**: ...
+        - **Use Case**: ...
+        - **Pros**: ...
+        - **Cons**: ...
+        - **Impact**: ...
+      - **[Z] Custom**
+        - ...
 
       **[Q2] ...**
       **[Q3] ...**
@@ -92,59 +97,59 @@
     **Action 3: Strategic Gap Analysis**
     - Generate 4 key strategic questions (ID `Q1`, `Q2`, `Q3`, `Q4`).
     - **Each question must provide 6 options (A-F) + Z (Custom)**.
-    - **Each option must include complete decision info table**.
+    - **Each option must include complete decision info list**.
 
     ---
 
-    **[Q1] Product DNA** - Core Value & Target User
-    | Option | Brief | Use Case | Pros | Cons | Impact |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] Pure Tool** | Extreme efficiency, no ads, no social, leave after use | Efficiency tool, Dev tool | Focus on core, fast dev | Limited growth, no stickiness | No user system, no backend (optional) |
-    | **[B] Community Driven** | Emphasize sharing & leaderboard, social viral | UGC platform, interest community | Self-propagation, high stickiness | Operation pressure, hard cold start | User system, notification, sharing needed |
-    | **[C] Commercial Oriented** | Pursue monetization efficiency, ads/IAP | Consumer App, SaaS | Promising revenue | User experience compromise | Payment integration, subscription system needed |
-    | **[D] Education Exploration** | For beginners, emphasize guide & fun | Learning platform, kids app | User friendly, differentiation | Pro users feel verbose | Guide system, tutorial module needed |
-    | **[E] Enterprise** | B2B/Internal tool, emphasize stability & compliance | SaaS, Enterprise app | High unit price, long cycle | Complex sales, high customization | RBAC, Audit Log, SSO needed |
-    | **[F] Open Source Driven** | Open source first, community contribution | Dev tool, Infrastructure | Eco growth, high trust | Commercialization challenge | CI/CD, Docs, Contribution Guide needed |
-    | **[Z] Custom** | (Please describe) | - | - | - | - |
-
-    **[Q2] Visual/Interaction Style**
-    > *Context*: Decide user's first impression and overall experience tone.
+    **[Q1] Product DNA & Target Audience**
+    > *Context*: What is the core value? Who is it for?
     
-    | Option | Brief | Use Case | Pros | Cons | Impact |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] Minimalist** | Minimalist, lots of whitespace, restrained colors | Efficiency tool, high-end brand | Clean, fast load | Might seem cold | Design Tokens mainly neutral colors |
-    | **[B] Playful** | Playful, rounded corners, animation, rich colors | Consumer app, social product | Eye catching, active experience | Might seem unprofessional | Animation system, Illustration needed |
-    | **[C] Corporate** | Business style, stable, professional, trust | B2B, Finance, Enterprise app | Professional trust | Might seem boring | Chart lib, Table component needed |
-    | **[D] Dashboard** | Data driven, charts main, info dense | Admin panel, Data platform | Rich info | High learning cost | Chart lib, Grid layout needed |
-    | **[E] CLI/Terminal** | Command line style, ASCII, Monospace | CLI tool, Developer product | Geeky, no UI burden | Hard for non-devs | Use Chalk/Picocolors |
-    | **[F] Immersive** | Immersive, full screen, motion, sound | Game, Creative app | Unique experience | High dev cost | Canvas/WebGL/Audio needed |
-    | **[Z] Custom** | (Please describe) | - | - | - | - |
+    - **[A] Pure Tool**: Extreme efficiency, no ads, no social, leave after use. *Use*: Efficiency tool, Dev tool. *Impact*: No user system, no backend (optional).
+      > **Pros**: Focus on core, fast dev | **Cons**: Limited growth, no stickiness
+    - **[B] Community / Social**: Emphasize connection, sharing and interaction. *Use*: Community, Collab Platform. *Impact*: User system, Notification, Feed needed.
+      > **Pros**: Self-propagation, high stickiness | **Cons**: Operation pressure, hard cold start
+    - **[C] Commercial / SaaS**: Pursue monetization efficiency, Subscription/Paid. *Use*: B2B/B2C SaaS. *Impact*: Payment integration, Subscription mgmt.
+      > **Pros**: Promising revenue | **Cons**: High UX requirement
+    - **[D] Content / Media**: Content distribution & consumption. *Use*: Blog, News, Streaming. *Impact*: CMS, CDN, SEO needed.
+      > **Pros**: Traffic oriented | **Cons**: Copyright & Moderation cost
+    - **[E] Enterprise / Internal**: Efficiency, Compliance & Control. *Use*: OA, ERP, Admin. *Impact*: RBAC, Audit Log, SSO.
+      > **Pros**: Clear requirement | **Cons**: Complex sales, UX often ignored
+    - **[F] Open Source / DevKit**: Dev ecosystem, Extensibility. *Use*: Framework, Plugin system. *Impact*: Docs, CI/CD, Contribution guide.
+      > **Pros**: Tech influence | **Cons**: Long commercial path
+    - **[Z] Custom**: (Please describe)
 
-    **[Q3] Core Experience Dimension**
-    > *Context*: Product's most important experience metric, decides tech selection priority.
+    **[Q2] Visual & Interaction Personality**
+    > *Context*: User's first impression. Not just colors, but "Personality".
     
-    | Option | Brief | Use Case | Pros | Cons | Impact |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] Speed** | Extreme response speed, millisecond interaction | Search, Real-time tool | Smooth experience | Complex architecture | Cache, Edge compute, Optimization needed |
-    | **[B] Animation** | Smooth animation, 60fps transition | Consumer app, Brand display | Visual attraction | Perf overhead | Animation lib, GPU acceleration needed |
-    | **[C] Reliability** | Stability first, zero crash | Enterprise app, Critical system | User trust | Long dev cycle | Error boundary, Monitor, Fallback needed |
-    | **[D] Offline-First** | Offline available, weak network friendly | Mobile app, PWA | Always available | Complex sync | Service Worker/CRDT needed |
-    | **[E] Security** | Security first, data protection | Finance, Medical, Compliance | Compliance, User trust | Experience compromise | Encryption, Audit, 2FA needed |
-    | **[F] Extensibility** | Extensibility, Plugin/API | Platform product, Dev tool | Eco development | Complex architecture | Plugin system, SDK design needed |
-    | **[Z] Custom** | (Please describe) | - | - | - | - |
+    - **[A] Minimalist / Clean**: Minimalist, lots of whitespace, restrained. *Use*: Efficiency tool, High-end brand. *Impact*: Restrained design.
+    - **[B] Playful / Gamified**: Playful, high saturation, micro-interaction. *Use*: Consumer app, Learning, Game. *Impact*: Animation lib, Gamification.
+    - **[C] Professional / Data-Dense**: Dense, calm, info-rich. *Use*: Dashboard, Trading terminal. *Impact*: High perf Grid, Chart lib.
+    - **[D] Developer / Terminal**: Geeky, dark mode, monospace. *Use*: Dev tool. *Impact*: Syntax highlight, Keyboard first.
+    - **[E] Brutalist / Neo**: Brutalist, high contrast, anti-design. *Use*: Trendy brand, Art. *Impact*: Unique UI lib.
+    - **[F] Native / System**: Native style, blend in. *Use*: Utility App. *Impact*: Native components.
+    - **[Z] Custom**: (Please describe)
 
-    **[Q4] Scale Estimation**
-    > *Context*: Decides architecture complexity and infrastructure selection.
+    **[Q3] The "Iron Triangle" Trade-off**
+    > *Context*: Resources are limited, pick your trade-off.
     
-    | Option | Brief | Use Case | Pros | Cons | Impact |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] MVP/Prototype** | <1000 Users, Single machine/Serverless | Validate idea, Personal project | Fastest launch | Poor scalability | Vercel/Cloudflare/Monolith |
-    | **[B] Startup/Growth** | 1k-10k Users | Startup, Early growth | Good balance | Some architecture needed | Basic cache, DB index |
-    | **[C] Scale** | 10k-100k Users | Mature product, Scaling | Scalable | Complex architecture | Load balancer, Read/Write split |
-    | **[D] Large Scale** | 100k+ Users | Large platform | High availability | High ops cost | Microservices, Dist cache |
-    | **[E] Enterprise** | Multi-tenant, SSO, Audit | SaaS, Enterprise deploy | High unit price | Long dev cycle | Tenant isolation, SSO integration |
-    | **[F] Serverless** | Serverless, Stateless | Fluctuating traffic, Cost sensitive | Elastic, Low cost | Cold start, Vendor lock-in | Lambda/Edge Functions |
-    | **[Z] Custom** | (Please describe) | - | - | - | - |
+    - **[A] Velocity First (MVP)**: Speed first. Dirty code ok. *Impact*: Fullstack framework (Next.js/Rails), Monolith.
+    - **[B] Performance First**: Extreme perf. Millisecond response. *Impact*: Rust/Go, WASM, Edge, Complex cache.
+    - **[C] Stability / Quality First**: Zero Bug, High coverage. *Use*: Finance/Medical. *Impact*: Strong Type, TDD, Slow iteration.
+    - **[D] Scalability First**: Prepare for million concurrency. *Use*: Growth expectation. *Impact*: Microservices, MQ, Complex Ops.
+    - **[E] UX / Animation First**: Experience first. *Use*: Consumer product. *Impact*: Client rendering, Optimistic UI, Animation tuning.
+    - **[F] Cost First**: Lowest cost. *Use*: Personal project. *Impact*: Serverless, Free tier, SQLite.
+    - **[Z] Custom**: (Please describe)
+
+    **[Q4] Scale & Infrastructure**
+    > *Context*: Decides "what knife to kill the chicken".
+    
+    - **[A] Hobby / Prototype**: <1k Users. Single machine/Serverless. *Impact*: SQLite/JSON DB, Vercel deploy.
+    - **[B] Startup / Growth**: 10k-100k Users. Standard Web Arch. *Impact*: Postgres/MySQL, Redis, Docker.
+    - **[C] High Traffic**: 100k+ Users / High Concurrency. *Impact*: Read/Write split, Load Balancer, CDN.
+    - **[D] Data Heavy**: Massive data storage/analytics. *Impact*: OLAP, Sharding.
+    - **[E] Offline / Local**: Local run, occasional sync. *Impact*: Client DB, CRDT.
+    - **[F] Enterprise Deployment**: Private deploy, Multi-env. *Impact*: K8s, Helm, Terraform.
+    - **[Z] Custom**: (Please describe)
 
     ---
     
@@ -157,8 +162,8 @@
     
     ---
     **Interaction Flow**:
-    - Bridge: "✅ Strategic config received! Entering Tech Deep Dive, I will generate targeted tech selection questions based on your choices..."
-    - If user choice is ambiguous or conflicting, **Proactively ask for clarification**.
+    - **Clarification**: If user choice implies logical conflict (e.g. "E. Enterprise" + "A. MVP"), **Do NOT generate**, enter `Clarification Mode` to ask user intent.
+    - **Bridge**: If clear, output: "✅ Strategic config received! Entering Tech Deep Dive..."
 </step_1_strategy>
 
 <step_2_tech_gate>
@@ -184,7 +189,7 @@
       - AI MUST dynamically generate 8 key tech selection questions based on **[Domain Type]** identified in Step 1 (Web/CLI/Mobile/Backend etc.).
       - **STRICTLY PROHIBIT using preset question templates**, must adapt to actual domain.
       - **Each question must provide 6 options (A-F) + Z (Custom)**.
-      - **Each option must include complete decision info table**.
+      - **Each option must include complete decision info list**.
 
     ---
 
@@ -192,15 +197,19 @@
     > **Note**: Q1-Q6 are generic dimensions, Q7-Q8 are domain specific dimensions generated by AI.
 
     **[Q1] Core Language & Runtime**
-    | Option | Brief | Use Case | Pros | Cons | Impact |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] TypeScript/Node** | JS Eco, Fullstack | Web, Node Service | Rich eco, Fullstack | Perf not top tier | npm eco |
-    | **[B] TypeScript/Bun** | Modern JS Runtime | High perf Node alternative | Faster, Built-in tools | Eco relatively new | Bun exclusive API |
-    | **[C] Rust** | System Lang | CLI, High perf service | Extreme perf, Safe | Steep learning curve | Cargo eco |
-    | **[D] Go** | Simple Efficient | Backend, CLI | Simple, Good concurrency | Generics relatively new | Go Modules |
-    | **[E] Python** | Fast Dev | AI/ML, Script, Backend | Rich eco, Easy to learn | Perf relatively poor | pip/conda |
-    | **[F] Java/Kotlin** | Enterprise | Large Backend, Android | Mature Stable | Heavy, Slow startup | Maven/Gradle |
-    | **[Z] Custom** | (Please describe) | - | - | - | - |
+    - **[A] TypeScript/Node**: JS Eco, Fullstack. *Use*: Web, Node Service. *Impact*: npm eco.
+      > **Pros**: Rich eco, Fullstack | **Cons**: Perf not top tier
+    - **[B] TypeScript/Bun**: Modern JS Runtime. *Use*: High perf Node alternative. *Impact*: Bun exclusive API.
+      > **Pros**: Faster, Built-in tools | **Cons**: Eco relatively new
+    - **[C] Rust**: System Lang. *Use*: CLI, High perf service. *Impact*: Cargo eco.
+      > **Pros**: Extreme perf, Safe | **Cons**: Steep learning curve
+    - **[D] Go**: Simple Efficient. *Use*: Backend, CLI. *Impact*: Go Modules.
+      > **Pros**: Simple, Good concurrency | **Cons**: Generics relatively new
+    - **[E] Python**: Fast Dev. *Use*: AI/ML, Script, Backend. *Impact*: pip/conda.
+      > **Pros**: Rich eco, Easy to learn | **Cons**: Perf relatively poor
+    - **[F] Java/Kotlin**: Enterprise. *Use*: Large Backend, Android. *Impact*: Maven/Gradle.
+      > **Pros**: Mature Stable | **Cons**: Heavy, Slow startup
+    - **[Z] Custom**: (Please describe)
 
     **[Q2] Core Framework/Eco**
     > *Context*: Decide project skeleton. Dynamically adjust options based on Q1 Language and Project Type.
@@ -231,26 +240,34 @@
     **[Must provide 6 options table, format as above]**
 
     **[Q5] Quality Assurance System**
-    | Option | Brief | Use Case | Pros | Cons | Impact |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] Vitest** | Modern Vite Test Framework | Vite Project | Fast, HMR support | Vite binding | Vitest config |
-    | **[B] Jest** | Mature Test Framework | React, General JS | Rich eco | Heavy config | Jest config |
-    | **[C] Pytest** | Python Test | Python Project | Concise, Many plugins | Python only | pytest.ini |
-    | **[D] Go Test** | Go Built-in Test | Go Project | No dependency, Standard | Basic features | *_test.go |
-    | **[E] Rust Test** | Cargo Built-in Test | Rust Project | No dependency, Integrated | Basic features | #[test] |
-    | **[F] Playwright/Cypress** | E2E Test | Web App | Real browser | Slow, Heavy resource | E2E config |
-    | **[Z] Custom** | (Please describe) | - | - | - | - |
+    - **[A] Vitest**: Modern Vite Test Framework. *Use*: Vite Project. *Impact*: Vitest config.
+      > **Pros**: Fast, HMR support | **Cons**: Vite binding
+    - **[B] Jest**: Mature Test Framework. *Use*: React, General JS. *Impact*: Jest config.
+      > **Pros**: Rich eco | **Cons**: Heavy config
+    - **[C] Pytest**: Python Test. *Use*: Python Project. *Impact*: pytest.ini.
+      > **Pros**: Concise, Many plugins | **Cons**: Python only
+    - **[D] Go Test**: Go Built-in Test. *Use*: Go Project. *Impact*: *_test.go.
+      > **Pros**: No dependency, Standard | **Cons**: Basic features
+    - **[E] Rust Test**: Cargo Built-in Test. *Use*: Rust Project. *Impact*: #[test].
+      > **Pros**: No dependency, Integrated | **Cons**: Basic features
+    - **[F] Playwright/Cypress**: E2E Test. *Use*: Web App. *Impact*: E2E config.
+      > **Pros**: Real browser | **Cons**: Slow, Heavy resource
+    - **[Z] Custom**: (Please describe)
 
     **[Q6] Infrastructure & Git**
-    | Option | Brief | Use Case | Pros | Cons | Impact |
-    |:---|:---|:---|:---|:---|:---|
-    | **[A] GitHub Actions** | GitHub CI/CD | GitHub hosted | Good integration, Free tier | GitHub binding | .github/workflows |
-    | **[B] GitLab CI** | GitLab CI/CD | GitLab/Self-hosted | Good private deploy | Heavy config | .gitlab-ci.yml |
-    | **[C] Docker + K8s** | Container Orchestration | Large scale deploy | Scalable | Complex ops | Dockerfile, k8s config |
-    | **[D] Vercel/Netlify** | Serverless Deploy | Frontend/Fullstack | Minimal deploy | Vendor lock-in | vercel.json |
-    | **[E] Trunk-Based** | Trunk Based Dev | Small team, Fast iteration | Simple, Reduce conflict | Good CI needed | Branch strategy |
-    | **[F] Git Flow** | Branch Workflow | Large team, Release rhythm | Clear, Traceable | Complex branches | Branch naming convention |
-    | **[Z] Custom** | (Please describe) | - | - | - | - |
+    - **[A] GitHub Actions**: GitHub CI/CD. *Use*: GitHub hosted. *Impact*: .github/workflows.
+      > **Pros**: Good integration, Free tier | **Cons**: GitHub binding
+    - **[B] GitLab CI**: GitLab CI/CD. *Use*: GitLab/Self-hosted. *Impact*: .gitlab-ci.yml.
+      > **Pros**: Good private deploy | **Cons**: Heavy config
+    - **[C] Docker + K8s**: Container Orchestration. *Use*: Large scale deploy. *Impact*: Dockerfile, k8s config.
+      > **Pros**: Scalable | **Cons**: Complex ops
+    - **[D] Vercel/Netlify**: Serverless Deploy. *Use*: Frontend/Fullstack. *Impact*: vercel.json.
+      > **Pros**: Minimal deploy | **Cons**: Vendor lock-in
+    - **[E] Trunk-Based**: Trunk Based Dev. *Use*: Small team, Fast iteration. *Impact*: Branch strategy.
+      > **Pros**: Simple, Reduce conflict | **Cons**: Good CI needed
+    - **[F] Git Flow**: Branch Workflow. *Use*: Large team, Release rhythm. *Impact*: Branch naming convention.
+      > **Pros**: Clear, Traceable | **Cons**: Complex branches
+    - **[Z] Custom**: (Please describe)
 
     **[Q7] Domain Specific Decision A**
     > *Trigger*: AI must identify the most core pain point or branch of this domain.
@@ -287,10 +304,7 @@
     **Target**: 
     - Fill all sections of `02_tech_stack.md`.
     - **Architecture**: Write corresponding directory structure based on user's **Architecture Pattern Choice**.
-      - **Strict**: Must respect user's choice, strictly NO self-assertion.
-      - Must sync update `Directory Mapping` and `Logical Topology` in `[[__DOCS_DIR__]]/global/01_map.md`.
     - **Update**: Simultaneously update `[[__DOCS_DIR__]]/global/00_vision.md`.
-      - Write Step 1 decisions (Q1 North Star, Q3 Constraint) into Vision doc corresponding sections.
     - **Update**: Update `[[__DOCS_DIR__]]/global/03_design_tokens.md` (If project has UI, based on Visual Style).
 </step_2_tech_gate>
 
