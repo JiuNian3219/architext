@@ -6,7 +6,6 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "dev": "ts-node src/index.ts",
-    "merge-md": "ts-node scripts/merge-md.ts",
     "lint": "eslint . && prettier --check .",
     "prepublishOnly": "npm run build",
     "prepare": "husky"
