@@ -33,6 +33,9 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
+# Architext
+.architext/*
+
 # System Files
 .DS_Store
 Thumbs.db
