@@ -1,37 +1,47 @@
-/** @fileoverview init 命令的入口文件，协调 Prompter（交互）和 Scaffolder（执行）以完成 Architext 框架的初始化。 */
-import { cancel, outro } from "@clack/prompts";
+/** @fileoverview init 命令入口，协调 Prompter（交互）和 Scaffolder（执行）以完成项目初始化。 */
+import { intro, outro } from "@clack/prompts";
+import color from "picocolors";
 import { saveConfig } from "../../../core/config.ts";
 import { UserCancelError } from "../../../core/errors.ts";
 import { Scaffolder } from "../../../core/scaffold.ts";
 import type { InitOptions } from "../../../types/index.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
-import { InitPrompter } from "./prompts.ts";
+import { collectInitConfig } from "./prompts.ts";
+
+const t = createT(getSystemLocale(), "command.init");
 
 /**
- * 初始化 Architext 项目配置，包含目录结构、文档、提示词等。
- * @param options 初始化选项，包含语言、编辑器、文档目录
- * @returns
+ * Init 命令的主入口函数。
+ * 收集用户配置 → 保存配置 → 执行脚手架生成。
+ *
+ * @param options 命令行传入的初始化选项
  */
-export async function initCommand(options: InitOptions) {
+export async function initCommand(options: InitOptions): Promise<void> {
+  console.clear();
+  intro(color.bgCyan(color.black(` ${t("title")} `)));
+
+  const config = await collectInitConfig(options);
+  if (!config) {
+    outro(color.yellow(t("cancel")));
+    return;
+  }
+
+  await saveConfig({
+    language: config.language,
+    editors: config.editors,
+    docDir: config.docDir,
+  });
+
   try {
-    const t = createT(getSystemLocale(), "command.init");
-    const prompter = new InitPrompter();
-    const config = await prompter.run(options);
-
-    await saveConfig({
-      language: config.language,
-      editors: config.editors,
-      docDir: config.docDir,
-    });
-
     await Scaffolder.run(config);
-
-    outro(t("success"));
   } catch (error) {
+    // ConflictResolver 在文件冲突时可能抛出 UserCancelError
     if (error instanceof UserCancelError) {
-      cancel(error.message);
+      outro(color.yellow(t("cancel")));
       return;
     }
     throw error;
   }
+
+  outro(t("success"));
 }
