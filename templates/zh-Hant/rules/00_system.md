@@ -34,39 +34,17 @@ alwaysApply: true
   </protocol>
 
   <protocol name="Metadata_Injection" priority="HIGH">
-    **Context Acceleration (上下文加速)**:
-    創建新檔案時，**必須** 根據檔案類型添加元數據以提升 AI 索引效率。
-    
-    **Markdown Files (.md)**:
-    ```yaml
-    ---
-    description: <Summary of file responsibility & intent>
-    ---
-    ```
-    *Benefit*: 允許 AI 在不讀取全文的情況下快速理解檔案用途，顯著減少 Token 消耗並提升檢索準確率。
-    
-    **Code Files (通用規則)**:
-    - **支持 Frontmatter 的語言** (如 Python, Rust, Go 等): 使用語言特定的註釋格式
-    - **不支持 Frontmatter 的語言** (如 TypeScript, JavaScript, Java, C++ 等): 使用語言標準的文件註釋格式
-      - TypeScript/JavaScript: JSDoc `/** ... */`
-      - Python: Docstring `"""..."""`
-      - Rust: `///` 文件註釋
-      - Go: `//` 註釋塊
-      - Java: Javadoc `/** ... */`
-      - C++: Doxygen `/** ... */`
-    
-    **Schema (通用格式)**:
-    ```text
-    [Language-Specific Comment Block]
-    ---
-    description: <Summary of file responsibility & intent>
-    ---
-    ```
-    
-    **Exception**: 
-    - 如果檔案職責已在 `[[__DOCS_DIR__]]/global/01_map.md` 中明確記錄，可省略元數據。
-    - 簡單的工具函數檔案（< 50 行）可省略，但建議保留。
-    - 配置檔案（如 `.json`, `.yaml`, `.toml`）通常不需要元數據，除非結構複雜。
+    **File Header Convention (檔案頭約定)**:
+    建立新檔案時，使用該語言的**標準文件註釋**在檔案頂部標註職責摘要。
+
+    - **Markdown**: YAML Frontmatter `--- description: <摘要> ---`
+    - **TypeScript/JavaScript**: `/** @fileoverview <摘要> */`
+    - **Python**: 模組級 Docstring `"""<摘要>"""`
+    - **Java/C++**: `/** @file <摘要> */`
+    - **Rust**: `//! <摘要>`
+    - **Go**: `// Package <name> <摘要>`
+
+    *跳過條件*: 檔案 < 50 行，或職責已在 `[[__DOCS_DIR__]]/global/01_map.md` 中記錄。
   </protocol>
 
 </critical_protocols>

@@ -34,39 +34,17 @@ Before writing or modifying any logic in `src/`, you must **locate** and **read*
   </protocol>
 
   <protocol name="Metadata_Injection" priority="HIGH">
-    **Context Acceleration**:
-    When creating new files, **MUST** add metadata based on file type to improve AI indexing efficiency.
-    
-    **Markdown Files (.md)**:
-    ```yaml
-    ---
-    description: <Summary of file responsibility & intent>
-    ---
-    ```
-    *Benefit*: Allows AI to quickly understand file purpose without reading full text, significantly reducing Token consumption and improving retrieval accuracy.
-    
-    **Code Files (General Rule)**:
-    - **Languages supporting Frontmatter** (e.g. Python, Rust, Go, etc.): Use language-specific comment format
-    - **Languages NOT supporting Frontmatter** (e.g. TypeScript, JavaScript, Java, C++, etc.): Use standard documentation comment format
-      - TypeScript/JavaScript: JSDoc `/** ... */`
-      - Python: Docstring `"""..."""`
-      - Rust: `///` Doc comment
-      - Go: `//` Comment block
-      - Java: Javadoc `/** ... */`
-      - C++: Doxygen `/** ... */`
-    
-    **Schema (General Format)**:
-    ```text
-    [Language-Specific Comment Block]
-    ---
-    description: <Summary of file responsibility & intent>
-    ---
-    ```
-    
-    **Exception**: 
-    - Metadata can be omitted if file responsibility is explicitly recorded in `[[__DOCS_DIR__]]/global/01_map.md`.
-    - Simple utility files (< 50 lines) can omit it, but recommended to keep.
-    - Config files (e.g. `.json`, `.yaml`, `.toml`) usually don't need metadata unless complex.
+    **File Header Convention**:
+    When creating new files, annotate the file's responsibility at the top using the language's **standard documentation comment**.
+
+    - **Markdown**: YAML Frontmatter `--- description: <summary> ---`
+    - **TypeScript/JavaScript**: `/** @fileoverview <summary> */`
+    - **Python**: Module-level Docstring `"""<summary>"""`
+    - **Java/C++**: `/** @file <summary> */`
+    - **Rust**: `//! <summary>`
+    - **Go**: `// Package <name> <summary>`
+
+    *Skip when*: file < 50 lines, or responsibility is already documented in `[[__DOCS_DIR__]]/global/01_map.md`.
   </protocol>
 
 </critical_protocols>
