@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 提供统一的日志输出接口，封装 console.log 等方法，支持颜色区分不同日志级别（info、success、warn、error、dim）。
- * ---
- */
+/** @fileoverview 提供统一的日志输出接口，封装 console.log 等方法，支持颜色区分不同日志级别（info、success、warn、error、dim）。 */
 
 import color from "picocolors";
 

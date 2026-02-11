@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 提供项目通用的 TypeScript 高级工具类型，用于支持类型安全的路径提取和属性访问。
- * ---
- */
+/** @fileoverview 提供项目通用的 TypeScript 高级工具类型，用于支持类型安全的路径提取和属性访问。 */
 
 /**
  * 用于找值的路径 (e.g. "init.title")

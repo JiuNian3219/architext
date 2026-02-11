@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 模板管理器，负责处理文件操作（复制、替换），支持模板文件的批量处理。
- * ---
- */
+/** @fileoverview 模板管理器，负责处理文件操作（复制、替换），支持模板文件的批量处理。 */
 
 import { FileOpType, FileOperation } from "@/types/index.ts";
 import { createT, getSystemLocale } from "@/utils/t.ts";

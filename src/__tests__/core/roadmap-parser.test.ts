@@ -1,8 +1,4 @@
-/**
- * ---
- * description: RoadmapParser 单元测试，验证任务列表解析、Mermaid 图节点解析、元数据提取等核心逻辑。
- * ---
- */
+/** @fileoverview RoadmapParser 单元测试，验证任务列表解析、Mermaid 图节点解析、元数据提取等核心逻辑。 */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { RoadmapParser } from "../../core/roadmap/parser.ts";
 import {

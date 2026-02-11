@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 集成测试 - init 命令
- * ---
- */
+/** @fileoverview 集成测试 - init 命令 */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { Scaffolder } from "../../core/scaffold.ts";

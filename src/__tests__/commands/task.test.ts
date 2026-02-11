@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Task 命令测试，覆盖 resolver（路径解析）、handlers（check/update/list）、formatter（格式化）。
- * ---
- */
+/** @fileoverview Task 命令测试，覆盖 resolver（路径解析）、handlers（check/update/list）、formatter（格式化）。 */
 import {
   describe,
   it,

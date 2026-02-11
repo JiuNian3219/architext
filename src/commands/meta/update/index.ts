@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 更新 Architext 项目配置，包括文件结构、内容、提示词等。
- * ---
- */
+/** @fileoverview 更新 Architext 项目配置，包括文件结构、内容、提示词等。 */
 import { intro, outro } from "@clack/prompts";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";

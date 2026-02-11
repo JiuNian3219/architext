@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 统一错误处理模块，负责捕获并格式化应用中的各类错误，确保 CLI 输出的友好性与一致性。
- * ---
- */
+/** @fileoverview 统一错误处理模块，负责捕获并格式化应用中的各类错误，确保 CLI 输出的友好性与一致性。 */
 
 import { logger } from "../utils/logger.ts";
 import { createT, getSystemLocale } from "../utils/t.ts";

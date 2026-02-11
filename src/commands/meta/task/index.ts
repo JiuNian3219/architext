@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Task 命令入口，协调 Resolver（路径解析）、Parser（数据解析）和 Handlers（业务逻辑）以完成任务管理。
- * ---
- */
+/** @fileoverview Task 命令入口，协调 Resolver（路径解析）、Parser（数据解析）和 Handlers（业务逻辑）以完成任务管理。 */
 import { RoadmapParser } from "../../../core/roadmap/parser.ts";
 import type { TaskCommandOptions } from "../../../types/index.ts";
 import { handleCheck, handleList, handleUpdateStatus } from "./handlers.ts";

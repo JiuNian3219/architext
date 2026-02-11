@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 定义 Architext 全局规则常量，包括文件路径结构、占位符定义以及编辑器配置映射。
- * ---
- */
+/** @fileoverview 定义 Architext 全局规则常量，包括文件路径结构、占位符定义以及编辑器配置映射。 */
 import type { EditorRuleConfig, SupportedEditor } from "../types/index.ts";
 
 export const FALLBACK_RULE_FILES = [

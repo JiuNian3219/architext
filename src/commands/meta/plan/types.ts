@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Plan 命令的领域类型定义，作为 parser 和 handlers 之间共享的类型契约。
- * ---
- */
+/** @fileoverview Plan 命令的领域类型定义，作为 parser 和 handlers 之间共享的类型契约。 */
 
 /** Plan 文件中的一个 checkbox 项 */
 export interface PlanCheckItem {

@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Plan 命令测试，覆盖 parser（checkbox 解析）、resolver（路径解析）、handlers（检查输出）。
- * ---
- */
+/** @fileoverview Plan 命令测试，覆盖 parser（checkbox 解析）、resolver（路径解析）、handlers（检查输出）。 */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import path from "path";
 import {

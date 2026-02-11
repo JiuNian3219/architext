@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 解析 Plan 文件 (plan.md) 中的 checkbox 任务，按 section 分组并识别人工验收区域。
- * ---
- */
+/** @fileoverview 解析 Plan 文件 (plan.md) 中的 checkbox 任务，按 section 分组并识别人工验收区域。 */
 
 import { normalizeLines } from "../../../utils/normalize-text.ts";
 import type { PlanCheckItem, PlanCheckResult, PlanSection } from "./types.ts";

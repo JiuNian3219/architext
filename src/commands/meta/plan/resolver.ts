@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 负责解析 Plan 文件路径，通过 Feature ID 定位 features/{ID}_* /plan.md。
- * ---
- */
+/** @fileoverview 负责解析 Plan 文件路径，通过 Feature ID 定位 features/{ID}_* /plan.md。 */
 import fs from "fs-extra";
 import path from "path";
 import { resolveDocDir } from "../../../core/doc-dir.ts";

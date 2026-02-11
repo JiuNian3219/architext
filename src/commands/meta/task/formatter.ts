@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Task 命令的终端输出格式化工具，负责进度条渲染和任务状态着色。
- * ---
- */
+/** @fileoverview Task 命令的终端输出格式化工具，负责进度条渲染和任务状态着色。 */
 import pc from "picocolors";
 import type { TaskStatus, Task } from "../../../core/roadmap/types.ts";
 import { STATUS_ICON, STATUS_COLORS } from "./constants.ts";

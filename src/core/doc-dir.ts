@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 共享的文档目录 (docDir) 解析逻辑，供 task、plan 等命令复用。
- * ---
- */
+/** @fileoverview 共享的文档目录 (docDir) 解析逻辑，供 task、plan 等命令复用。 */
 import fs from "fs-extra";
 import path from "path";
 import { loadConfig } from "./config.ts";

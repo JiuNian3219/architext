@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 处理 init 命令的用户交互流程，收集语言、编辑器和文档目录等配置信息。
- * ---
- */
+/** @fileoverview 处理 init 命令的用户交互流程，收集语言、编辑器和文档目录等配置信息。 */
 
 import { confirm, intro, isCancel, multiselect, select } from "@clack/prompts";
 import color from "picocolors";

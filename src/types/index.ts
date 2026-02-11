@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 统一管理项目核心领域模型与配置类型定义，确保类型系统的单一真理源 (Single Source of Truth)。
- * ---
- */
+/** @fileoverview 统一管理项目核心领域模型与配置类型定义，确保类型系统的单一真理源 (Single Source of Truth)。 */
 
 /**
  * 支持的语言类型

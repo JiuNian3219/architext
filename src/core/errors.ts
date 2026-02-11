@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 定义应用级错误体系（Error Models），包含基类 AppError 及各类具体业务异常，作为系统错误类型的“字典”。
- * ---
- */
+/** @fileoverview 定义应用级错误体系（Error Models），包含基类 AppError 及各类具体业务异常，作为系统错误类型的“字典”。 */
 
 /**
  * 应用级错误基类

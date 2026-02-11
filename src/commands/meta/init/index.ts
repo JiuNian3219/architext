@@ -1,8 +1,4 @@
-/**
- * ---
- * description: init 命令的入口文件，协调 Prompter（交互）和 Scaffolder（执行）以完成 Architext 框架的初始化。
- * ---
- */
+/** @fileoverview init 命令的入口文件，协调 Prompter（交互）和 Scaffolder（执行）以完成 Architext 框架的初始化。 */
 import { cancel, outro } from "@clack/prompts";
 import { saveConfig } from "../../../core/config.ts";
 import { UserCancelError } from "../../../core/errors.ts";

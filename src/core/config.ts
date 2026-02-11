@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 负责管理项目级配置文件 (architext.json) 的加载与保存，维护配置数据的持久化。
- * ---
- */
+/** @fileoverview 负责管理项目级配置文件 (architext.json) 的加载与保存，维护配置数据的持久化。 */
 import { ArchitextConfig } from "@/types/index.ts";
 import fs from "fs-extra";
 import path from "path";

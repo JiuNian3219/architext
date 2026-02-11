@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 测试日志工具函数 (logger.ts)
- * ---
- */
+/** @fileoverview 测试日志工具函数 (logger.ts) */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { logger } from "../../utils/logger.ts";

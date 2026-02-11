@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Scaffolder 集成测试，验证从配置到文件生成的完整流程
- * ---
- */
+/** @fileoverview Scaffolder 集成测试，验证从配置到文件生成的完整流程 */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { Scaffolder } from "../../core/scaffold.ts";

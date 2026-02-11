@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Plan 命令入口，协调 Resolver（路径解析）、Parser（checkbox 解析）和 Handler（检查输出）。
- * ---
- */
+/** @fileoverview Plan 命令入口，协调 Resolver（路径解析）、Parser（checkbox 解析）和 Handler（检查输出）。 */
 import fs from "fs-extra";
 import { AppError } from "../../../core/errors.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";

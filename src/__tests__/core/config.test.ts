@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 测试配置管理器 (config.ts)
- * ---
- */
+/** @fileoverview 测试配置管理器 (config.ts) */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { loadConfig, saveConfig, CONFIG_NAME } from "../../core/config.ts";

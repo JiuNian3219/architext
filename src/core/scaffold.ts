@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 核心脚手架执行引擎，负责根据配置生成文档骨架、安装核心规则并分发 IDE 配置文件。
- * ---
- */
+/** @fileoverview 核心脚手架执行引擎，负责根据配置生成文档骨架、安装核心规则并分发 IDE 配置文件。 */
 
 import fs from "fs-extra";
 import path from "path";

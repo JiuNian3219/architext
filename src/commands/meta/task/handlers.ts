@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Task 命令的核心业务逻辑，包含 check（一致性检查）、updateStatus（状态更新）、list（任务列表）三个处理器。
- * ---
- */
+/** @fileoverview Task 命令的核心业务逻辑，包含 check（一致性检查）、updateStatus（状态更新）、list（任务列表）三个处理器。 */
 import fs from "fs-extra";
 import pc from "picocolors";
 import {

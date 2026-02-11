@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 负责解析 Roadmap 文件路径，优先读取配置，兜底查找默认位置。
- * ---
- */
+/** @fileoverview 负责解析 Roadmap 文件路径，优先读取配置，兜底查找默认位置。 */
 import fs from "fs-extra";
 import path from "path";
 import { loadConfig } from "../../../core/config.ts";

@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 测试国际化工具函数 (t.ts)
- * ---
- */
+/** @fileoverview 测试国际化工具函数 (t.ts) */
 
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { createT, getSystemLocale } from "../../utils/t.ts";

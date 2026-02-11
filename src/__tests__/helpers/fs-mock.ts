@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 文件系统 Mock 辅助工具，用于测试中模拟文件系统操作
- * ---
- */
+/** @fileoverview 文件系统 Mock 辅助工具，用于测试中模拟文件系统操作 */
 
 import { vi, type Mock } from "vitest";
 

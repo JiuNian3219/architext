@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 测试模板管理器 (TemplateManager)
- * ---
- */
+/** @fileoverview 测试模板管理器 (TemplateManager) */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { TemplateManager } from "../../core/template.ts";

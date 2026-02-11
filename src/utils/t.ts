@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 提供类型安全的国际化 (i18n) 工具函数，支持嵌套路径访问和参数插值，确保 CLI 输出的多语言一致性。
- * ---
- */
+/** @fileoverview 提供类型安全的国际化 (i18n) 工具函数，支持嵌套路径访问和参数插值，确保 CLI 输出的多语言一致性。 */
 
 import en from "../locales/en.json" with { type: "json" };
 import zhHant from "../locales/zh-Hant.json" with { type: "json" };

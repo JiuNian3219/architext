@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Task 命令的状态常量集中管理，消除 handlers/formatter 之间的重复定义，作为 TaskStatus 映射的单一真理源。
- * ---
- */
+/** @fileoverview Task 命令的状态常量集中管理，消除 handlers/formatter 之间的重复定义，作为 TaskStatus 映射的单一真理源。 */
 import pc from "picocolors";
 import type { TaskStatus } from "../../../core/roadmap/types.ts";
 

@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 临时目录辅助工具，用于测试中创建和管理临时目录
- * ---
- */
+/** @fileoverview 临时目录辅助工具，用于测试中创建和管理临时目录 */
 
 import fs from "fs-extra";
 import os from "os";

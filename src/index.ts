@@ -1,9 +1,5 @@
 #!/usr/bin/env node
-/**
- * ---
- * description: Architext CLI 主入口，负责解析命令行参数、执行对应命令（init、update、doctor），并处理全局错误。
- * ---
- */
+/** @fileoverview Architext CLI 主入口，负责解析命令行参数、执行对应命令（init、update、doctor），并处理全局错误。 */
 import { cac } from "cac";
 import pkg from "../package.json" with { type: "json" };
 import { doctorCommand } from "./commands/meta/doctor/index.ts";

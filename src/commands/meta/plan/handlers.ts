@@ -1,8 +1,4 @@
-/**
- * ---
- * description: Plan 命令的核心业务逻辑，负责检查 Plan 文件的 checkbox 完成度并格式化输出。
- * ---
- */
+/** @fileoverview Plan 命令的核心业务逻辑，负责检查 Plan 文件的 checkbox 完成度并格式化输出。 */
 import pc from "picocolors";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";

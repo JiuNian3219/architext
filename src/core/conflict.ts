@@ -1,8 +1,4 @@
-/**
- * ---
- * description: 冲突解决器，负责检测目标路径是否已存在文件，并提供交互式的解决策略（覆盖、跳过、取消）。
- * ---
- */
+/** @fileoverview 冲突解决器，负责检测目标路径是否已存在文件，并提供交互式的解决策略（覆盖、跳过、取消）。 */
 
 import { select } from "@clack/prompts";
 import fs from "fs-extra";
