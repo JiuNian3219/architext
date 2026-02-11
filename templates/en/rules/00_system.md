@@ -109,6 +109,15 @@ Before writing or modifying any logic in `src/`, you must **locate** and **read*
       - ✅ Strictly forbidden to change unless user explicitly requests Metadata modification.
   </step>
 
+  <step n="2.7" action="AI Maintenance Guide Preservation">
+    *Action*: When modifying any `.md` file under `[[__DOCS_DIR__]]`, check if the file contains a `## 🤖 AI Maintenance Guide` section at the bottom.
+    *Rule*: **AI Maintenance Guide Protection (ABSOLUTE)**.
+      - ❌ **Strictly forbidden** to reduce, simplify, abbreviate, rewrite, or modify this section in any way.
+      - ❌ **Strictly forbidden** to omit or shorten this section when generating or rewriting files.
+      - ✅ Must preserve **verbatim, word-for-word**, including all list items, bold markers, code references, and line breaks.
+      - ✅ Unless the user **explicitly and directly** instructs modification of this section, **do not touch it**.
+  </step>
+
   <step n="3" action="Agent Skill Strategy">
     *Action*: Distinguish **Skills (Expertise)** vs **Tools (Execution)**.
     *Check*: 
@@ -132,6 +141,7 @@ Before writing or modifying any logic in `src/`, you must **locate** and **read*
     2. **MUST** strictly preserve original Markdown structure (Headers, Blockquotes, Tables).
     3. **MUST** strictly preserve YAML Frontmatter (metadata between `---`), forbidden to delete or modify `applyTo`, `globs` fields.
     4. **ONLY fill** blank or placeholder areas, strictly forbidden to rewrite the entire file structure.
+    5. **Strictly forbidden** to simplify, reduce, or modify any content in the `## 🤖 AI Maintenance Guide` section at file bottom. This section must be preserved **verbatim**.
   </protocol>
 
   <safety>

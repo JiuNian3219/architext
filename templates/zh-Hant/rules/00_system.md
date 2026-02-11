@@ -109,6 +109,15 @@ alwaysApply: true
       - ✅ 嚴禁變動，除非用戶明確要求修改 Metadata。
   </step>
 
+  <step n="2.7" action="AI Maintenance Guide Preservation">
+    *Action*: 在修改任何 `[[__DOCS_DIR__]]` 下的 `.md` 檔案時，檢查檔案底部是否存在 `## 🤖 AI Maintenance Guide` 區域。
+    *Rule*: **AI Maintenance Guide 保護 (ABSOLUTE)**.
+      - ❌ **嚴禁**刪減、簡化、縮寫、改寫或以任何方式修改該區域的內容。
+      - ❌ **嚴禁**在生成或重寫檔案時省略或縮短該區域。
+      - ✅ 必須**逐字逐句、原封不動**地保留，包括所有列表項、加粗標記、程式碼引用和換行格式。
+      - ✅ 除非用戶**明確、直接**指示修改該區域，否則**一律不動**。
+  </step>
+
   <step n="3" action="Agent Skill Strategy">
     *Action*: 區分 **Skills (Expertise)** 與 **Tools (Execution)**。
     *Check*: 
@@ -132,6 +141,7 @@ alwaysApply: true
     2. **必須** 嚴格保留原有的 Markdown 結構（Headers, Blockquotes, Tables）。
     3. **必須** 嚴格保留 YAML Frontmatter (`---` 之間的元數據)，嚴禁刪除或修改 `applyTo`, `globs` 等欄位。
     4. **僅填充** 空白或占位符區域，嚴禁重寫整個文件結構。
+    5. **嚴禁** 簡化、刪減或修改檔案底部 `## 🤖 AI Maintenance Guide` 區域的任何內容，該區域必須**原封不動**保留。
   </protocol>
 
   <safety>
