@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: 基于 `features/<id>_<Name>/3.plan.md` 的任务清单，工程化、规范化地完成功能开发；严格遵循 `02_tech_stack.md`（如项目有 UI，还需遵循 `03_design_tokens.md`）；在本地通过构建、类型检查、Lint、格式化、基本测试与审计。
+  **Goal**: 基于 `features/<id>_<Slug>/plan.md` 的任务清单，工程化、规范化地完成功能开发；严格遵循 `02_tech_stack.md`（如项目有 UI，还需遵循 `03_design_tokens.md`）；在本地通过构建、类型检查、Lint、格式化、基本测试与审计。
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -12,17 +12,24 @@
       4.  **SOTA Pattern Check**: 拒绝过时写法；优先采用项目技术栈中定义的现代最佳实践。
       5.  **No Commit Policy**: 未经用户授权不得提交代码；仅以补丁形式呈现变更。
       6.  **Static Check First**: 代码必须通过所有静态检查（类型、Lint、格式化）才能视为完成。
+      7.  **Plan Completion Gate**: 结束前必须验证 `plan.md` 的任务清单完成度。所有可由 AI 完成的任务必须全部完成，仅允许「需要人工介入」和「不可抗力」类任务豁免。
     </principles>
 </meta>
 
 <step_1_resolve>
     **Role**: 系统分析师
     **Action**:
-    1.  **Resolve ID**: 从 `[[__DOCS_DIR__]]/global/00_roadmap.md` 解析 `<id>` -> `<id>` (Feature Name) 与阶段/状态。
-    2.  **Load Context**:
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/1.spec.md`（逻辑与场景）
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/2.ui.md`（设计与组件，如存在）
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/3.plan.md`（任务拆解）
+    1.  **Resolve ID**: 从 `[[__DOCS_DIR__]]/global/00_roadmap.md` 解析 `<id>` -> Feature Name、`📁 Slug` 与阶段/状态。
+    2.  **Pre-flight Check (状态门禁)**:
+        - 检查任务 `<id>` 的当前状态是否为 **`active`** (🟢)。
+        - **Rule**: 只有 `active` 状态的任务才能进入 code 流程。
+        - 如果状态为 `pending` (⏳): **拒绝执行**，提示 "请先运行 `/archi.plan <ID>` 完成功能规划，规划完成后任务将自动变为 active。"
+        - 如果状态为 `blocked` (🧱): **拒绝执行**，提示 "任务被阻塞，前置依赖尚未完成。请先完成依赖任务。"
+        - 如果状态为 `done` (✅): **拒绝执行**，提示 "任务已完成，无需再次执行。如需修改请使用 `/archi.edit <ID>`。"
+    3.  **Load Context** (使用 Roadmap 中的 `📁 Slug` 字段定位文件夹):
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md`（逻辑与场景）
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md`（设计与组件，如存在）
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md`（任务拆解）
         - Read `02_tech_stack.md`（技术红线）
         - Read `[[__DOCS_DIR__]]/global/03_design_tokens.md`（设计 Token，如项目有 UI）
         - Read `[[__DOCS_DIR__]]/global/04_data_snapshot.md`（数据模型，如项目有数据层）
@@ -157,58 +164,53 @@
 </step_5_audit>
 
 <step_6_signoff>
-    **Action**:
+    **🚨 Plan Completion Gate (强制 - 结束前必检)**:
+    > 在执行签收流程之前，**必须**先验证任务完成度，严禁跳过。
+
+    1.  **检查任务完成度**: 运行 `npx archi plan <ID>` 检查 `plan.md` 中所有任务 Checkbox 的完成状态。
+    2.  **判定通过条件**: 所有任务均已勾选 `[x]`，**或**未完成的任务**仅**属于以下豁免类别：
+        - 🧑 **需要人工介入**: 手动测试、用户验收、人工审批、需要真实设备/环境验证等。
+        - 🌐 **不可抗力**: 第三方服务不可用、外部依赖未就绪、环境/权限限制、需要付费资源等。
+    3.  **未通过处理**: 如果存在**可由 AI 完成但未完成**的任务，**严禁签收 (Sign Off)**。必须回到 `<step_3_implement>` 继续实施，直到所有可完成的任务全部完成。
+    4.  **豁免标注**: 对于豁免的未完成任务，必须在最终输出中明确标注**原因**和**豁免类别** (🧑 人工 / 🌐 不可抗力)。
+
+    ---
+
+    **Action** (仅在 Plan Completion Gate 通过后执行):
     1. 输出“完成任务清单”与对应的补丁链接（Code Reference）。
-    2. 更新 `[[__DOCS_DIR__]]/features/<id>_<Name>/3.plan.md`，勾选已完成的任务 Checkbox。
-    3. 更新 `[[__DOCS_DIR__]]/global/00_roadmap.md` 中 `[id]/<Name>` 的状态（例如从 Pending -> In Progress 或完成时 -> Done）。
-    4. 提供“下一步建议”：继续实现后续 Phase 或触发 `/archi.plan` 以细化新模块。
-    5. **Git Commit Suggestion**: 根据变更内容，生成符合 Conventional Commits 规范的提交信息 (e.g. `feat(auth): implement login flow`).
+    2. 更新 `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md`，勾选已完成的任务 Checkbox。
+    3. **🚨 Roadmap Status Sync (强制)**:
+       - 运行 `npx archi task <ID> --status done`（或 `active`，取决于是否全部 Phase 都已完成）更新任务状态。
+       - **严禁**直接手动编辑 `00_roadmap.md` 来改状态，必须通过 CLI 命令确保列表与 Mermaid 图双向同步。
+    4. **🚨 Consistency Check (强制)**:
+       - 运行 `npx archi task --check` 验证 Roadmap 一致性。
+       - 如果检查失败，必须修复不一致后重新运行 `--check` 直到通过。
+    5. 提供“下一步建议”：继续实现后续 Phase 或触发 `/archi.plan` 以细化新模块。
+    6. **Git Commit Suggestion**: 根据变更内容，生成符合 Conventional Commits 规范的提交信息 (e.g. `feat(auth): implement login flow`).
 
     **Output Template**:
     ```markdown
     ## ✅ Implementation Complete
 
-    **Feature ID**: `<ID>`
-    **Feature Name**: `<Name>`
-    **Status**: [In Progress / Done]
+    **Feature**: `<ID>` — `<Name>` | **Status**: [In Progress / Done]
 
-    ### 📋 Implementation Summary
-    * ✅ [列出完成的主要任务]
-    * ✅ [列出完成的主要任务]
-    * ✅ [列出完成的主要任务]
+    ### 📋 Completed Tasks
+    * ✅ [完成的主要任务]
+    * ✅ [完成的主要任务]
 
-    ### 📂 Files Changed
-    * `[source]/...` (新增/修改，例如 `src/`, `lib/`, `cmd/`, `packages/` 等)
-    * `[tests]/...` (新增/修改，例如 `tests/`, `__tests__/`, `spec/` 等)
-    * `[[__DOCS_DIR__]]/features/<ID>_<Name>/3.plan.md` (已更新)
-
-    ### 🔎 Validation & Audit Results
-    * ✅ Build: Passed
-    * ✅ Type Check: Passed
-    * ✅ Lint: Passed
-    * ✅ Format: Passed
-    * ✅ Tests: [X/X] Passed
-    * ✅ Audit: All checks passed
+    ### ⏭️ Exempted Tasks (如有)
+    * 🧑 [任务名称] — 原因: [需要人工介入]
+    * 🌐 [任务名称] — 原因: [不可抗力]
 
     ### 💬 Git Commit Suggestion
-    ```
-    feat(<scope>): <description>
-    ```
+    `feat(<scope>): <description>`
 
-    ---
-
-    ### 🧭 Next Steps (下一步操作)
-
-    | 场景 | 推荐操作 | 说明 |
-    |:---|:---|:---|
-    | **继续实现当前功能** | 检查 `3.plan.md` 中未完成的任务 | 如果还有 Phase 未完成，继续执行 `/archi.code <ID>` |
-    | **开始下一个功能** | `/archi.plan [Feature_ID]` | 选择 Roadmap 中下一个 Ready 任务进行规划 |
-    | **发现 Bug** | `/archi.fix <ID> [bug描述]` | 诊断并修复问题 |
-    | **需求变更** | `/archi.edit <ID> [变更描述]` | 修改 Spec/UI 文档并更新计划 |
-    | **查看帮助** | `/archi.help` | 显示完整指令手册 |
-
-    > 💡 **推荐**: 
-    > - 如果当前功能已完成所有 Phase，运行 `/archi.plan [下一个 Feature_ID]` 开始规划新功能。
-    > - 如果当前功能还有未完成的 Phase，继续运行 `/archi.code <ID>` 完成剩余任务。
+    ### 🧭 Next Steps
+    | 场景 | 推荐操作 |
+    |:---|:---|
+    | **继续实现** | `/archi.code <ID>` |
+    | **规划新功能** | `/archi.plan [Feature_ID]` |
+    | **发现 Bug** | `/archi.fix <ID> [bug描述]` |
+    | **需求变更** | `/archi.edit <ID> [变更描述]` |
     ```
 </step_6_signoff>

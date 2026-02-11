@@ -66,9 +66,9 @@ my-project/
 │   │
 │   └── features/               # 功能文档（按功能模块组织）
 │       └── INF-001_feature-name/
-│           ├── 1.spec.md       # 功能规格（Gherkin）
-│           ├── 2.ui.md         # UI 设计（如适用）
-│           └── 3.plan.md       # 实施计划
+│           ├── spec.md         # 功能规格（Gherkin）
+│           ├── ui.md           # UI 设计（如适用）
+│           └── plan.md         # 实施计划
 │
 └── xxx/                        # 业务代码（项目实际代码）
     └── ...

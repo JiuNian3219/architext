@@ -1,5 +1,5 @@
 ---
-description: Project Execution Queue & Dependency Graph (DAG). Tracks status (Pending/WIP/Done) of all features and infrastructure tasks.
+description: Project Execution Queue & Dependency Graph (DAG). Tracks status of all features and infrastructure tasks.
 ---
 
 # Product Roadmap
@@ -9,68 +9,85 @@ description: Project Execution Queue & Dependency Graph (DAG). Tracks status (Pe
 
 ---
 
-## 🗺️ Master Plan (Global Planning & Dependencies)
+## 🗺️ Master Plan
 
 ### 📊 Dependency Graph (Parallelism Analysis)
-> **Legend**:
-> * ✅ **Done**: Deployed.
-> * 🚧 **WIP**: In Development (Current Focus).
-> * ⏳ **Pending**: Backlog, dependencies ready, ready to start.
-> * 🔒 **Blocked**: Blocked, waiting for prerequisites.
 
-<!-- 
-[AI Instruction]: 
-Generate a Mermaid DAG to visualize dependencies and parallel tracks.
-Nodes: [ID] Name
-Shape: Box for Pending, Rounded for Done.
--->
+> **Legend**:
+> * ✅ **Done**: Completed/Deployed.
+> * 🟢 **Active**: In Progress (Current Focus).
+> * ⏳ **Pending**: Backlog, dependencies ready.
+> * 🧱 **Blocked**: Waiting for prerequisites.
+
+<!-- VISUAL_START -->
 ```mermaid
 graph TD
-    %% Legend
-    %% ✅ Done, 🚧 WIP, ⏳ Pending, 🔒 Blocked
-    
-    %% Examples
-    INF-101[🏗️ INF-101: Init Repo] --> DAT-101[🗄️ DAT-101: User Schema]
-    DAT-101 --> API-101[⚙️ API-101: Auth Service]
-    INF-101 --> UI-101[🎨 UI-101: Shadcn Setup]
-    UI-101 --> UI-102[🧩 UI-102: Login Form]
-    API-101 --> INT-101[🔌 INT-101: Login Page Integration]
-    UI-102 --> INT-101
+    %% Styles
+    classDef done fill:#9f9,stroke:#333,stroke-width:2px;
+    classDef active fill:#f9f,stroke:#333,stroke-width:4px;
+    classDef pending fill:#fff,stroke:#333,stroke-width:1px;
+    classDef blocked fill:#ccc,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
+
+    %% Nodes Example
+    INF-01[🏗️ INF-01: Scaffolding] --> FEAT-01[✨ FEAT-01: Example Feature]
+
+    %% Class Assignment
+    class INF-01 pending;
+    class FEAT-01 blocked;
 ```
+<!-- VISUAL_END -->
 
-### Phase 1 [INF]: Infrastructure
-*(AI: Plan Tech Stack, CI/CD, Test Setup here)*
+### 📝 Task List
 
-### Phase 2 [CORE]: Core Features
-*(AI: Plan Step 1 Features here)*
+<!-- TASKS_START -->
+## 🚀 Phase 1: Infrastructure
+- [ ] ⏳ **[INF-01]** Project Scaffolding
+  - 🎯 Goal: Initialize repo, linter, tests, and core utils (DoD: `npm test` passes).
+  - 🔗 Dep: None
+  - 🏷️ Tag: Infra
+  - 📁 Slug: Project_Scaffolding
 
-### Phase 3 [EXT]: Extensions
-*(AI: Plan Scale & UX enhancements here)*
-
-<!-- Example Format:
-- [ ] ⏳ **[INF-101] Database Infrastructure**
-    - **Goal**: Setup Postgres + Prisma environment, ensure connection and migration.
-    - **Dep**: None
-- [ ] 🔒 **[FEAT-201] Order Flow**
-    - **Goal**: Implement order placement, payment, and status transitions (Full Stack).
-    - **Dep**: [INF-101]
--->
+## 🧩 Phase 2: Core Features
+- [ ] 🧱 **[FEAT-01]** Example Feature
+  - 🎯 Goal: Implement basic feature logic.
+  - 🔗 Dep: [INF-01]
+  - 🏷️ Tag: Core
+  - 📁 Slug: Example_Feature
+<!-- TASKS_END -->
 
 ---
 
 ## 🤖 AI Maintenance Guide
 
-**Trigger**: After every execution of `/archi.plan` or `/archi.code`.
+**Trigger**: After every execution of `/archi.plan` or `npx archi task`.
 
-1.  **Dependency Visualization (Mermaid)**:
-    *   **Sync**: Update the `graph TD` code block whenever task status changes.
-    *   **Style**: Pending=`[ ]`, WIP=`style [ID] fill:#f9f,stroke:#333`, Done=`style [ID] fill:#9f9,stroke:#333`.
-2.  **ID Prefix Enforcement**:
-    *   `[INF]`: Infrastructure
-    *   `[DAT]`: Data
-    *   `[API]`: API
-    *   `[UI]`: UI
-    *   `[INT]`: Integration
-    *   `[FEAT]`: Business Feature
-3.  **Queue Logic**:
-    *   **Unblock**: When all `Dep` dependencies of a task are marked as ✅, immediately update its status to ⏳ **Pending**.
+1.  **CLI Validation**:
+    *   AI generates content, CLI (`archi task --check`) validates format.
+    *   **Anti-Clobbering**: DO NOT delete anchors like `<!-- TASKS_START -->`.
+
+2.  **Status Sync**:
+    *   **List**: Use `[x] ✅`, `[ ] 🟢`, `[ ] ⏳`, `[ ] 🧱`.
+    *   **Graph**: Must apply corresponding `class` in Mermaid (done/active/pending/blocked).
+    *   **Status Lifecycle**:
+
+        | Transition | Trigger | CLI Command |
+        |:---|:---|:---|
+        | `[initial]` -> `pending` | `/archi.start` creates task with `Dep: None` or all Deps completed | - |
+        | `[initial]` -> `blocked` | `/archi.start` creates task with unresolved Deps | - |
+        | `blocked` -> `pending` | All Dep tasks become `done` | `npx archi task <ID> --status pending` |
+        | `pending` -> `active` | `/archi.plan` completes feature planning | `npx archi task <ID> --status active` |
+        | `active` -> `done` | `/archi.code` completes implementation | `npx archi task <ID> --status done` |
+
+    *   **Gate Rules**:
+        *   Only tasks with `active` status can execute `/archi.code`.
+        *   Only tasks with `pending` status (dependencies ready) can execute `/archi.plan`.
+        *   `blocked` tasks cannot be planned or coded directly; dependencies must be completed first.
+
+3.  **Dependency Logic**:
+    *   **Unblock**: When all `Dep` are done, update blocked tasks from 🧱 to ⏳.
+
+4.  **Graph vs Dep (Edges vs Dependency Field)**:
+    *   **Dep field**: Complete logical dependency list (including indirect/transitive deps), used for scheduling and blocking.
+    *   **Mermaid edges**: Only draw **direct, nearest** prerequisites to keep the graph clean and readable.
+    *   Do **NOT** draw edges for every entry in the Dep field.
+    *   Example: A.Dep=[B,C], B.Dep=[C] — graph draws `C --> B --> A` only, not `C --> A`.

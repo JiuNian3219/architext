@@ -59,4 +59,74 @@ alwaysApply: true
 - **Command Mode (`/archi.*`)**: **High-Intensity, Process-Oriented**. User needs to follow template steps one by one (Step 1 -> Step 2).
 - **Chat Mode (Natural Language)**: **Free-Form, Assistive**. You act as an Architect, using available rule files (00/02/90/99) to answer questions and assist development.
 
+---
+
+## 4. CLI Tools Registry
+
+> Beyond chat commands (`/archi.*`), Architext provides **terminal CLI commands**.
+> You should **proactively invoke** these commands at the right time, rather than waiting for the user to run them manually.
+
+### ⚠️ Working Directory Rule (Critical)
+
+> **Before executing ANY `npx archi` command, you MUST ensure the terminal's working directory is the project root (the directory containing the `.architext/` folder).**
+>
+> - If unsure about the current directory, run `pwd` (Linux/Mac) or `cd` (Windows) to confirm.
+> - If not in the project root, **run `cd <project-root-path>` first** before executing the command.
+> - **Bad**: Running `npx archi task` from `src/components/` — the command won't find `.architext/` config.
+> - **Good**: `cd /path/to/project && npx archi task`
+
+### `npx archi task` — Roadmap Task Management
+
+| Subcommand / Option | Purpose | Example |
+| :--- | :--- | :--- |
+| `npx archi task` | List all tasks with progress bar | `npx archi task` |
+| `npx archi task --list` | Same as above (explicit mode) | `npx archi task --list` |
+| `npx archi task <ID> --status <s>` | Update task status | `npx archi task INF-001 --status done` |
+| `npx archi task --check` | Validate Roadmap consistency (list vs graph) | `npx archi task --check` |
+
+**Valid status values**: `pending` · `active` · `done` · `blocked`
+
+#### When to Use?
+
+| Scenario | Action |
+| :--- | :--- |
+| After `/archi.plan` completes, new feature planned | `npx archi task <ID> --status active` |
+| After `/archi.code` completes, feature implemented | `npx archi task <ID> --status done` |
+| A task is found to be blocked | `npx archi task <ID> --status blocked` |
+| After modifying `00_roadmap.md` | `npx archi task --check` to validate consistency |
+| Need an overview of project progress | `npx archi task` to view summary |
+
+> **Important**: When you complete a task via `/archi.code` or `/archi.plan`, you **MUST** proactively run `npx archi task <ID> --status done` to update progress, rather than waiting for the user to do it manually.
+
+### `npx archi plan` — Plan Completion Check
+
+> Checks the checkbox task completion status in `plan.md` for a specified Feature.
+> Automatically identifies Manual Verification sections and excludes them from automated statistics.
+
+| Subcommand / Option | Purpose | Example |
+| :--- | :--- | :--- |
+| `npx archi plan <ID>` | Check Plan completion for a Feature | `npx archi plan SUB-01` |
+
+**Output Example**:
+```
+📋 Plan Check: SUB-01 Subscription CRUD
+
+Phase 1: Data Layer & Validation   [4/4] ✅
+Phase 2: UI Components             [6/6] ✅
+Manual Verification                [0/5] (Skipped — Manual)
+──────────────────────────────────────
+Total: 10/10 (100%)
+✅ All automated tasks completed!
+```
+
+#### When to Use?
+
+| Scenario | Action |
+| :--- | :--- |
+| Before `/archi.code` signoff, mandatory completion check | `npx archi plan <ID>` to confirm all checkboxes are checked |
+| Want to check implementation progress of a Feature | `npx archi plan <ID>` to view completion ratio per Phase |
+| Uncompleted tasks exist but signoff is needed | Check unchecked items in output to determine if they are Manual/Force Majeure |
+
+> **Important**: During the signoff phase (Step 6 Sign Off) of `/archi.code`, you **MUST** first run `npx archi plan <ID>` to verify Plan completion. Signoff can only proceed when all AI-completable tasks are checked (or uncompleted items belong to Manual Verification / Force Majeure only).
+
 **End of Dispatcher.**

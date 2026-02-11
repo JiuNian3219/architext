@@ -5,27 +5,43 @@
   - If input is **ID** (Exists in Roadmap): Directly read context.
   - If input is **Context** (New Requirement): Auto generate ID, append to Roadmap, then start interview.
 
+<constraints_cursor>
+    **Mode Lock**: This protocol MUST execute in **Agent Mode (Normal Mode)**. **NEVER** switch to Plan Mode or any read-only mode. If the IDE prompts for mode change, REJECT it.
+</constraints_cursor>
+
 <meta>
     <style>Architectural, Exhaustive, Strict, Technology-Agnostic</style>
     <language>English</language>
     <principles>
-      1.  **Global First**: Update global indices (Map/Data/Dict).
+      1.  **Global First**: The birth of local features must be accompanied by updates to global indices (Map/Data/Dict).
       2.  **AI-Native Perspective**: 
           - All Pros/Cons must be written from the perspective of an **AI Agent**.
           - Focus on: **Context Locality**, **Type Safety**, **Boilerplate Utility** (Good for context), **Ambiguity Risk**.
-      3.  **Flexible Interaction**: Options are suggestions. Support Multi-select/Custom.
-      4.  **Audit-Gated**: Pass virtual auditor check.
+      3.  **Flexible Interaction**: Options are heuristic suggestions. Support Multi-select, Hybrid or Custom.
+      4.  **Audit-Gated**: Only docs that pass the virtual auditor check can be delivered to the user.
     </principles>
 </meta>
 
 <step_1_load>
     **Role**: System Analyst
-    **Action**: Load Roadmap, Tech Stack, Design Tokens, Data Model.
+    **Action**:
+    1.  **Read Roadmap**: Read `[[__DOCS_DIR__]]/global/00_roadmap.md`.
+        - **🚨 Pre-flight Check**: Check if `Dep` (Dependencies) of current task `<ID>` are completed (`✅`).
+        - **Rule**: If deps are not done, **REJECT Plan**, ask user to finish deps first (unless user explicitly overrides).
+    2.  **Read Tech Stack**: Read `02_tech_stack.md`.
+    3.  **Read Design Tokens** (If project has UI): Read `[[__DOCS_DIR__]]/global/03_design_tokens.md`.
+    4.  **Read Data Model** (If project has Data layer): Read `[[__DOCS_DIR__]]/global/04_data_snapshot.md`.
+    5.  **Read Dependency Context** (If task has dependencies):
+        - If current task `<ID>`'s `Dep` field references other tasks (e.g. `INF-01`, `FEAT-02`), **MUST** read their corresponding doc directories `[[__DOCS_DIR__]]/features/<DepID>_<Slug>/`.
+        - Focus on reading dependency's `spec.md` (to understand interface contracts & data structures) and `plan.md` (to understand what's already implemented), ensuring current task planning aligns with upstream.
+        - **Goal**: Avoid re-defining interfaces that upstream already provides; ensure Integration Points are precisely aligned.
+
+    **Output**: Prepare interview context materials (including key interface info from dependency tasks).
 </step_1_load>
 
 <step_2_interview>
     **Role**: Architect (Dynamically adapt)
-    **Action**: Throw out **Implementation Option Questions**.
+    **Action**: Based on `[ctx]` and project status, throw out **Implementation Option Questions** in 5 dimensions.
     
     ---
     
@@ -118,40 +134,117 @@
 
     ---
 
-    **Goal**: Lock `1.spec`, `2.ui`, `04_data`.
-    **Bridge**: "✅ Options Generated. Interactive Design Process..."
+    **Goal**: Lock `spec`, `ui`, `04_data`.
+    **Bridge**: "✅ Options Generated. This is an **Interactive Design Process**, please tell me your choices..."
     
-    **⌨️ INPUT**: `A | B | ...`
+    **⌨️ INPUT (Flexible Reply)**: `A | B | ...`
 </step_2_interview>
 
 <step_2_5_refinement>
-    **Trigger**: Unsure/Conflict.
-    **Role**: Consultant.
+    **Trigger**: User reply contains "Unsure", "Difference", "Suggest" or obvious logic conflict.
+    **Role**: Consultant
+    **Action**: 
+    1.  **Do NOT generate docs**.
+    2.  Explain user's confusion, compare options.
+    3.  Propose new, more specific suggestions.
+    4.  Wait for user confirmation again.
 </step_2_5_refinement>
 
 <step_3_global_sync>
     **Role**: System Admin
-    **Action**: Update Map, Dictionary, Data, Error Codes.
+    **Constraint**: MUST update global files **BEFORE** generating Feature Docs.
+
+    **Action Checklist**:
+    1.  **Update `01_map.md`**:
+        - Register `[[__DOCS_DIR__]]/features/<ID>_<Slug>` in `3. Directory Mapping`. (Slug comes from Roadmap's `📁 Slug` field)
+        - Define module responsibility & dependencies in `4. Logical Topology`.
+    2.  **Update `02_dictionary.md`**:
+        - Extract new terms from interview to fill table.
+        - Register newly discovered public components/modules.
+    3.  **Update `04_data_snapshot.md`** (If project has Data layer):
+        - Add or modify Table/Schema definition based on Q1 choice. **STRICTLY PROHIBIT** just writing "TBD", must write field names and types.
+    4.  **Update `05_error_codes.md`**:
+        - Register new business error codes based on Q4 choice.
+
+    **Output**: Show diff of above files (brief).
+    **Bridge**: "✅ Global Docs Synced. Generating feature docs..."
 </step_3_global_sync>
 
 <step_4_generate>
     **Role**: Doc Engineer
-    **Action**: Generate `1.spec.md`, `2.ui.md`, `3.plan.md`.
-    
-    **AX Rules**:
-    1.  **Gherkin for AI**: Scenarios must be explicit about data setup.
-    2.  **UI for AI**: Use semantic names that map to Design Tokens easily.
-    3.  **Plan for AI**: Tasks must be atomic and testable.
+    **Input**: Interview Result + Updated Global Context.
+    **Action**: Generate standard docs under `[[__DOCS_DIR__]]/features/<ID>_<Slug>/`. (Slug comes from Roadmap's `📁 Slug` field; for new requirements, generate Slug when appending to Roadmap)
+
+    **1. Generate `spec.md`** (Mandatory):
+    - **Template**: Use `templates/spec.template.md`.
+    - **Content**: Convert Q1 (Data Logic) and Q4 (Error Handling) to **Gherkin Scenarios**.
+    - **AX Rule**:
+        - **Interface Stability**: If this is an upstream task, Spec MUST define strict Interfaces.
+
+    **2. Generate `ui.md`** (If project has UI):
+    - **Template**: Use `templates/ui.template.md`.
+    - **Content**: Convert Q2 (Interface) to **ITP v3.0** description.
+    - **AX Rule**:
+        - Use semantic naming, mapping to `03_design_tokens.md`.
+
+    **3. Generate `plan.md`** (Mandatory):
+    - **Template**: Use `templates/plan.template.md`.
+    - **Content**: Dynamically adjust Phases based on project type.
+    - **AX Rule**: 
+        - **Anti-Clobbering**: Explicitly request "Additive Only" and "Respect Unknowns".
+        - **Atomic Context**: Ensure each Task's context is self-contained.
+
+    **Bridge**: "✅ Feature Docs Generated. Performing compliance audit..."
 </step_4_generate>
 
 <step_5_audit>
-    **Role**: Chief Auditor
-    **Goal**: Intercept non-compliant docs.
+    **Role**: 🔴 Chief Auditor
+    **Goal**: Intercept non-compliant docs, force self-correction.
+
+    **Checklist**:
+    1.  **Tech Consistency**: Any undeclared tech used?
+    2.  **Data Integrity**: Do data entities in Scenario exist?
+    3.  **Error Handling**: Is Q4 covered?
+    4.  **AX Compliance**: Are Anti-Clobbering and Interface Stability rules followed?
+
+    **Action**: 
+    - If issues found, **Silent Auto-Fix** doc content.
+    - If issues are critical (e.g. Logic Conflict), mark `⚠️ Risk Warning` in output.
+    
+    **Bridge**: "✅ Audit Passed. Finalizing output..."
 </step_5_audit>
 
 <step_6_signoff>
-    **Action**: Update Roadmap status.
-    **Output**: Final summary.
+    **Action**: 
+    1.  **Validation**: Run `npx archi task --check` to validate Roadmap consistency.
+    2.  **Status Update**: If all good, run `npx archi task <ID> --status active` to mark as in-progress (planned, awaiting implementation).
+    3.  Output summary.
+
+    **Output Template**:
+    ```markdown
+    ## ✅ Feature Definition Complete
+
+    **Feature**: `<ID>` — `<Name>`
+
+    ### 📋 Decisions Summary
+    | Question | Choice | Key Impact |
+    |:---|:---|:---|
+    | Q1. Data Model | [Choice] | [Brief Impact] |
+    | Q2. Interaction | [Choice] | [Brief Impact] |
+    | Q3. Data Flow | [Choice] | [Brief Impact] |
+    | Q4. Resilience | [Choice] | [Brief Impact] |
+    | Q5. Access | [Choice] | [Brief Impact] |
+
+    ### 🧭 Next Steps
+    | Scenario | Recommended Action |
+    |:---|:---|
+    | **Start Implementation** | `/archi.code <ID>` |
+    | **Need Adjustment** | `/archi.edit <ID> [change description]` |
+    | **Plan Other Features** | `/archi.plan [New Feature_ID]` |
+
+    > 💡 **Recommendation**: Run `/archi.code <ID>` to start implementation.
+    ```
+
 </step_6_signoff>
 
 </protocol_plan>

@@ -76,10 +76,10 @@
     │   │   └── plan.template.md    # Implementation Plan Template
     │   │
     │   └── features/               # Feature Docs - Organized by Module
-    │       └── <ID>_<Name>/        # One folder per feature
-    │           ├── 1.spec.md       # Feature Spec - Gherkin Scenarios
-    │           ├── 2.ui.md         # UI Design - ITP Component Tree (if applicable)
-    │           └── 3.plan.md       # Implementation Plan - Task List
+    │       └── <ID>_<Slug>/        # One folder per feature
+    │           ├── spec.md         # Feature Spec - Gherkin Scenarios
+    │           ├── ui.md           # UI Design - ITP Component Tree (if applicable)
+    │           └── plan.md         # Implementation Plan - Task List
     │
     └── xxx/                        # Business Code (Actual Project Code)
         └── ...

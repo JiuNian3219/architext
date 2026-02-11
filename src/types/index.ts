@@ -44,6 +44,7 @@ export interface EditorRuleConfig {
 export interface ArchitextConfig {
   language: string;
   docDir: string;
+  roadmap?: string;
   editors: SupportedEditor[];
   version?: string;
   updatedAt: string;
@@ -68,6 +69,15 @@ export interface InitConfig {
   language: LocaleLang;
   editors: SupportedEditor[];
   docDir: string;
+}
+
+/**
+ * Task 命令参数选项
+ */
+export interface TaskCommandOptions {
+  status?: string;
+  check?: boolean;
+  list?: boolean;
 }
 
 /**

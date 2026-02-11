@@ -28,7 +28,7 @@ description: Implementation Plan & Test Cases for {FEATURE_NAME}.
   - [ ] Validation: [Schema] (e.g. Zod schema for input validation)
 
 * [ ] **Phase 2: UI Construction**
-  - [ ] Static Components (ITP implementation, reference `2.ui.md`)
+  - [ ] Static Components (ITP implementation, reference `ui.md`)
   - [ ] Interactive Logic (Hooks, e.g. `useForm`, `useMutation`)
   - [ ] State Management (if needed)
 
@@ -49,6 +49,6 @@ description: Implementation Plan & Test Cases for {FEATURE_NAME}.
 
 ### Manual Verification
 
-* [ ] **Check**: UI visually matches `2.ui.md`
+* [ ] **Check**: UI visually matches `ui.md`
 
 * [ ] **Check**: Specific interaction (e.g. Double click prevention)

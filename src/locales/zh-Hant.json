@@ -31,6 +31,16 @@
     "failed": "環境自檢失敗",
     "success": "系統檢查通過：一切正常"
   },
+  "task": {
+    "desc": "管理專案 Roadmap 任務",
+    "status": "更新任務狀態 (pending|active|done|blocked)",
+    "check": "檢查 Roadmap 一致性",
+    "list": "列出任務概覽"
+  },
+  "plan": {
+    "desc": "檢查功能實現計畫 (plan.md) 的完成度",
+    "id_required": "請指定 Feature ID (例如: archi plan SUB-01)"
+  },
   "scaffold": {
     "fallback": "未找到 {lang} 模板，回退使用 'zh'",
     "step_docs": "正在初始化檔案骨架...",
@@ -75,6 +85,45 @@
       "cancel": "已取消卸載。",
       "not_found": "未找到設定檔 (.architext/architext.json)，無法自動卸載。",
       "cleaning": "正在清理..."
+    },
+    "task": {
+      "check": {
+        "graph_node_no_match": "圖中節點 [{id}] 在任務列表中無對應條目",
+        "task_no_class": "任務 [{id}] 存在於列表但在 Mermaid 圖中缺少 'class' 定義",
+        "status_mismatch": "狀態不一致 [{id}]: 列表=\"{listStatus}\", 圖=\"{graphClass}\" (預期 \"{expected}\")",
+        "task_no_node_def": "任務 [{id}] 在 Mermaid 圖中缺少節點定義 (ID[label])",
+        "missing_classdef": "Mermaid 圖中缺少必要的 'classDef {name}' 宣告",
+        "missing_edge": "圖中缺少邊: [{from}] --> [{to}] (在 Dep 欄位中宣告)",
+        "missing_graph_decl": "Mermaid 語法: 缺少 'graph TD/LR/TB/BT/RL' 宣告 (圖無法渲染)",
+        "unbalanced_brackets": "Mermaid 語法: 第 {line} 行方括號不匹配 — {opens} 個 '[' vs {closes} 個 ']' (將導致渲染失敗)",
+        "empty_node_label": "Mermaid 語法: 第 {line} 行存在空節點標籤 '[]' (節點將無文字渲染)",
+        "undeclared_classdef": "Mermaid 語法: 'class {nodeId} {styleClass}' 引用了未宣告的 classDef '{styleClass}' (樣式不會生效)",
+        "empty_mermaid": "Mermaid 程式碼區塊為空 — ```mermaid 和 ``` 之間沒有內容",
+        "invalid_dep": "任務 [{id}] 的依賴無效: [{depId}] 不存在於任務列表中",
+        "consistent": "Roadmap 一致性檢查通過。"
+      },
+      "update": {
+        "id_required": "更新狀態需要指定任務 ID。用法: architext task <id> --status <status>",
+        "updating": "正在更新任務 [{id}] 狀態為 {status}...",
+        "added_class": "已為 [{id}] 新增圖節點 class 定義",
+        "no_visual": "未找到 [{id}] 的圖節點且無可視區塊。",
+        "done": "任務 [{id}] -> {status}"
+      },
+      "list": {
+        "empty": "Roadmap 中未找到任務。",
+        "title": "專案 Roadmap 狀態"
+      }
+    },
+    "plan": {
+      "title": "Plan 檢查: {id} {name}",
+      "section_pass": "[{done}/{total}]",
+      "section_manual": "[{done}/{total}] (跳過 — 人工驗收)",
+      "unchecked_item": "  L{line}: {content}",
+      "total": "合計: {done}/{total} ({percent}%)",
+      "all_done": "所有自動化任務已完成！",
+      "remaining": "剩餘 {count} 個任務未完成",
+      "empty": "Plan 檔案中沒有 checkbox 任務",
+      "not_found": "未找到 [{id}] 的實現計畫檔案 (plan.md)"
     },
     "update": {},
     "doctor": {}

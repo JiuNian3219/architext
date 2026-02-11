@@ -40,3 +40,52 @@ export class ConfigParseError extends AppError {
     super(message, "CONFIG_PARSE_ERROR", true);
   }
 }
+
+export class RoadmapNotFoundError extends AppError {
+  constructor() {
+    super(
+      "Roadmap file not found. Please create '00_roadmap.md' or configure 'roadmap' in architext.json",
+      "ROADMAP_NOT_FOUND",
+      true,
+    );
+  }
+}
+
+export class TaskNotFoundError extends AppError {
+  constructor(taskId: string) {
+    super(`Task [${taskId}] not found.`, "TASK_NOT_FOUND", true);
+  }
+}
+
+export class InvalidTaskStatusError extends AppError {
+  constructor(status: string) {
+    super(
+      `Invalid status: '${status}'. Valid values: pending, active, done, blocked`,
+      "INVALID_TASK_STATUS",
+      true,
+    );
+  }
+}
+
+export class PlanNotFoundError extends AppError {
+  constructor(featureId: string) {
+    super(
+      `Plan file not found for feature [${featureId}]. Expected at: {docDir}/features/${featureId}_*/plan.md`,
+      "PLAN_NOT_FOUND",
+      true,
+    );
+  }
+}
+
+export class RoadmapConsistencyError extends AppError {
+  public readonly issues: string[];
+
+  constructor(issues: string[]) {
+    super(
+      `Roadmap has ${issues.length} inconsistencies.`,
+      "ROADMAP_INCONSISTENCY",
+      true,
+    );
+    this.issues = issues;
+  }
+}

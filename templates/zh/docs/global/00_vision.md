@@ -42,7 +42,7 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 
 ## 4. Design & Experience (设计与体验语言)
 
-> **Note:** 具体色值和圆角定义请严格参阅 `[[__DOCS_DIR__]]/03_design_tokens.md`。
+> **Note:** 具体色值和圆角定义请严格参阅 `[[__DOCS_DIR__]]/global/03_design_tokens.md`。
 
 ### Visual Style (视觉风格)
 

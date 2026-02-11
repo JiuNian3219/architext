@@ -1,5 +1,5 @@
 ---
-description: Project Execution Queue & Dependency Graph (DAG). Tracks status (Pending/WIP/Done) of all features and infrastructure tasks.
+description: Project Execution Queue & Dependency Graph (DAG). Tracks status of all features and infrastructure tasks.
 ---
 
 # Product Roadmap
@@ -12,65 +12,82 @@ description: Project Execution Queue & Dependency Graph (DAG). Tracks status (Pe
 ## 🗺️ Master Plan (全局規劃與依賴)
 
 ### 📊 Dependency Graph (Parallelism Analysis)
-> **Legend (圖例)**:
-> * ✅ **Done**: 已上線。
-> * 🚧 **WIP**: 正在開發中 (Current Focus)。
-> * ⏳ **Pending**: 待辦，依賴項已就緒，隨時可做。
-> * 🔒 **Blocked**: 阻塞中，需等待前置依賴完成。
 
-<!-- 
-[AI Instruction]: 
-Generate a Mermaid DAG to visualize dependencies and parallel tracks.
-Nodes: [ID] Name
-Shape: Box for Pending, Rounded for Done.
--->
+> **Legend (圖例)**:
+> * ✅ **Done**: 已完成/已上線。
+> * 🟢 **Active**: 正在進行中 (Current Focus)。
+> * ⏳ **Pending**: 待辦，依賴項已就緒。
+> * 🧱 **Blocked**: 阻塞中，需等待前置依賴。
+
+<!-- VISUAL_START -->
 ```mermaid
 graph TD
-    %% Legend
-    %% ✅ Done, 🚧 WIP, ⏳ Pending, 🔒 Blocked
-    
-    %% Examples
-    INF-101[🏗️ INF-101: Init Repo] --> DAT-101[🗄️ DAT-101: User Schema]
-    DAT-101 --> API-101[⚙️ API-101: Auth Service]
-    INF-101 --> UI-101[🎨 UI-101: Shadcn Setup]
-    UI-101 --> UI-102[🧩 UI-102: Login Form]
-    API-101 --> INT-101[🔌 INT-101: Login Page Integration]
-    UI-102 --> INT-101
+    %% Styles
+    classDef done fill:#9f9,stroke:#333,stroke-width:2px;
+    classDef active fill:#f9f,stroke:#333,stroke-width:4px;
+    classDef pending fill:#fff,stroke:#333,stroke-width:1px;
+    classDef blocked fill:#ccc,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
+
+    %% Nodes Example
+    INF-01[🏗️ INF-01: Scaffolding] --> FEAT-01[✨ FEAT-01: Example Feature]
+
+    %% Class Assignment
+    class INF-01 pending;
+    class FEAT-01 blocked;
 ```
+<!-- VISUAL_END -->
 
-### Phase 1 [INF]: Infrastructure (基建)
-*(AI: Plan Tech Stack, CI/CD, Test Setup here)*
+### 📝 Task List (任務清單)
 
-### Phase 2 [CORE]: Core Features (核心功能)
-*(AI: Plan Step 1 Features here)*
+<!-- TASKS_START -->
+## 🚀 Phase 1: Infrastructure (基建)
+- [ ] ⏳ **[INF-01]** Project Scaffolding
+  - 🎯 Goal: 初始化倉庫、Linter、測試環境與核心工具函數 (DoD: `npm test` 通過)。
+  - 🔗 Dep: None
+  - 🏷️ Tag: Infra
+  - 📁 Slug: Project_Scaffolding
 
-### Phase 3 [EXT]: Extensions (擴展與優化)
-*(AI: Plan Scale & UX enhancements here)*
-
-<!-- 示例格式:
-- [ ] ⏳ **[INF-101] 資料庫基建**
-    - **Goal**: 搭建 Postgres + Prisma 環境，確保能連接並遷移。
-    - **Dep**: None
-- [ ] 🔒 **[FEAT-201] 訂單流程**
-    - **Goal**: 實現下單、支付、狀態流轉 (Full Stack)。
-    - **Dep**: [INF-101]
--->
+## 🧩 Phase 2: Core Features (核心功能)
+- [ ] 🧱 **[FEAT-01]** Example Feature
+  - 🎯 Goal: 實現基礎功能邏輯。
+  - 🔗 Dep: [INF-01]
+  - 🏷️ Tag: Core
+  - 📁 Slug: Example_Feature
+<!-- TASKS_END -->
 
 ---
 
 ## 🤖 AI Maintenance Guide
 
-**Trigger**: 每次執行 `/archi.plan` 或 `/archi.code` 後。
+**Trigger**: 每次執行 `/archi.plan` 或 `npx archi task` 後。
 
-1.  **Dependency Visualization (Mermaid)**:
-    *   **Sync**: 每次任務狀態變更時，必須更新 `graph TD` 代碼塊。
-    *   **Style**: Pending=`[ ]`, WIP=`style [ID] fill:#f9f,stroke:#333`, Done=`style [ID] fill:#9f9,stroke:#333`.
-2.  **ID Prefix Enforcement**:
-    *   `[INF]`: Infrastructure
-    *   `[DAT]`: Data
-    *   `[API]`: API
-    *   `[UI]`: UI
-    *   `[INT]`: Integration
-    *   `[FEAT]`: Business Feature
-3.  **Queue Logic**:
-    *   **Unblock**: 當某任務依賴的所有 `Dep` 都標記為 ✅ 時，立即將其狀態更新為 ⏳ **Pending**。
+1.  **CLI Validation**:
+    *   AI 負責生成內容，CLI (`archi task --check`) 負責校驗格式。
+    *   **Anti-Clobbering**: 嚴禁刪除 `<!-- TASKS_START -->` 等錨點。
+
+2.  **Status Sync**:
+    *   **List**: 使用 `[x] ✅`, `[ ] 🟢`, `[ ] ⏳`, `[ ] 🧱`。
+    *   **Graph**: 必須在 Mermaid 中應用對應的 `class` (done/active/pending/blocked)。
+    *   **Status Lifecycle (狀態生命週期)**:
+
+        | 轉換 | 觸發條件 | CLI 命令 |
+        |:---|:---|:---|
+        | `[初始]` -> `pending` | `/archi.start` 建立任務，且 `Dep: None` 或所有 Dep 已完成 | - |
+        | `[初始]` -> `blocked` | `/archi.start` 建立任務，且有未完成的 Dep | - |
+        | `blocked` -> `pending` | 所有 Dep 任務變為 `done` 時 | `npx archi task <ID> --status pending` |
+        | `pending` -> `active` | `/archi.plan` 完成功能規劃後 | `npx archi task <ID> --status active` |
+        | `active` -> `done` | `/archi.code` 完成功能實現後 | `npx archi task <ID> --status done` |
+
+    *   **Gate Rules (門禁規則)**:
+        *   只有 `active` 狀態的任務才能執行 `/archi.code`。
+        *   只有 `pending` 狀態（依賴已就緒）的任務才能執行 `/archi.plan`。
+        *   `blocked` 狀態的任務不能直接 plan 或 code，必須先等待依賴完成。
+
+3.  **Dependency Logic**:
+    *   **Unblock**: 當 `Dep` 全部完成時，將後續任務從 🧱 改為 ⏳。
+
+4.  **Graph vs Dep (圖邊 vs 依賴欄位)**:
+    *   **Dep 欄位**: 完整的邏輯依賴列表（含間接/傳遞依賴），用於任務調度與阻塞判斷。
+    *   **Mermaid 圖邊**: 只畫**直接的、最近的**前置依賴，保持圖的清晰可讀。
+    *   **嚴禁**將 Dep 欄位中的所有條目都畫成圖中的邊。
+    *   例：A.Dep=[B,C]，B.Dep=[C]，圖中只畫 `C --> B --> A`，不畫 `C --> A`。

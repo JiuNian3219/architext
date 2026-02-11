@@ -10,8 +10,8 @@
       1.  **Structure over Chat**: Output must be like a structured "Dashboard", strictly NO chatty filler.
       2.  **AI-Native Perspective**: 
           - All Pros/Cons must be written from the perspective of an **AI Agent (Claude/GPT)**.
-          - Key Metrics: **Context Window Cost**, **Hallucination Risk**, **Reasoning Depth**, **Self-Correction (Compiler feedback)**.
-          - **Ignore**: Human "Learning Curve", "Repetitive Work" (AI doesn't get tired).
+          - Key Metrics: **Context Locality**, **Type Safety**, **Hallucination Risk**, **Self-Correction**.
+          - **Default High Quality**: Do not ask "Quality vs Speed", default to Best Practice.
       3.  **User Agency First**: Prioritize extracting explicit requirements from `[context]`, mark as `✅ Core`.
       4.  **Rich Menu**: Generate 6-10 valuable Extension Features.
       5.  **Option Z Everywhere**: Must include `[Z] Custom`.
@@ -46,16 +46,15 @@
 
       **[Q2] ...**
       **[Q3] ...**
-      **[Q4] ...**
 
       ---
-      **⌨️ INPUT (Pipeline Reply)**: `ExtensionIDs (Space separated) | Q1 | Q2 | Q3 | Q4`
+      **⌨️ INPUT (Pipeline Reply)**: `ExtensionIDs (Space separated) | Q1 | Q2 | Q3`
     </output_template>
 </meta>
 
 <step_0_benchmark>
     **Role**: Industry Researcher
-    **Action**: Analyze context, list 1-3 Benchmarks.
+    **Action**: Analyze context, list 1-3 benchmark products or open-source projects with brief reference value.
 </step_0_benchmark>
 
 <step_1_strategy>
@@ -68,11 +67,11 @@
     **Action 2: Feature Matrix Generation**
     - Extract Core.
     - Brainstorm 6-10 Extensions.
-    - **AX Note**: Describe impact on AI context length (e.g. "Requires reading massive docs").
+    - **AX Note**: Describe impact on AI context length.
 
     **Action 3: Strategic Gap Analysis**
-    - Generate 4 key strategic questions.
-    - **AI Perspective Rule**: Evaluate based on AI code generation difficulty and accuracy.
+    - Generate 3 key strategic questions.
+    - **AI Perspective Rule**: Evaluate based on AI code generation difficulty.
 
     ---
 
@@ -110,24 +109,7 @@
       > **AI Pros**: Mature component libs, stable gen | **AI Cons**: Low styling flexibility
     - **[Z] Custom**: (Please describe)
 
-    **[Q3] The "Iron Triangle" Trade-off**
-    > *Context*: Decides code generation priority (Quality vs Speed vs Perf).
-    
-    - **[A] Velocity First (MVP)**: Speed first.
-      > **AI Pros**: Single monolith file allowed, high context hit rate | **AI Cons**: High coupling, hard to refactor later
-    - **[B] Performance First**: Extreme perf.
-      > **AI Pros**: Strong typing (Rust/Go) constraints | **AI Cons**: Complex memory/cache logic, Max reasoning difficulty
-    - **[C] Stability / Quality First**: Zero Bug.
-      > **AI Pros**: Enforced tests & types aid Self-Correction | **AI Cons**: Slow generation, double token cost
-    - **[D] Scalability First**: Scale ready.
-      > **AI Pros**: Decoupled modules | **AI Cons**: Context Fragmentation, cross-module reasoning errors
-    - **[E] UX / Animation First**: Experience first.
-      > **AI Pros**: None | **AI Cons**: Async state & Optimistic UI are race-condition prone
-    - **[F] Cost First**: Lowest cost.
-      > **AI Pros**: Simple arch (Serverless) | **AI Cons**: Cold start & stateless logic handling
-    - **[Z] Custom**: (Please describe)
-
-    **[Q4] Scale & Infrastructure**
+    **[Q3] Scale & Infrastructure**
     > *Context*: Decides infra complexity.
     
     - **[A] Hobby / Prototype**: Single/Serverless.
@@ -146,7 +128,7 @@
 
     ---
     
-    **⌨️ INPUT (Pipeline Reply)**: `ExtensionIDs | Q1 | Q2 | Q3 | Q4`
+    **⌨️ INPUT (Pipeline Reply)**: `ExtensionIDs | Q1 | Q2 | Q3`
 </step_1_strategy>
 
 <step_2_tech_gate>
@@ -196,20 +178,104 @@
 <step_3_roadmap>
     **Role**: TPM (Execution Mode)
     **Goal**: Convert strategy into **AI-Executable** atomic task chain.
-    
-    **AX Rules**:
-    1.  **Atomic Context**: Task context must be self-contained. Avoid forcing AI to read multiple large files.
-    2.  **Test-Driven**: Each task MUST include a "Verification" step for AI to run tests after coding.
-    3.  **No Ambiguity**: Task descriptions must be "Input/Output" precise, not vague "Implement feature".
+    **Target Template**: `docs/global/00_roadmap.md`
+
+    **Action**:
+    1.  **Define Phase 1 (Infra): The "Big Bang"**
+        - **Principle**: Establish complete infrastructure skeleton at once.
+        - **[INF-01] Project Scaffolding**: Directory structure, Linter, Env, Logger, Test Setup.
+        - **[INF-02] Core Entities** (If applicable): Database Schema, User/Auth Model, Global Types.
+        - **Rule**: Phase 2 tasks default dependency is INF-01 (and INF-02).
+
+    2.  **Define Phase 2 (Feature): Domain Partitioning**
+        - **Principle**: Must group by **Domain** (Tag).
+        - **Applicability**: All project types (Web/CLI/Backend/Script).
+            - *Web*: User, Order, Payment
+            - *CLI*: ConfigCmd, UserCmd, PluginSys
+            - *Script*: Parser, Network, Output
+        - **Parallelism**: Tasks in different Domains are parallel by default.
+
+    3.  **Visualization (Mermaid)**
+        - **Constraint**: Must define `classDef` (done/active/pending/blocked) in Mermaid header.
+        - **Apply**: Every node must have a class applied.
+        - **Direct edges only**: Graph edges (`-->`) represent only the **direct, nearest** prerequisite. Do **NOT** draw edges for every entry in the Dep field.
+          - The Dep field is the **complete logical dependency list** (including indirect/transitive deps), used for task scheduling.
+          - The Mermaid graph is a **simplified visualization** showing only the primary execution path, keeping the diagram clean and readable.
+          - Example: A.Dep=[B,C], B.Dep=[C] — graph draws `C --> B --> A` only, do **NOT** draw `C --> A`.
+
+    **Task Schema (Standard)**:
+    ```markdown
+    ## Pending (no dependencies / all deps completed):
+    - [ ] ⏳ **[ID]** Title
+      - 🎯 Goal: <Detailed DoD - Input/Output/Criteria>
+      - 🔗 Dep: None
+      - 🏷️ Tag: <Domain>
+      - 📁 Slug: <English_Slug>
+
+    ## Blocked (has unresolved dependencies):
+    - [ ] 🧱 **[ID]** Title
+      - 🎯 Goal: <Detailed DoD - Input/Output/Criteria>
+      - 🔗 Dep: [Prev ID]
+      - 🏷️ Tag: <Domain>
+      - 📁 Slug: <English_Slug>
+    ```
+
+    **Initial Status Rule**:
+    - **`Dep: None`** or all Deps completed -> use `⏳ pending` + Mermaid `class ID pending`
+    - **`Dep: [XXX]`** with unresolved Deps -> use `🧱 blocked` + Mermaid `class ID blocked`
+    - Do **NOT** set all tasks to `⏳ pending`. You MUST differentiate based on dependency status.
+
+    > **Slug Rule**: Used for `features/<ID>_<Slug>/` directory naming. Must be English, PascalCase or underscore-separated (e.g. `Subscription_CRUD`, `Theme_Switch`). Title can be in any language, but Slug must be English.
+
+    **Output Template**:
+    (Must include `<!-- TASKS_START -->` / `<!-- TASKS_END -->` and `<!-- VISUAL_START -->` / `<!-- VISUAL_END -->` anchors)
 </step_3_roadmap>
 
 <step_4_audit>
     **Role**: Compliance Officer
-    **Goal**: Ensure output meets AI generation best practices.
+    **Goal**: Ensure documents actually generated in this start session meet standards, intercept non-compliant content.
+
+    **Checklist**:
+    1.  **Vision Completeness**: Does `00_vision.md` include North Star Metric and Design Philosophy?
+    2.  **Tech Stack Consistency**: Does `02_tech_stack.md` match Step 2 user choices? Does it include complete tech stack declarations?
+    3.  **Roadmap Format Compliance**: Run `npx archi task --check` to validate task list vs Mermaid graph consistency.
+    4.  **Design Tokens** (if project has UI): Does `03_design_tokens.md` include basic color/font/spacing variable definitions?
+
+    **Action**: 
+    - If issues found, **silently fix (Auto-Fix)** document content.
+    - If issues are severe, mark `⚠️ Risk Warning` in output.
+    
+    **Bridge**: "✅ Audit Passed. Generating final confirmation..."
 </step_4_audit>
 
 <step_5_signoff>
-    **Action**: Output final confirmation.
+    **Action**:
+    1.  Run `npx archi task` to display project task progress overview.
+    2.  Output final confirmation.
+
+    **Output Template**:
+    ```markdown
+    ## ✅ Project Initialization Complete
+
+    **Project**: `<Project Name>` | **Type**: `<Web/CLI/Backend/...>` | **Tasks**: `<Total>` (Phase 1: `<N>`, Phase 2: `<N>`)
+
+    ### 📋 Decisions Summary
+    | Question | Choice | Key Impact |
+    |:---|:---|:---|
+    | Q1. Product DNA | [Choice] | [Brief impact] |
+    | Q2. Visual Style | [Choice] | [Brief impact] |
+    | Q3. Scale | [Choice] | [Brief impact] |
+
+    ### 🧭 Next Steps
+    | Scenario | Recommended Action |
+    |:---|:---|
+    | **Start planning first feature** | `/archi.plan INF-01` |
+    | **View roadmap** | Read `[[__DOCS_DIR__]]/global/00_roadmap.md` |
+    | **Adjust tech stack** | `/archi.revise tech_stack [change description]` |
+    | **View help** | `/archi.help` |
+
+    > 💡 **Recommendation**: Run `/archi.plan INF-01` to start planning the first infrastructure task.
+    ```
 </step_5_signoff>
 
 </protocol_kickoff>

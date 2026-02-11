@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: Based on the task list in `features/<id>_<Name>/3.plan.md`, engineer and standardize the feature implementation; strictly follow `02_tech_stack.md` (and `03_design_tokens.md` if the project has UI); pass build, type check, lint, formatting, basic tests, and audit locally.
+  **Goal**: Based on the task list in `features/<id>_<Slug>/plan.md`, engineer and standardize the feature implementation; strictly follow `02_tech_stack.md` (and `03_design_tokens.md` if the project has UI); pass build, type check, lint, formatting, basic tests, and audit locally.
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -12,17 +12,24 @@
       4.  **SOTA Pattern Check**: Reject outdated practices; prioritize modern best practices defined in the project tech stack.
       5.  **No Commit Policy**: Do not commit code without user authorization; present changes as patches only.
       6.  **Static Check First**: Code must pass all static checks (Type, Lint, Format) to be considered complete.
+      7.  **Plan Completion Gate**: Must verify task completion in `plan.md` before signing off. All AI-completable tasks must be finished; only "Human Intervention Required" and "Force Majeure" tasks are exempt.
     </principles>
 </meta>
 
 <step_1_resolve>
     **Role**: System Analyst
     **Action**:
-    1.  **Resolve ID**: Parse `<id>` -> `<id>` (Feature Name) and phase/status from `[[__DOCS_DIR__]]/global/00_roadmap.md`.
-    2.  **Load Context**:
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/1.spec.md` (Logic & Scenarios)
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/2.ui.md` (Design & Components, if exists)
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/3.plan.md` (Task Breakdown)
+    1.  **Resolve ID**: Parse `<id>` -> Feature Name, `📁 Slug`, and phase/status from `[[__DOCS_DIR__]]/global/00_roadmap.md`.
+    2.  **Pre-flight Check (Status Gate)**:
+        - Verify that task `<id>` current status is **`active`** (🟢).
+        - **Rule**: Only tasks with `active` status can enter the code workflow.
+        - If status is `pending` (⏳): **Reject** — "Please run `/archi.plan <ID>` first to complete feature planning. The task will be set to active automatically upon completion."
+        - If status is `blocked` (🧱): **Reject** — "Task is blocked. Prerequisites are not yet completed. Please complete dependency tasks first."
+        - If status is `done` (✅): **Reject** — "Task is already completed. Use `/archi.edit <ID>` if modifications are needed."
+    3.  **Load Context** (Use the `📁 Slug` field from Roadmap to locate the directory):
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` (Logic & Scenarios)
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` (Design & Components, if exists)
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md` (Task Breakdown)
         - Read `02_tech_stack.md` (Technical Red Lines)
         - Read `[[__DOCS_DIR__]]/global/03_design_tokens.md` (Design Tokens, if project has UI)
         - Read `[[__DOCS_DIR__]]/global/04_data_snapshot.md` (Data Model, if project has Data Layer)
@@ -157,58 +164,53 @@
 </step_5_audit>
 
 <step_6_signoff>
-    **Action**:
+    **🚨 Plan Completion Gate (Mandatory - Pre-Signoff Check)**:
+    > Before executing the signoff process, task completion **must** be verified first. Skipping is strictly prohibited.
+
+    1.  **Check Task Completion**: Run `npx archi plan <ID>` to check the completion status of all task Checkboxes in `plan.md`.
+    2.  **Pass Criteria**: All tasks are checked `[x]`, **or** uncompleted tasks belong **only** to the following exempt categories:
+        - 🧑 **Human Intervention Required**: Manual testing, user acceptance, manual approval, requires real device/environment verification, etc.
+        - 🌐 **Force Majeure**: Third-party service unavailable, external dependency not ready, environment/permission restrictions, requires paid resources, etc.
+    3.  **Failure Handling**: If there are tasks that **can be completed by AI but are not**, **signing off is strictly prohibited**. Must return to `<step_3_implement>` to continue implementation until all completable tasks are finished.
+    4.  **Exemption Annotation**: For exempt uncompleted tasks, must clearly annotate the **reason** and **exemption category** (🧑 Human / 🌐 Force Majeure) in the final output.
+
+    ---
+
+    **Action** (Execute only after Plan Completion Gate passes):
     1. Output "Completed Task List" and corresponding patch links (Code Reference).
-    2. Update `[[__DOCS_DIR__]]/features/<id>_<Name>/3.plan.md`, check the completed task Checkboxes.
-    3. Update status of `[id]/<Name>` in `[[__DOCS_DIR__]]/global/00_roadmap.md` (e.g., from Pending -> In Progress or when done -> Done).
-    4. Provide "Next Step Suggestions": Continue implementing subsequent Phases or trigger `/archi.plan` to refine new modules.
-    5. **Git Commit Suggestion**: Generate commit message conforming to Conventional Commits specification based on changes (e.g. `feat(auth): implement login flow`).
+    2. Update `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md`, check the completed task Checkboxes.
+    3. **🚨 Roadmap Status Sync (Mandatory)**:
+       - Run `npx archi task <ID> --status done` (or `active`, depending on whether all Phases are complete) to update task status.
+       - **NEVER** manually edit `00_roadmap.md` to change status. MUST use the CLI command to ensure bidirectional sync between task list and Mermaid graph.
+    4. **🚨 Consistency Check (Mandatory)**:
+       - Run `npx archi task --check` to validate Roadmap consistency.
+       - If check fails, fix inconsistencies and re-run `--check` until it passes.
+    5. Provide "Next Step Suggestions": Continue implementing subsequent Phases or trigger `/archi.plan` to refine new modules.
+    6. **Git Commit Suggestion**: Generate commit message conforming to Conventional Commits specification based on changes (e.g. `feat(auth): implement login flow`).
 
     **Output Template**:
     ```markdown
     ## ✅ Implementation Complete
 
-    **Feature ID**: `<ID>`
-    **Feature Name**: `<Name>`
-    **Status**: [In Progress / Done]
+    **Feature**: `<ID>` — `<Name>` | **Status**: [In Progress / Done]
 
-    ### 📋 Implementation Summary
-    * ✅ [List major completed tasks]
-    * ✅ [List major completed tasks]
-    * ✅ [List major completed tasks]
+    ### 📋 Completed Tasks
+    * ✅ [Major completed task]
+    * ✅ [Major completed task]
 
-    ### 📂 Files Changed
-    * `[source]/...` (New/Modified, e.g. `src/`, `lib/`, `cmd/`, `packages/`, etc.)
-    * `[tests]/...` (New/Modified, e.g. `tests/`, `__tests__/`, `spec/`, etc.)
-    * `[[__DOCS_DIR__]]/features/<ID>_<Name>/3.plan.md` (Updated)
-
-    ### 🔎 Validation & Audit Results
-    * ✅ Build: Passed
-    * ✅ Type Check: Passed
-    * ✅ Lint: Passed
-    * ✅ Format: Passed
-    * ✅ Tests: [X/X] Passed
-    * ✅ Audit: All checks passed
+    ### ⏭️ Exempted Tasks (If any)
+    * 🧑 [Task name] — Reason: [Human intervention required]
+    * 🌐 [Task name] — Reason: [Force majeure]
 
     ### 💬 Git Commit Suggestion
-    ```
-    feat(<scope>): <description>
-    ```
+    `feat(<scope>): <description>`
 
-    ---
-
-    ### 🧭 Next Steps (下一步操作)
-
-    | Scenario | Recommended Action | Explanation |
-    |:---|:---|:---|
-    | **Continue Implementation** | Check unfinished tasks in `3.plan.md` | If phases remain, continue `/archi.code <ID>` |
-    | **Start Next Feature** | `/archi.plan [Feature_ID]` | Select next Ready task in Roadmap to plan |
-    | **Found Bug** | `/archi.fix <ID> [bug description]` | Diagnose and fix issues |
-    | **Requirement Change** | `/archi.edit <ID> [change description]` | Modify Spec/UI docs and update plan |
-    | **View Help** | `/archi.help` | Show full command manual |
-
-    > 💡 **Recommendation**: 
-    > - If current feature has completed all Phases, run `/archi.plan [Next Feature_ID]` to start planning new feature.
-    > - If current feature has unfinished Phases, continue running `/archi.code <ID>` to complete remaining tasks.
+    ### 🧭 Next Steps
+    | Scenario | Recommended Action |
+    |:---|:---|
+    | **Continue Implementation** | `/archi.code <ID>` |
+    | **Plan New Feature** | `/archi.plan [Feature_ID]` |
+    | **Found Bug** | `/archi.fix <ID> [bug description]` |
+    | **Requirement Change** | `/archi.edit <ID> [change description]` |
     ```
 </step_6_signoff>

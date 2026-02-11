@@ -59,4 +59,74 @@ alwaysApply: true
 - **Command Mode (`/archi.*`)**: 是**高強度的、流程化的**。用戶需要按照模板步驟一步步來 (Step 1 -> Step 2)。
 - **Chat Mode (Natural Language)**: 是**自由的、輔助性的**。你作為架構師，利用手頭的規則文件 (00/02/90/99) 回答用戶問題，輔助用戶開發。
 
+---
+
+## 4. CLI Tools Registry (CLI 工具註冊表)
+
+> 除了對話指令 (`/archi.*`)，Architext 還提供了可在**終端執行的 CLI 命令**。
+> 你應當在**合適的時機**主動調用這些命令，而非等待用戶手動執行。
+
+### ⚠️ 工作目錄規則 (Critical)
+
+> **在執行任何 `npx archi` 命令之前，你必須確保終端的工作目錄是專案根目錄（即 `.architext/` 資料夾所在的目錄）。**
+>
+> - 如果你不確定當前目錄，先運行 `pwd`（Linux/Mac）或 `cd`（Windows）確認。
+> - 如果當前不在專案根目錄，**先執行 `cd <專案根目錄路徑>`** 再運行命令。
+> - **錯誤示例**: 在 `src/components/` 子目錄下直接運行 `npx archi task` — 命令將無法找到 `.architext/` 配置。
+> - **正確示例**: `cd /path/to/project && npx archi task`
+
+### `npx archi task` — Roadmap 任務管理
+
+| 子命令 / 選項 | 用途 | 範例 |
+| :--- | :--- | :--- |
+| `npx archi task` | 列出所有任務及進度條 | `npx archi task` |
+| `npx archi task --list` | 同上（顯式模式） | `npx archi task --list` |
+| `npx archi task <ID> --status <s>` | 更新任務狀態 | `npx archi task INF-001 --status done` |
+| `npx archi task --check` | 檢查 Roadmap 一致性（列表 vs 圖） | `npx archi task --check` |
+
+**合法狀態值**: `pending` · `active` · `done` · `blocked`
+
+#### 何時使用？
+
+| 場景 | 動作 |
+| :--- | :--- |
+| `/archi.plan` 完成後，新功能已規劃 | `npx archi task <ID> --status active` |
+| `/archi.code` 完成後，功能已實現 | `npx archi task <ID> --status done` |
+| 發現某任務被阻塞 | `npx archi task <ID> --status blocked` |
+| 修改了 `00_roadmap.md` 後 | `npx archi task --check` 驗證一致性 |
+| 需要了解專案進度全貌 | `npx archi task` 查看概覽 |
+
+> **重要**: 當你透過 `/archi.code` 或 `/archi.plan` 完成任務時，**必須**主動運行 `npx archi task <ID> --status done` 更新進度，而非等待用戶手動執行。
+
+### `npx archi plan` — Plan 完成度檢查
+
+> 檢查指定 Feature 的 `plan.md` 中 checkbox 任務的完成度。
+> 自動識別人工驗收區域（Manual Verification），將其排除在自動化統計之外。
+
+| 子命令 / 選項 | 用途 | 範例 |
+| :--- | :--- | :--- |
+| `npx archi plan <ID>` | 檢查指定 Feature 的 Plan 完成度 | `npx archi plan SUB-01` |
+
+**輸出範例**:
+```
+📋 Plan 檢查: SUB-01 訂閱 CRUD
+
+Phase 1: 資料層與校驗          [4/4] ✅
+Phase 2: UI 元件               [6/6] ✅
+Manual Verification            [0/5] (跳過 — 人工驗收)
+──────────────────────────────────────
+合計: 10/10 (100%)
+✅ 所有自動化任務已完成！
+```
+
+#### 何時使用？
+
+| 場景 | 動作 |
+| :--- | :--- |
+| `/archi.code` 簽收前，強制驗證任務完成度 | `npx archi plan <ID>` 確認全部 checkbox 已勾選 |
+| 想了解某個 Feature 的實施進展 | `npx archi plan <ID>` 查看各 Phase 完成比例 |
+| 存在未完成任務但需要簽收 | 檢查輸出中的未勾選項，判斷是否屬於人工驗收/不可抗力 |
+
+> **重要**: 在 `/archi.code` 的簽收階段 (Step 6 Sign Off)，**必須**先運行 `npx archi plan <ID>` 驗證 Plan 完成度。只有所有可由 AI 完成的任務全部勾選（或未完成項僅屬於人工驗收/不可抗力），才能執行簽收流程。
+
 **End of Dispatcher.**

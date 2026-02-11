@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: 基於 `features/<id>_<Name>/3.plan.md` 的任務清單，工程化、規範化地完成功能開發；嚴格遵循 `02_tech_stack.md`（如專案有 UI，還需遵循 `03_design_tokens.md`）；在本地通過建置、型別檢查、Lint、格式化、基本測試與審計。
+  **Goal**: 基於 `features/<id>_<Slug>/plan.md` 的任務清單，工程化、規範化地完成功能開發；嚴格遵循 `02_tech_stack.md`（如專案有 UI，還需遵循 `03_design_tokens.md`）；在本地通過建置、型別檢查、Lint、格式化、基本測試與審計。
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -12,17 +12,24 @@
       4.  **SOTA Pattern Check**: 拒絕過時寫法；優先採用專案技術堆疊中定義的現代最佳實務。
       5.  **No Commit Policy**: 未經使用者授權不得提交程式碼；僅以修補程式形式呈現變更。
       6.  **Static Check First**: 程式碼必須通過所有靜態檢查（型別、Lint、格式化）才能視為完成。
+      7.  **Plan Completion Gate**: 結束前必須驗證 `plan.md` 的任務清單完成度。所有可由 AI 完成的任務必須全部完成，僅允許「需要人工介入」和「不可抗力」類任務豁免。
     </principles>
 </meta>
 
 <step_1_resolve>
     **Role**: 系統分析師
     **Action**:
-    1.  **Resolve ID**: 從 `[[__DOCS_DIR__]]/global/00_roadmap.md` 解析 `<id>` -> `<id>` (Feature Name) 與階段/狀態。
-    2.  **Load Context**:
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/1.spec.md`（邏輯與場景）
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/2.ui.md`（設計與元件，如存在）
-        - Read `[[__DOCS_DIR__]]/features/<id>_<name>/3.plan.md`（任務拆解）
+    1.  **Resolve ID**: 從 `[[__DOCS_DIR__]]/global/00_roadmap.md` 解析 `<id>` -> Feature Name、`📁 Slug` 與階段/狀態。
+    2.  **Pre-flight Check (狀態門禁)**:
+        - 檢查任務 `<id>` 的當前狀態是否為 **`active`** (🟢)。
+        - **Rule**: 只有 `active` 狀態的任務才能進入 code 流程。
+        - 如果狀態為 `pending` (⏳): **拒絕執行**，提示 "請先執行 `/archi.plan <ID>` 完成功能規劃，規劃完成後任務將自動變為 active。"
+        - 如果狀態為 `blocked` (🧱): **拒絕執行**，提示 "任務被阻塞，前置依賴尚未完成。請先完成依賴任務。"
+        - 如果狀態為 `done` (✅): **拒絕執行**，提示 "任務已完成，無需再次執行。如需修改請使用 `/archi.edit <ID>`。"
+    3.  **Load Context** (使用 Roadmap 中的 `📁 Slug` 欄位定位資料夾):
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md`（邏輯與場景）
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md`（設計與元件，如存在）
+        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md`（任務拆解）
         - Read `02_tech_stack.md`（技術紅線）
         - Read `[[__DOCS_DIR__]]/global/03_design_tokens.md`（設計 Token，如專案有 UI）
         - Read `[[__DOCS_DIR__]]/global/04_data_snapshot.md`（資料模型，如專案有資料層）
@@ -157,58 +164,53 @@
 </step_5_audit>
 
 <step_6_signoff>
-    **Action**:
+    **🚨 Plan Completion Gate (強制 - 結束前必檢)**:
+    > 在執行簽收流程之前，**必須**先驗證任務完成度，嚴禁跳過。
+
+    1.  **檢查任務完成度**: 運行 `npx archi plan <ID>` 檢查 `plan.md` 中所有任務 Checkbox 的完成狀態。
+    2.  **判定通過條件**: 所有任務均已勾選 `[x]`，**或**未完成的任務**僅**屬於以下豁免類別：
+        - 🧑 **需要人工介入**: 手動測試、使用者驗收、人工審批、需要真實裝置/環境驗證等。
+        - 🌐 **不可抗力**: 第三方服務不可用、外部相依未就緒、環境/權限限制、需要付費資源等。
+    3.  **未通過處理**: 如果存在**可由 AI 完成但未完成**的任務，**嚴禁簽收 (Sign Off)**。必須回到 `<step_3_implement>` 繼續實施，直到所有可完成的任務全部完成。
+    4.  **豁免標註**: 對於豁免的未完成任務，必須在最終輸出中明確標註**原因**和**豁免類別** (🧑 人工 / 🌐 不可抗力)。
+
+    ---
+
+    **Action** (僅在 Plan Completion Gate 通過後執行):
     1. 輸出「完成任務清單」與對應的修補程式連結（Code Reference）。
-    2. 更新 `[[__DOCS_DIR__]]/features/<id>_<Name>/3.plan.md`，勾選已完成的任務 Checkbox。
-    3. 更新 `[[__DOCS_DIR__]]/global/00_roadmap.md` 中 `[id]/<Name>` 的狀態（例如從 Pending -> In Progress 或完成時 -> Done）。
-    4. 提供「下一步建議」：繼續實現後續 Phase 或觸發 `/archi.plan` 以細化新模組。
-    5. **Git Commit Suggestion**: 根據變更內容，產生符合 Conventional Commits 規範的提交資訊 (e.g. `feat(auth): implement login flow`).
+    2. 更新 `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md`，勾選已完成的任務 Checkbox。
+    3. **🚨 Roadmap Status Sync (強制)**:
+       - 執行 `npx archi task <ID> --status done`（或 `active`，取決於是否所有 Phase 都已完成）更新任務狀態。
+       - **嚴禁**直接手動編輯 `00_roadmap.md` 來改狀態，必須透過 CLI 命令確保列表與 Mermaid 圖雙向同步。
+    4. **🚨 Consistency Check (強制)**:
+       - 執行 `npx archi task --check` 驗證 Roadmap 一致性。
+       - 如果檢查失敗，必須修復不一致後重新執行 `--check` 直到通過。
+    5. 提供「下一步建議」：繼續實現後續 Phase 或觸發 `/archi.plan` 以細化新模組。
+    6. **Git Commit Suggestion**: 根據變更內容，產生符合 Conventional Commits 規範的提交資訊 (e.g. `feat(auth): implement login flow`).
 
     **Output Template**:
     ```markdown
     ## ✅ Implementation Complete
 
-    **Feature ID**: `<ID>`
-    **Feature Name**: `<Name>`
-    **Status**: [In Progress / Done]
+    **Feature**: `<ID>` — `<Name>` | **Status**: [In Progress / Done]
 
-    ### 📋 Implementation Summary
-    * ✅ [列出完成的主要任務]
-    * ✅ [列出完成的主要任務]
-    * ✅ [列出完成的主要任務]
+    ### 📋 Completed Tasks
+    * ✅ [完成的主要任務]
+    * ✅ [完成的主要任務]
 
-    ### 📂 Files Changed
-    * `[source]/...` (新增/修改，例如 `src/`, `lib/`, `cmd/`, `packages/` 等)
-    * `[tests]/...` (新增/修改，例如 `tests/`, `__tests__/`, `spec/` 等)
-    * `[[__DOCS_DIR__]]/features/<ID>_<Name>/3.plan.md` (已更新)
-
-    ### 🔎 Validation & Audit Results
-    * ✅ Build: Passed
-    * ✅ Type Check: Passed
-    * ✅ Lint: Passed
-    * ✅ Format: Passed
-    * ✅ Tests: [X/X] Passed
-    * ✅ Audit: All checks passed
+    ### ⏭️ Exempted Tasks (如有)
+    * 🧑 [任務名稱] — 原因: [需要人工介入]
+    * 🌐 [任務名稱] — 原因: [不可抗力]
 
     ### 💬 Git Commit Suggestion
-    ```
-    feat(<scope>): <description>
-    ```
+    `feat(<scope>): <description>`
 
-    ---
-
-    ### 🧭 Next Steps (下一步操作)
-
-    | 場景 | 推薦操作 | 說明 |
-    |:---|:---|:---|
-    | **繼續實現當前功能** | 檢查 `3.plan.md` 中未完成的任務 | 如果還有 Phase 未完成，繼續執行 `/archi.code <ID>` |
-    | **開始下一個功能** | `/archi.plan [Feature_ID]` | 選擇 Roadmap 中下一個 Ready 任務進行規劃 |
-    | **發現 Bug** | `/archi.fix <ID> [bug描述]` | 診斷並修復問題 |
-    | **需求變更** | `/archi.edit <ID> [變更描述]` | 修改 Spec/UI 文件並更新計劃 |
-    | **檢視幫助** | `/archi.help` | 顯示完整指令手冊 |
-
-    > 💡 **推薦**: 
-    > - 如果當前功能已完成所有 Phase，執行 `/archi.plan [下一個 Feature_ID]` 開始規劃新功能。
-    > - 如果當前功能還有未完成的 Phase，繼續執行 `/archi.code <ID>` 完成剩餘任務。
+    ### 🧭 Next Steps
+    | 場景 | 推薦操作 |
+    |:---|:---|
+    | **繼續實現** | `/archi.code <ID>` |
+    | **規劃新功能** | `/archi.plan [Feature_ID]` |
+    | **發現 Bug** | `/archi.fix <ID> [bug描述]` |
+    | **需求變更** | `/archi.edit <ID> [變更描述]` |
     ```
 </step_6_signoff>

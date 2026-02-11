@@ -6,7 +6,7 @@
     <style>Diagnostic, Surgical, Spec-Compliant</style>
     <language>English</language>
     <principles>
-      1.  **Spec Immutable**: Strictly prohibited from modifying `1.spec.md` or `2.ui.md` (unless the Bug itself is a documentation error).
+      1.  **Spec Immutable**: Strictly prohibited from modifying `spec.md` or `ui.md` (unless the Bug itself is a documentation error).
       2.  **Reproduction**: Must conceive reproduction steps or test cases first.
       3.  **Root Cause**: Must analyze root cause, not just patch the surface.
       4.  **Test-Driven**: Fix plan must include adding test cases (Unit/Integration).
@@ -18,12 +18,12 @@
     **Role**: Detective (Debugger)
     **Action**:
     1.  **Resolve Target**:
-        - If `<id>` provided: Lock target `features/<id>_<name>/`.
+        - If `<id>` provided: Lock target `features/<ID>_<Slug>/`.
         - If `<id>` not provided: Analyze `[context]` and search for most relevant feature module in `features/` directory.
           - ➡️ Found unique match: Auto lock.
           - ➡️ Found multiple matches: List candidates and ask user.
           - ➡️ Cannot locate: Report error and ask user to specify ID.
-    2.  Read all documents under target directory (`1.spec.md`, `2.ui.md`, `3.plan.md`) and relevant code.
+    2.  Read all documents under target directory (`spec.md`, `ui.md`, `plan.md`) and relevant code.
     3.  Analyze `[context]` description, combine with code logic to locate potential failure points.
     4.  **Hypothesis**: Propose 1-3 possible root cause hypotheses.
 
@@ -34,14 +34,14 @@
 <step_2_plan_fix>
     **Role**: Doctor
     **Action**:
-    - Update `[[__DOCS_DIR__]]/features/<id>_<name>/3.plan.md`.
+    - Update `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.md`.
     - Append `### Bugfix: <Bug Title>` section.
     - **Tasks**:
       1.  Create Reproduction Test Case (Red).
       2.  Apply Fix (Green).
       3.  Regression Test.
     
-    **Output**: `3.plan.md` with fix tasks appended.
+    **Output**: `plan.md` with fix tasks appended.
 </step_2_plan_fix>
 
 <step_3_draft_patch>
@@ -80,41 +80,21 @@
     ```markdown
     ## ✅ Bug Fixed
 
-    **Feature ID**: `<ID>`
-    **Feature Name**: `<Name>`
-    **Bug Description**: `<Brief description>`
+    **Feature**: `<ID>` — `<Name>` | **Bug**: `<Brief description>`
 
-    ### 🐛 Diagnosis (根因分析)
-    **Root Cause**: [Root Cause Analysis]
-    **Impact**: [Impact Scope]
+    ### 🐛 Root Cause
+    [Root cause analysis]
 
     ### ✅ Fix Applied
-    * **Files Modified**: 
-      * `src/...` (Brief description of fix)
-      * `tests/...` (Added test cases)
-    * **Plan Updated**: `[[__DOCS_DIR__]]/features/<ID>_<Name>/3.plan.md` (Fix tasks appended)
+    * [Brief description of fix]
+    * [Added test cases]
 
-    ### 🧪 Verification Results
-    * ✅ Reproduction Test: Passed
-    * ✅ Regression Test: Passed
-    * ✅ Lint/Type Check: Passed
-    * ✅ Build: Passed
-
-    ---
-
-    ### 🧭 Next Steps (下一步操作)
-
-    | Scenario | Recommended Action | Explanation |
-    |:---|:---|:---|
-    | **Continue Development** | `/archi.code <ID>` | If there are unfinished feature development tasks |
-    | **Test Verification** | Run full test suite | Ensure fix introduced no regression issues |
-    | **Found New Bug** | `/archi.fix <ID> [bug description]` | If there are other issues to fix |
-    | **Requirement Change** | `/archi.edit <ID> [change description]` | If feature requirements need adjustment |
-    | **View Help** | `/archi.help` | Show full command manual |
-
-    > 💡 **Recommendation**: 
-    > - If fix is complete and verification passed, you can continue running `/archi.code <ID>` to complete other development tasks.
-    > - Recommend running full test suite to ensure no regression introduced.
+    ### 🧭 Next Steps
+    | Scenario | Recommended Action |
+    |:---|:---|
+    | **Continue Development** | `/archi.code <ID>` |
+    | **Found New Bug** | `/archi.fix <ID> [bug description]` |
+    | **Requirement Change** | `/archi.edit <ID> [change description]` |
     ```
 </step_5_summary>
 
