@@ -1,216 +1,127 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: 基於 `features/<id>_<Slug>/plan.md` 的任務清單，工程化、規範化地完成功能開發；嚴格遵循 `02_tech_stack.md`（如專案有 UI，還需遵循 `03_design_tokens.md`）；在本地通過建置、型別檢查、Lint、格式化、基本測試與審計。
+  **Goal**: 基於 `features/<id>_<Slug>/plan.md` 任務清單，完成功能開發；遵循 `02_tech_stack.md`（[?UI] 同時遵循 `03_design_tokens.md`）；通過建置、型別、Lint、格式化、測試與審計。
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
     <language>繁體中文</language>
     <principles>
-      1.  **Frontmatter Preservation**: 嚴禁刪除或修改任何已存在檔案的 YAML Frontmatter 或等效詮釋資料。
-      2.  **Follow Conventions**: 僅使用儲存庫已存在的函式庫與模式；先讀程式碼再改動。
-      3.  **Security First**: 禁止引入或列印任何金鑰；敏感資訊不落盤。
-      4.  **SOTA Pattern Check**: 拒絕過時寫法；優先採用專案技術堆疊中定義的現代最佳實務。
-      5.  **No Commit Policy**: 未經使用者授權不得提交程式碼；僅以修補程式形式呈現變更。
-      6.  **Static Check First**: 程式碼必須通過所有靜態檢查（型別、Lint、格式化）才能視為完成。
-      7.  **Plan Completion Gate**: 結束前必須驗證 `plan.md` 的任務清單完成度。所有可由 AI 完成的任務必須全部完成，僅允許「需要人工介入」和「不可抗力」類任務豁免。
+      1.  **Frontmatter Preservation**: 禁改已有檔案的 YAML Frontmatter。
+      2.  **Follow Conventions**: 僅用儲存庫已有庫與模式；先讀後改。
+      3.  **Security First**: 禁引入/列印密鑰；敏感資訊不落盤。
+      4.  **SOTA Pattern Check**: 拒絕過時寫法；採用 tech_stack 定義的最佳實務。
+      5.  **No Commit Policy**: 未經授權不提交；以補丁呈現變更。
+      6.  **Static Check First**: 須通過所有靜態檢查(型別/Lint/格式化)。
+      7.  **Plan Completion Gate**: 結束前驗證 plan.md 完成度。AI 可完成的任務須全部完成，僅豁免「人工介入」和「不可抗力」類。
     </principles>
 </meta>
 
 <step_1_resolve>
     **Role**: 系統分析師
     **Action**:
-    1.  **Resolve ID**: 從 `[[__DOCS_DIR__]]/global/00_roadmap.md` 解析 `<id>` -> Feature Name、`📁 Slug` 與階段/狀態。
-    2.  **Pre-flight Check (狀態門禁)**:
-        - 檢查任務 `<id>` 的當前狀態是否為 **`active`** (🟢)。
-        - **Rule**: 只有 `active` 狀態的任務才能進入 code 流程。
-        - 如果狀態為 `pending` (⏳): **拒絕執行**，提示 "請先執行 `/archi.plan <ID>` 完成功能規劃，規劃完成後任務將自動變為 active。"
-        - 如果狀態為 `blocked` (🧱): **拒絕執行**，提示 "任務被阻塞，前置依賴尚未完成。請先完成依賴任務。"
-        - 如果狀態為 `done` (✅): **拒絕執行**，提示 "任務已完成，無需再次執行。如需修改請使用 `/archi.edit <ID>`。"
-    3.  **Load Context** (使用 Roadmap 中的 `📁 Slug` 欄位定位資料夾):
-        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md`（邏輯與場景）
-        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md`（設計與元件，如存在）
-        - Read `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md`（任務拆解）
-        - Read `02_tech_stack.md`（技術紅線）
-        - Read `[[__DOCS_DIR__]]/global/03_design_tokens.md`（設計 Token，如專案有 UI）
-        - Read `[[__DOCS_DIR__]]/global/04_data_snapshot.md`（資料模型，如專案有資料層）
+    1.  **Resolve ID**: 從 `[[__DOCS_DIR__]]/global/00_roadmap.md` 解析 `<id>` → Feature Name、Slug、階段/狀態。
+    2.  **Status Gate** — 僅 `active` 可進入 code 流程:
 
-    **Output**: 匯總待實施任務的「原子清單」，標註相依性與先後順序。
-    **Bridge**: "上下文已載入，準備進入工程化實施階段……"
+        | 狀態 | 處理 |
+        |:---|:---|
+        | `active` 🟢 | 通過，繼續 |
+        | `pending` ⏳ | 拒絕 — 提示先執行 `/archi.plan <ID>` |
+        | `blocked` 🧱 | 拒絕 — 前置依賴未完成 |
+        | `done` ✅ | 拒絕 — 已完成，如需修改用 `/archi.edit <ID>` |
+
+    3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 邏輯與場景
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 設計與元件(如存在)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md` — 任務拆解
+        - `02_tech_stack.md` — 技術紅線
+        - [?UI] `[[__DOCS_DIR__]]/global/03_design_tokens.md`
+        - [?Data] `[[__DOCS_DIR__]]/global/04_data_snapshot.md`
+
+    **Output**: 待實施任務的原子清單，標註依賴與順序。
 </step_1_resolve>
 
 <step_2_plan>
     **Role**: Tech Lead
     **Action**:
-    - 產生「執行藍圖」（根據專案類型動態調整）：
-      - **Phase A (Domain/Data/API)**: 資料模型/介面/校驗（型別安全、驗證邏輯）
-      - **Phase B (UI/Presentation)**: 元件結構/樣式（如專案有 UI，僅用設計 Token）
-      - **Phase C (Integration)**: 端對端串聯（狀態管理、路由、資料流、錯誤處理）
-      - **Note**: 對於非 UI 專案（如 CLI、Backend、Library），Phase B 可能不適用，應調整為相應的展示層或介面層。
-    - 每一項任務寫出「完成判定標準」（驗收條件），包括：
-      - 靜態檢查通過（型別、Lint、格式化）
-      - 功能測試通過（單元/整合測試）
-      - 符合架構規範（參考 `02_tech_stack.md`）
+    生成執行藍圖（根據專案型別動態調整）：
+    - **Phase A (Domain/Data/API)**: 資料模型/介面/校驗
+    - **Phase B (UI/Presentation)**: 元件結構/樣式（僅用 Design Token）；非 UI 專案調整為對應展示層
+    - **Phase C (Integration)**: 端到端串聯（狀態管理、路由、資料流、錯誤處理）
 
-    **Output**: 物件導向實施的任務列表（Checkbox），每一項可測量且原子化。
-    **Bridge**: "藍圖已產生，開始逐項落地程式碼……"
+    每項任務寫出完成判定標準：靜態檢查通過、測試通過、符合 tech_stack 規範。
+
+    **Output**: 面向實施的原子任務列表(Checkbox)。
 </step_2_plan>
 
 <step_3_implement>
     **Role**: 資深工程師
     **Protocol**:
-    - **Read First**: 修改前必須讀取目標檔案；遵循專案現有程式碼風格與命名。
-    - **Use Existing Stack**: 僅使用 `02_tech_stack.md` 中宣告的技術與函式庫。
-    - **Design Tokens Only** (如專案有 UI): UI 樣式嚴格使用 `03_design_tokens.md` 中的 Token；禁止硬編碼 Hex/px/rem 等值。
-    - **Type-Safe**: 補齊型別定義；使用專案技術堆疊中定義的型別系統（如 TypeScript、Zod、Rust 型別、Go 介面等）守護邊界。
-    - **Micro-Structure Policy (程式碼組織)**:
-        - 🚫 **No Junk Drawer**: 禁止建立泛化的 `utils/*` / `helpers/*` / `common/*` / `misc/*` 等「垃圾抽屜」目錄/檔案。必須按領域拆分（如 `date`, `currency`, `io`, `http`, `auth` 等）。
-        - 📍 **Colocation First**: 僅被單一模組使用的輔助邏輯，優先與模組同目錄共置（例如 `internal/`, `_internal/`, `_components/` 等專案約定的私有目錄），避免無意義的全域共用。
-        - 📦 **Public API Boundary**: 跨模組引用必須通過專案約定的 Public API 入口暴露（例如 `index.ts`, `lib.rs`, `__init__.py`, `pkg/<name>` 等），嚴禁深入引用內部實作細節。
-        - 📝 **Meaningful Comments**: 
-            - **Why, Not What**: 註解應解釋「為什麼這麼做」（業務背景/特殊邊界），而非翻譯程式碼做了什麼。
-            - **Anti-Pattern**: 拒絕 `// Increment i by 1` 這種廢話註解。
-        - 📖 **Code Readability**:
-            - **Self-Documenting Names**: 變數/函式名必須自解釋。拒絕 `a`, `b`, `tmp` 等無意義命名（迴圈變數 `i` 除外）。
-            - **Structured Logic**: 優先使用衛語句 (Guard Clauses) 減少巢狀；避免過長的函式。
-        - **Error Handling Policy (錯誤處理)**:
-            - 🚫 **No Silent Failures**: 禁止吞錯/禁止僅列印日誌後繼續。
-            - ✅ **Proper Propagation**: 必須根據場景選擇：拋出專案定義的錯誤類型（如 `AppError`/Exception）、返回 Result 類型、或返回可列舉的錯誤碼（遵循 `05_error_codes.md`，如適用）。
-            - 📢 **Feedback to Caller**: 必須對「呼叫方」提供可觀測回饋，而非靜默失敗（如 UI: Toast/Alert；CLI: Exit Code + Message；API: Status Code + Error Body；統一日誌/指標/追蹤，如專案有 Observability 約定）。
-    - **Robustness**: 必須顯式處理邊界情況（Loading/Error/Empty/Timeout 等）；嚴禁只寫 Happy Path。
-    - **SOTA**: 遵循 `02_tech_stack.md` 中定義的現代最佳實務；拒絕專案技術堆疊中明確禁止的過時模式。
-    - **Patch Output**: 以修補程式形式輸出全量變更，並附帶 Code Reference。
-    - **Scaffold Safety (鷹架安全)**:
-        - ⚠️ **Danger**: 許多鷹架/產生器在當前目錄 (`.`) 非空時會要求**清空或覆蓋檔案**，可能導致 `docs/` 或 `[[__DOCS_DIR__]]/` 被誤刪/污染。
-        - ✅ **Safe Strategy**: 在新目錄產生（或先備份再執行），並顯式保護 `[[__DOCS_DIR__]]/` 目錄不被覆蓋；任何刪除/覆蓋操作都必須先列清單並請求確認。
+    - **Read First**: 修改前須讀取目標檔案；遵循專案現有程式碼風格。
+    - **Use Existing Stack**: 僅用 `02_tech_stack.md` 宣告的技術與庫。
+    - [?UI] **Design Tokens Only**: 樣式嚴格使用 Token；禁硬編碼 Hex/px/rem。
+    - **Type-Safe**: 補齊型別定義；用專案技術棧的型別系統守護邊界。
+    - **Code Organization**: 遵循 `02_tech_stack.md` 中定義的架構模式與檔案歸位策略。
+    - **Comments**: 解釋 Why 而非 What；拒絕廢話註解。
+    - **Naming**: 自解釋命名；拒絕 `a`, `b`, `tmp` 等無意義名（迴圈變數 `i` 除外）。
+    - **Error Handling**: 禁吞錯/禁靜默失敗；須正確傳播錯誤並給呼叫方可觀測回饋（UI: Toast；CLI: Exit Code；API: Status Code + Body）。
+    - **Robustness**: 顯式處理邊界(Loading/Error/Empty/Timeout)；禁只寫 Happy Path。
+    - **SOTA**: 遵循 tech_stack 定義的最佳實務；拒絕明確禁止的過時模式。
+    - **Scaffold Safety**: 鷹架在非空目錄可能覆蓋檔案 — 須在新目錄生成並保護 `[[__DOCS_DIR__]]/`；刪除/覆蓋操作須先列清單並確認。
+    - **Patch Output**: 以補丁形式輸出變更，附 Code Reference。
 
-    **Action**:
-    - 實施 Phase A/B/C 的任務；對每一項產出最小可用程式碼（含必要的單元/整合測試樁）。
-    - 若需新增檔案/目錄，保持與現有架構模式 (`02_tech_stack.md`)/約定一致。
-    - 若需設定指令碼（如 ESLint、TSConfig），先讀取現有設定再最小改動。
-
-    **Output**: 修補程式集（Apply Patch）與檔案引用，覆蓋範圍明確。
+    **Action**: 按 Phase A/B/C 逐項實施；每項產出完整、工程化的程式碼（含必要測試）；新增檔案/目錄須與 tech_stack 一致。
 </step_3_implement>
 
 <step_4_validate>
     **Role**: 驗證工程師
-    **Action** (按順序執行，任何一步失敗都必須修復；**所有命令均以 `02_tech_stack.md` 或專案現有指令碼為準**):
-    
-    1.  **Build Check (建置檢查)**:
-        - 執行專案建置命令（如 `npm run build`, `cargo build`, `go build`, `mvn compile` 等）
-        - 若未知：讀取 `package.json`/`Cargo.toml`/`pom.xml`/`README.md` 推斷命令
-        - **Rule**: 建置必須成功，無編譯錯誤
-    
-    2.  **Type Check (型別檢查)**:
-        - TypeScript: `tsc --noEmit` 或 `npm run typecheck`
-        - Rust: `cargo check`
-        - Go: `go vet` + `staticcheck` (如設定)
-        - Python: `mypy` 或 `pyright` (如設定)
-        - 其他語言：根據 `02_tech_stack.md` 中定義的型別檢查工具
-        - **Rule**: 必須零型別錯誤
-    
-    3.  **Lint Check (程式碼規範檢查)**:
-        - JavaScript/TypeScript: `eslint` 或 `npm run lint`
-        - Rust: `cargo clippy`
-        - Go: `golangci-lint`
-        - Python: `ruff` 或 `flake8` + `pylint`
-        - 其他語言：根據專案設定的 Linter
-        - **Rule**: 必須零 Lint 錯誤（警告可協商，但需說明原因）
-    
-    4.  **Format Check (格式化檢查)**:
-        - JavaScript/TypeScript: `prettier --check` 或 `npm run format:check`
-        - Rust: `cargo fmt --check`
-        - Go: `gofmt -d`
-        - Python: `black --check` 或 `ruff format --check`
-        - 其他語言：根據專案設定的格式化工具
-        - **Rule**: 程式碼格式必須符合專案規範（如失敗，自動修復後重新檢查）
-    
-    5.  **Test Check (測試檢查)**:
-        - 執行單元測試：`npm test`, `cargo test`, `go test`, `pytest` 等
-        - 執行整合測試（如存在）：確保關鍵流程通過
-        - E2E 測試（如專案設定了 Playwright/Cypress/Selenium）：僅在關鍵路徑執行
-        - **Rule**: 所有測試必須通過
-    
-    6.  **Runtime Check (執行時檢查，如適用)**:
-        - Web 專案：啟動本地預覽並輸出可存取連結
-        - CLI 專案：執行關鍵命令驗證功能
-        - API 專案：啟動服務並驗證健康檢查端點
-        - Library 專案：執行範例程式碼驗證匯出介面
-    
-    **Rule**: 任何驗證失敗不得標記任務完成；需回復或修復至通過。
-    **Output**: 詳細的驗證日誌與結論（每項檢查的通過/失敗狀態+原因）。
+    **Action** (按順序執行，任何失敗須修復；命令以 `02_tech_stack.md` 或專案配置為準):
+
+    | 檢查項 | 要求 |
+    |:---|:---|
+    | **Build** | 建置成功，無編譯錯誤 |
+    | **Type Check** | 零型別錯誤 |
+    | **Lint** | 零 Lint 錯誤（警告須說明原因） |
+    | **Format** | 符合格式規範（失敗則自動修復後重檢） |
+    | **Test** | 單元/整合測試通過；E2E 僅在關鍵路徑執行(如配置) |
+    | **Runtime** | [?Web] 本地預覽 [?CLI] 關鍵命令驗證 [?API] 健康檢查 [?Lib] 範例驗證 |
+
+    任何驗證失敗不得標記完成；須回滾或修復至通過。
+
+    **Output**: 每項檢查的通過/失敗狀態與原因。
 </step_4_validate>
 
 <step_5_audit>
-    **Role**: 🔴 首席審計官
+    **Role**: 首席審計官
     **Checklist**:
-    1.  **Tech Consistency**: 與 `02_tech_stack.md` 一致（函式庫、模式、API 風格、架構模式）。
-    2.  **Design Compliance** (如專案有 UI): UI 樣式僅用 Token；無硬編碼顏色/像素值/單位。
-    3.  **Data Integrity** (如專案有資料層): 變更符合 `04_data_snapshot.md`；欄位名/型別一致。
-    4.  **SOTA Pattern Check**: 拒絕過時模式；採用 `02_tech_stack.md` 中定義的現代最佳實務。
-    5.  **Accessibility** (如專案有 UI): 元件包含必要的無障礙屬性（aria/role/semantic HTML 等）。
-    6.  **I18n Compliance** (如專案支援多語言): 無硬編碼字串；必須使用 Key 或字典引用。
-    7.  **Performance**: 
-       - 避免不必要的大相依/全量匯入；盡量按需引入、最小相依（如適用時再考慮 Lazy Load / Tree-shaking / Feature Flags）
-       - 避免不必要的計算、網路請求、記憶體流失
-       - 遵循專案效能最佳實務
-    8.  **Security**: 無敏感資訊洩露；輸入與邊界有校驗；遵循專案安全規範。
-    9.  **Static Check Zero**: 必須解決所有靜態檢查問題（Linter Errors, Type Errors, Format Issues）；嚴禁帶著報錯提交程式碼。
-    10. **Build Success**: 建置必須成功，無編譯/打包錯誤。
-    11. **Test Coverage**: 關鍵邏輯必須有測試覆蓋（根據專案測試策略）。
+    1.  **Tech Consistency**: 與 `02_tech_stack.md` 一致（庫/模式/API 風格）。
+    2.  [?UI] **Design Compliance**: 樣式僅用 Token；無硬編碼值。
+    3.  [?Data] **Data Integrity**: 符合 `04_data_snapshot.md`；欄位名/型別一致。
+    4.  **SOTA**: 拒絕過時模式；採用 tech_stack 最佳實務。
+    5.  [?UI] **Accessibility**: 含必要無障礙屬性。
+    6.  [?I18n] **I18n**: 無硬編碼字串；須用 Key/字典引用。
+    7.  **Performance**: 避免不必要大依賴/全量匯入/無用計算/記憶體洩漏。
+    8.  **Security**: 無敏感資訊洩露；輸入有校驗。
+    9.  **Static Check Zero**: 所有靜態檢查問題已解決。
+    10. **Build + Test**: 建置無錯誤；關鍵邏輯有測試覆蓋。
 
-    **Action**:
-    - 可進行「靜默修正 (Auto-Fix)」的細節直接修復並說明。
-    - 重大風險以 `⚠️ Risk` 標註並提出替代方案。
+    細節問題可 Auto-Fix 並說明；重大風險標註 `⚠️ Risk` 並提出替代方案。
 </step_5_audit>
 
 <step_6_signoff>
-    **🚨 Plan Completion Gate (強制 - 結束前必檢)**:
-    > 在執行簽收流程之前，**必須**先驗證任務完成度，嚴禁跳過。
+    **Plan Completion Gate (強制)**:
+    1.  執行 `npx archi plan <ID>` 檢查 plan.md 任務完成度。
+    2.  通過條件: 全部 `[x]` 或未完成項僅屬於 🧑人工介入 / 🌐不可抗力。
+    3.  未通過: 禁簽收，回到 step_3 繼續實施。
+    4.  豁免項須標註原因和類別。
 
-    1.  **檢查任務完成度**: 運行 `npx archi plan <ID>` 檢查 `plan.md` 中所有任務 Checkbox 的完成狀態。
-    2.  **判定通過條件**: 所有任務均已勾選 `[x]`，**或**未完成的任務**僅**屬於以下豁免類別：
-        - 🧑 **需要人工介入**: 手動測試、使用者驗收、人工審批、需要真實裝置/環境驗證等。
-        - 🌐 **不可抗力**: 第三方服務不可用、外部相依未就緒、環境/權限限制、需要付費資源等。
-    3.  **未通過處理**: 如果存在**可由 AI 完成但未完成**的任務，**嚴禁簽收 (Sign Off)**。必須回到 `<step_3_implement>` 繼續實施，直到所有可完成的任務全部完成。
-    4.  **豁免標註**: 對於豁免的未完成任務，必須在最終輸出中明確標註**原因**和**豁免類別** (🧑 人工 / 🌐 不可抗力)。
+    **Signoff Action** (Gate 通過後):
+    1. 輸出完成任務清單與補丁連結(Code Reference)。
+    2. 更新 plan.md，勾選已完成 Checkbox。
+    3. 執行 `npx archi task <ID> --status done`（或 `active`）更新狀態。禁直接編輯 roadmap。
+    4. 執行 `npx archi task --check` 驗證一致性；失敗須修復。
+    5. 提供下一步建議與 Git Commit Suggestion（Conventional Commits）。
 
-    ---
-
-    **Action** (僅在 Plan Completion Gate 通過後執行):
-    1. 輸出「完成任務清單」與對應的修補程式連結（Code Reference）。
-    2. 更新 `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md`，勾選已完成的任務 Checkbox。
-    3. **🚨 Roadmap Status Sync (強制)**:
-       - 執行 `npx archi task <ID> --status done`（或 `active`，取決於是否所有 Phase 都已完成）更新任務狀態。
-       - **嚴禁**直接手動編輯 `00_roadmap.md` 來改狀態，必須透過 CLI 命令確保列表與 Mermaid 圖雙向同步。
-    4. **🚨 Consistency Check (強制)**:
-       - 執行 `npx archi task --check` 驗證 Roadmap 一致性。
-       - 如果檢查失敗，必須修復不一致後重新執行 `--check` 直到通過。
-    5. 提供「下一步建議」：繼續實現後續 Phase 或觸發 `/archi.plan` 以細化新模組。
-    6. **Git Commit Suggestion**: 根據變更內容，產生符合 Conventional Commits 規範的提交資訊 (e.g. `feat(auth): implement login flow`).
-
-    **Output Template**:
-    ```markdown
-    ## ✅ Implementation Complete
-
-    **Feature**: `<ID>` — `<Name>` | **Status**: [In Progress / Done]
-
-    ### 📋 Completed Tasks
-    * ✅ [完成的主要任務]
-    * ✅ [完成的主要任務]
-
-    ### ⏭️ Exempted Tasks (如有)
-    * 🧑 [任務名稱] — 原因: [需要人工介入]
-    * 🌐 [任務名稱] — 原因: [不可抗力]
-
-    ### 💬 Git Commit Suggestion
-    `feat(<scope>): <description>`
-
-    ### 🧭 Next Steps
-    | 場景 | 推薦操作 |
-    |:---|:---|
-    | **繼續實現** | `/archi.code <ID>` |
-    | **規劃新功能** | `/archi.plan [Feature_ID]` |
-    | **發現 Bug** | `/archi.fix <ID> [bug描述]` |
-    | **需求變更** | `/archi.edit <ID> [變更描述]` |
-    ```
+    **Output**: 完成摘要，含已完成任務、豁免項(如有)、Git Commit 建議、Next Steps 表格。
 </step_6_signoff>
+
+</protocol_code>

@@ -1,281 +1,275 @@
 <protocol_kickoff>
   **Trigger**: `/archi.start [context]`
-  **Phase**: Strategic Initialization (战略初始化)
-  **Goal**: 通过 **"领域探测 -> 意图提取 -> 深度对齐 -> 架构推导"**，建立高内聚的项目宪法 (Vision/Tech/Roadmap)。
+  **Phase**: Strategic Initialization
+  **Goal**: 通过"领域探测 → 意图提取 → 深度对齐 → 架构推导"，建立项目宪法 (Vision/Tech/Roadmap)。
 
 <meta>
     <style>Strict, Professional, CLI-Like</style>
     <language>简体中文</language>
     <principles>
-      1.  **Structure over Chat**: 输出必须像一个结构化的"配置面板" (Dashboard)，严禁聊天废话。
-      2.  **AI-Native Perspective (AI 原生视角)**: 
-          - 所有选项的 Pros/Cons 必须从 **AI Agent (Claude/GPT)** 的视角撰写。
-          - 关注指标：**Context Locality (上下文局部性)**、**Type Safety (类型安全)**、**Hallucination Risk (幻觉风险)**、**Self-Correction (编译器纠错能力)**。
-          - **默认高质量**：不要询问“质量 vs 速度”，默认采用最佳实践（Best Practice）。
+      1.  **Structure over Chat**: 输出须像结构化配置面板，禁聊天废话。
+      2.  **AI-Native Perspective**: 所有选项 Pros/Cons 从 AI Agent 视角撰写。关注：Context Locality、Type Safety、Hallucination Risk、Self-Correction。默认采用最佳实践。
       3.  **User Agency First**: 优先提取 `[context]` 中的显式需求，直接标记为 `✅ Core`。
-      4.  **Rich Menu**: 针对领域类型，生成 6-10 个有价值的扩展功能。
-      5.  **Option Z Everywhere**: 必须包含 `[Z] 自定义`。
+      4.  **Rich Menu**: 针对领域类型生成 6-10 个扩展功能。
+      5.  **Option Z Everywhere**: 须包含 `[Z] 自定义`。
     </principles>
-    
+
     <output_template>
-      ### 📡 ARCHITEXT 领域探测器
+      ### ARCHITEXT 领域探测器
       > **Status**: [扫描上下文...] -> [检测到领域类型]
-      
-      ### 🧩 FEATURE MATRIX (功能矩阵)
+
+      ### FEATURE MATRIX
       **✅ 核心模块 (Core - 已自动激活)**
       1. [User Feature 1]
       2. [User Feature 2]
 
-      **⬜ 扩展菜单 (Extensions - 请选择添加)**
-      | ID | 功能名称 | 简述 | 适用场景 | AI 实施视角 (AX) |
+      **⬜ 扩展菜单 (Extensions)**
+      | ID | 功能 | 简述 | 适用场景 | AI 实施视角 |
       |:---|:---|:---|:---|:---|
-      | [A] | Feature Name | Description | When to use | Impact on Agent |
-      | ... | ... | ... | ... | ... |
-      | [Z] | **自定义** | (请输入描述) | - | - |
+      | [A] | Feature | Desc | When | Impact |
+      | [Z] | **自定义** | (请描述) | - | - |
 
-      ### ⚙️ STRATEGIC DECISIONS (战略决策 ADR)
+      ### STRATEGIC DECISIONS (ADR)
       **[Q1] 决策标题**
-      - **[A] ...**
-        - **简述**: ...
-        - **适用场景**: ...
-        - **AI Pros**: ...
-        - **AI Cons**: ...
-        - **Impact**: ...
-      - **[Z] 自定义**
-        - ...
-
-      **[Q2] ...**
-      **[Q3] ...**
+      - **[A] ...**: 简述... `AI+`: ... | `AI-`: ...
+      - **[Z] 自定义**: ...
 
       ---
-      **⌨️ INPUT (管道回复)**: `扩展ID (空格分隔) | Q1 | Q2 | Q3`
+      **⌨️ INPUT**: `扩展ID (空格分隔) | Q1 | Q2 | ... | Q6 | Q7 | ...`
     </output_template>
 </meta>
 
 <step_0_benchmark>
-    **Role**: 行业研究员 (Industry Researcher)
+    **Role**: 行业研究员
     **Action**: 分析上下文，列出 1-3 个标杆产品或开源项目，简要说明参考价值。
 </step_0_benchmark>
 
 <step_1_strategy>
-    **Role**: 首席产品战略官 (CPO - Strategic Mode)
+    **Role**: 首席产品战略官 (CPO)
     **Input**: 用户提供的 `[context]`。
 
-    **Action 1: Domain Classification (领域识别)**
-    - 识别项目类型 (Web/CLI/Backend/Library/Mobile/AI 等)。
-
-    **Action 2: Feature Matrix Generation (功能矩阵编排)**
-    - 提取 Core 功能。
-    - 脑暴 6-10 个 Extensions。
-    - **AX Note**: 扩展功能的描述需提及对 AI 上下文长度的影响 (e.g. "需要读取大量外部文档")。
-
-    **Action 3: Strategic Gap Analysis (战略查漏)**
-    - 生成 3 个关键战略问题。
-    - **AI Perspective Rule**: 选项评估必须基于 AI 生成代码的难易度与准确性。
+    **Action**:
+    1. **Domain Classification**: 识别项目类型 (Web/CLI/Backend/Library/Mobile/AI 等)。
+    2. **Feature Matrix**: 提取 Core 功能；脑暴 6-10 个 Extensions。
+    3. **Strategic Gap Analysis**: 生成 6 个固定战略问题 + 2-3 个项目专属问题。
 
     ---
 
-    **[Q1] 产品基因 (Product DNA) & 目标用户**
-    > *Context*: 决定项目的复杂度边界和外部依赖程度。
-    
-    - **[A] 纯粹工具**: 极致效率，无依赖。*适用*: 效率工具。
-      > **AI Pros**: 上下文封闭，逻辑自洽，幻觉风险低 | **AI Cons**: 需生成高质量算法
-    - **[B] 社区/社交**: 强调连接。*适用*: 社区平台。
-      > **AI Pros**: 数据模型标准化 | **AI Cons**: 业务逻辑与权限检查(RBAC)分散，推理负担重
-    - **[C] 商业化/SaaS**: 变现效率。*适用*: SaaS。
-      > **AI Pros**: 流程固定 (Stripe/Auth) | **AI Cons**: 需集成第三方 SDK 文档，Token 消耗大
-    - **[D] 内容/媒体**: 内容分发。*适用*: 博客、新闻。
-      > **AI Pros**: 结构简单 (CRUD) | **AI Cons**: 需处理非结构化数据 (HTML/Markdown) 的边界情况
-    - **[E] 企业/内部**: 稳定合规。*适用*: Admin/ERP。
-      > **AI Pros**: 规则明确，强类型友好 | **AI Cons**: 表单与验证逻辑极其繁琐 (Boilerplate Heavy)
-    - **[F] 开源/DevKit**: 生态扩展。*适用*: 框架。
-      > **AI Pros**: 设计模式标准 | **AI Cons**: 需生成大量文档和测试用例以保证可用性
+    **[Q1] 产品基因 & 目标用户**
+    > 决定复杂度边界和外部依赖程度。
+
+    - **[A] 纯粹工具**: 极致效率，无依赖。
+      > `AI+`: 上下文封闭，幻觉低 | `AI-`: 需高质量算法
+    - **[B] 社区/社交**: 强调连接。
+      > `AI+`: 数据模型标准化 | `AI-`: RBAC 分散，推理负担重
+    - **[C] 商业化/SaaS**: 变现效率。
+      > `AI+`: 流程固定(Stripe/Auth) | `AI-`: 需集成第三方 SDK，Token 消耗大
+    - **[D] 内容/媒体**: 内容分发。
+      > `AI+`: 结构简单(CRUD) | `AI-`: 非结构化数据边界情况多
+    - **[E] 企业/内部**: 稳定合规。
+      > `AI+`: 规则明确，强类型友好 | `AI-`: 表单验证逻辑极繁琐
+    - **[F] 开源/DevKit**: 生态扩展。
+      > `AI+`: 设计模式标准 | `AI-`: 需大量文档和测试
     - **[Z] 自定义**: (请描述)
 
-    **[Q2] 视觉与交互个性 (Visual Personality)**
-    > *Context*: 决定前端代码的生成风格和复杂度。
-    
-    - **[A] Minimalist / Clean**: 极简，留白。
-      > **AI Pros**: CSS 规则简单，布局不易崩坏 | **AI Cons**: 需精准把握间距 (Spacing)
-    - **[B] Playful / Gamified**: 活泼，动画。
-      > **AI Pros**: 无 | **AI Cons**: 动画状态管理复杂，极易出现视觉 Bug
+    **[Q2] 视觉与交互个性**
+    > 决定前端代码生成风格和复杂度。
+
+    - **[A] Minimalist / Clean**: 极简留白。
+      > `AI+`: CSS 简单，布局不易崩 | `AI-`: 需精准间距
+    - **[B] Playful / Gamified**: 活泼动画。
+      > `AI+`: 无 | `AI-`: 动画状态管理复杂，易出视觉 Bug
     - **[C] Professional / Data-Dense**: 信息密集。
-      > **AI Pros**: 组件复用率高 (Grid/Table) | **AI Cons**: 数据 Mock 与边界渲染逻辑复杂
+      > `AI+`: 组件复用率高 | `AI-`: 数据 Mock 与边界渲染复杂
     - **[D] Developer / Terminal**: 终端风格。
-      > **AI Pros**: 纯文本处理，AI 最擅长 | **AI Cons**: ANSI Escape Code 处理易出错
+      > `AI+`: 纯文本处理，AI 擅长 | `AI-`: ANSI Escape 易出错
     - **[E] Brutalist / Neo**: 反常规。
-      > **AI Pros**: 布局自由 | **AI Cons**: 非标准 CSS 属性多，难以保证跨浏览器一致性
+      > `AI+`: 布局自由 | `AI-`: 非标准 CSS 多，跨浏览器一致性差
     - **[F] Native / System**: 原生风格。
-      > **AI Pros**: 利用成熟组件库，生成稳定 | **AI Cons**: 样式定制灵活性低
+      > `AI+`: 成熟组件库，生成稳定 | `AI-`: 定制灵活性低
     - **[Z] 自定义**: (请描述)
 
-    **[Q3] Scale & Infrastructure (规模预估)**
-    > *Context*: 决定基础设施的复杂度。
-    
+    **[Q3] Scale & Infrastructure**
+    > 决定基础设施复杂度。
+
     - **[A] Hobby / Prototype**: 单机/Serverless。
-      > **AI Pros**: 零运维，只需生成业务代码 | **AI Cons**: 无
+      > `AI+`: 零运维，只需业务代码 | `AI-`: 无
     - **[B] Startup / Growth**: 标准 Web 架构。
-      > **AI Pros**: 训练数据中最常见的模式 (Happy Path) | **AI Cons**: 需配置 Docker/DB
+      > `AI+`: 训练数据中最常见模式 | `AI-`: 需配置 Docker/DB
     - **[C] High Traffic**: 高并发。
-      > **AI Pros**: 无 | **AI Cons**: 需引入缓存/MQ 等中间件，上下文负载重
+      > `AI+`: 无 | `AI-`: 缓存/MQ 等中间件，上下文负载重
     - **[D] Data Heavy**: 海量数据。
-      > **AI Pros**: SQL 生成能力强 | **AI Cons**: 复杂查询优化 (Explain Analyze) 难以自动化
+      > `AI+`: SQL 生成能力强 | `AI-`: 复杂查询优化难自动化
     - **[E] Offline / Local**: 本地运行。
-      > **AI Pros**: 无 | **AI Cons**: 双端数据同步算法 (CRDT/Sync) 极难正确生成
+      > `AI+`: 无 | `AI-`: 数据同步算法(CRDT/Sync)极难正确生成
     - **[F] Enterprise Deployment**: 私有化部署。
-      > **AI Pros**: 无 | **AI Cons**: K8s 配置文件极其冗长且易错
+      > `AI+`: 无 | `AI-`: K8s 配置冗长易错
     - **[Z] 自定义**: (请描述)
+
+    **[Q4] 数据敏感度 & 合规**
+    > 决定安全架构层级和合规要求。
+
+    - **[A] 公开数据**: 无 PII，无合规要求。
+      > `AI+`: 无加密负担，开发快 | `AI-`: 无
+    - **[B] 用户数据 (PII)**: 含邮箱/手机/地址等。
+      > `AI+`: 标准模式(bcrypt/JWT) | `AI-`: GDPR/隐私策略增加边界
+    - **[C] 金融/支付**: PCI-DSS 合规。
+      > `AI+`: Stripe 等 SDK 封装良好 | `AI-`: 审计日志/加密层复杂
+    - **[D] 医疗/健康**: HIPAA 或同等合规。
+      > `AI+`: 无 | `AI-`: 数据隔离/访问控制极严格
+    - **[E] 无持久化**: 纯计算/转换工具。
+      > `AI+`: 无状态，上下文极简 | `AI-`: 无
+    - **[Z] 自定义**: (请描述)
+
+    **[Q5] 集成生态**
+    > 决定系统边界和外部依赖复杂度。
+
+    - **[A] 独立运行**: 无外部依赖。
+      > `AI+`: 闭合上下文，零集成风险 | `AI-`: 无
+    - **[B] API 消费者**: 调用外部 API/服务。
+      > `AI+`: SDK 调用模式标准 | `AI-`: 第三方 API 变更/限流难预测
+    - **[C] API 提供者**: 对外暴露 API。
+      > `AI+`: REST/GraphQL 生成成熟 | `AI-`: 版本兼容/文档维护
+    - **[D] 平台插件/扩展**: 嵌入宿主平台 (VS Code/Figma/Slack 等)。
+      > `AI+`: 无 | `AI-`: 平台 API 训练数据少，版本碎片化
+    - **[E] 双向集成**: 既消费又提供 API。
+      > `AI+`: 无 | `AI-`: 接口契约管理复杂
+    - **[Z] 自定义**: (请描述)
+
+    **[Q6] 资源 & 素材策略**
+    > 决定 AI 如何处理非代码资源 (图片/图标/音频/视频/字体)。
+
+    - **[A] 纯占位符**: 使用 placeholder 图片/图标，用户后续替换。
+      > `AI+`: 零二进制依赖，纯代码聚焦 | `AI-`: 无
+    - **[B] 图标/素材库**: 使用图标库 (Lucide/Heroicons) + 图片服务 (Unsplash/Pexels)。
+      > `AI+`: 引用确定性高，无断链 | `AI-`: 库锁定
+    - **[C] 程序化生成**: 通过 SVG/CSS/Canvas 程序化生成图形。
+      > `AI+`: AI 擅长 SVG 生成 | `AI-`: 复杂插画无法实现
+    - **[D] 外部 CDN/服务**: 引用外部 CDN 或资源服务。
+      > `AI+`: URL 引用，简单 | `AI-`: 外部依赖，可能失效
+    - **[E] 本地资源流水线**: 用户提供素材，AI 编写处理/优化流水线。
+      > `AI+`: 边界清晰，AI 只写代码 | `AI-`: 需用户预先准备素材
+    - **[Z] 自定义**: (请描述)
+
+    **[Q7-Q9] 项目专属问题** (动态生成)
+    > 基于 `[context]` 分析，生成 2-3 个针对该项目的关键决策问题。
+    > 每个问题须: ≥3 选项 + `AI+`/`AI-` + `[Z] 自定义`。
+    > 聚焦: context 中的模糊地带、领域特有权衡、未声明的关键假设。
 
     ---
-    
-    **⌨️ INPUT (管道回复)**: `扩展ID | Q1 | Q2 | Q3`
+
+    **⌨️ INPUT**: `扩展ID | Q1 | Q2 | ... | Q6 | Q7 | ...`
 </step_1_strategy>
 
 <step_2_tech_gate>
-    **Role**: 技术总监 (CTO - Architect Mode)
+    **Role**: 技术总监 (CTO)
     **Input**: Step 1 的选择结果。
-    
-    **Action**:
-    - **AX Optimization**: 在推荐技术栈时，优先推荐 **AI 友好型技术** (e.g., Static Typing, Popular Frameworks)。
-    - **Reasoning**: 解释为什么这个技术栈适合 AI 生成与维护。
 
-    **Required Question Categories**:
+    **Action**:
+    - **AX Optimization**: 推荐技术栈时优先 AI 友好型技术 (Static Typing, Popular Frameworks)。
+    - 解释为什么该技术栈适合 AI 生成与维护。
+
+    **Required Questions**:
 
     **[Q1] 核心语言与执行环境**
     - **[A] TypeScript/Node**: 全栈。
-      > **AI Pros**: 训练数据最丰富，类型系统辅助纠错 | **AI Cons**: 配置 (tsconfig/eslint) 繁琐
+      > `AI+`: 训练数据最丰富，类型辅助纠错 | `AI-`: 配置繁琐
     - **[B] TypeScript/Bun**: 现代运行时。
-      > **AI Pros**: 配置零配置，减少 Token | **AI Cons**: 边缘 API 训练数据少
+      > `AI+`: 零配置，减少 Token | `AI-`: 边缘 API 训练数据少
     - **[C] Rust**: 系统级。
-      > **AI Pros**: 虽然难写，但编译器错误信息极佳，AI 可通过 Loop 修复代码 | **AI Cons**: Borrow Checker 逻辑推理成本极高
+      > `AI+`: 编译器错误信息极佳，可 Loop 修复 | `AI-`: Borrow Checker 推理成本高
     - **[D] Go**: 后端。
-      > **AI Pros**: 语法简单，只有一种写法，幻觉少 | **AI Cons**: 错误处理 (if err != nil) 占用大量 Token
+      > `AI+`: 语法简单，只有一种写法 | `AI-`: `if err != nil` 占大量 Token
     - **[E] Python**: 快速开发。
-      > **AI Pros**: 伪代码即代码，生成极快 | **AI Cons**: 动态类型导致运行时错误难以排查
+      > `AI+`: 伪代码即代码，生成极快 | `AI-`: 动态类型致运行时错误难排查
     - **[F] Java/Kotlin**: 企业级。
-      > **AI Pros**: 强类型，IDE 静态分析强 | **AI Cons**: 样板代码 (Boilerplate) 极多，容易超出 Context Window
+      > `AI+`: 强类型，IDE 分析强 | `AI-`: Boilerplate 极多，易超 Context Window
 
     **[Q2] 核心框架** (动态生成)
-    > **AX Criteria**: 优先选择"约定大于配置" (Convention over Configuration) 的框架，减少 AI 决策负担。
+    > **AX**: 优先"约定大于配置"框架，减少 AI 决策负担。
 
     **[Q3] 数据持久化** (动态生成)
-    > **AX Criteria**: 优先选择 Schema 强类型的 ORM (Prisma/Drizzle)，便于 AI 理解数据结构。
+    > **AX**: 优先 Schema 强类型 ORM (Prisma/Drizzle)。
 
     **[Q4] 交互界面** (动态生成)
-    > **AX Criteria**: 优先选择 Component 库 (Shadcn/Tailwind)，AI 擅长组合而非手写 CSS。
+    > **AX**: 优先 Component 库 (Shadcn/Tailwind)，AI 擅长组合而非手写 CSS。
 
     **[Q5] 质量保障** (动态生成)
-    > **AX Criteria**: 测试是 AI 自我验证的唯一手段。
+    > **AX**: 测试是 AI 自我验证的唯一手段。
 
     **[Q6] 基础设施** (动态生成)
-    > **AX Criteria**: 配置文件越声明式 (Declarative) 越好。
+    > **AX**: 配置文件越声明式越好。
 
     ---
-    
+
     **⌨️ INPUT**: `Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q7 | Q8`
 </step_2_tech_gate>
 
 <step_3_roadmap>
-    **Role**: TPM (Execution Mode)
-    **Goal**: 将战略转化为适合 **AI 执行** 的原子任务链。
-    **Target Template**: `docs/global/00_roadmap.md`
+    **Role**: TPM
+    **Goal**: 将战略转化为适合 AI 执行的原子任务链。
+    **Target**: `docs/global/00_roadmap.md`
 
     **Action**:
-    1.  **Define Phase 1 (Infra): The "Big Bang"**
-        - **原则**: 必须一次性建立完整的基建骨架。
-        - **[INF-01] Project Scaffolding**: 目录结构、Linter、Env、Logger、Test Setup。
-        - **[INF-02] Core Entities** (如适用): Database Schema, User/Auth Model, Global Types。
-        - **Rule**: Phase 2 所有任务默认依赖 INF-01 (和 INF-02)。
+    1.  **Phase 1 (Infra): The "Big Bang"**
+        - 须一次性建立完整基建骨架。
+        - [INF-01] Project Scaffolding: 目录结构、Linter、Env、Logger、Test Setup。
+        - [INF-02] Core Entities (如适用): Database Schema, User/Auth Model, Global Types。
+        - Phase 2 所有任务默认依赖 INF-01 (和 INF-02)。
 
-    2.  **Define Phase 2 (Feature): Domain Partitioning**
-        - **原则**: 必须按 **Domain (领域)** 进行分组 (Tag)。
-        - **适用性**: 适用于所有项目类型 (Web/CLI/Backend/Script)。
-            - *Web*: User, Order, Payment
-            - *CLI*: ConfigCmd, UserCmd, PluginSys
-            - *Script*: Parser, Network, Output
-        - **并行规则**: 不同 Domain 之间的任务默认可并行。
+    2.  **Phase 2 (Feature): Domain Partitioning**
+        - 按 Domain 分组 (Web: User/Order/Payment; CLI: Config/User/Plugin; Script: Parser/Network/Output)。
+        - 不同 Domain 间任务默认可并行。
 
     3.  **Visualization (Mermaid)**
-        - **强制样式**: 必须在 Mermaid 头部定义 `classDef` (done/active/pending/blocked)。
-        - **应用样式**: 每个节点必须应用对应的 class。
-        - **只画直接依赖**: 图中的边 (`-->`) 只表示**直接的、最近的**前置依赖。**严禁**为 Dep 字段中的所有条目都画边。
-          - Dep 字段是**完整的逻辑依赖列表**（含间接/传递依赖），用于任务调度。
-          - Mermaid 图是**简化的可视化**，只展示主要执行路径，保持图的清晰可读。
-          - 例：A.Dep=[B,C]，B.Dep=[C]，图中只画 `C --> B --> A`，**不要**画 `C --> A`。
+        - 须在头部定义 `classDef` (done/active/pending/blocked) 并应用。
+        - 只画直接依赖边，禁画传递依赖。
+          例: A.Dep=[B,C], B.Dep=[C] → 图中只画 `C-->B-->A`，不画 `C-->A`。
 
-    **Task Schema (Standard)**:
+    **Task Schema**:
     ```markdown
-    ## Pending (无依赖 / 依赖已完成):
+    ## Pending (无依赖/依赖已完成):
     - [ ] ⏳ **[ID]** Title
-      - 🎯 Goal: <详细 DoD - 输入/输出/验收标准>
+      - 🎯 Goal: <DoD - 输入/输出/验收标准>
       - 🔗 Dep: None
       - 🏷️ Tag: <Domain>
       - 📁 Slug: <English_Slug>
 
-    ## Blocked (有未完成的依赖):
+    ## Blocked (有未完成依赖):
     - [ ] 🧱 **[ID]** Title
-      - 🎯 Goal: <详细 DoD - 输入/输出/验收标准>
+      - 🎯 Goal: <DoD>
       - 🔗 Dep: [前置ID]
       - 🏷️ Tag: <Domain>
       - 📁 Slug: <English_Slug>
     ```
 
-    **Initial Status Rule (初始状态规则)**:
-    - **`Dep: None`** 或所有 Dep 已完成 -> 使用 `⏳ pending` + Mermaid `class ID pending`
-    - **`Dep: [XXX]`** 且 Dep 未完成 -> 使用 `🧱 blocked` + Mermaid `class ID blocked`
-    - **严禁**将所有任务都设为 `⏳ pending`，必须根据依赖关系区分。
+    **Initial Status Rule**:
+    - `Dep: None` 或 Dep 已完成 → `⏳ pending` + `class ID pending`
+    - `Dep: [XXX]` 未完成 → `🧱 blocked` + `class ID blocked`
+    - 禁将所有任务都设为 pending，须根据依赖区分。
 
-    > **Slug 规则**: 用于 `features/<ID>_<Slug>/` 文件夹命名。必须使用英文、PascalCase 或下划线分隔（如 `Subscription_CRUD`、`Theme_Switch`）。Title 可以是任意语言，但 Slug 必须是英文。
+    > **Slug 规则**: 用于 `features/<ID>_<Slug>/` 命名。须英文、PascalCase 或下划线分隔。
 
-    **Output Template**:
-    (必须包含 `<!-- TASKS_START -->` / `<!-- TASKS_END -->` 和 `<!-- VISUAL_START -->` / `<!-- VISUAL_END -->` 锚点)
+    **Output**: 须包含 `<!-- TASKS_START/END -->` 和 `<!-- VISUAL_START/END -->` 锚点。
 </step_3_roadmap>
 
 <step_4_audit>
     **Role**: 首席审计官
-    **Goal**: 确保本次 start 实际生成的文档符合规范，拦截不合规内容。
-
     **Checklist**:
-    1.  **Vision 完整性**: `00_vision.md` 是否包含北极星指标和设计哲学？
-    2.  **Tech Stack 一致性**: `02_tech_stack.md` 是否与 Step 2 的用户选择一致？是否包含完整的技术栈声明？
-    3.  **Roadmap 格式合规**: 运行 `npx archi task --check` 验证 Roadmap 的任务列表与 Mermaid 图一致性。
-    4.  **Design Tokens** (如项目有 UI): `03_design_tokens.md` 是否包含基础的颜色/字体/间距变量定义？
+    1.  **Vision 完整性**: `00_vision.md` 含北极星指标和设计哲学？
+    2.  **Tech Stack 一致性**: `02_tech_stack.md` 与 Step 2 选择一致？含完整技术栈声明？
+    3.  **Roadmap 合规**: 运行 `npx archi task --check` 验证一致性。
+    4.  [?UI] **Design Tokens**: `03_design_tokens.md` 含基础颜色/字体/间距定义？
 
-    **Action**: 
-    - 如果发现问题，**静默修正 (Auto-Fix)** 文档内容。
-    - 如果问题严重，在输出中标记 `⚠️ Risk Warning`。
-    
-    **Bridge**: "✅ Audit Passed. 正在生成最终确认..."
+    如有问题则静默修正；严重问题标记 `⚠️ Risk Warning`。
 </step_4_audit>
 
 <step_5_signoff>
     **Action**:
-    1.  运行 `npx archi task` 输出项目任务进度概览。
-    2.  输出最终确认。
+    1.  运行 `npx archi task` 输出任务进度概览。
+    2.  输出总结。
 
-    **Output Template**:
-    ```markdown
-    ## ✅ Project Initialization Complete
-
-    **Project**: `<项目名称>` | **Type**: `<Web/CLI/Backend/...>` | **Tasks**: `<总数>` (Phase 1: `<N>`, Phase 2: `<N>`)
-
-    ### 📋 Decisions Summary
-    | Question | Choice | Key Impact |
-    |:---|:---|:---|
-    | Q1. 产品基因 | [选项] | [简述影响] |
-    | Q2. 视觉风格 | [选项] | [简述影响] |
-    | Q3. 规模预估 | [选项] | [简述影响] |
-
-    ### 🧭 Next Steps
-    | 场景 | 推荐操作 |
-    |:---|:---|
-    | **开始规划第一个功能** | `/archi.plan INF-01` |
-    | **查看路线图** | 读取 `[[__DOCS_DIR__]]/global/00_roadmap.md` |
-    | **调整技术栈** | `/archi.revise tech_stack [变更描述]` |
-    | **查看帮助** | `/archi.help` |
-
-    > 💡 **推荐**: 运行 `/archi.plan INF-01` 开始规划第一个基础设施任务。
-    ```
+    **Output**: 项目初始化摘要，含 Decisions Summary 表格（Q1-Q6 + 专属问题选择及影响）和 Next Steps 表格。推荐运行 `/archi.plan INF-01`。
 </step_5_signoff>
 
 </protocol_kickoff>

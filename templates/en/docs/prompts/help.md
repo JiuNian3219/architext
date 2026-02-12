@@ -19,14 +19,14 @@
 
     **Content**:
 
-    # 📘 Architext Command Manual (v1.1)
+    # Architext Command Manual (v1.1)
 
     > **Core Philosophy**: **No Docs, No Code.**
     > All code changes must start with documentation (Define) and end with audit (Audit).
 
     ---
 
-    ## 📁 Project Structure
+    ## Project Structure
 
     After initialization, Architext will create the following structure in the project:
 
@@ -97,9 +97,9 @@
 
     | Command | Args | Role (Brief) | Core Logic |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.start`** | `[context]` | **🔥 Project Cold Start**<br>Start a new project from scratch. | Interview Vision -> Confirm Style -> Confirm Tech Stack -> **Create Docs Skeleton**. |
-    | **`/archi.inherit`** | `(none)` | **🏰 Legacy Takeover**<br>Take over an existing legacy project. | Full Code Scan -> Reverse Deduction -> **Fill Global Docs**. |
-    | **`/archi.map`** | `(none)` | **🗺️ Refresh Map**<br>Refresh directory map. | Scan File System -> **Update 01_map.md**. |
+    | **`/archi.start`** | `[context]` | ** Project Cold Start**<br>Start a new project from scratch. | Interview Vision -> Confirm Style -> Confirm Tech Stack -> **Create Docs Skeleton**. |
+    | **`/archi.inherit`** | `(none)` | ** Legacy Takeover**<br>Take over an existing legacy project. | Full Code Scan -> Reverse Deduction -> **Fill Global Docs**. |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>Refresh directory map. | Scan File System -> **Update 01_map.md**. |
 
     ---
 
@@ -109,8 +109,8 @@
 
     | Command | Args | Role (Brief) | Core Logic |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.plan`** | `[id \| context]` | **✨ Feature Planning**<br>Define new feature or refine existing one. | Smart Decision:<br>1. Has ID -> Read existing docs, deep refine.<br>2. No ID -> **Create New ID** -> Architecture Interview -> Generate Spec/UI/Plan. |
-    | **`/archi.adopt`** | `[context]` | **📦 Adopt Legacy**<br>Adopt legacy code. | Fuzzy Search Code -> **Auto Draft ID** -> Reverse Generate Spec/UI. |
+    | **`/archi.plan`** | `[id \| context]` | ** Feature Planning**<br>Define new feature or refine existing one. | Smart Decision:<br>1. Has ID -> Read existing docs, deep refine.<br>2. No ID -> **Create New ID** -> Architecture Interview -> Generate Spec/UI/Plan. |
+    | **`/archi.adopt`** | `[context]` | ** Adopt Legacy**<br>Adopt legacy code. | Fuzzy Search Code -> **Auto Draft ID** -> Reverse Generate Spec/UI. |
 
     ---
 
@@ -118,8 +118,8 @@
 
     | Command | Args | Role (Brief) | Core Logic |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.edit`** | `<id> [context]` | **📝 Modify Spec/UI**<br>Modify **local** feature requirements. | Read Old Docs -> Inject New Req -> **Update Spec/UI** -> Append Plan. |
-    | **`/archi.revise`** | `<target> [context]` | **🧠 Global Revision**<br>Modify **global** settings (e.g. Tech Stack). | Modify Vision/Tech/Roadmap -> **Broadcast Changes** (Notify related Features). |
+    | **`/archi.edit`** | `<id> [context]` | ** Modify Spec/UI**<br>Modify **local** feature requirements. | Read Old Docs -> Inject New Req -> **Update Spec/UI** -> Append Plan. |
+    | **`/archi.revise`** | `<target> [context]` | ** Global Revision**<br>Modify **global** settings (e.g. Tech Stack). | Modify Vision/Tech/Roadmap -> **Broadcast Changes** (Notify related Features). |
 
     ---
 
@@ -127,8 +127,8 @@
 
     | Command | Args | Role (Brief) | Core Logic |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.code`** | `<id>` | **🔨 Write Code**<br>Translate docs to code. | Read Plan -> Generate/Modify Code -> **Static Check + Auto Audit**. |
-    | **`/archi.fix`** | `[id] <context>` | **🚑 Bug Fix**<br>Fix Bug (Not requirement change). | Diagnose Error -> Record Plan -> **Fix Code** (Usually don't modify Spec). |
+    | **`/archi.code`** | `<id>` | ** Write Code**<br>Translate docs to code. | Read Plan -> Generate/Modify Code -> **Static Check + Auto Audit**. |
+    | **`/archi.fix`** | `[id] <context>` | ** Bug Fix**<br>Fix Bug (Not requirement change). | Diagnose Error -> Record Plan -> **Fix Code** (Usually don't modify Spec). |
 
     ---
 
@@ -136,12 +136,12 @@
 
     | Command | Args | Role (Brief) | Core Logic |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.map`** | `(none)` | **🔄 Refresh Map**<br>Manually refresh architecture map. | Rescan Directory Tree -> Update `01_map.md` (File Topology). |
-    | **`/archi.help`** | `[lang]` | **📖 Manual**<br>Show this manual. | Show command list, project structure & usage. |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>Manually refresh architecture map. | Rescan Directory Tree -> Update `01_map.md` (File Topology). |
+    | **`/archi.help`** | `[lang]` | ** Manual**<br>Show this manual. | Show command list, project structure & usage. |
 
     ---
 
-    ## 💡 Quick Decision Guide
+    ## Quick Decision Guide
 
     | Scenario | Recommended Command |
     | :--- | :--- |
@@ -158,7 +158,7 @@
 
     ---
 
-    ## 🔄 Typical Workflow
+    ## Typical Workflow
 
     ```
     /archi.start [Project Description]     # Step 1: Project Init -> Generate Vision/Tech/Roadmap
@@ -180,7 +180,7 @@
 
     ---
 
-    > **🧭 Next Step**: 
+    > ** Next Step**: 
     > - New Project? Run `/archi.start [Your Project Description]` to start initialization.
     > - Existing Project? Run `/archi.inherit` to take over existing codebase.
     > - Want to plan new feature? Run `/archi.plan [Feature Description]` to start architecture interview.

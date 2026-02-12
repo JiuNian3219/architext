@@ -19,14 +19,14 @@
 
     **Content**:
 
-    # 📘 Architext Command Manual (v1.1)
+    # Architext Command Manual (v1.1)
 
     > **Core Philosophy**: **No Docs, No Code.**
     > 所有的程式碼變更必須始於文件 (Define)，終於審計 (Audit)。
 
     ---
 
-    ## 📁 Project Structure (專案目錄結構)
+    ## Project Structure (專案目錄結構)
 
     初始化後，Architext 會在專案中建立以下結構：
 
@@ -97,9 +97,9 @@
 
     | Command | Args | Role (簡述) | Core Logic (核心邏輯) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.start`** | `[context]` | **🔥 Project Cold Start**<br>新專案冷啟動。 | 訪談願景 -> 確認風格 -> 確認技術堆疊 -> **建立 Docs 骨架**。 |
-    | **`/archi.inherit`** | `(none)` | **🏰 Legacy Takeover**<br>接管現有的舊專案。 | 全量掃描程式碼 -> 逆向推導 -> **填充 Global Docs**。 |
-    | **`/archi.map`** | `(none)` | **🗺️ Refresh Map**<br>重新整理目錄地圖。 | 掃描檔案系統 -> **更新 01_map.md**。 |
+    | **`/archi.start`** | `[context]` | ** Project Cold Start**<br>新專案冷啟動。 | 訪談願景 -> 確認風格 -> 確認技術堆疊 -> **建立 Docs 骨架**。 |
+    | **`/archi.inherit`** | `(none)` | ** Legacy Takeover**<br>接管現有的舊專案。 | 全量掃描程式碼 -> 逆向推導 -> **填充 Global Docs**。 |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>重新整理目錄地圖。 | 掃描檔案系統 -> **更新 01_map.md**。 |
 
     ---
 
@@ -109,8 +109,8 @@
 
     | Command | Args | Role (簡述) | Core Logic (核心邏輯) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.plan`** | `[id \| context]` | **✨ Feature Planning**<br>定義新功能或細化已有功能。 | 智慧判斷：<br>1. 有 ID -> 讀取已有文件，深度細化。<br>2. 無 ID -> **建新 ID** -> 架構訪談 -> 生成 Spec/UI/Plan。 |
-    | **`/archi.adopt`** | `[context]` | **📦 Adopt Legacy**<br>納管舊程式碼。 | 模糊搜尋程式碼 -> **自動擬定 ID** -> 逆向生成 Spec/UI。 |
+    | **`/archi.plan`** | `[id \| context]` | ** Feature Planning**<br>定義新功能或細化已有功能。 | 智慧判斷：<br>1. 有 ID -> 讀取已有文件，深度細化。<br>2. 無 ID -> **建新 ID** -> 架構訪談 -> 生成 Spec/UI/Plan。 |
+    | **`/archi.adopt`** | `[context]` | ** Adopt Legacy**<br>納管舊程式碼。 | 模糊搜尋程式碼 -> **自動擬定 ID** -> 逆向生成 Spec/UI。 |
 
     ---
 
@@ -118,8 +118,8 @@
 
     | Command | Args | Role (簡述) | Core Logic (核心邏輯) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.edit`** | `<id> [context]` | **📝 Modify Spec/UI**<br>修改**局部**功能的需求。 | 讀取舊文件 -> 注入新需求 -> **更新 Spec/UI** -> 追加 Plan。 |
-    | **`/archi.revise`** | `<target> [context]` | **🧠 Global Revision**<br>修改**全域**設定 (如技術堆疊)。 | 修改 Vision/Tech/Roadmap -> **廣播變更** (通知相關 Feature)。 |
+    | **`/archi.edit`** | `<id> [context]` | ** Modify Spec/UI**<br>修改**局部**功能的需求。 | 讀取舊文件 -> 注入新需求 -> **更新 Spec/UI** -> 追加 Plan。 |
+    | **`/archi.revise`** | `<target> [context]` | ** Global Revision**<br>修改**全域**設定 (如技術堆疊)。 | 修改 Vision/Tech/Roadmap -> **廣播變更** (通知相關 Feature)。 |
 
     ---
 
@@ -127,8 +127,8 @@
 
     | Command | Args | Role (簡述) | Core Logic (核心邏輯) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.code`** | `<id>` | **🔨 Write Code**<br>將文件翻譯為程式碼。 | 讀取 Plan -> 生成/修改程式碼 -> **靜態檢查 + 自動審計**。 |
-    | **`/archi.fix`** | `[id] <context>` | **🚑 Bug Fix**<br>修復 Bug (非需求變更)。 | 診斷錯誤 -> 記錄 Plan -> **修復程式碼** (通常不修改 Spec)。 |
+    | **`/archi.code`** | `<id>` | ** Write Code**<br>將文件翻譯為程式碼。 | 讀取 Plan -> 生成/修改程式碼 -> **靜態檢查 + 自動審計**。 |
+    | **`/archi.fix`** | `[id] <context>` | ** Bug Fix**<br>修復 Bug (非需求變更)。 | 診斷錯誤 -> 記錄 Plan -> **修復程式碼** (通常不修改 Spec)。 |
 
     ---
 
@@ -136,8 +136,8 @@
 
     | Command | Args | Role (簡述) | Core Logic (核心邏輯) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.map`** | `(none)` | **🔄 Refresh Map**<br>手動重新整理架構地圖。 | 重新掃描目錄樹 -> 更新 `01_map.md` (檔案拓樸)。 |
-    | **`/archi.help`** | `[lang]` | **📖 Manual**<br>顯示本說明書。 | 顯示指令列表、專案結構與用法。 |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>手動重新整理架構地圖。 | 重新掃描目錄樹 -> 更新 `01_map.md` (檔案拓樸)。 |
+    | **`/archi.help`** | `[lang]` | ** Manual**<br>顯示本說明書。 | 顯示指令列表、專案結構與用法。 |
 
     ---
 
@@ -158,7 +158,7 @@
 
     ---
 
-    ## 🔄 Typical Workflow (典型工作流)
+    ## Typical Workflow (典型工作流)
 
     ```
     /archi.start [專案描述]     # Step 1: 專案初始化 -> 生成 Vision/Tech/Roadmap
@@ -180,7 +180,7 @@
 
     ---
 
-    > **🧭 Next Step**: 
+    > ** Next Step**: 
     > - 新專案？運行 `/archi.start [你的專案描述]` 開始初始化。
     > - 已有專案？運行 `/archi.inherit` 接管現有程式碼庫。
     > - 想規劃新功能？運行 `/archi.plan [功能描述]` 開始架構訪談。

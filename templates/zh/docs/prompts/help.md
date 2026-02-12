@@ -1,34 +1,27 @@
 <protocol_help>
   **Trigger**: `/archi.help [lang]`
-  **Goal**: 显示 Architext 完整指令清单，解释 DDAD (文档驱动开发) 的操作流，并展示项目目录结构。
+  **Goal**: 显示 Architext 指令清单，解释 DDAD 操作流，展示项目目录结构。
 
 <meta>
     <style>Clean, Structured, Manual-Style</style>
     <language>简体中文</language>
     <principles>
-      1.  **Lifecycle-Oriented**: 按项目生命周期 (启动->定义->变更->执行) 分组，而非简单的字母排序。
-      2.  **Logic Clarity**: 明确解释核心逻辑 (e.g. 为什么 `/archi.plan` 不写代码只写文档)。
-      3.  **Bilingual Support**: 根据 `[lang]` (zh/zh-Hant/en) 输出对应语言，默认为中文。
-      4.  **Structure Awareness**: 展示项目目录结构，帮助用户理解文件组织。
+      1.  **Lifecycle-Oriented**: 按项目生命周期分组（启动→定义→变更→执行）。
+      2.  **Bilingual Support**: 根据 `[lang]` (zh/zh-Hant/en) 输出对应语言，默认中文。
     </principles>
 </meta>
 
 <step_1_render>
-    **Role**: 技术文档工程师
-    **Action**: 输出以下 Markdown 格式的手册。
+    **Action**: 输出以下手册。
 
-    **Content**:
-
-    # 📘 Architext Command Manual (v1.1)
+    # Architext Command Manual (v1.1)
 
     > **Core Philosophy**: **No Docs, No Code.**
-    > 所有的代码变更必须始于文档 (Define)，终于审计 (Audit)。
+    > 所有代码变更始于文档 (Define)，终于审计 (Audit)。
 
     ---
 
-    ## 📁 Project Structure (项目目录结构)
-
-    初始化后，Architext 会在项目中创建以下结构：
+    ## Project Structure
 
     ```
     my-project/
@@ -97,9 +90,9 @@
 
     | Command | Args | Role (简述) | Core Logic (核心逻辑) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.start`** | `[context]` | **🔥 Project Cold Start**<br>新项目冷启动。 | 访谈愿景 -> 确认风格 -> 确认技术栈 -> **创建 Docs 骨架**。 |
-    | **`/archi.inherit`** | `(none)` | **🏰 Legacy Takeover**<br>接管现有的旧项目。 | 全量扫描代码 -> 逆向推导 -> **填充 Global Docs**。 |
-    | **`/archi.map`** | `(none)` | **🗺️ Refresh Map**<br>刷新目录地图。 | 扫描文件系统 -> **更新 01_map.md**。 |
+    | **`/archi.start`** | `[context]` | ** Project Cold Start**<br>新项目冷启动。 | 访谈愿景 -> 确认风格 -> 确认技术栈 -> **创建 Docs 骨架**。 |
+    | **`/archi.inherit`** | `(none)` | ** Legacy Takeover**<br>接管现有的旧项目。 | 全量扫描代码 -> 逆向推导 -> **填充 Global Docs**。 |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>刷新目录地图。 | 扫描文件系统 -> **更新 01_map.md**。 |
 
     ---
 
@@ -109,8 +102,8 @@
 
     | Command | Args | Role (简述) | Core Logic (核心逻辑) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.plan`** | `[id \| context]` | **✨ Feature Planning**<br>定义新功能或细化已有功能。 | 智能判断：<br>1. 有 ID -> 读取已有文档，深度细化。<br>2. 无 ID -> **建新 ID** -> 架构访谈 -> 生成 Spec/UI/Plan。 |
-    | **`/archi.adopt`** | `[context]` | **📦 Adopt Legacy**<br>纳管旧代码。 | 模糊搜索代码 -> **自动拟定 ID** -> 逆向生成 Spec/UI。 |
+    | **`/archi.plan`** | `[id \| context]` | ** Feature Planning**<br>定义新功能或细化已有功能。 | 智能判断：<br>1. 有 ID -> 读取已有文档，深度细化。<br>2. 无 ID -> **建新 ID** -> 架构访谈 -> 生成 Spec/UI/Plan。 |
+    | **`/archi.adopt`** | `[context]` | ** Adopt Legacy**<br>纳管旧代码。 | 模糊搜索代码 -> **自动拟定 ID** -> 逆向生成 Spec/UI。 |
 
     ---
 
@@ -118,8 +111,8 @@
 
     | Command | Args | Role (简述) | Core Logic (核心逻辑) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.edit`** | `<id> [context]` | **📝 Modify Spec/UI**<br>修改**局部**功能的需求。 | 读取旧文档 -> 注入新需求 -> **更新 Spec/UI** -> 追加 Plan。 |
-    | **`/archi.revise`** | `<target> [context]` | **🧠 Global Revision**<br>修改**全局**设定 (如技术栈)。 | 修改 Vision/Tech/Roadmap -> **广播变更** (通知相关 Feature)。 |
+    | **`/archi.edit`** | `<id> [context]` | ** Modify Spec/UI**<br>修改**局部**功能的需求。 | 读取旧文档 -> 注入新需求 -> **更新 Spec/UI** -> 追加 Plan。 |
+    | **`/archi.revise`** | `<target> [context]` | ** Global Revision**<br>修改**全局**设定 (如技术栈)。 | 修改 Vision/Tech/Roadmap -> **广播变更** (通知相关 Feature)。 |
 
     ---
 
@@ -127,8 +120,8 @@
 
     | Command | Args | Role (简述) | Core Logic (核心逻辑) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.code`** | `<id>` | **🔨 Write Code**<br>将文档翻译为代码。 | 读取 Plan -> 生成/修改代码 -> **静态检查 + 自动审计**。 |
-    | **`/archi.fix`** | `[id] <context>` | **🚑 Bug Fix**<br>修复 Bug (非需求变更)。 | 诊断错误 -> 记录 Plan -> **修复代码** (通常不修改 Spec)。 |
+    | **`/archi.code`** | `<id>` | ** Write Code**<br>将文档翻译为代码。 | 读取 Plan -> 生成/修改代码 -> **静态检查 + 自动审计**。 |
+    | **`/archi.fix`** | `[id] <context>` | ** Bug Fix**<br>修复 Bug (非需求变更)。 | 诊断错误 -> 记录 Plan -> **修复代码** (通常不修改 Spec)。 |
 
     ---
 
@@ -136,12 +129,12 @@
 
     | Command | Args | Role (简述) | Core Logic (核心逻辑) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.map`** | `(none)` | **🔄 Refresh Map**<br>手动刷新架构地图。 | 重新扫描目录树 -> 更新 `01_map.md` (文件拓扑)。 |
-    | **`/archi.help`** | `[lang]` | **📖 Manual**<br>显示本说明书。 | 显示指令列表、项目结构与用法。 |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>手动刷新架构地图。 | 重新扫描目录树 -> 更新 `01_map.md` (文件拓扑)。 |
+    | **`/archi.help`** | `[lang]` | ** Manual**<br>显示本说明书。 | 显示指令列表、项目结构与用法。 |
 
     ---
 
-    ## 💡 Quick Decision Guide (快速决策)
+    ## Quick Decision Guide (快速决策)
 
     | 场景 | 推荐指令 |
     | :--- | :--- |
@@ -158,7 +151,7 @@
 
     ---
 
-    ## 🔄 Typical Workflow (典型工作流)
+    ## Typical Workflow (典型工作流)
 
     ```
     /archi.start [项目描述]     # Step 1: 项目初始化 -> 生成 Vision/Tech/Roadmap
@@ -180,7 +173,7 @@
 
     ---
 
-    > **🧭 Next Step**: 
+    > ** Next Step**: 
     > - 新项目？运行 `/archi.start [你的项目描述]` 开始初始化。
     > - 已有项目？运行 `/archi.inherit` 接管现有代码库。
     > - 想规划新功能？运行 `/archi.plan [功能描述]` 开始架构访谈。
