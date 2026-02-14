@@ -108,18 +108,23 @@
 </step_5_audit>
 
 <step_6_signoff>
+    **CLI 必執行**: 以下命令須在終端實際執行，禁僅以文字建議代替。
+
     **Plan Completion Gate (強制)**:
     1.  執行 `npx archi plan <ID>` 檢查 plan.md 任務完成度。
     2.  通過條件: 全部 `[x]` 或未完成項僅屬於 🧑人工介入 / 🌐不可抗力。
     3.  未通過: 禁簽收，回到 step_3 繼續實施。
     4.  豁免項須標註原因和類別。
 
-    **Signoff Action** (Gate 通過後):
-    1. 輸出完成任務清單與補丁連結(Code Reference)。
-    2. 更新 plan.md，勾選已完成 Checkbox。
-    3. 執行 `npx archi task <ID> --status done`（或 `active`）更新狀態。禁直接編輯 roadmap。
-    4. 執行 `npx archi task --check` 驗證一致性；失敗須修復。
-    5. 提供下一步建議與 Git Commit Suggestion（Conventional Commits）。
+    **Signoff Action** (Gate 通過後，按序執行):
+    1. **CLI 必執行** (須實際在終端執行，禁跳過):
+       - `npx archi task <ID> --status done`（或 `active`）。禁直接編輯 roadmap。
+       - `npx archi task --check`；失敗須修復。
+    2. 輸出完成任務清單與補丁連結(Code Reference)。
+    3. 更新 plan.md，勾選已完成 Checkbox。
+    4. 提供下一步建議與 Git Commit Suggestion（Conventional Commits）。
+
+    **Checkpoint** (Output 前須確認): □ `npx archi plan` 已執行 □ `npx archi task --status` 已執行 □ `npx archi task --check` 已執行。
 
     **Output**: 完成摘要，含已完成任務、豁免項(如有)、Git Commit 建議、Next Steps 表格。
 </step_6_signoff>
