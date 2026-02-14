@@ -45,88 +45,68 @@
     > 决定数据结构。
 
     **Web/Backend 示例**:
-    - **[A] Flat / Single Entity**: 单一实体表。
-      > `AI+`: 上下文局限在单文件，不易出错 | `AI-`: 无
-    - **[B] 1:N Relation**: 标准父子关系。
-      > `AI+`: 标准模式 | `AI-`: 须同时更新两个模型文件及关联逻辑
-    - **[C] M:N Relation**: 多对多关联。
-      > `AI+`: 无 | `AI-`: 极易遗漏中间表或事务逻辑
-    - **[D] Recursive / Tree**: 树形/递归结构。
-      > `AI+`: 无 | `AI-`: 递归生成易产生无限循环或栈溢出
-    - **[E] JSON / EAV**: 动态字段/JSON列。
-      > `AI+`: Schema 灵活 | `AI-`: 丧失类型提示，AI 无法从 Schema 推断结构
-    - **[F] Virtual / Computed**: 虚拟/计算属性。
-      > `AI+`: 无需数据迁移 | `AI-`: 查询逻辑复杂，易写出低效查询
-    - **[Z] 自定义**: (请描述)
+    | ID | 选项 | 简述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Flat / Single Entity | 单一实体表 | 上下文局限在单文件，不易出错 | 无 |
+    | B | 1:N Relation | 标准父子关系 | 标准模式 | 须同时更新两个模型文件及关联逻辑 |
+    | C | M:N Relation | 多对多关联 | 无 | 极易遗漏中间表或事务逻辑 |
+    | D | Recursive / Tree | 树形/递归结构 | 无 | 递归生成易产生无限循环或栈溢出 |
+    | E | JSON / EAV | 动态字段/JSON列 | Schema 灵活 | 丧失类型提示，AI 无法从 Schema 推断结构 |
+    | F | Virtual / Computed | 虚拟/计算属性 | 无需数据迁移 | 查询逻辑复杂，易写出低效查询 |
+    | Z | 自定义 | (请描述) | - | - |
 
     **Q2. Interaction & Presentation Pattern**
     > 决定用户操作方式。
 
     **Web/UI 项目**:
-    - **[A] CRUD Table/List**: 标准增删改查。
-      > `AI+`: 标准组件极易生成 | `AI-`: 无
-    - **[B] Wizard / Stepper**: 分步向导。
-      > `AI+`: 步骤状态明确 | `AI-`: 跨步骤状态管理复杂
-    - **[C] Dashboard / Kanban**: 看板/卡片视图。
-      > `AI+`: 无 | `AI-`: 拖拽逻辑依赖文档较差的第三方库，幻觉风险高
-    - **[D] Modal / Drawer Drill-down**: 弹窗/抽屉钻取。
-      > `AI+`: 上下文局部化 | `AI-`: Z-index/Focus Trap 等 Bug 常见
-    - **[E] Infinite Scroll / Feed**: 信息流。
-      > `AI+`: 无 | `AI-`: 虚拟化逻辑极难写对
-    - **[F] Editor / Canvas**: 编辑器/画布。
-      > `AI+`: 无 | `AI-`: Canvas API 指令式，比声明式 DOM 难生成得多
-    - **[Z] 自定义**: (请描述)
+    | ID | 选项 | 简述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | CRUD Table/List | 标准增删改查 | 标准组件极易生成 | 无 |
+    | B | Wizard / Stepper | 分步向导 | 步骤状态明确 | 跨步骤状态管理复杂 |
+    | C | Dashboard / Kanban | 看板/卡片视图 | 无 | 拖拽逻辑依赖文档较差的第三方库，幻觉风险高 |
+    | D | Modal / Drawer Drill-down | 弹窗/抽屉钻取 | 上下文局部化 | Z-index/Focus Trap 等 Bug 常见 |
+    | E | Infinite Scroll / Feed | 信息流 | 无 | 虚拟化逻辑极难写对 |
+    | F | Editor / Canvas | 编辑器/画布 | 无 | Canvas API 指令式，比声明式 DOM 难生成得多 |
+    | Z | 自定义 | (请描述) | - | - |
 
     **Q3. State Sync & Data Flow**
     > 数据如何在客户端、服务端和存储之间同步。
 
-    - **[A] Standard REST/Request**: 标准请求/响应。
-      > `AI+`: 原子操作，无状态，易测试 | `AI-`: 无
-    - **[B] Optimistic UI**: 乐观更新。
-      > `AI+`: 无 | `AI-`: 回滚逻辑常被遗忘
-    - **[C] Polling / SWR**: 轮询/SWR。
-      > `AI+`: React Query 等库处理佳 | `AI-`: 无
-    - **[D] Realtime (Socket/SSE)**: 实时推送。
-      > `AI+`: 无 | `AI-`: 连接状态与重连逻辑极难正确生成
-    - **[E] Local-First / Offline**: 本地优先。
-      > `AI+`: 无 | `AI-`: 同步冲突解决属高阶算法
-    - **[F] Background Job / Async**: 异步任务。
-      > `AI+`: 解耦 | `AI-`: 需额外 Worker 上下文
-    - **[Z] 自定义**: (请描述)
+    | ID | 选项 | 简述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Standard REST/Request | 标准请求/响应 | 原子操作，无状态，易测试 | 无 |
+    | B | Optimistic UI | 乐观更新 | 无 | 回滚逻辑常被遗忘 |
+    | C | Polling / SWR | 轮询/SWR | React Query 等库处理佳 | 无 |
+    | D | Realtime (Socket/SSE) | 实时推送 | 无 | 连接状态与重连逻辑极难正确生成 |
+    | E | Local-First / Offline | 本地优先 | 无 | 同步冲突解决属高阶算法 |
+    | F | Background Job / Async | 异步任务 | 解耦 | 需额外 Worker 上下文 |
+    | Z | 自定义 | (请描述) | - | - |
 
     **Q4. Edge Cases & Error Handling**
     > 此功能特有的失败模式处理。
 
-    - **[A] Fail Fast / Toast**: 快速失败并提示。
-      > `AI+`: 简单一行调用 | `AI-`: 无
-    - **[B] Form Validation**: 表单级校验。
-      > `AI+`: Zod Schema 作为 UI 生成的强上下文 | `AI-`: 正则准确率不稳定
-    - **[C] Retry Mechanism**: 自动重试。
-      > `AI+`: 无 | `AI-`: 幂等性逻辑难验证
-    - **[D] Fallback UI / Skeleton**: 骨架屏/降级UI。
-      > `AI+`: 标准模式 | `AI-`: 需生成并行 UI 结构
-    - **[E] Draft / Auto-save**: 草稿/自动保存。
-      > `AI+`: 无 | `AI-`: 存储节流逻辑需要
-    - **[F] Undo / Redo**: 撤销/重做。
-      > `AI+`: 无 | `AI-`: 状态快照逻辑复杂
-    - **[Z] 自定义**: (请描述)
+    | ID | 选项 | 简述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Fail Fast / Toast | 快速失败并提示 | 简单一行调用 | 无 |
+    | B | Form Validation | 表单级校验 | Zod Schema 作为 UI 生成的强上下文 | 正则准确率不稳定 |
+    | C | Retry Mechanism | 自动重试 | 无 | 幂等性逻辑难验证 |
+    | D | Fallback UI / Skeleton | 骨架屏/降级UI | 标准模式 | 需生成并行 UI 结构 |
+    | E | Draft / Auto-save | 草稿/自动保存 | 无 | 存储节流逻辑需要 |
+    | F | Undo / Redo | 撤销/重做 | 无 | 状态快照逻辑复杂 |
+    | Z | 自定义 | (请描述) | - | - |
 
     **Q5. Access Control**
     > 谁能执行此操作。
 
-    - **[A] Public**: 公开。
-      > `AI+`: 无需鉴权中间件 | `AI-`: 无
-    - **[B] Authenticated**: 登录用户。
-      > `AI+`: 标准中间件 | `AI-`: 无
-    - **[C] Owner Only**: 仅资源拥有者。
-      > `AI+`: 简单 `user.id === resource.ownerId` | `AI-`: 无
-    - **[D] Role Based (RBAC)**: 特定角色。
-      > `AI+`: 规则明确 | `AI-`: 守卫逻辑复杂，上下文负载高
-    - **[E] Shared / Team**: 团队成员可见。
-      > `AI+`: 无 | `AI-`: 权限检查涉及复杂 Join 查询
-    - **[F] Tier / Subscription**: 付费/订阅限制。
-      > `AI+`: 无 | `AI-`: Mock 支付状态困难
-    - **[Z] 自定义**: (请描述)
+    | ID | 选项 | 简述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Public | 公开 | 无需鉴权中间件 | 无 |
+    | B | Authenticated | 登录用户 | 标准中间件 | 无 |
+    | C | Owner Only | 仅资源拥有者 | 简单 `user.id === resource.ownerId` | 无 |
+    | D | Role Based (RBAC) | 特定角色 | 规则明确 | 守卫逻辑复杂，上下文负载高 |
+    | E | Shared / Team | 团队成员可见 | 无 | 权限检查涉及复杂 Join 查询 |
+    | F | Tier / Subscription | 付费/订阅限制 | 无 | Mock 支付状态困难 |
+    | Z | 自定义 | (请描述) | - | - |
 
     ---
 

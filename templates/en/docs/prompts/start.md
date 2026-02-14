@@ -31,8 +31,10 @@
 
       ### STRATEGIC DECISIONS (ADR)
       **[Q1] Decision Title**
-      - **[A] ...**: Brief... `AI+`: ... | `AI-`: ...
-      - **[Z] Custom**: ...
+      | ID | Option | Brief | AI+ | AI- |
+      |:---|:---|:---|:---|:---|
+      | A | ... | ... | ... | ... |
+      | Z | Custom | (Please describe) | - | - |
 
       ---
       **⌨️ INPUT**: `ExtensionIDs (space separated) | Q1 | Q2 | ... | Q6 | Q7 | ...`
@@ -58,102 +60,81 @@
     **[Q1] Product DNA & Target Audience**
     > Decides complexity boundary and external dependency level.
 
-    - **[A] Pure Tool**: Extreme efficiency, no deps.
-      > `AI+`: Closed context, low hallucination | `AI-`: Requires high-quality algorithms
-    - **[B] Community / Social**: Connection focused.
-      > `AI+`: Standardized data models | `AI-`: Scattered RBAC, heavy reasoning load
-    - **[C] Commercial / SaaS**: Monetization efficiency.
-      > `AI+`: Fixed flows (Stripe/Auth) | `AI-`: Requires 3rd-party SDK integration, high token usage
-    - **[D] Content / Media**: Content distribution.
-      > `AI+`: Simple structure (CRUD) | `AI-`: Many unstructured data edge cases
-    - **[E] Enterprise / Internal**: Stability & compliance.
-      > `AI+`: Clear rules, strong-typing friendly | `AI-`: Extremely tedious form validation logic
-    - **[F] Open Source / DevKit**: Ecosystem expansion.
-      > `AI+`: Standard design patterns | `AI-`: Requires massive docs and tests
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Pure Tool | Extreme efficiency, no deps | Closed context, low hallucination | Requires high-quality algorithms |
+    | B | Community / Social | Connection focused | Standardized data models | Scattered RBAC, heavy reasoning load |
+    | C | Commercial / SaaS | Monetization efficiency | Fixed flows (Stripe/Auth) | Requires 3rd-party SDK integration, high token usage |
+    | D | Content / Media | Content distribution | Simple structure (CRUD) | Many unstructured data edge cases |
+    | E | Enterprise / Internal | Stability & compliance | Clear rules, strong-typing friendly | Extremely tedious form validation logic |
+    | F | Open Source / DevKit | Ecosystem expansion | Standard design patterns | Requires massive docs and tests |
+    | Z | Custom | (Please describe) | - | - |
 
     **[Q2] Visual & Interaction Personality**
     > Decides frontend code generation style and complexity.
 
-    - **[A] Minimalist / Clean**: Minimalist whitespace.
-      > `AI+`: Simple CSS, layout hard to break | `AI-`: Requires precise spacing
-    - **[B] Playful / Gamified**: Lively animations.
-      > `AI+`: None | `AI-`: Complex animation state management, prone to visual bugs
-    - **[C] Professional / Data-Dense**: Info dense.
-      > `AI+`: High component reuse | `AI-`: Complex data mock and edge rendering
-    - **[D] Developer / Terminal**: Terminal style.
-      > `AI+`: Pure text processing, AI excels | `AI-`: ANSI Escape prone to errors
-    - **[E] Brutalist / Neo**: Anti-conventional.
-      > `AI+`: Free layout | `AI-`: Non-standard CSS, poor cross-browser consistency
-    - **[F] Native / System**: Native style.
-      > `AI+`: Mature component libs, stable generation | `AI-`: Low customization flexibility
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Minimalist / Clean | Minimalist whitespace | Simple CSS, layout hard to break | Requires precise spacing |
+    | B | Playful / Gamified | Lively animations | None | Complex animation state management, prone to visual bugs |
+    | C | Professional / Data-Dense | Info dense | High component reuse | Complex data mock and edge rendering |
+    | D | Developer / Terminal | Terminal style | Pure text processing, AI excels | ANSI Escape prone to errors |
+    | E | Brutalist / Neo | Anti-conventional | Free layout | Non-standard CSS, poor cross-browser consistency |
+    | F | Native / System | Native style | Mature component libs, stable generation | Low customization flexibility |
+    | Z | Custom | (Please describe) | - | - |
 
     **[Q3] Scale & Infrastructure**
     > Decides infrastructure complexity.
 
-    - **[A] Hobby / Prototype**: Single/Serverless.
-      > `AI+`: Zero ops, just business code | `AI-`: None
-    - **[B] Startup / Growth**: Standard web architecture.
-      > `AI+`: Most common pattern in training data | `AI-`: Requires Docker/DB config
-    - **[C] High Traffic**: High concurrency.
-      > `AI+`: None | `AI-`: Cache/MQ middleware, heavy context load
-    - **[D] Data Heavy**: Massive data.
-      > `AI+`: Strong SQL generation capability | `AI-`: Complex query optimization hard to automate
-    - **[E] Offline / Local**: Local run.
-      > `AI+`: None | `AI-`: Data sync algorithms (CRDT/Sync) extremely hard to generate correctly
-    - **[F] Enterprise Deployment**: Private deployment.
-      > `AI+`: None | `AI-`: K8s configs verbose and error-prone
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Hobby / Prototype | Single/Serverless | Zero ops, just business code | None |
+    | B | Startup / Growth | Standard web architecture | Most common pattern in training data | Requires Docker/DB config |
+    | C | High Traffic | High concurrency | None | Cache/MQ middleware, heavy context load |
+    | D | Data Heavy | Massive data | Strong SQL generation capability | Complex query optimization hard to automate |
+    | E | Offline / Local | Local run | None | Data sync algorithms (CRDT/Sync) extremely hard to generate correctly |
+    | F | Enterprise Deployment | Private deployment | None | K8s configs verbose and error-prone |
+    | Z | Custom | (Please describe) | - | - |
 
     **[Q4] Data Sensitivity & Compliance**
     > Decides security architecture tier and compliance requirements.
 
-    - **[A] Public Data**: No PII, no compliance required.
-      > `AI+`: No encryption overhead, fast dev | `AI-`: None
-    - **[B] User Data (PII)**: Contains email/phone/address etc.
-      > `AI+`: Standard patterns (bcrypt/JWT) | `AI-`: GDPR/privacy policies add boundaries
-    - **[C] Financial / Payment**: PCI-DSS compliance.
-      > `AI+`: Stripe etc. SDKs well-encapsulated | `AI-`: Audit logs/encryption layers complex
-    - **[D] Medical / Health**: HIPAA or equivalent.
-      > `AI+`: None | `AI-`: Data isolation/access control extremely strict
-    - **[E] No Persistence**: Pure computation/transformation tool.
-      > `AI+`: Stateless, minimal context | `AI-`: None
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Public Data | No PII, no compliance required | No encryption overhead, fast dev | None |
+    | B | User Data (PII) | Contains email/phone/address etc | Standard patterns (bcrypt/JWT) | GDPR/privacy policies add boundaries |
+    | C | Financial / Payment | PCI-DSS compliance | Stripe etc. SDKs well-encapsulated | Audit logs/encryption layers complex |
+    | D | Medical / Health | HIPAA or equivalent | None | Data isolation/access control extremely strict |
+    | E | No Persistence | Pure computation/transformation tool | Stateless, minimal context | None |
+    | Z | Custom | (Please describe) | - | - |
 
     **[Q5] Integration Landscape**
     > Decides system boundary and external dependency complexity.
 
-    - **[A] Standalone**: No external dependencies.
-      > `AI+`: Closed context, zero integration risk | `AI-`: None
-    - **[B] API Consumer**: Calls external APIs/services.
-      > `AI+`: Standard SDK call patterns | `AI-`: 3rd-party API changes/rate limits unpredictable
-    - **[C] API Provider**: Exposes APIs externally.
-      > `AI+`: REST/GraphQL generation mature | `AI-`: Version compat/doc maintenance
-    - **[D] Platform Plugin/Extension**: Embedded in host platform (VS Code/Figma/Slack etc.).
-      > `AI+`: None | `AI-`: Platform API training data scarce, version fragmentation
-    - **[E] Bidirectional Integration**: Both consumes and provides APIs.
-      > `AI+`: None | `AI-`: Interface contract management complex
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Standalone | No external dependencies | Closed context, zero integration risk | None |
+    | B | API Consumer | Calls external APIs/services | Standard SDK call patterns | 3rd-party API changes/rate limits unpredictable |
+    | C | API Provider | Exposes APIs externally | REST/GraphQL generation mature | Version compat/doc maintenance |
+    | D | Platform Plugin/Extension | Embedded in host platform (VS Code/Figma/Slack etc) | None | Platform API training data scarce, version fragmentation |
+    | E | Bidirectional Integration | Both consumes and provides APIs | None | Interface contract management complex |
+    | Z | Custom | (Please describe) | - | - |
 
     **[Q6] Resource & Asset Strategy**
     > Decides how AI handles non-code resources (images/icons/audio/video/fonts).
 
-    - **[A] Placeholders Only**: Use placeholder images/icons, user replaces later.
-      > `AI+`: Zero binary deps, pure code focus | `AI-`: None
-    - **[B] Icon/Asset Libraries**: Use icon libs (Lucide/Heroicons) + image services (Unsplash/Pexels).
-      > `AI+`: Deterministic references, no broken links | `AI-`: Library lock-in
-    - **[C] Programmatic Generation**: Generate graphics via SVG/CSS/Canvas.
-      > `AI+`: AI excels at SVG generation | `AI-`: Complex illustrations impossible
-    - **[D] External CDN/Service**: Reference external CDN or asset services.
-      > `AI+`: URL-based, simple | `AI-`: External dependency, may break
-    - **[E] Local Asset Pipeline**: User provides assets, AI writes processing/optimization pipeline.
-      > `AI+`: Clear boundary, AI handles code only | `AI-`: Requires user prep
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Placeholders Only | Placeholder images/icons, user replaces later | Zero binary deps, pure code focus | None |
+    | B | Icon/Asset Libraries | Lucide/Heroicons + Unsplash/Pexels | Deterministic references, no broken links | Library lock-in |
+    | C | Programmatic Generation | SVG/CSS/Canvas graphics | AI excels at SVG generation | Complex illustrations impossible |
+    | D | External CDN/Service | Reference external CDN or asset services | URL-based, simple | External dependency, may break |
+    | E | Local Asset Pipeline | User provides assets, AI writes processing pipeline | Clear boundary, AI handles code only | Requires user prep |
+    | Z | Custom | (Please describe) | - | - |
 
     **[Q7-Q9] Project-Specific Questions** (Dynamically Generated)
     > Based on `[context]` analysis, generate 2-3 critical decision questions specific to this project.
-    > Each question must have: ≥3 options + `AI+`/`AI-` + `[Z] Custom`.
+    > Each question must use table format: ≥3 options + AI+/AI- columns + `[Z] Custom`.
     > Focus: ambiguities in context, domain-specific trade-offs, unstated critical assumptions.
 
     ---
@@ -172,18 +153,15 @@
     **Required Questions**:
 
     **[Q1] Core Language & Runtime**
-    - **[A] TypeScript/Node**: Fullstack.
-      > `AI+`: Richest training data, types aid error correction | `AI-`: Tedious config
-    - **[B] TypeScript/Bun**: Modern runtime.
-      > `AI+`: Zero config, saves tokens | `AI-`: Edge APIs have less training data
-    - **[C] Rust**: System level.
-      > `AI+`: Compiler errors excellent for loop repair | `AI-`: Borrow Checker reasoning cost high
-    - **[D] Go**: Backend.
-      > `AI+`: Simple syntax, only one way to write | `AI-`: `if err != nil` consumes many tokens
-    - **[E] Python**: Fast development.
-      > `AI+`: Pseudocode-like, extremely fast generation | `AI-`: Dynamic typing causes hard-to-debug runtime errors
-    - **[F] Java/Kotlin**: Enterprise.
-      > `AI+`: Strong typing, powerful IDE analysis | `AI-`: Extreme boilerplate, easily exceeds Context Window
+
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | TypeScript/Node | Fullstack | Richest training data, types aid error correction | Tedious config |
+    | B | TypeScript/Bun | Modern runtime | Zero config, saves tokens | Edge APIs have less training data |
+    | C | Rust | System level | Compiler errors excellent for loop repair | Borrow Checker reasoning cost high |
+    | D | Go | Backend | Simple syntax, only one way to write | `if err != nil` consumes many tokens |
+    | E | Python | Fast development | Pseudocode-like, extremely fast generation | Dynamic typing causes hard-to-debug runtime errors |
+    | F | Java/Kotlin | Enterprise | Strong typing, powerful IDE analysis | Extreme boilerplate, easily exceeds Context Window |
 
     **[Q2] Core Framework** (Dynamic)
     > **AX**: Prioritize "Convention over Configuration" frameworks to reduce AI decision burden.

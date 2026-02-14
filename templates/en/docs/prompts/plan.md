@@ -45,88 +45,68 @@
     > Decide data structure.
 
     **Web/Backend Example**:
-    - **[A] Flat / Single Entity**: Single entity table.
-      > `AI+`: Context local to one file, low error rate | `AI-`: None
-    - **[B] 1:N Relation**: Standard parent-child.
-      > `AI+`: Standard pattern | `AI-`: Must update two model files + relation logic
-    - **[C] M:N Relation**: Many-to-many.
-      > `AI+`: None | `AI-`: High risk of missing intermediate table or transaction logic
-    - **[D] Recursive / Tree**: Tree/recursive structure.
-      > `AI+`: None | `AI-`: Recursive generation prone to infinite loops or stack overflow
-    - **[E] JSON / EAV**: Dynamic fields/JSON column.
-      > `AI+`: Flexible schema | `AI-`: Loses type hints, AI cannot infer structure from schema
-    - **[F] Virtual / Computed**: Virtual/computed properties.
-      > `AI+`: No data migration needed | `AI-`: Complex query logic, prone to inefficient queries
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Flat / Single Entity | Single entity table | Context local to one file, low error rate | None |
+    | B | 1:N Relation | Standard parent-child | Standard pattern | Must update two model files + relation logic |
+    | C | M:N Relation | Many-to-many | None | High risk of missing intermediate table or transaction logic |
+    | D | Recursive / Tree | Tree/recursive structure | None | Recursive generation prone to infinite loops or stack overflow |
+    | E | JSON / EAV | Dynamic fields/JSON column | Flexible schema | Loses type hints, AI cannot infer structure from schema |
+    | F | Virtual / Computed | Virtual/computed properties | No data migration needed | Complex query logic, prone to inefficient queries |
+    | Z | Custom | (Please describe) | - | - |
 
     **Q2. Interaction & Presentation Pattern**
     > Decide user interaction method.
 
     **Web/UI Project**:
-    - **[A] CRUD Table/List**: Standard CRUD.
-      > `AI+`: Standard components easy to generate | `AI-`: None
-    - **[B] Wizard / Stepper**: Step-by-step wizard.
-      > `AI+`: Explicit step state | `AI-`: Complex cross-step state management
-    - **[C] Dashboard / Kanban**: Board/card view.
-      > `AI+`: None | `AI-`: Drag logic depends on poorly documented 3rd-party libs, high hallucination risk
-    - **[D] Modal / Drawer Drill-down**: Modal/drawer drill-down.
-      > `AI+`: Localized context | `AI-`: Z-index/Focus Trap bugs common
-    - **[E] Infinite Scroll / Feed**: Feed.
-      > `AI+`: None | `AI-`: Virtualization logic extremely hard to get right
-    - **[F] Editor / Canvas**: Editor/canvas.
-      > `AI+`: None | `AI-`: Canvas API is imperative, much harder to generate than declarative DOM
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | CRUD Table/List | Standard CRUD | Standard components easy to generate | None |
+    | B | Wizard / Stepper | Step-by-step wizard | Explicit step state | Complex cross-step state management |
+    | C | Dashboard / Kanban | Board/card view | None | Drag logic depends on poorly documented 3rd-party libs, high hallucination risk |
+    | D | Modal / Drawer Drill-down | Modal/drawer drill-down | Localized context | Z-index/Focus Trap bugs common |
+    | E | Infinite Scroll / Feed | Feed | None | Virtualization logic extremely hard to get right |
+    | F | Editor / Canvas | Editor/canvas | None | Canvas API is imperative, much harder to generate than declarative DOM |
+    | Z | Custom | (Please describe) | - | - |
 
     **Q3. State Sync & Data Flow**
     > How data syncs between client, server, and storage.
 
-    - **[A] Standard REST/Request**: Standard request/response.
-      > `AI+`: Atomic operations, stateless, easy to test | `AI-`: None
-    - **[B] Optimistic UI**: Optimistic update.
-      > `AI+`: None | `AI-`: Rollback logic often forgotten
-    - **[C] Polling / SWR**: Polling/SWR.
-      > `AI+`: Libraries like React Query handle well | `AI-`: None
-    - **[D] Realtime (Socket/SSE)**: Realtime push.
-      > `AI+`: None | `AI-`: Connection state and reconnection logic extremely hard to generate correctly
-    - **[E] Local-First / Offline**: Local-first.
-      > `AI+`: None | `AI-`: Sync conflict resolution is advanced algorithmic work
-    - **[F] Background Job / Async**: Async tasks.
-      > `AI+`: Decoupled | `AI-`: Requires additional Worker context
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Standard REST/Request | Standard request/response | Atomic operations, stateless, easy to test | None |
+    | B | Optimistic UI | Optimistic update | None | Rollback logic often forgotten |
+    | C | Polling / SWR | Polling/SWR | Libraries like React Query handle well | None |
+    | D | Realtime (Socket/SSE) | Realtime push | None | Connection state and reconnection logic extremely hard to generate correctly |
+    | E | Local-First / Offline | Local-first | None | Sync conflict resolution is advanced algorithmic work |
+    | F | Background Job / Async | Async tasks | Decoupled | Requires additional Worker context |
+    | Z | Custom | (Please describe) | - | - |
 
     **Q4. Edge Cases & Error Handling**
     > Feature-specific failure mode handling.
 
-    - **[A] Fail Fast / Toast**: Fail fast with notification.
-      > `AI+`: Simple one-line call | `AI-`: None
-    - **[B] Form Validation**: Form-level validation.
-      > `AI+`: Zod Schema as strong context for UI generation | `AI-`: Regex accuracy unstable
-    - **[C] Retry Mechanism**: Auto retry.
-      > `AI+`: None | `AI-`: Idempotency logic hard to verify
-    - **[D] Fallback UI / Skeleton**: Skeleton/fallback UI.
-      > `AI+`: Standard pattern | `AI-`: Requires parallel UI structure generation
-    - **[E] Draft / Auto-save**: Draft/auto-save.
-      > `AI+`: None | `AI-`: Storage throttling logic needed
-    - **[F] Undo / Redo**: Undo/redo.
-      > `AI+`: None | `AI-`: Complex state snapshot logic
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Fail Fast / Toast | Fail fast with notification | Simple one-line call | None |
+    | B | Form Validation | Form-level validation | Zod Schema as strong context for UI generation | Regex accuracy unstable |
+    | C | Retry Mechanism | Auto retry | None | Idempotency logic hard to verify |
+    | D | Fallback UI / Skeleton | Skeleton/fallback UI | Standard pattern | Requires parallel UI structure generation |
+    | E | Draft / Auto-save | Draft/auto-save | None | Storage throttling logic needed |
+    | F | Undo / Redo | Undo/redo | None | Complex state snapshot logic |
+    | Z | Custom | (Please describe) | - | - |
 
     **Q5. Access Control**
     > Who can perform this operation.
 
-    - **[A] Public**: Public.
-      > `AI+`: No auth middleware needed | `AI-`: None
-    - **[B] Authenticated**: Logged-in users.
-      > `AI+`: Standard middleware | `AI-`: None
-    - **[C] Owner Only**: Resource owner only.
-      > `AI+`: Simple `user.id === resource.ownerId` | `AI-`: None
-    - **[D] Role Based (RBAC)**: Specific roles.
-      > `AI+`: Explicit rules | `AI-`: Complex guard logic, high context load
-    - **[E] Shared / Team**: Team members visible.
-      > `AI+`: None | `AI-`: Permission check involves complex Join queries
-    - **[F] Tier / Subscription**: Paid/subscription restriction.
-      > `AI+`: None | `AI-`: Mocking payment state is difficult
-    - **[Z] Custom**: (Please describe)
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Public | Public | No auth middleware needed | None |
+    | B | Authenticated | Logged-in users | Standard middleware | None |
+    | C | Owner Only | Resource owner only | Simple `user.id === resource.ownerId` | None |
+    | D | Role Based (RBAC) | Specific roles | Explicit rules | Complex guard logic, high context load |
+    | E | Shared / Team | Team members visible | None | Permission check involves complex Join queries |
+    | F | Tier / Subscription | Paid/subscription restriction | None | Mocking payment state is difficult |
+    | Z | Custom | (Please describe) | - | - |
 
     ---
 

@@ -45,88 +45,68 @@
     > 決定資料結構。
 
     **Web/Backend 範例**:
-    - **[A] Flat / Single Entity**: 單一實體表。
-      > `AI+`: 上下文侷限在單檔案，不易出錯 | `AI-`: 無
-    - **[B] 1:N Relation**: 標準父子關係。
-      > `AI+`: 標準模式 | `AI-`: 須同時更新兩個模型檔案及關聯邏輯
-    - **[C] M:N Relation**: 多對多關聯。
-      > `AI+`: 無 | `AI-`: 極易遺漏中間表或交易邏輯
-    - **[D] Recursive / Tree**: 樹形/遞迴結構。
-      > `AI+`: 無 | `AI-`: 遞迴生成易產生無限迴圈或堆疊溢位
-    - **[E] JSON / EAV**: 動態欄位/JSON列。
-      > `AI+`: Schema 靈活 | `AI-`: 喪失型別提示，AI 無法從 Schema 推斷結構
-    - **[F] Virtual / Computed**: 虛擬/計算屬性。
-      > `AI+`: 無需資料遷移 | `AI-`: 查詢邏輯複雜，易寫出低效查詢
-    - **[Z] 自訂**: (請描述)
+    | ID | 選項 | 簡述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Flat / Single Entity | 單一實體表 | 上下文侷限在單檔案，不易出錯 | 無 |
+    | B | 1:N Relation | 標準父子關係 | 標準模式 | 須同時更新兩個模型檔案及關聯邏輯 |
+    | C | M:N Relation | 多對多關聯 | 無 | 極易遺漏中間表或交易邏輯 |
+    | D | Recursive / Tree | 樹形/遞迴結構 | 無 | 遞迴生成易產生無限迴圈或堆疊溢位 |
+    | E | JSON / EAV | 動態欄位/JSON列 | Schema 靈活 | 喪失型別提示，AI 無法從 Schema 推斷結構 |
+    | F | Virtual / Computed | 虛擬/計算屬性 | 無需資料遷移 | 查詢邏輯複雜，易寫出低效查詢 |
+    | Z | 自訂 | (請描述) | - | - |
 
     **Q2. Interaction & Presentation Pattern**
     > 決定使用者操作方式。
 
     **Web/UI 專案**:
-    - **[A] CRUD Table/List**: 標準增刪改查。
-      > `AI+`: 標準元件極易生成 | `AI-`: 無
-    - **[B] Wizard / Stepper**: 分步嚮導。
-      > `AI+`: 步驟狀態明確 | `AI-`: 跨步驟狀態管理複雜
-    - **[C] Dashboard / Kanban**: 看板/卡片視圖。
-      > `AI+`: 無 | `AI-`: 拖曳邏輯依賴文件較差的第三方庫，幻覺風險高
-    - **[D] Modal / Drawer Drill-down**: 彈窗/抽屜鑽取。
-      > `AI+`: 上下文局部化 | `AI-`: Z-index/Focus Trap 等 Bug 常見
-    - **[E] Infinite Scroll / Feed**: 資訊流。
-      > `AI+`: 無 | `AI-`: 虛擬化邏輯極難寫對
-    - **[F] Editor / Canvas**: 編輯器/畫布。
-      > `AI+`: 無 | `AI-`: Canvas API 指令式，比宣告式 DOM 難生成得多
-    - **[Z] 自訂**: (請描述)
+    | ID | 選項 | 簡述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | CRUD Table/List | 標準增刪改查 | 標準元件極易生成 | 無 |
+    | B | Wizard / Stepper | 分步嚮導 | 步驟狀態明確 | 跨步驟狀態管理複雜 |
+    | C | Dashboard / Kanban | 看板/卡片視圖 | 無 | 拖曳邏輯依賴文件較差的第三方庫，幻覺風險高 |
+    | D | Modal / Drawer Drill-down | 彈窗/抽屜鑽取 | 上下文局部化 | Z-index/Focus Trap 等 Bug 常見 |
+    | E | Infinite Scroll / Feed | 資訊流 | 無 | 虛擬化邏輯極難寫對 |
+    | F | Editor / Canvas | 編輯器/畫布 | 無 | Canvas API 指令式，比宣告式 DOM 難生成得多 |
+    | Z | 自訂 | (請描述) | - | - |
 
     **Q3. State Sync & Data Flow**
     > 資料如何在客戶端、服務端和儲存之間同步。
 
-    - **[A] Standard REST/Request**: 標準請求/回應。
-      > `AI+`: 原子操作，無狀態，易測試 | `AI-`: 無
-    - **[B] Optimistic UI**: 樂觀更新。
-      > `AI+`: 無 | `AI-`: 回滾邏輯常被遺忘
-    - **[C] Polling / SWR**: 輪詢/SWR。
-      > `AI+`: React Query 等庫處理佳 | `AI-`: 無
-    - **[D] Realtime (Socket/SSE)**: 即時推送。
-      > `AI+`: 無 | `AI-`: 連線狀態與重連邏輯極難正確生成
-    - **[E] Local-First / Offline**: 本地優先。
-      > `AI+`: 無 | `AI-`: 同步衝突解決屬高階演算法
-    - **[F] Background Job / Async**: 非同步任務。
-      > `AI+`: 解耦 | `AI-`: 需額外 Worker 上下文
-    - **[Z] 自訂**: (請描述)
+    | ID | 選項 | 簡述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Standard REST/Request | 標準請求/回應 | 原子操作，無狀態，易測試 | 無 |
+    | B | Optimistic UI | 樂觀更新 | 無 | 回滾邏輯常被遺忘 |
+    | C | Polling / SWR | 輪詢/SWR | React Query 等庫處理佳 | 無 |
+    | D | Realtime (Socket/SSE) | 即時推送 | 無 | 連線狀態與重連邏輯極難正確生成 |
+    | E | Local-First / Offline | 本地優先 | 無 | 同步衝突解決屬高階演算法 |
+    | F | Background Job / Async | 非同步任務 | 解耦 | 需額外 Worker 上下文 |
+    | Z | 自訂 | (請描述) | - | - |
 
     **Q4. Edge Cases & Error Handling**
     > 此功能特有的失敗模式處理。
 
-    - **[A] Fail Fast / Toast**: 快速失敗並提示。
-      > `AI+`: 簡單一行呼叫 | `AI-`: 無
-    - **[B] Form Validation**: 表單級校驗。
-      > `AI+`: Zod Schema 作為 UI 生成的強上下文 | `AI-`: 正規表示式準確率不穩定
-    - **[C] Retry Mechanism**: 自動重試。
-      > `AI+`: 無 | `AI-`: 冪等性邏輯難驗證
-    - **[D] Fallback UI / Skeleton**: 骨架屏/降級UI。
-      > `AI+`: 標準模式 | `AI-`: 需生成並行 UI 結構
-    - **[E] Draft / Auto-save**: 草稿/自動保存。
-      > `AI+`: 無 | `AI-`: 儲存節流邏輯需要
-    - **[F] Undo / Redo**: 撤銷/重做。
-      > `AI+`: 無 | `AI-`: 狀態快照邏輯複雜
-    - **[Z] 自訂**: (請描述)
+    | ID | 選項 | 簡述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Fail Fast / Toast | 快速失敗並提示 | 簡單一行呼叫 | 無 |
+    | B | Form Validation | 表單級校驗 | Zod Schema 作為 UI 生成的強上下文 | 正規表示式準確率不穩定 |
+    | C | Retry Mechanism | 自動重試 | 無 | 冪等性邏輯難驗證 |
+    | D | Fallback UI / Skeleton | 骨架屏/降級UI | 標準模式 | 需生成並行 UI 結構 |
+    | E | Draft / Auto-save | 草稿/自動保存 | 無 | 儲存節流邏輯需要 |
+    | F | Undo / Redo | 撤銷/重做 | 無 | 狀態快照邏輯複雜 |
+    | Z | 自訂 | (請描述) | - | - |
 
     **Q5. Access Control**
     > 誰能執行此操作。
 
-    - **[A] Public**: 公開。
-      > `AI+`: 無需鑑權中介軟體 | `AI-`: 無
-    - **[B] Authenticated**: 登入使用者。
-      > `AI+`: 標準中介軟體 | `AI-`: 無
-    - **[C] Owner Only**: 僅資源擁有者。
-      > `AI+`: 簡單 `user.id === resource.ownerId` | `AI-`: 無
-    - **[D] Role Based (RBAC)**: 特定角色。
-      > `AI+`: 規則明確 | `AI-`: 守衛邏輯複雜，上下文負載高
-    - **[E] Shared / Team**: 團隊成員可見。
-      > `AI+`: 無 | `AI-`: 權限檢查涉及複雜 Join 查詢
-    - **[F] Tier / Subscription**: 付費/訂閱限制。
-      > `AI+`: 無 | `AI-`: Mock 支付狀態困難
-    - **[Z] 自訂**: (請描述)
+    | ID | 選項 | 簡述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A | Public | 公開 | 無需鑑權中介軟體 | 無 |
+    | B | Authenticated | 登入使用者 | 標準中介軟體 | 無 |
+    | C | Owner Only | 僅資源擁有者 | 簡單 `user.id === resource.ownerId` | 無 |
+    | D | Role Based (RBAC) | 特定角色 | 規則明確 | 守衛邏輯複雜，上下文負載高 |
+    | E | Shared / Team | 團隊成員可見 | 無 | 權限檢查涉及複雜 Join 查詢 |
+    | F | Tier / Subscription | 付費/訂閱限制 | 無 | Mock 支付狀態困難 |
+    | Z | 自訂 | (請描述) | - | - |
 
     ---
 
