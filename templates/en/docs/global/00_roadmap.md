@@ -28,6 +28,7 @@ graph TD
     classDef pending fill:#fff,stroke:#333,stroke-width:1px;
     classDef blocked fill:#ccc,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
 
+    %% Arrow Direction: Dependency --> Dependent (execution order: do first --> do next)
     %% Nodes Example
     INF-01[🏗️ INF-01: Scaffolding] --> FEAT-01[✨ FEAT-01: Example Feature]
 
@@ -90,4 +91,7 @@ graph TD
     *   **Dep field**: Complete logical dependency list (including indirect/transitive deps), used for scheduling and blocking.
     *   **Mermaid edges**: Only draw **direct, nearest** prerequisites to keep the graph clean and readable.
     *   Do **NOT** draw edges for every entry in the Dep field.
-    *   Example: A.Dep=[B,C], B.Dep=[C] — graph draws `C --> B --> A` only, not `C --> A`.
+    *   **Arrow Direction (Critical)**: Arrows represent **execution order**, pointing from prerequisite to dependent task (do first --> do next). Never reverse.
+        *   Correct: `INF-01 --> FEAT-01` (infra first, then feature)
+        *   Wrong: `FEAT-01 --> INF-01` (forbidden: feature pointing to infra)
+    *   Example: A.Dep=[B,C], B.Dep=[C] — graph draws `C --> B --> A` (execution order: C then B then A) only, not `C --> A`.

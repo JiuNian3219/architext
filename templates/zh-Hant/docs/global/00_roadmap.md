@@ -28,6 +28,7 @@ graph TD
     classDef pending fill:#fff,stroke:#333,stroke-width:1px;
     classDef blocked fill:#ccc,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
 
+    %% Arrow Direction: 依賴 --> 被依賴方（即執行順序：先做 --> 後做）
     %% Nodes Example
     INF-01[🏗️ INF-01: Scaffolding] --> FEAT-01[✨ FEAT-01: Example Feature]
 
@@ -90,4 +91,7 @@ graph TD
     *   **Dep 欄位**: 完整的邏輯依賴列表（含間接/傳遞依賴），用於任務調度與阻塞判斷。
     *   **Mermaid 圖邊**: 只畫**直接的、最近的**前置依賴，保持圖的清晰可讀。
     *   **嚴禁**將 Dep 欄位中的所有條目都畫成圖中的邊。
-    *   例：A.Dep=[B,C]，B.Dep=[C]，圖中只畫 `C --> B --> A`，不畫 `C --> A`。
+    *   **箭頭方向（關鍵）**: 箭頭代表**執行順序**，從前置任務指向後續任務（先做 --> 後做）。禁反向。
+        *   正確: `INF-01 --> FEAT-01`（先做基建，再做功能）
+        *   錯誤: `FEAT-01 --> INF-01`（禁：功能指向基建）
+    *   例：A.Dep=[B,C]，B.Dep=[C]，圖中只畫 `C --> B --> A`（執行順序：先C再B再A），不畫 `C --> A`。

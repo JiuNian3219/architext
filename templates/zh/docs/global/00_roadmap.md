@@ -28,6 +28,7 @@ graph TD
     classDef pending fill:#fff,stroke:#333,stroke-width:1px;
     classDef blocked fill:#ccc,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
 
+    %% Arrow Direction: 依赖 --> 被依赖方（即执行顺序：先做 --> 后做）
     %% Nodes Example
     INF-01[🏗️ INF-01: Scaffolding] --> FEAT-01[✨ FEAT-01: Example Feature]
 
@@ -90,4 +91,7 @@ graph TD
     *   **Dep 字段**: 完整的逻辑依赖列表（含间接/传递依赖），用于任务调度与阻塞判断。
     *   **Mermaid 图边**: 只画**直接的、最近的**前置依赖，保持图的清晰可读。
     *   **严禁**将 Dep 字段中的所有条目都画成图中的边。
-    *   例：A.Dep=[B,C]，B.Dep=[C]，图中只画 `C --> B --> A`，不画 `C --> A`。
+    *   **箭头方向（关键）**: 箭头代表**执行顺序**，从前置任务指向后续任务（先做 --> 后做）。禁反向。
+        *   正确: `INF-01 --> FEAT-01`（先做基建，再做功能）
+        *   错误: `FEAT-01 --> INF-01`（禁：功能指向基建）
+    *   例：A.Dep=[B,C]，B.Dep=[C]，图中只画 `C --> B --> A`（执行顺序：先C再B再A），不画 `C --> A`。
