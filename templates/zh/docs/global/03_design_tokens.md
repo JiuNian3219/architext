@@ -4,6 +4,7 @@ description: Design System Tokens (Colors, Typography, Spacing).
 
 # Design Tokens
 
+> **Scope:** `[?UI]` 仅适用于有 UI/界面的项目（Web/小程序/桌面应用等）。CLI/API/库项目可忽略。
 > **Status:** [Drafting]
 > **Role:** 视觉法律。严禁使用硬编码的 Hex 值或像素值。
 
@@ -74,5 +75,5 @@ description: Design System Tokens (Colors, Typography, Spacing).
 
 **Action**:
 1.  **Doc-First**: 永远先修改此文件，定义新的 Token。
-2.  **Sync**: 随后更新 `tailwind.config.ts` 或 `global.css` 以匹配此文件的定义。
+2.  **Sync**: 随后更新项目的样式配置文件以匹配此定义（依据 `02_tech_stack.md` 技术选型：如 Tailwind 则 `tailwind.config.*`，如 CSS 变量则 `*.css` / `theme.*`，其他栈类推）。
 3.  **Refactor**: 如果发现代码中存在 Hard-coded values (e.g. `w-[23px]`), 必须将其提炼为 Token 并更新此表。

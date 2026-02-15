@@ -20,13 +20,13 @@ description: Project Glossary & Component Registry.
 | :--- | :--- | :--- | :--- |
 | *(Empty)* | | | |
 
-## 3. Component Registry
-<!-- [AI Instruction]: Scan project, record existing reusable components to prevent duplicate development. -->
+## 3. Component Registry [?UI]
+<!-- [AI Instruction]: Applies only to projects with UI. Scan project, record existing reusable components to prevent duplicate development. Path per `01_map.md`. -->
 
 | Component Name | File Path | Usage Description |
 | :--- | :--- | :--- |
 | *(Empty)* | | |
-| *(e.g. PrimaryButton)* | *(src/components/Btn.tsx)* | *(Main CTA)* |
+| *(e.g. PrimaryButton)* | *(per 01_map module path)* | *(Main CTA)* |
 
 ---
 

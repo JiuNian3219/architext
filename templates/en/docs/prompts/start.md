@@ -70,8 +70,8 @@
     | F | Open Source / DevKit | Ecosystem expansion | Standard design patterns | Requires massive docs and tests |
     | Z | Custom | (Please describe) | - | - |
 
-    **[Q2] Visual & Interaction Personality**
-    > Decides frontend code generation style and complexity.
+    **[Q2] Visual & Interaction Personality** [?UI]
+    > If project has UI, decides frontend code generation style and complexity; CLI/API projects may skip.
 
     | ID | Option | Brief | AI+ | AI- |
     |:---|:---|:---|:---|:---|
@@ -169,8 +169,8 @@
     **[Q3] Data Persistence** (Dynamic)
     > **AX**: Prioritize Schema-typed ORMs (Prisma/Drizzle).
 
-    **[Q4] Interface & Comm** (Dynamic)
-    > **AX**: Prioritize Component libs (Shadcn/Tailwind), AI excels at composition over raw CSS.
+    **[Q4] Interface & Comm** [?UI] (Dynamic)
+    > Show if project has UI. **AX**: Prioritize Component libs (Shadcn/Tailwind etc.), AI excels at composition over raw CSS; for CLI/terminal projects, consider Chalk/terminal UI libs.
 
     **[Q5] Quality Assurance** (Dynamic)
     > **AX**: Tests are the only means for AI self-verification.

@@ -33,8 +33,8 @@ When reading or editing code files, must execute the following addressing steps:
 | Code Type | Required Context | Source of Truth |
 |:---|:---|:---|
 | **Business Logic** (Features/Entities) | Spec Document | `[[__DOCS_DIR__]]/global/01_map.md` → Module Entry |
-| **UI Components** (Pages/Widgets) | UI Document + `[[__DOCS_DIR__]]/global/03_design_tokens.md` | `[[__DOCS_DIR__]]/global/01_map.md` + Global Rules |
-| **Data Schema** (Prisma/SQL/Models) | Data Snapshot | `[[__DOCS_DIR__]]/global/04_data_snapshot.md` |
+| **UI Components** (Pages/Widgets) [?UI] | UI Document + `[[__DOCS_DIR__]]/global/03_design_tokens.md` | `[[__DOCS_DIR__]]/global/01_map.md` + Global Rules |
+| **Data Schema** (ORM/SQL/Models) [?Data] | Data Snapshot | `[[__DOCS_DIR__]]/global/04_data_snapshot.md` |
 | **Config / Infra** (Package.json...) | Tech Stack | `02_tech_stack.md` |
 
 ---

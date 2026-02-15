@@ -40,9 +40,9 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 
 ---
 
-## 4. Design & Experience (設計與體驗語言)
+## 4. Design & Experience (設計與體驗語言) [?UI]
 
-> **Note:** 具體色值和圓角定義請嚴格參閱 `[[__DOCS_DIR__]]/global/03_design_tokens.md`。
+> **Note:** 本節僅適用於有 UI 的專案。具體色值和圓角定義請嚴格參閱 `[[__DOCS_DIR__]]/global/03_design_tokens.md`。
 
 ### Visual Style (視覺風格)
 

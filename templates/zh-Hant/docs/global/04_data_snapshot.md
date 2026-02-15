@@ -4,9 +4,10 @@ description: Data Model Snapshot
 
 # Data Model Snapshot
 
+> **Scope:** `[?Data]` 僅適用於有資料層的專案。CLI/純計算專案可忽略。
 > **Status:** [Sync Required]
-> **Role:** 數據契約與結構鏡像 (Design Contract & Schema Snapshot)。
-> **Source File:** *(AI: Fill path, e.g., prisma/schema.prisma)*
+> **Role:** 資料契約與結構鏡像 (Design Contract & Schema Snapshot)。
+> **Source File:** *(AI: 依據 tech_stack 填寫，如 prisma/schema.prisma、models/*.py、schema.sql 等)*
 
 ## 1. Relationships (關係圖)
 

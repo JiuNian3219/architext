@@ -4,9 +4,10 @@ description: Data Model Snapshot
 
 # Data Model Snapshot
 
+> **Scope:** `[?Data]` Applies only to projects with a data layer. CLI/pure-compute projects may ignore.
 > **Status:** [Sync Required]
 > **Role:** Design Contract & Schema Snapshot.
-> **Source File:** *(AI: Fill path, e.g., prisma/schema.prisma)*
+> **Source File:** *(AI: Fill per tech_stack, e.g. prisma/schema.prisma, models/*.py, schema.sql)*
 
 ## 1. Relationships
 

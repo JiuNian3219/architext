@@ -26,8 +26,8 @@ description: The Master Index of Project Documentation, Directory Structure & Lo
 | `00_vision.md`        | **Vision**          | 愿景、北极星指标、设计哲学。   |
 | `01_map.md`           | **Map (This file)** | 目录结构、文件索引、逻辑拓扑。 |
 | `02_dictionary.md`    | **Dictionary**      | 业务术语、公共组件注册表。     |
-| `03_design_tokens.md` | **Visuals**         | 颜色、字体、间距变量。         |
-| `04_data_snapshot.md` | **Data**            | 数据库 Schema 镜像。           |
+| `03_design_tokens.md` | **Visuals** [?UI]   | 颜色、字体、间距变量。         |
+| `04_data_snapshot.md` | **Data** [?Data]    | 数据库 Schema 镜像。           |
 | `05_error_codes.md`   | **Errors**          | 错误码与协议契约。             |
 | `00_vision.md`        | **Vision**          | 愿景、北极星指标、设计哲学。   |
 
@@ -80,7 +80,7 @@ description: The Master Index of Project Documentation, Directory Structure & Lo
     *   `Section 3 (Directory Mapping)`: 必须反映真实的物理文件树。
     *   `Section 4 (Logical Topology)`: 必须注册每个 Feature Module 的职责。
 2.  **Format**:
-    *   `Location` 列必须使用相对于根目录的路径 (e.g., `src/features/auth`).
+    *   `Location` 列须使用相对于根目录的路径（依据项目实际结构，如 Web: `src/features/auth`，CLI: `src/commands/init`，API: `src/routes/`）。
     *   `Dependencies` 列必须列出显式的 import 关系。
 3.  **Self-Correction**:
     *   如果发现代码中的引用关系违反了 Section 4 定义的层级，必须报错并停止生成。

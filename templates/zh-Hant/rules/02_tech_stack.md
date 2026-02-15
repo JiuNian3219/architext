@@ -124,15 +124,15 @@ alwaysApply: false
 * **Constraint**: [Architecture Constraints]
 
 ### File Placement Rules (檔案歸位邏輯)
-> *Context*: 定義不同類型的檔案（測試、類型、介面、樣式）應該創建在哪裡。
+> *Context*: 定義不同類型的檔案應創建在哪裡。**須依據專案類型 (Web/CLI/API/Lib) 與 `01_map.md` 的目錄結構自訂**，下表為佔位示例。
 
-| File Type | Placement Strategy | Example |
+| File Type | Placement Strategy | Example (依據專案調整) |
 | :--- | :--- | :--- |
-| **Unit Tests** | [e.g. Colocation (`foo.test.ts` next to `foo.ts`) or Centralized (`__tests__`)] | `src/utils/date.test.ts` |
-| **Interfaces/Types** | [e.g. Near usage or Global `types/`] | `src/types/user.d.ts` |
-| **Assets/Images** | [e.g. Public folder or Module assets] | `public/images` |
-| **Styles** | [e.g. CSS Modules next to component or Global CSS] | `components/Button.module.css` |
-| **DTOs/Models** | [e.g. Domain folder or Shared folder] | `src/domain/user/dto` |
+| **Unit Tests** | [e.g. Colocation 或 Centralized] | `utils/date.test.ts` / `__tests__/` |
+| **Interfaces/Types** | [e.g. Near usage 或 Global types] | `types/user.d.ts` / `domain/user.entity.ts` |
+| **Assets/Images** [?UI] | [e.g. Public 或 Module assets] | `public/images` / `assets/` |
+| **Styles** [?UI] | [e.g. 按元件或全域] | `Button.module.css` / `global.css` |
+| **DTOs/Models** [?Data] | [e.g. Domain 或 Shared] | `domain/user/dto` / `models/` |
 
 ---
 

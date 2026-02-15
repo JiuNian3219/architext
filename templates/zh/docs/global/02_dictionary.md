@@ -20,13 +20,13 @@ description: Project Glossary & Component Registry.
 | :--- | :--- | :--- | :--- |
 | *(Empty)* | | | |
 
-## 3. Component Registry (公共组件注册表)
-<!-- [AI Instruction]: 扫描项目，记录已有的复用组件，防止重复开发。 -->
+## 3. Component Registry (公共组件注册表) [?UI]
+<!-- [AI Instruction]: 仅适用于有 UI 的项目。扫描项目，记录已有的复用组件，防止重复开发。路径须依据 `01_map.md` 的目录结构。 -->
 
 | Component Name | File Path | Usage Description |
 | :--- | :--- | :--- |
 | *(Empty)* | | |
-| *(e.g. PrimaryButton)* | *(src/components/Btn.tsx)* | *(Main CTA)* |
+| *(e.g. PrimaryButton)* | *(依据 01_map 的模块路径)* | *(Main CTA)* |
 
 ---
 

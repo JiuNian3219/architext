@@ -130,15 +130,15 @@ Component naming must follow `Prefix+Function` format, arbitrary naming is forbi
 * **Constraint**: [Architecture Constraints]
 
 ### File Placement Rules
-> *Context*: Defines where different types of files (Tests, Types, Interfaces, Styles) should be created.
+> *Context*: Defines where different types of files should be created. **Must adapt to project type (Web/CLI/API/Lib) and directory structure in `01_map.md`**; table below is placeholder.
 
-| File Type | Placement Strategy | Example |
+| File Type | Placement Strategy | Example (adapt per project) |
 | :--- | :--- | :--- |
-| **Unit Tests** | [e.g. Colocation (`foo.test.ts` next to `foo.ts`) or Centralized (`__tests__`)] | `src/utils/date.test.ts` |
-| **Interfaces/Types** | [e.g. Near usage or Global `types/`] | `src/types/user.d.ts` |
-| **Assets/Images** | [e.g. Public folder or Module assets] | `public/images` |
-| **Styles** | [e.g. CSS Modules next to component or Global CSS] | `components/Button.module.css` |
-| **DTOs/Models** | [e.g. Domain folder or Shared folder] | `src/domain/user/dto` |
+| **Unit Tests** | [e.g. Colocation or Centralized] | `utils/date.test.ts` / `__tests__/` |
+| **Interfaces/Types** | [e.g. Near usage or Global types] | `types/user.d.ts` / `domain/user.entity.ts` |
+| **Assets/Images** [?UI] | [e.g. Public or Module assets] | `public/images` / `assets/` |
+| **Styles** [?UI] | [e.g. Per-component or Global] | `Button.module.css` / `global.css` |
+| **DTOs/Models** [?Data] | [e.g. Domain or Shared] | `domain/user/dto` / `models/` |
 
 ---
 

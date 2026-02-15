@@ -4,6 +4,7 @@ description: Design System Tokens (Colors, Typography, Spacing).
 
 # Design Tokens
 
+> **Scope:** `[?UI]` Applies only to projects with UI (Web/Mini-app/Desktop etc.). CLI/API/Library projects may ignore.
 > **Status:** [Drafting]
 > **Role:** Visual Law. Strictly forbidden to use hardcoded Hex values or pixel values.
 
@@ -74,5 +75,5 @@ description: Design System Tokens (Colors, Typography, Spacing).
 
 **Action**:
 1.  **Doc-First**: Always modify this file first to define new Tokens.
-2.  **Sync**: Then update `tailwind.config.ts` or `global.css` to match definitions here.
+2.  **Sync**: Then update project styling config to match (per `02_tech_stack.md`: e.g. `tailwind.config.*` for Tailwind, `*.css`/`theme.*` for CSS vars, adapt to stack).
 3.  **Refactor**: If hard-coded values (e.g. `w-[23px]`) are found in code, must extract them into Tokens and update this table.

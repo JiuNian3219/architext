@@ -26,8 +26,8 @@ description: The Master Index of Project Documentation, Directory Structure & Lo
 | `00_vision.md`        | **Vision**          | 願景、北極星指標、設計哲學。   |
 | `01_map.md`           | **Map (This file)** | 目錄結構、文件索引、邏輯拓撲。 |
 | `02_dictionary.md`    | **Dictionary**      | 業務術語、公共組件註冊表。     |
-| `03_design_tokens.md` | **Visuals**         | 顏色、字體、間距變量。         |
-| `04_data_snapshot.md` | **Data**            | 資料庫 Schema 鏡像。           |
+| `03_design_tokens.md` | **Visuals** [?UI]   | 顏色、字體、間距變量。         |
+| `04_data_snapshot.md` | **Data** [?Data]    | 資料庫 Schema 鏡像。           |
 | `05_error_codes.md`   | **Errors**          | 錯誤碼與協議契約。             |
 
 ### Project Management (`[[__DOCS_DIR__]]/`)
@@ -79,7 +79,7 @@ description: The Master Index of Project Documentation, Directory Structure & Lo
     *   `Section 3 (Directory Mapping)`: 必須反映真實的物理文件樹。
     *   `Section 4 (Logical Topology)`: 必須註冊每個 Feature Module 的職責。
 2.  **Format**:
-    *   `Location` 列必須使用相對於根目錄的路徑 (e.g., `src/features/auth`).
+    *   `Location` 列須使用相對於根目錄的路徑（依據專案實際結構，如 Web: `src/features/auth`，CLI: `src/commands/init`，API: `src/routes/`）。
     *   `Dependencies` 列必須列出顯式的 import 關係。
 3.  **Self-Correction**:
     *   如果發現代碼中的引用關係違反了 Section 4 定義的層級，必須報錯並停止生成。
