@@ -173,7 +173,7 @@
     > Show if project has UI. **AX**: Prioritize Component libs (Shadcn/Tailwind etc.), AI excels at composition over raw CSS; for CLI/terminal projects, consider Chalk/terminal UI libs.
 
     **[Q5] Quality Assurance** (Dynamic)
-    > **AX**: Tests are the only means for AI self-verification.
+    > **AX**: Tests are the only means for AI self-verification. Must cover: test tools, test scope, **Runtime verification commands**.
 
     **[Q6] Infrastructure** (Dynamic)
     > **AX**: The more declarative the config, the better.
@@ -191,7 +191,7 @@
     **Action**:
     1.  **Phase 1 (Infra): The "Big Bang"**
         - Must establish complete infrastructure skeleton at once.
-        - [INF-01] Project Scaffolding: Directory structure, Linter, Env, Logger, Test Setup.
+        - [INF-01] Project Scaffolding: Directory structure, Linter, Env, Logger, Test Setup, `scripts/dev-check` script (based on `02_tech_stack.md` Runtime Verification definitions).
         - [INF-02] Core Entities (if applicable): Database Schema, User/Auth Model, Global Types.
         - Phase 2 tasks default depend on INF-01 (and INF-02).
 

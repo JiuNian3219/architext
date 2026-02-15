@@ -76,18 +76,39 @@
     **Role**: Validation Engineer
     **Action** (Execute in order, fix any failure; commands subject to `02_tech_stack.md` or project config):
 
+    **4.1 Static Checks**
+
     | Check Item | Requirement |
     |:---|:---|
-    | **Build** | Build succeeds, no compilation errors |
+    | **Build** | Build succeeds, zero compilation errors |
     | **Type Check** | Zero type errors |
     | **Lint** | Zero lint errors (warnings must explain reason) |
     | **Format** | Compliant with format rules (if failed, auto-fix then re-check) |
-    | **Test** | Unit/integration tests pass; E2E only on critical paths (if configured) |
-    | **Runtime** | [?Web] Local preview [?CLI] Key command verification [?API] Health check [?Lib] Example verification |
 
-    Any validation failure must not be marked complete; must rollback or fix until passed.
+    **4.2 Test**
 
-    **Output**: Pass/fail status and reason for each check.
+    | Check Item | Requirement |
+    |:---|:---|
+    | **Existing Tests** | Run existing test suite, all pass; must not break existing tests with new code |
+    | **New Coverage** | Add tests for newly added/modified critical logic; pure styling changes exempt |
+
+    **4.3 Runtime Verification (Mandatory)**
+
+    > Prohibited from marking complete via code review or tests alone.
+    > If `scripts/dev-check` exists, run it first; otherwise verify manually per `02_tech_stack.md` Runtime Verification.
+
+    | Project Type | Verification Action | Pass Criteria |
+    |:---|:---|:---|
+    | [?Web] | Start dev server → browser-navigate target feature path | Renders correctly, no interaction errors, clean console |
+    | [?API] | Start service → call new/modified endpoints | Status code and body match spec |
+    | [?CLI] | Execute target command (normal args + edge cases) | stdout as expected, correct exit code |
+    | [?Lib] | Run example code or playground to verify exported API | No runtime errors, correct return values |
+    | [?Mobile] | Launch emulator/device → operate target feature | UI renders, interactions respond |
+    | [?Desktop] | Launch app → operate target feature | Window renders, feature functional |
+
+    **Evidence**: Output must include verification results (command output summary / screenshot / error log). Fix and re-verify if failed.
+
+    **Output**: ✅/❌ status and reason for each check; Runtime verification evidence.
 </step_4_validate>
 
 <step_5_audit>

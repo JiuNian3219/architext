@@ -95,9 +95,18 @@ Component naming must follow `Prefix+Function` format, arbitrary naming is forbi
 * **Tool:** [e.g. Vitest + Testcontainers / pytest + Docker / go test + testcontainers]
 * **Scope:** [e.g. Test full write flow from API to Database / Full execution flow of CLI commands.]
 
-### E2E Testing [Optional - Only for projects with UI]
-* **Tool:** [e.g. Playwright / Cypress / Selenium]
-* **Scope:** [e.g. Cover only Critical User Journeys, like Login, Payment.]
+### E2E Testing
+* **Tool:** [e.g. [?Web] Playwright / Cypress  [?API] Supertest / httpie + shell script  [?CLI] shell script / bats  [?Lib] example project + automation script  [?Mobile] Detox / Maestro]
+* **Scope:** [e.g. [?Web] Critical user journeys (login/payment/signup)  [?API] Key endpoint full chain (request→process→response→side effects)  [?CLI] Key command full flow (args→execution→output→exit code)  [?Lib] Public API typical usage scenarios]
+
+### Runtime Verification
+> The following commands must be codified into a `scripts/dev-check` script (generate `.sh` / `.ps1` per OS) during `/archi.start` INF-01 phase.
+> `/archi.code` validation phase must execute this script to confirm environment readiness.
+
+* **Install:** [e.g. `pnpm install` / `pip install -r requirements.txt` / `cargo build` / `go mod download`]
+* **Dev Command:** [e.g. `npm run dev` / `python manage.py runserver` / `cargo run` / N/A]
+* **Health Check:** [e.g. `curl http://localhost:3000/api/health` / `./bin/cli --version` / `python -c "import mylib"`]
+* **Smoke Test:** [e.g. Browser navigate to login page → submit form / `cli generate --help` verify output / `GET /api/users` verify response structure]
 
 ---
 

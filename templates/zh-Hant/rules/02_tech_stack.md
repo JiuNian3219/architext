@@ -87,13 +87,22 @@ alwaysApply: false
 * **Scope:** [例如：覆蓋所有的 Utils 工具函數、複雜的業務邏輯、核心算法。]
 * **Rule:** [例如：必須 Mock 所有外部依賴（API、數據庫、檔案系統）。禁止對易變 UI 進行快照測試（如適用）。]
 
-### Integration Testing (集成測試)
+### Integration Testing (整合測試)
 * **Tool:** [例如：Vitest + Testcontainers / pytest + Docker / go test + testcontainers]
 * **Scope:** [例如：測試 API 到數據庫的完整寫入鏈路 / CLI 命令的完整執行流程。]
 
-### E2E Testing (端到端測試) [可選 - 僅適用於有使用者介面的專案]
-* **Tool:** [例如：Playwright / Cypress / Selenium]
-* **Scope:** [例如：僅覆蓋核心路徑 (Critical User Journeys)，如登錄、支付。]
+### E2E Testing (端到端測試)
+* **Tool:** [例如：[?Web] Playwright / Cypress  [?API] Supertest / httpie + shell script  [?CLI] shell script / bats  [?Lib] 範例專案 + 自動化腳本  [?Mobile] Detox / Maestro]
+* **Scope:** [例如：[?Web] 核心使用者路徑 (登入/支付/註冊)  [?API] 關鍵 endpoint 全鏈路 (請求→處理→回應→副作用)  [?CLI] 關鍵命令全流程 (參數→執行→輸出→退出碼)  [?Lib] 公開 API 的典型使用場景]
+
+### Runtime Verification (執行時驗證)
+> 以下命令須在 `/archi.start` INF-01 階段固化為 `scripts/dev-check` 腳本（按 OS 生成 `.sh` / `.ps1`）。
+> `/archi.code` 驗證階段須執行此腳本確認環境就緒。
+
+* **Install:** [例如：`pnpm install` / `pip install -r requirements.txt` / `cargo build` / `go mod download`]
+* **Dev Command:** [例如：`npm run dev` / `python manage.py runserver` / `cargo run` / N/A]
+* **Health Check:** [例如：`curl http://localhost:3000/api/health` / `./bin/cli --version` / `python -c "import mylib"`]
+* **Smoke Test:** [例如：瀏覽器造訪登入頁 → 提交表單 / `cli generate --help` 驗證輸出 / `GET /api/users` 驗證回應結構]
 
 ---
 

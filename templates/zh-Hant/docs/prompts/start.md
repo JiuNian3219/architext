@@ -173,7 +173,7 @@
     > 如專案有 UI 則顯示。**AX**: 優先 Component 庫 (Shadcn/Tailwind 等)，AI 擅長組合而非手寫 CSS；CLI/終端專案可選 Chalk/終端 UI 庫。
 
     **[Q5] 品質保障** (動態生成)
-    > **AX**: 測試是 AI 自我驗證的唯一手段。
+    > **AX**: 測試是 AI 自我驗證的唯一手段。須涵蓋：測試工具、測試範圍、**Runtime 驗證命令**。
 
     **[Q6] 基礎設施** (動態生成)
     > **AX**: 配置檔越宣告式越好。
@@ -191,7 +191,7 @@
     **Action**:
     1.  **Phase 1 (Infra): The "Big Bang"**
         - 須一次性建立完整基建骨架。
-        - [INF-01] Project Scaffolding: 目錄結構、Linter、Env、Logger、Test Setup。
+        - [INF-01] Project Scaffolding: 目錄結構、Linter、Env、Logger、Test Setup、`scripts/dev-check` 腳本（基於 `02_tech_stack.md` Runtime Verification 定義）。
         - [INF-02] Core Entities (如適用): Database Schema, User/Auth Model, Global Types。
         - Phase 2 所有任務預設依賴 INF-01 (和 INF-02)。
 

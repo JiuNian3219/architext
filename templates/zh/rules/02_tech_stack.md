@@ -91,9 +91,18 @@ alwaysApply: false
 * **Tool:** [例如：Vitest + Testcontainers / pytest + Docker / go test + testcontainers]
 * **Scope:** [例如：测试 API 到数据库的完整写入链路 / CLI 命令的完整执行流程。]
 
-### E2E Testing (端到端测试) [可选 - 仅适用于有用户界面的项目]
-* **Tool:** [例如：Playwright / Cypress / Selenium]
-* **Scope:** [例如：仅覆盖核心路径 (Critical User Journeys)，如登录、支付。]
+### E2E Testing (端到端测试)
+* **Tool:** [例如：[?Web] Playwright / Cypress  [?API] Supertest / httpie + shell script  [?CLI] shell script / bats  [?Lib] 示例项目 + 自动化脚本  [?Mobile] Detox / Maestro]
+* **Scope:** [例如：[?Web] 核心用户路径 (登录/支付/注册)  [?API] 关键 endpoint 全链路 (请求→处理→响应→副作用)  [?CLI] 关键命令全流程 (参数→执行→输出→退出码)  [?Lib] 公开 API 的典型使用场景]
+
+### Runtime Verification (运行时验证)
+> 以下命令须在 `/archi.start` INF-01 阶段固化为 `scripts/dev-check` 脚本（按 OS 生成 `.sh` / `.ps1`）。
+> `/archi.code` 验证阶段须执行此脚本确认环境就绪。
+
+* **Install:** [例如：`pnpm install` / `pip install -r requirements.txt` / `cargo build` / `go mod download`]
+* **Dev Command:** [例如：`npm run dev` / `python manage.py runserver` / `cargo run` / N/A]
+* **Health Check:** [例如：`curl http://localhost:3000/api/health` / `./bin/cli --version` / `python -c "import mylib"`]
+* **Smoke Test:** [例如：浏览器访问登录页 → 提交表单 / `cli generate --help` 验证输出 / `GET /api/users` 验证响应结构]
 
 ---
 
