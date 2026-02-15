@@ -74,41 +74,37 @@
 
 <step_4_validate>
     **Role**: 验证工程师
-    **Action** (按序执行，失败须修复；命令以 `02_tech_stack.md` 或项目配置为准):
+    **Action** (失败须修复后重跑；命令以 `02_tech_stack.md` Section 5 为准):
 
-    **4.1 Static Checks**
+    **Automated Check**: 运行 `scripts/validate`（如存在）；否则按以下清单逐项手动执行。
 
-    | 检查项 | 要求 |
-    |:---|:---|
-    | **Build** | 构建成功，零编译错误 |
-    | **Type Check** | 零类型错误 |
-    | **Lint** | 零 Lint 错误（警告须说明原因） |
-    | **Format** | 符合格式规范（失败则自动修复后重检） |
+    | Phase | 检查项 | 要求 |
+    |:---|:---|:---|
+    | **Static** | Build | 零编译错误 |
+    | | Type Check | 零类型错误 |
+    | | Lint | 零 Lint 错误（警告须说明原因） |
+    | | Format | 符合格式规范（失败则自动修复后重检） |
+    | **Test** | Existing Tests | 运行已有测试套件全部通过；禁因新代码破坏旧测试 |
+    | | New Coverage | 为新增/修改的关键逻辑补充测试；纯样式调整可豁免 |
 
-    **4.2 Test**
+    **Feature Verification (硬性要求)**
 
-    | 检查项 | 要求 |
-    |:---|:---|
-    | **Existing Tests** | 运行已有测试套件，全部通过；禁因新代码破坏旧测试 |
-    | **New Coverage** | 为新增/修改的关键逻辑补充测试；纯样式调整可豁免 |
-
-    **4.3 Runtime Verification (硬性要求)**
-
-    > 禁仅通过代码审查或测试就标记完成。
-    > 如 `scripts/dev-check` 存在，须先执行；否则按 `02_tech_stack.md` Runtime Verification 手动验证。
+    > 禁仅通过代码审查或自动化测试就标记完成；须实际运行目标功能并验证。
+    > 如 dev server 未启动，先执行 `scripts/dev-up`。
 
     | 项目类型 | 验证动作 | 通过标准 |
     |:---|:---|:---|
-    | [?Web] | 启动 dev server → 浏览器操作目标功能路径 | 渲染正常，交互无报错，控制台无异常 |
-    | [?API] | 启动服务 → 调用新增/修改的 endpoint | 状态码与 Body 符合 spec |
+    | [?Web] | 浏览器操作目标功能路径 | 渲染正常，交互无报错，控制台无异常 |
+    | [?API] | 调用新增/修改的 endpoint | 状态码与 Body 符合 spec |
     | [?CLI] | 执行目标命令（含正常参数 + 边界参数） | stdout 符合预期，exit code 正确 |
     | [?Lib] | 运行示例代码或 playground 验证导出 API | 无运行时错误，返回值正确 |
-    | [?Mobile] | 启动模拟器/真机 → 操作目标功能 | 界面正常，交互响应 |
-    | [?Desktop] | 启动应用 → 操作目标功能 | 窗口正常，功能可用 |
+    | [?Mobile] | 模拟器/真机操作目标功能 | 界面正常，交互响应 |
+    | [?Desktop] | 启动应用操作目标功能 | 窗口正常，功能可用 |
 
-    **Evidence**: Output 须附验证结果（命令输出摘要 / 截图 / 错误日志）。验证失败须修复后重验。
+    **Evidence**: Output 须附验证结果（命令输出摘要 / 截图 / 错误日志）。
+    **Fallback**: 验证持续失败且怀疑环境问题 → `scripts/dev-reset` → `scripts/dev-up` → 重试。
 
-    **Output**: 每项检查 ✅/❌ 状态与原因；Runtime 验证证据。
+    **Output**: 每项检查 ✅/❌ 状态与原因；Feature Verification 证据。
 </step_4_validate>
 
 <step_5_audit>
@@ -123,7 +119,7 @@
     7.  **Performance**: 避免不必要大依赖/全量导入/无用计算/内存泄漏。
     8.  **Security**: 无敏感信息泄露；输入有校验。
     9.  **Static Check Zero**: 所有静态检查问题已解决。
-    10. **Build + Test**: 构建无错误；关键逻辑有测试覆盖。
+    10. **step_4 Gate**: 确认 step_4 所有检查（Static + Test + Feature Verification）已通过。
 
     细节问题可 Auto-Fix 并说明；重大风险标注 `⚠️ Risk` 并提出替代方案。
 </step_5_audit>

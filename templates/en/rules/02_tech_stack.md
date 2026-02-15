@@ -84,29 +84,29 @@ Component naming must follow `Prefix+Function` format, arbitrary naming is forbi
 
 ---
 
-## 5. Testing Strategy
+## 5. Testing & Verification
 
-### Unit Testing
-* **Tool:** [e.g. Vitest / Jest / pytest / cargo test / go test / unittest]
-* **Scope:** [e.g. Cover all Utils functions, complex business logic, core algorithms.]
-* **Rule:** [e.g. Must Mock all external dependencies (API, Database, File System). Snapshot testing for volatile UI is forbidden (if applicable).]
+### Static Analysis (Commands)
+* **Build:** [e.g. `pnpm build` / `cargo build` / `go build` / `python -m py_compile`]
+* **Type Check:** [e.g. `pnpm type-check` / `mypy .` / N/A]
+* **Lint:** [e.g. `pnpm lint` / `ruff check .` / `cargo clippy` / `golangci-lint run`]
+* **Format:** [e.g. `pnpm format:check` / `ruff format --check` / `cargo fmt --check`]
 
-### Integration Testing
-* **Tool:** [e.g. Vitest + Testcontainers / pytest + Docker / go test + testcontainers]
-* **Scope:** [e.g. Test full write flow from API to Database / Full execution flow of CLI commands.]
+### Test Suite
+* **Unit:** Tool: [e.g. Vitest / Jest / pytest / cargo test / go test]  Scope: [e.g. Utils functions, core business logic, algorithms]  Rule: [e.g. Must Mock external deps; no snapshot tests for volatile UI]
+* **Integration:** Tool: [e.g. Vitest + Testcontainers / pytest + Docker]  Scope: [e.g. API→DB write chain / CLI full execution flow]
+* **E2E:** Tool: [e.g. [?Web] Playwright / Cypress  [?API] Supertest / httpie  [?CLI] bats / shell script  [?Lib] example project + automation script  [?Mobile] Detox / Maestro]  Scope: [e.g. [?Web] Critical user journeys  [?API] Key endpoint full chain  [?CLI] Key command full flow  [?Lib] Public API typical usage scenarios]
+* **Test Command:** [e.g. `pnpm test` / `pytest` / `cargo test` / `go test ./...`]
 
-### E2E Testing
-* **Tool:** [e.g. [?Web] Playwright / Cypress  [?API] Supertest / httpie + shell script  [?CLI] shell script / bats  [?Lib] example project + automation script  [?Mobile] Detox / Maestro]
-* **Scope:** [e.g. [?Web] Critical user journeys (login/payment/signup)  [?API] Key endpoint full chain (request→process→response→side effects)  [?CLI] Key command full flow (args→execution→output→exit code)  [?Lib] Public API typical usage scenarios]
+### Environment Scripts
+> Must generate `scripts/` directory during `/archi.start` INF-01 phase (generate `.sh` / `.ps1` per OS).
 
-### Runtime Verification
-> The following commands must be codified into a `scripts/dev-check` script (generate `.sh` / `.ps1` per OS) during `/archi.start` INF-01 phase.
-> `/archi.code` validation phase must execute this script to confirm environment readiness.
-
-* **Install:** [e.g. `pnpm install` / `pip install -r requirements.txt` / `cargo build` / `go mod download`]
-* **Dev Command:** [e.g. `npm run dev` / `python manage.py runserver` / `cargo run` / N/A]
-* **Health Check:** [e.g. `curl http://localhost:3000/api/health` / `./bin/cli --version` / `python -c "import mylib"`]
-* **Smoke Test:** [e.g. Browser navigate to login page → submit form / `cli generate --help` verify output / `GET /api/users` verify response structure]
+* **`scripts/validate`** — Automated quality check (AI runs after every code change): all Static Analysis items + Test Command.
+* **`scripts/dev-up`** — Bring up dev environment: Install → Build → Start Dev Server → Health Check.
+  - **Install:** [e.g. `pnpm install` / `pip install -r requirements.txt` / `cargo build` / `go mod download`]
+  - **Dev Command:** [e.g. `npm run dev` / `python manage.py runserver` / `cargo run` / N/A]
+  - **Health Check:** [e.g. `curl http://localhost:3000/api/health` / `./bin/cli --version` / `python -c "import mylib"`]
+* **`scripts/dev-reset`** — Environment reset (when environment is broken): Kill Processes → Clean Cache → Reinstall → Rebuild → Restart.
 
 ---
 

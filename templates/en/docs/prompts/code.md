@@ -74,41 +74,37 @@
 
 <step_4_validate>
     **Role**: Validation Engineer
-    **Action** (Execute in order, fix any failure; commands subject to `02_tech_stack.md` or project config):
+    **Action** (Fix and re-run on failure; commands subject to `02_tech_stack.md` Section 5):
 
-    **4.1 Static Checks**
+    **Automated Check**: Run `scripts/validate` (if exists); otherwise execute the checklist below manually.
 
-    | Check Item | Requirement |
-    |:---|:---|
-    | **Build** | Build succeeds, zero compilation errors |
-    | **Type Check** | Zero type errors |
-    | **Lint** | Zero lint errors (warnings must explain reason) |
-    | **Format** | Compliant with format rules (if failed, auto-fix then re-check) |
+    | Phase | Check Item | Requirement |
+    |:---|:---|:---|
+    | **Static** | Build | Zero compilation errors |
+    | | Type Check | Zero type errors |
+    | | Lint | Zero lint errors (warnings must explain reason) |
+    | | Format | Compliant with format rules (if failed, auto-fix then re-check) |
+    | **Test** | Existing Tests | Run existing test suite, all pass; must not break existing tests |
+    | | New Coverage | Add tests for newly added/modified critical logic; pure styling exempt |
 
-    **4.2 Test**
+    **Feature Verification (Mandatory)**
 
-    | Check Item | Requirement |
-    |:---|:---|
-    | **Existing Tests** | Run existing test suite, all pass; must not break existing tests with new code |
-    | **New Coverage** | Add tests for newly added/modified critical logic; pure styling changes exempt |
-
-    **4.3 Runtime Verification (Mandatory)**
-
-    > Prohibited from marking complete via code review or tests alone.
-    > If `scripts/dev-check` exists, run it first; otherwise verify manually per `02_tech_stack.md` Runtime Verification.
+    > Prohibited from marking complete via code review or automated tests alone; must actually run and verify the target feature.
+    > If dev server is not running, execute `scripts/dev-up` first.
 
     | Project Type | Verification Action | Pass Criteria |
     |:---|:---|:---|
-    | [?Web] | Start dev server → browser-navigate target feature path | Renders correctly, no interaction errors, clean console |
-    | [?API] | Start service → call new/modified endpoints | Status code and body match spec |
+    | [?Web] | Browser-navigate target feature path | Renders correctly, no interaction errors, clean console |
+    | [?API] | Call new/modified endpoints | Status code and body match spec |
     | [?CLI] | Execute target command (normal args + edge cases) | stdout as expected, correct exit code |
     | [?Lib] | Run example code or playground to verify exported API | No runtime errors, correct return values |
-    | [?Mobile] | Launch emulator/device → operate target feature | UI renders, interactions respond |
-    | [?Desktop] | Launch app → operate target feature | Window renders, feature functional |
+    | [?Mobile] | Emulator/device operate target feature | UI renders, interactions respond |
+    | [?Desktop] | Launch app operate target feature | Window renders, feature functional |
 
-    **Evidence**: Output must include verification results (command output summary / screenshot / error log). Fix and re-verify if failed.
+    **Evidence**: Output must include verification results (command output summary / screenshot / error log).
+    **Fallback**: If verification keeps failing and environment issues suspected → `scripts/dev-reset` → `scripts/dev-up` → retry.
 
-    **Output**: ✅/❌ status and reason for each check; Runtime verification evidence.
+    **Output**: ✅/❌ status and reason for each check; Feature Verification evidence.
 </step_4_validate>
 
 <step_5_audit>
@@ -123,7 +119,7 @@
     7.  **Performance**: Avoid unnecessary large dependencies/full imports/useless computation/memory leaks.
     8.  **Security**: No sensitive info leakage; inputs validated.
     9.  **Static Check Zero**: All static check issues resolved.
-    10. **Build + Test**: Build error-free; critical logic has test coverage.
+    10. **step_4 Gate**: Confirm all step_4 checks (Static + Test + Feature Verification) have passed.
 
     Detail issues can be Auto-Fixed with explanation; major risks marked `⚠️ Risk` with alternatives proposed.
 </step_5_audit>

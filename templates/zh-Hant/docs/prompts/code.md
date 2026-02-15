@@ -74,41 +74,37 @@
 
 <step_4_validate>
     **Role**: 驗證工程師
-    **Action** (按序執行，失敗須修復；命令以 `02_tech_stack.md` 或專案配置為準):
+    **Action** (失敗須修復後重跑；命令以 `02_tech_stack.md` Section 5 為準):
 
-    **4.1 Static Checks**
+    **Automated Check**: 執行 `scripts/validate`（如存在）；否則按以下清單逐項手動執行。
 
-    | 檢查項 | 要求 |
-    |:---|:---|
-    | **Build** | 建置成功，零編譯錯誤 |
-    | **Type Check** | 零型別錯誤 |
-    | **Lint** | 零 Lint 錯誤（警告須說明原因） |
-    | **Format** | 符合格式規範（失敗則自動修復後重檢） |
+    | Phase | 檢查項 | 要求 |
+    |:---|:---|:---|
+    | **Static** | Build | 零編譯錯誤 |
+    | | Type Check | 零型別錯誤 |
+    | | Lint | 零 Lint 錯誤（警告須說明原因） |
+    | | Format | 符合格式規範（失敗則自動修復後重檢） |
+    | **Test** | Existing Tests | 執行已有測試套件全部通過；禁因新程式碼破壞舊測試 |
+    | | New Coverage | 為新增/修改的關鍵邏輯補充測試；純樣式調整可豁免 |
 
-    **4.2 Test**
+    **Feature Verification (硬性要求)**
 
-    | 檢查項 | 要求 |
-    |:---|:---|
-    | **Existing Tests** | 執行已有測試套件，全部通過；禁因新程式碼破壞舊測試 |
-    | **New Coverage** | 為新增/修改的關鍵邏輯補充測試；純樣式調整可豁免 |
-
-    **4.3 Runtime Verification (硬性要求)**
-
-    > 禁僅通過程式碼審查或測試就標記完成。
-    > 如 `scripts/dev-check` 存在，須先執行；否則按 `02_tech_stack.md` Runtime Verification 手動驗證。
+    > 禁僅通過程式碼審查或自動化測試就標記完成；須實際執行目標功能並驗證。
+    > 如 dev server 未啟動，先執行 `scripts/dev-up`。
 
     | 專案型別 | 驗證動作 | 通過標準 |
     |:---|:---|:---|
-    | [?Web] | 啟動 dev server → 瀏覽器操作目標功能路徑 | 渲染正常，互動無報錯，主控台無異常 |
-    | [?API] | 啟動服務 → 呼叫新增/修改的 endpoint | 狀態碼與 Body 符合 spec |
+    | [?Web] | 瀏覽器操作目標功能路徑 | 渲染正常，互動無報錯，主控台無異常 |
+    | [?API] | 呼叫新增/修改的 endpoint | 狀態碼與 Body 符合 spec |
     | [?CLI] | 執行目標命令（含正常參數 + 邊界參數） | stdout 符合預期，exit code 正確 |
     | [?Lib] | 執行範例程式碼或 playground 驗證匯出 API | 無執行時錯誤，回傳值正確 |
-    | [?Mobile] | 啟動模擬器/真機 → 操作目標功能 | 介面正常，互動響應 |
-    | [?Desktop] | 啟動應用 → 操作目標功能 | 視窗正常，功能可用 |
+    | [?Mobile] | 模擬器/真機操作目標功能 | 介面正常，互動響應 |
+    | [?Desktop] | 啟動應用操作目標功能 | 視窗正常，功能可用 |
 
-    **Evidence**: Output 須附驗證結果（命令輸出摘要 / 截圖 / 錯誤日誌）。驗證失敗須修復後重驗。
+    **Evidence**: Output 須附驗證結果（命令輸出摘要 / 截圖 / 錯誤日誌）。
+    **Fallback**: 驗證持續失敗且懷疑環境問題 → `scripts/dev-reset` → `scripts/dev-up` → 重試。
 
-    **Output**: 每項檢查 ✅/❌ 狀態與原因；Runtime 驗證證據。
+    **Output**: 每項檢查 ✅/❌ 狀態與原因；Feature Verification 證據。
 </step_4_validate>
 
 <step_5_audit>
@@ -123,7 +119,7 @@
     7.  **Performance**: 避免不必要大依賴/全量匯入/無用計算/記憶體洩漏。
     8.  **Security**: 無敏感資訊洩露；輸入有校驗。
     9.  **Static Check Zero**: 所有靜態檢查問題已解決。
-    10. **Build + Test**: 建置無錯誤；關鍵邏輯有測試覆蓋。
+    10. **step_4 Gate**: 確認 step_4 所有檢查（Static + Test + Feature Verification）已通過。
 
     細節問題可 Auto-Fix 並說明；重大風險標註 `⚠️ Risk` 並提出替代方案。
 </step_5_audit>

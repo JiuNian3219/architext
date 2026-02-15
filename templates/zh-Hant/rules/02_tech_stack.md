@@ -81,28 +81,29 @@ alwaysApply: false
 
 ---
 
-## 5. Testing Strategy (測試策略)
-### Unit Testing (單元測試)
-* **Tool:** [例如：Vitest / Jest / pytest / cargo test / go test / unittest]
-* **Scope:** [例如：覆蓋所有的 Utils 工具函數、複雜的業務邏輯、核心算法。]
-* **Rule:** [例如：必須 Mock 所有外部依賴（API、數據庫、檔案系統）。禁止對易變 UI 進行快照測試（如適用）。]
+## 5. Testing & Verification (測試與驗證)
 
-### Integration Testing (整合測試)
-* **Tool:** [例如：Vitest + Testcontainers / pytest + Docker / go test + testcontainers]
-* **Scope:** [例如：測試 API 到數據庫的完整寫入鏈路 / CLI 命令的完整執行流程。]
+### Static Analysis (靜態分析命令)
+* **Build:** [例如：`pnpm build` / `cargo build` / `go build` / `python -m py_compile`]
+* **Type Check:** [例如：`pnpm type-check` / `mypy .` / N/A]
+* **Lint:** [例如：`pnpm lint` / `ruff check .` / `cargo clippy` / `golangci-lint run`]
+* **Format:** [例如：`pnpm format:check` / `ruff format --check` / `cargo fmt --check`]
 
-### E2E Testing (端到端測試)
-* **Tool:** [例如：[?Web] Playwright / Cypress  [?API] Supertest / httpie + shell script  [?CLI] shell script / bats  [?Lib] 範例專案 + 自動化腳本  [?Mobile] Detox / Maestro]
-* **Scope:** [例如：[?Web] 核心使用者路徑 (登入/支付/註冊)  [?API] 關鍵 endpoint 全鏈路 (請求→處理→回應→副作用)  [?CLI] 關鍵命令全流程 (參數→執行→輸出→退出碼)  [?Lib] 公開 API 的典型使用場景]
+### Test Suite (測試套件)
+* **Unit:** Tool: [例如：Vitest / Jest / pytest / cargo test / go test]  Scope: [例如：Utils 工具函數、核心業務邏輯、算法]  Rule: [例如：須 Mock 外部依賴；禁對易變 UI 做快照測試]
+* **Integration:** Tool: [例如：Vitest + Testcontainers / pytest + Docker]  Scope: [例如：API→DB 寫入鏈路 / CLI 完整執行流程]
+* **E2E:** Tool: [例如：[?Web] Playwright / Cypress  [?API] Supertest / httpie  [?CLI] bats / shell script  [?Lib] 範例專案 + 自動化腳本  [?Mobile] Detox / Maestro]  Scope: [例如：[?Web] 核心使用者路徑  [?API] 關鍵 endpoint 全鏈路  [?CLI] 關鍵命令全流程  [?Lib] 公開 API 典型使用場景]
+* **Test Command:** [例如：`pnpm test` / `pytest` / `cargo test` / `go test ./...`]
 
-### Runtime Verification (執行時驗證)
-> 以下命令須在 `/archi.start` INF-01 階段固化為 `scripts/dev-check` 腳本（按 OS 生成 `.sh` / `.ps1`）。
-> `/archi.code` 驗證階段須執行此腳本確認環境就緒。
+### Environment Scripts (環境腳本)
+> 須在 `/archi.start` INF-01 階段生成 `scripts/` 目錄（按 OS 生成 `.sh` / `.ps1`）。
 
-* **Install:** [例如：`pnpm install` / `pip install -r requirements.txt` / `cargo build` / `go mod download`]
-* **Dev Command:** [例如：`npm run dev` / `python manage.py runserver` / `cargo run` / N/A]
-* **Health Check:** [例如：`curl http://localhost:3000/api/health` / `./bin/cli --version` / `python -c "import mylib"`]
-* **Smoke Test:** [例如：瀏覽器造訪登入頁 → 提交表單 / `cli generate --help` 驗證輸出 / `GET /api/users` 驗證回應結構]
+* **`scripts/validate`** — 自動化質檢（AI 每次改完程式碼後執行）：Static Analysis 全項 + Test Command。
+* **`scripts/dev-up`** — 拉起開發環境：Install → Build → Start Dev Server → Health Check。
+  - **Install:** [例如：`pnpm install` / `pip install -r requirements.txt` / `cargo build` / `go mod download`]
+  - **Dev Command:** [例如：`npm run dev` / `python manage.py runserver` / `cargo run` / N/A]
+  - **Health Check:** [例如：`curl http://localhost:3000/api/health` / `./bin/cli --version` / `python -c "import mylib"`]
+* **`scripts/dev-reset`** — 環境重置（環境異常時執行）：Kill Processes → Clean Cache → Reinstall → Rebuild → Restart。
 
 ---
 
