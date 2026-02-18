@@ -73,7 +73,6 @@ export interface InitConfig {
 export interface TaskCommandOptions {
   status?: string;
   check?: boolean;
-  list?: boolean;
 }
 
 /**

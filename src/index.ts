@@ -68,7 +68,6 @@ cli
   .command("task [id]", t("task.desc"))
   .option("--status <status>", t("task.status"))
   .option("--check", t("task.check"))
-  .option("--list", t("task.list"))
   .action(run(taskCommand));
 
 // Plan 实现计划检查

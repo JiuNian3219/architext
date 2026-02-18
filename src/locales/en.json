@@ -34,8 +34,7 @@
   "task": {
     "desc": "Manage project roadmap tasks",
     "status": "Update task status (pending|active|done|blocked)",
-    "check": "Check roadmap consistency",
-    "list": "List tasks summary"
+    "check": "Check roadmap consistency"
   },
   "plan": {
     "desc": "Check implementation plan (plan.json) completion status",

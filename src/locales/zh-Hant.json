@@ -34,8 +34,7 @@
   "task": {
     "desc": "管理專案 Roadmap 任務",
     "status": "更新任務狀態 (pending|active|done|blocked)",
-    "check": "檢查 Roadmap 一致性",
-    "list": "列出任務概覽"
+    "check": "檢查 Roadmap 一致性"
   },
   "plan": {
     "desc": "檢查功能實現計畫 (plan.json) 的完成度",

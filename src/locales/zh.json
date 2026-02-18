@@ -34,8 +34,7 @@
   "task": {
     "desc": "管理项目 Roadmap 任务",
     "status": "更新任务状态 (pending|active|done|blocked)",
-    "check": "检查 Roadmap 一致性",
-    "list": "列出任务概览"
+    "check": "检查 Roadmap 一致性"
   },
   "plan": {
     "desc": "检查功能实现计划 (plan.json) 的完成度",
