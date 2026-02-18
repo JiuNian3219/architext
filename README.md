@@ -161,11 +161,11 @@ JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi ren
 *   `npx archi update`: 更新项目骨架。
 *   `npx archi doctor`: 检查项目健康状况。
 *   `npx archi uninstall`: 卸载项目。
-*   `npx archi help`: 显示帮助指南。
-*   `npx archi version`: 显示项目版本。
+*   `npx archi --help` / `npx archi -h`: 显示帮助指南。
+*   `npx archi --version` / `npx archi -V`: 显示项目版本。
 
 ### 🔧 AI CLI 工具命令
-*   `npx archi task [list|check|<id> <status>]`: 查看/校验/更新 Roadmap 任务状态（直接操作 `roadmap.json`）。
+*   `npx archi task [--list|--check]` 或 `npx archi task <id> --status <status>`: 查看/校验/更新 Roadmap 任务状态（直接操作 `roadmap.json`）。`--list` 与 `--check` 为选项，非子命令。
 *   `npx archi plan <feature-id>`: 检查指定 Feature 的 Plan 完成度（读取 `plan.json`）。
 *   `npx archi render`: 将 JSON 数据文件生成对应的 Markdown 可读视图。
 
