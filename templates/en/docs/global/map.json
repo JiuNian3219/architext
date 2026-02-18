@@ -65,19 +65,19 @@
       }
     ]
   },
-  "fileExtensions": [
+  "featureDocs": [
     {
-      "ext": ".spec.md",
+      "file": "spec.md",
       "category": "Specification",
       "purpose": "Business Logic, Algorithms, Acceptance Criteria (Logic)"
     },
     {
-      "ext": ".ui.md",
+      "file": "ui.md",
       "category": "UI/UX",
       "purpose": "Visual Structure, Interaction States, Style Definitions (Visual)"
     },
     {
-      "ext": ".plan.md",
+      "file": "plan.json",
       "category": "Plan",
       "purpose": "Detailed Step Breakdown & Test Cases (Execution)"
     }

@@ -5,6 +5,7 @@ export const FALLBACK_RULE_FILES = [
   "00_system.md",
   "01_workflow.md",
   "02_tech_stack.md",
+  "03_data_governance.md",
   "90_custom_rules.md",
   "99_context_glue.md",
 ];

@@ -86,30 +86,17 @@
       "success": "Architext 已成功移除。",
       "error": "卸载过程中发生错误。",
       "cancel": "已取消卸载。",
-      "not_found": "未找到配置文件 (.architext/architext.json)，无法自动卸载。",
+      "not_found": "未找到配置文件 (architext.json)，无法自动卸载。",
       "cleaning": "正在清理..."
     },
     "task": {
       "check": {
-        "graph_node_no_match": "图中节点 [{id}] 在任务列表中无对应条目",
-        "task_no_class": "任务 [{id}] 存在于列表但在 Mermaid 图中缺少 'class' 定义",
-        "status_mismatch": "状态不一致 [{id}]: 列表=\"{listStatus}\", 图=\"{graphClass}\" (预期 \"{expected}\")",
-        "task_no_node_def": "任务 [{id}] 在 Mermaid 图中缺少节点定义 (ID[label])",
-        "missing_classdef": "Mermaid 图中缺少必要的 'classDef {name}' 声明",
-        "missing_edge": "图中缺少边: [{from}] --> [{to}] (在 Dep 字段中声明)",
-        "missing_graph_decl": "Mermaid 语法: 缺少 'graph TD/LR/TB/BT/RL' 声明 (图无法渲染)",
-        "unbalanced_brackets": "Mermaid 语法: 第 {line} 行方括号不匹配 — {opens} 个 '[' vs {closes} 个 ']' (将导致渲染失败)",
-        "empty_node_label": "Mermaid 语法: 第 {line} 行存在空节点标签 '[]' (节点将无文本渲染)",
-        "undeclared_classdef": "Mermaid 语法: 'class {nodeId} {styleClass}' 引用了未声明的 classDef '{styleClass}' (样式不会生效)",
-        "empty_mermaid": "Mermaid 代码块为空 — ```mermaid 和 ``` 之间没有内容",
         "invalid_dep": "任务 [{id}] 的依赖无效: [{depId}] 不存在于任务列表中",
         "consistent": "Roadmap 一致性检查通过。"
       },
       "update": {
         "id_required": "更新状态需要指定任务 ID。用法: architext task <id> --status <status>",
         "updating": "正在更新任务 [{id}] 状态为 {status}...",
-        "added_class": "已为 [{id}] 添加图节点 class 定义",
-        "no_visual": "未找到 [{id}] 的图节点且无可视区块。",
         "done": "任务 [{id}] -> {status}",
         "unblocked": "任务 [{id}] 已解锁 -> pending (所有依赖已完成)"
       },

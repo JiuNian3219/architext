@@ -7,7 +7,7 @@
     <language>English</language>
     <principles>
       1.  **Doc First**: Must modify docs (Spec/UI) first, then generate Plan. Prohibited from skipping docs to change code plans directly.
-      2.  **Incremental**: Only append new Tasks to plan.md, keep completed history (unless rollback needed).
+      2.  **Incremental**: Only append new Tasks to Plan, keep completed history (unless rollback needed).
       3.  **Conflict Check**: Check if new requirements conflict with tech_stack / design_tokens.
       4.  **Frontmatter Preservation**: Prohibited from destroying existing document Metadata.
     </principles>

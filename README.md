@@ -103,7 +103,7 @@ my-project/
 - **IDE Rules 目录**：根据选择的 IDE，rules 文件会被复制到对应的目录（`.cursor/rules/`, `.trae/rules/` 等）
 - **文档目录**：默认使用 `.architext/`，可通过 `architext.json` 配置为其他名称（如 `docs/`）
 - **Rules 文件扩展名**：Cursor 使用 `.mdc`，其他 IDE 使用 `.md`
-- **单一事实来源**：所有 IDE 目录下的 rules 文件都引用同一个源（`.architext/rules/`），确保一致性
+- **单一事实来源**：规则文件由 `templates/*/rules/` 统一复制到各 IDE 目录，确保一致性
 
 ### A. 规则矩阵 (The Brain)
 这是注入给 AI 的"世界观"和"法律"，通常通过 IDE 规则（如 `.trae/rules`）加载。
@@ -143,7 +143,7 @@ JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi ren
 ### 📝 Definition (定义 - 纯文档阶段)
 *   `/archi.plan`: **Deep Planning**
     *   深度架构访谈 -> 同步全局资产。
-    *   产出 `Spec.md` (逻辑), `UI.md` (视觉), `Plan.md` (步骤)。
+    *   产出 `Spec` (逻辑), `UI` (视觉), `Plan` (步骤)。
 *   `/archi.edit`: **Spec Modification**
     *   局部变更（先改 Spec 后改代码）。
 

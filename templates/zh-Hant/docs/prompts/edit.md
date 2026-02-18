@@ -7,7 +7,7 @@
     <language>繁體中文</language>
     <principles>
       1.  **Doc First**: 須先改文件 (Spec/UI)，再生成 Plan。禁跳過文件直接改程式碼計畫。
-      2.  **Incremental**: 僅追加新 Task 到 plan.md，保留已完成歷史（除非需回滾）。
+      2.  **Incremental**: 僅追加新 Task 到 Plan，保留已完成歷史（除非需回滾）。
       3.  **Conflict Check**: 檢查新需求是否與 tech_stack / design_tokens 衝突。
       4.  **Frontmatter Preservation**: 禁破壞現有文件 Metadata。
     </principles>

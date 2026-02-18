@@ -12,7 +12,7 @@
       4.  **SOTA Pattern Check**: Reject outdated practices; adopt best practices defined in tech_stack.
       5.  **No Commit Policy**: Do not commit without authorization; present changes as patches.
       6.  **Static Check First**: Must pass all static checks (Type/Lint/Format).
-      7.  **Plan Completion Gate**: Verify plan.md completion before signing off. All AI-completable tasks must be finished; only "Human Intervention" and "Force Majeure" are exempt.
+      7.  **Plan Completion Gate**: Verify Plan completion before signing off. All AI-completable tasks must be finished; only "Human Intervention" and "Force Majeure" are exempt.
     </principles>
 </meta>
 

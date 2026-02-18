@@ -86,30 +86,17 @@
       "success": "Architext successfully removed.",
       "error": "Uninstall error occurred.",
       "cancel": "Uninstall cancelled.",
-      "not_found": "Configuration (.architext/architext.json) not found. Cannot auto-uninstall.",
+      "not_found": "Configuration (architext.json) not found. Cannot auto-uninstall.",
       "cleaning": "Cleaning up..."
     },
     "task": {
       "check": {
-        "graph_node_no_match": "Graph node [{id}] has no matching entry in task list",
-        "task_no_class": "Task [{id}] exists in list but has no 'class' definition in Mermaid graph",
-        "status_mismatch": "Status mismatch [{id}]: list=\"{listStatus}\", graph=\"{graphClass}\" (expected \"{expected}\")",
-        "task_no_node_def": "Task [{id}] has no node definition (ID[label]) in Mermaid graph",
-        "missing_classdef": "Mermaid graph is missing required 'classDef {name}' declaration",
-        "missing_edge": "Missing edge in graph: [{from}] --> [{to}] (declared in Dep field)",
-        "missing_graph_decl": "Mermaid syntax: missing 'graph TD/LR/TB/BT/RL' declaration (graph will not render)",
-        "unbalanced_brackets": "Mermaid syntax: unbalanced brackets on line {line} — {opens} '[' vs {closes} ']' (will break rendering)",
-        "empty_node_label": "Mermaid syntax: empty node label '[]' on line {line} (node will render without text)",
-        "undeclared_classdef": "Mermaid syntax: 'class {nodeId} {styleClass}' references undeclared classDef '{styleClass}' (style will not apply)",
-        "empty_mermaid": "Mermaid block is empty — no graph content between ```mermaid and ```",
         "invalid_dep": "Task [{id}] has invalid dependency: [{depId}] does not exist in task list",
         "consistent": "Roadmap is consistent."
       },
       "update": {
         "id_required": "Task ID is required for status update. Usage: architext task <id> --status <status>",
         "updating": "Updating task [{id}] to {status}...",
-        "added_class": "Added new graph class for [{id}]",
-        "no_visual": "Graph node for [{id}] not found and no visual block.",
         "done": "Task [{id}] -> {status}",
         "unblocked": "Task [{id}] unblocked -> pending (all deps done)"
       },

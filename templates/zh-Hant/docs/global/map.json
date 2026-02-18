@@ -65,19 +65,19 @@
       }
     ]
   },
-  "fileExtensions": [
+  "featureDocs": [
     {
-      "ext": ".spec.md",
+      "file": "spec.md",
       "category": "Specification",
       "purpose": "業務邏輯、演算法、驗收標準 (Logic)"
     },
     {
-      "ext": ".ui.md",
+      "file": "ui.md",
       "category": "UI/UX",
       "purpose": "視覺結構、互動狀態、樣式定義 (Visual)"
     },
     {
-      "ext": ".plan.md",
+      "file": "plan.json",
       "category": "Plan",
       "purpose": "詳細步驟拆解與測試案例 (Execution)"
     }

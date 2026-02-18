@@ -65,19 +65,19 @@
       }
     ]
   },
-  "fileExtensions": [
+  "featureDocs": [
     {
-      "ext": ".spec.md",
+      "file": "spec.md",
       "category": "Specification",
       "purpose": "业务逻辑、算法、验收标准 (Logic)"
     },
     {
-      "ext": ".ui.md",
+      "file": "ui.md",
       "category": "UI/UX",
       "purpose": "视觉结构、交互状态、样式定义 (Visual)"
     },
     {
-      "ext": ".plan.md",
+      "file": "plan.json",
       "category": "Plan",
       "purpose": "详细步骤拆解与测试用例 (Execution)"
     }

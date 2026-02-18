@@ -12,7 +12,7 @@
       4.  **SOTA Pattern Check**: 拒绝过时写法；采用 tech_stack 定义的最佳实践。
       5.  **No Commit Policy**: 未经授权不提交；以补丁呈现变更。
       6.  **Static Check First**: 须通过所有静态检查(类型/Lint/格式化)。
-      7.  **Plan Completion Gate**: 结束前验证 plan.md 完成度。AI 可完成的任务须全部完成，仅豁免「人工介入」和「不可抗力」类。
+      7.  **Plan Completion Gate**: 结束前验证 Plan 完成度。AI 可完成的任务须全部完成，仅豁免「人工介入」和「不可抗力」类。
     </principles>
 </meta>
 
