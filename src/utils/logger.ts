@@ -12,4 +12,7 @@ export const logger = {
   step: (msg: string) => console.log(color.cyan(`➤ ${msg}`)),
   done: (msg: string) => console.log(color.green(`✔ ${msg}`)),
   fail: (msg: string) => console.error(color.red(`✖ ${msg}`)),
+
+  /** 清空终端，统一封装以符合 No console.log 规范。 */
+  clear: () => console.clear(),
 };

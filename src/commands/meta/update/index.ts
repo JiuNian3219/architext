@@ -8,7 +8,7 @@ export async function updateCommand(options: {
   dryRun: boolean;
   editor?: string;
 }) {
-  console.clear();
+  logger.clear();
   const t = createT(getSystemLocale());
 
   intro("Architext Update");

@@ -5,7 +5,7 @@ import { createT, getSystemLocale } from "../../../utils/t.ts";
 
 // 暂时没有实现
 export async function doctorCommand(_options: { fix: boolean }) {
-  console.clear();
+  logger.clear();
   const t = createT(getSystemLocale());
 
   intro("Architext Doctor");

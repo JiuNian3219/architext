@@ -2,6 +2,7 @@
 import { intro, outro } from "@clack/prompts";
 import color from "picocolors";
 import { saveConfig } from "../../../core/config.ts";
+import { logger } from "../../../utils/logger.ts";
 import { UserCancelError } from "../../../core/errors.ts";
 import { Scaffolder } from "../../../core/scaffold.ts";
 import type { InitOptions } from "../../../types/index.ts";
@@ -17,7 +18,7 @@ const t = createT(getSystemLocale(), "command.init");
  * @param options 命令行传入的初始化选项
  */
 export async function initCommand(options: InitOptions): Promise<void> {
-  console.clear();
+  logger.clear();
   intro(color.bgCyan(color.black(` ${t("title")} `)));
 
   const config = await collectInitConfig(options);

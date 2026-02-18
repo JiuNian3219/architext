@@ -11,7 +11,7 @@ import { resolveFilesToDelete } from "./resolver.ts";
 const t = createT(getSystemLocale(), "command.uninstall");
 
 export const uninstallCommand = async () => {
-  console.clear();
+  logger.clear();
   intro(color.bgRed(color.black(` ${t("title")} `)));
 
   const cwd = process.cwd();
