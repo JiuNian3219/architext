@@ -105,7 +105,22 @@ describe("resolveRoadmapPath", () => {
     );
   });
 
-  it("应回退到默认候选路径 (roadmap.json)", async () => {
+  it("应回退到 .architext/global/roadmap.json（无 config 时）", async () => {
+    await createTestStructure(tempDir, {
+      ".architext": {
+        global: {
+          "roadmap.json": JSON.stringify({ version: 1, phases: [] }),
+        },
+      },
+    });
+
+    const result = await resolveRoadmapPath(tempDir);
+    expect(result).toBe(
+      path.join(tempDir, ".architext", "global", "roadmap.json"),
+    );
+  });
+
+  it("应回退到扁平路径 roadmap.json", async () => {
     await createTestStructure(tempDir, {
       "roadmap.json": JSON.stringify({ version: 1, phases: [] }),
     });
@@ -114,17 +129,15 @@ describe("resolveRoadmapPath", () => {
     expect(result).toBe(path.join(tempDir, "roadmap.json"));
   });
 
-  it("应回退到 docs/global/roadmap.json", async () => {
+  it("应回退到扁平路径 global/roadmap.json（根目录）", async () => {
     await createTestStructure(tempDir, {
-      docs: {
-        global: {
-          "roadmap.json": JSON.stringify({ version: 1, phases: [] }),
-        },
+      global: {
+        "roadmap.json": JSON.stringify({ version: 1, phases: [] }),
       },
     });
 
     const result = await resolveRoadmapPath(tempDir);
-    expect(result).toBe(path.join(tempDir, "docs", "global", "roadmap.json"));
+    expect(result).toBe(path.join(tempDir, "global", "roadmap.json"));
   });
 
   it("所有路径都不存在时应抛出 RoadmapNotFoundError", async () => {
