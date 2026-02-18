@@ -16,9 +16,9 @@ import { formatProgressBar, formatTaskLine } from "./formatter.ts";
 
 /**
  * 检查 Roadmap JSON 的数据一致性。
- * 验证维度：
- *   A. 依赖完整性 — deps 引用的 ID 须存在于任务列表中
- *   B. ID 唯一性 — 不得有重复的任务 ID
+ * 验证维度（按执行顺序）：
+ *   A. ID 唯一性 — 不得有重复的任务 ID
+ *   B. 依赖完整性 — deps 引用的 ID 须存在于任务列表中
  *   C. 状态合法性 — status 须为合法值
  *
  * @param data 已解析的 Roadmap 数据
