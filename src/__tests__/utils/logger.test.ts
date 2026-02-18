@@ -46,21 +46,24 @@ describe("logger", () => {
   it("step 应该输出带前缀的消息", () => {
     logger.step("test step");
     expect(console.log).toHaveBeenCalledTimes(1);
-    const call = (console.log as any).mock.calls[0][0];
-    expect(call).toContain("test step");
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining("test step"),
+    );
   });
 
   it("done 应该输出带前缀的消息", () => {
     logger.done("test done");
     expect(console.log).toHaveBeenCalledTimes(1);
-    const call = (console.log as any).mock.calls[0][0];
-    expect(call).toContain("test done");
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining("test done"),
+    );
   });
 
   it("fail 应该输出带前缀的消息", () => {
     logger.fail("test fail");
     expect(console.error).toHaveBeenCalledTimes(1);
-    const call = (console.error as any).mock.calls[0][0];
-    expect(call).toContain("test fail");
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringContaining("test fail"),
+    );
   });
 });

@@ -23,7 +23,7 @@ export async function loadConfig(
 
   try {
     return await fs.readJSON(configPath);
-  } catch (error: any) {
+  } catch (error: unknown) {
     // 明确抛出解析错误，避免被误判为“无配置”
     if (error instanceof SyntaxError) {
       throw new ConfigParseError(

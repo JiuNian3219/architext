@@ -19,8 +19,8 @@ const defaultLang = getSystemLocale();
 const t = createT(defaultLang);
 
 // 统一的异步 Action 包装器
-const run = (action: (...args: any[]) => Promise<void>) => {
-  return async (...args: any[]) => {
+const run = <T extends unknown[]>(action: (...args: T) => Promise<void>) => {
+  return async (...args: T) => {
     try {
       await action(...args);
     } catch (error) {

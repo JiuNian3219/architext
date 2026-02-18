@@ -55,8 +55,9 @@ export const uninstallCommand = async () => {
     }
     s.stop(t("done"));
     outro(color.green(t("success")));
-  } catch (error: any) {
+  } catch (error: unknown) {
     s.stop(color.red(t("error")));
-    throw new AppError(error.message);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new AppError(message);
   }
 };

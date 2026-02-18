@@ -5,8 +5,7 @@ import { Scaffolder } from "../../core/scaffold.ts";
 import * as fs from "fs-extra";
 import path from "path";
 import { createTempDir, cleanupTempDir } from "../helpers/temp-dir.ts";
-import { GLOBAL_RULES } from "../../core/rules.ts";
-import { InitConfig } from "../../types/index.ts";
+import type { InitConfig, LocaleLang } from "../../types/index.ts";
 import { TemplateManager } from "../../core/template.ts";
 
 describe("Scaffolder Integration", () => {
@@ -125,11 +124,11 @@ describe("Scaffolder Integration", () => {
   });
 
   it("应该回退到默认语言（如果请求的语言不存在）", async () => {
-    const config = {
-      language: "nonexistent" as any,
+    const config: InitConfig = {
+      language: "nonexistent" as LocaleLang,
       docDir: ".architext",
       editors: ["cursor"],
-    } as unknown as InitConfig;
+    };
 
     // 应该不抛出错误，而是回退到默认语言
     await expect(Scaffolder.run(config)).resolves.not.toThrow();

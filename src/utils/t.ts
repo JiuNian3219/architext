@@ -15,11 +15,11 @@ type Schema = typeof zh; // 以中文文件为结构标准
  * @param path 点分路径，例如 'init.title'
  * @returns 路径对应的值，或 undefined
  */
-function get(obj: any, path: string): any {
+function get(obj: unknown, path: string): unknown {
   if (!obj) return undefined;
-  return path.split(".").reduce((acc, part) => {
-    if (acc && typeof acc === "object") {
-      return (acc as any)[part];
+  return path.split(".").reduce<unknown>((acc, part) => {
+    if (acc !== null && acc !== undefined && typeof acc === "object") {
+      return (acc as Record<string, unknown>)[part];
     }
     return undefined;
   }, obj);
@@ -88,7 +88,7 @@ export function createT(lang: LocaleLang = "zh", scope?: string) {
   const currentFallback = scope ? get(rootFallback, scope) : rootFallback;
 
   return (key: string, params?: Record<string, string | number>) => {
-    let msg: any;
+    let msg: unknown;
 
     if (scope) {
       // 聚焦模式：支持深度路径访问
