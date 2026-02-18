@@ -1,184 +1,68 @@
 <protocol_help>
-  **Trigger**: `/archi.help [lang]`
-  **Goal**: 显示 Architext 指令清单，解释 DDAD 操作流，展示项目目录结构。
+  **Trigger**: `/archi.help [question]`
+  **Goal**: 项目导航与上下文问答。分析项目当前状态，推荐下一步操作；或基于项目上下文回答用户问题。
 
 <meta>
-    <style>Clean, Structured, Manual-Style</style>
+    <style>Concise, Contextual, Actionable</style>
     <language>简体中文</language>
     <principles>
-      1.  **Lifecycle-Oriented**: 按项目生命周期分组（启动→定义→变更→执行）。
-      2.  **Bilingual Support**: 根据 `[lang]` (zh/zh-Hant/en) 输出对应语言，默认中文。
+      1.  **Context-Aware**: 基于项目真实状态回答，禁凭空猜测。
+      2.  **Actionable Output**: 每次输出须含可执行的下一步建议（具体命令 + 参数）。
+      3.  **Minimal Token**: 精简输出，不复述用户已知信息。仅呈现推理结论与建议。
+      4.  **No Audit**: 不做深度审计（那是 `/archi.audit` 的职责）。聚焦导航与问答。
     </principles>
 </meta>
 
-<step_1_render>
-    **Action**: 输出以下手册。
+<step_1_load_context>
+    **Role**: 项目观察员
+    **Action**:
+    1.  读取 `[[__DOCS_DIR__]]/global/roadmap.json` — 获取任务列表、状态、依赖关系。
+    2.  扫描 `[[__DOCS_DIR__]]/features/` 目录 — 获取已有 Feature 及其文档完整度（有无 spec.md / ui.md / plan.json）。
+    3.  [?question] 若用户带了问题，根据问题语义定位相关文件（spec / plan / vision / tech_stack / data_snapshot 等），按需读取。
 
-    # Architext Command Manual (v1.1)
+    **Output**: 内部上下文（不直接输出给用户）。
+</step_1_load_context>
 
-    > **Core Philosophy**: **No Docs, No Code.**
-    > 所有代码变更始于文档 (Define)，终于审计 (Audit)。
+<step_2_route>
+    **Role**: 路由器
+    **Action**: 根据输入分支：
 
-    ---
+    | 输入 | 分支 |
+    |:---|:---|
+    | 无参数 | → step_3_navigate（项目导航） |
+    | 有 `[question]` | → step_4_answer（上下文问答） |
 
-    ## Project Structure
+</step_2_route>
 
-    ```
-    my-project/
-    │
-    ├── .cursor/rules/              # Cursor IDE 规则目录
-    │   ├── 00_system.mdc           # 系统宪法 - AI 身份与思维循环
-    │   ├── 01_workflow.mdc         # 工作流路由 - 指令识别与模式切换
-    │   ├── 02_tech_stack.mdc       # 技术法律 - 技术选型与编码规范
-    │   ├── 03_data_governance.mdc  # 数据治理 - 数据操作红线与规范
-    │   ├── 90_custom_rules.mdc     # 用户家规 - 团队自定义约束
-    │   └── 99_context_glue.mdc     # 上下文桥梁 - 代码与文档关联
-    │
-    ├── .cursor/commands/           # Cursor IDE 命令目录 (仅 Cursor)
-    │   ├── archi.start.md          # /archi.start 命令定义
-    │   ├── archi.plan.md           # /archi.plan 命令定义
-    │   ├── archi.code.md           # /archi.code 命令定义
-    │   ├── archi.fix.md            # /archi.fix 命令定义
-    │   ├── archi.edit.md           # /archi.edit 命令定义
-    │   └── archi.help.md           # /archi.help 命令定义
-    │
-    ├── .trae/rules/                # Trae IDE 规则目录 (同上，扩展名为 .md)
-    │   └── ...
-    │
-    ├── .architext/                 # 文档目录 (默认名称，可配置)
-    │   │
-    │   ├── global/                 # 全局文档 - 项目级资产
-    │   │   ├── vision.md        # 项目愿景 - 北极星指标与设计哲学
-    │   │   ├── roadmap.json        # 项目路线图 - 任务依赖与进度追踪 (JSON 数据源)
-    │   │   ├── map.json            # 架构地图 - 目录索引与逻辑拓扑 (JSON 数据源)
-    │   │   ├── dictionary.json     # 术语字典 - 业务术语与组件注册 (JSON 数据源)
-    │   │   ├── design_tokens.json  # 设计系统 - 颜色/字体/间距变量 (JSON 数据源, 如有 UI)
-    │   │   ├── data_snapshot.json  # 数据快照 - 数据库 Schema 镜像 (JSON 数据源, 如有数据层)
-    │   │   └── error_codes.json    # 错误码契约 - 业务错误码定义 (JSON 数据源)
-    │   │
-    │   ├── prompts/                # Prompt 模板 - 供 AI 读取的指令协议
-    │   │   ├── start.md            # 项目启动协议
-    │   │   ├── plan.md             # 功能规划协议
-    │   │   ├── code.md             # 代码实现协议
-    │   │   ├── edit.md             # 需求变更协议
-    │   │   ├── fix.md              # Bug 修复协议
-    │   │   └── help.md             # 帮助手册 (本文件)
-    │   │
-    │   ├── templates/              # 文档模板
-    │   │   ├── spec.template.md    # 功能规格模板 (Gherkin)
-    │   │   ├── ui.template.md      # UI 设计模板 (ITP v3.0)
-    │   │   └── plan.template.json  # 实施计划模板 (JSON 数据源)
-    │   │
-    │   └── features/               # 功能文档 - 按模块组织
-    │       └── <ID>_<Slug>/        # 每个功能一个文件夹
-    │           ├── spec.md         # 功能规格 - Gherkin 场景
-    │           ├── ui.md           # UI 设计 - ITP 组件树 (如适用)
-    │           └── plan.json       # 实施计划 - 任务清单 (JSON 数据源)
-    │
-    └── xxx/                        # 业务代码 (项目实际代码)
-        └── ...
-    ```
+<step_3_navigate>
+    **Role**: 项目导航员
+    **Action**:
+    1.  **判断项目阶段**:
 
-    **说明**:
-    - **IDE Rules 目录**: 根据选择的 IDE，规则文件会被复制到对应目录 (`.cursor/rules/`, `.trae/rules/` 等)
-    - **IDE Commands 目录**: 仅 Cursor 支持，命令文件会被生成到 `.cursor/commands/` 目录，文件名格式为 `archi.{命令名}.md`
-    - **文档目录**: 默认使用 `.architext/`，可通过 `architext.json` 配置为其他名称
-    - **扩展名差异**: Cursor 规则文件使用 `.mdc`，其他 IDE 使用 `.md`
+        | 信号 | 阶段 | 建议 |
+        |:---|:---|:---|
+        | roadmap.json 不存在 | 未初始化 | 运行 `/archi.start` |
+        | 有 roadmap 但无 Feature 目录 | 已启动，未规划 | 运行 `/archi.plan [描述]` |
+        | 有 active 任务且 plan.json 完整 | 可编码 | 运行 `/archi.code <ID>` |
+        | 有 active 任务但缺 spec/plan | 规划未完成 | 运行 `/archi.plan <ID>` 补全 |
+        | 所有任务 done | 已完成 | 规划新功能或发布 |
+        | 有 blocked 任务 | 存在阻塞 | 提示阻塞原因与前置依赖 |
 
-    ---
+    2.  **输出格式**:
+        - 一句话总结当前状态
+        - 推荐的下一步操作（含具体命令）
+        - 如有多个可选路径，列出优先级排序（最多 3 个）
+</step_3_navigate>
 
-    ## 1. Initialization (项目启动)
+<step_4_answer>
+    **Role**: 项目顾问
+    **Action**:
+    1.  解析 `[question]` 语义，定位相关项目文件。
+    2.  读取相关文件，综合回答。
+    3.  若问题涉及操作（如"怎么做 X"），回答须包含具体命令建议。
+    4.  若信息不足以回答，明确告知缺少什么，而非编造。
 
-    | Command | Args | Role (简述) | Core Logic (核心逻辑) |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.start`** | `[context]` | ** Project Cold Start**<br>新项目冷启动。 | 访谈愿景 -> 确认风格 -> 确认技术栈 -> **创建 Docs 骨架**。 |
-    | **`/archi.inherit`** | `(none)` | ** Legacy Takeover**<br>接管现有的旧项目。 | 全量扫描代码 -> 逆向推导 -> **填充 Global Docs**。 |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>刷新目录地图。 | 扫描文件系统 -> **更新 map.json**。 |
-
-    ---
-
-    ## 2. Definition (需求定义)
-
-    > **Rule**: 此阶段**不写代码**，只生成 `.architext/features/` 下的 Spec/UI/Plan 文档。
-
-    | Command | Args | Role (简述) | Core Logic (核心逻辑) |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.plan`** | `[id \| context]` | ** Feature Planning**<br>定义新功能或细化已有功能。 | 智能判断：<br>1. 有 ID -> 读取已有文档，深度细化。<br>2. 无 ID -> **建新 ID** -> 架构访谈 -> 生成 Spec/UI/Plan。 |
-    | **`/archi.adopt`** | `[context]` | ** Adopt Legacy**<br>纳管旧代码。 | 模糊搜索代码 -> **自动拟定 ID** -> 逆向生成 Spec/UI。 |
-
-    ---
-
-    ## 3. Evolution (变更管理)
-
-    | Command | Args | Role (简述) | Core Logic (核心逻辑) |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.edit`** | `<id> [context]` | ** Modify Spec/UI**<br>修改**局部**功能的需求。 | 读取旧文档 -> 注入新需求 -> **更新 Spec/UI** -> 追加 Plan。 |
-    | **`/archi.revise`** | `<target> [context]` | ** Global Revision**<br>修改**全局**设定 (如技术栈)。 | 修改 Vision/Tech/Roadmap -> **广播变更** (通知相关 Feature)。 |
-
-    ---
-
-    ## 4. Execution (执行与修复)
-
-    | Command | Args | Role (简述) | Core Logic (核心逻辑) |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.code`** | `<id>` | ** Write Code**<br>将文档翻译为代码。 | 读取 Plan -> 生成/修改代码 -> **静态检查 + 自动审计**。 |
-    | **`/archi.fix`** | `[id] <context>` | ** Bug Fix**<br>修复 Bug (非需求变更)。 | 诊断错误 -> 记录 Plan -> **修复代码** (通常不修改 Spec)。 |
-
-    ---
-
-    ## 5. Maintenance (维护与治理)
-
-    | Command | Args | Role (简述) | Core Logic (核心逻辑) |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>手动刷新架构地图。 | 重新扫描目录树 -> 更新 `map.json` (文件拓扑)。 |
-    | **`/archi.help`** | `[lang]` | ** Manual**<br>显示本说明书。 | 显示指令列表、项目结构与用法。 |
-
-    ---
-
-    ## Quick Decision Guide (快速决策)
-
-    | 场景 | 推荐指令 |
-    | :--- | :--- |
-    | **新项目**从零开始 | `/archi.start` |
-    | **老项目**接管维护 | `/archi.inherit` |
-    | **新功能**需求定义 | `/archi.plan [功能描述]` |
-    | **已有功能**深度细化 | `/archi.plan [Feature_ID]` |
-    | **给老代码**补文档 | `/archi.adopt` |
-    | **改需求**（局部） | `/archi.edit <id> [变更描述]` |
-    | **改全局**（技术栈/架构） | `/archi.revise <target> [变更描述]` |
-    | **写代码**实现功能 | `/archi.code <id>` |
-    | **修 Bug** | `/archi.fix [id] <bug 描述>` |
-    | **刷新地图** | `/archi.map` |
-
-    ---
-
-    ## Typical Workflow (典型工作流)
-
-    ```
-    /archi.start [项目描述]     # Step 1: 项目初始化 -> 生成 Vision/Tech/Roadmap
-           ↓
-    /archi.plan [功能描述]      # Step 2: 功能规划 -> 生成 Spec/UI/Plan
-           ↓
-    /archi.code <Feature_ID>    # Step 3: 代码实现 -> 静态检查 + 审计
-           ↓
-    (发现 Bug?)
-           ↓
-    /archi.fix [Feature_ID] <bug 描述>     # Step 4: Bug 修复 (如需)
-           ↓
-    (需求变更?)
-           ↓
-    /archi.edit [Feature_ID] <需求变更描述>    # Step 5: 需求变更 (如需) -> 更新 Spec/UI/Plan
-           ↓
-    /archi.code <Feature_ID>    # Step 6: 继续实现变更
-    ```
-
-    ---
-
-    > ** Next Step**: 
-    > - 新项目？运行 `/archi.start [你的项目描述]` 开始初始化。
-    > - 已有项目？运行 `/archi.inherit` 接管现有代码库。
-    > - 想规划新功能？运行 `/archi.plan [功能描述]` 开始架构访谈。
-
-</step_1_render>
+    **Output**: 基于项目上下文的简洁回答 + 相关文件引用。
+</step_4_answer>
 
 </protocol_help>

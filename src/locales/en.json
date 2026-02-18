@@ -43,6 +43,9 @@
   "render": {
     "desc": "Render JSON data files into Markdown views"
   },
+  "help": {
+    "desc": "Display Architext command help information"
+  },
   "scaffold": {
     "fallback": "Template for {lang} not found, falling back to 'zh'",
     "step_docs": "Scaffolding documentation structure...",
@@ -145,6 +148,108 @@
       }
     },
     "update": {},
-    "doctor": {}
+    "doctor": {},
+    "help": {
+      "tagline": "No Docs, No Code. — AI-Native Architecture Protocol",
+      "section": {
+        "ai": "AI Commands (use in Chat)",
+        "cli": "CLI Commands (use in Terminal)",
+        "quick": "Quick Start",
+        "workflow": "Typical Workflow"
+      },
+      "ai": {
+        "start": {
+          "desc": "Cold start a new project. Interview vision, tech stack, generate doc skeleton.",
+          "detail": "Output: Vision + Tech Stack + Roadmap + Global doc skeleton",
+          "example": "e.g. /archi.start I want to build a Todo CLI tool in Rust"
+        },
+        "inherit": {
+          "desc": "Take over a legacy project. Full code scan, reverse-engineer architecture, fill docs.",
+          "detail": "For existing codebases lacking Architext documentation"
+        },
+        "plan": {
+          "desc": "Feature planning. Define new features or deep-refine existing ones.",
+          "detail": "Output: Spec (logic) + UI (visual, if applicable) + Plan (steps)",
+          "example1": "e.g. /archi.plan user login module",
+          "example2": "e.g. /archi.plan INF-001"
+        },
+        "code": {
+          "desc": "Translate docs to code. Read Plan, implement step by step with checks & audit.",
+          "detail": "Prerequisite: Feature must have complete Spec + Plan",
+          "example": "e.g. /archi.code INF-001"
+        },
+        "fix": {
+          "desc": "Fix a bug (not a requirement change). Diagnose and fix code, usually no Spec change.",
+          "detail": "Auto-records fix process to Plan for documentation consistency",
+          "example": "e.g. /archi.fix INF-001 login returns 403 error"
+        },
+        "edit": {
+          "desc": "Local requirement change. Update Spec/UI docs first, then sync code changes.",
+          "detail": "Change chain: Update Spec/UI --> Append Plan steps --> Modify code",
+          "example": "e.g. /archi.edit INF-001 add remember-me feature"
+        },
+        "revise": {
+          "desc": "Global change (tech stack, architecture). Broadcasts to affected Features.",
+          "detail": "Scope: Vision / Tech Stack / Roadmap / Related Features",
+          "example": "e.g. /archi.revise tech_stack migrate from REST to GraphQL"
+        },
+        "map": {
+          "desc": "Refresh architecture map. Rescan directory tree, update map.json.",
+          "detail": "Use when directory structure changes to keep map.json in sync"
+        },
+        "help": {
+          "desc": "Project navigator & contextual Q&A. Analyze state, suggest next actions.",
+          "detail": "No args: smart next-step recommendation; with question: project-aware answer",
+          "example1": "e.g. /archi.help",
+          "example2": "e.g. /archi.help what does the data model look like?"
+        }
+      },
+      "cli": {
+        "init": {
+          "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates.",
+          "editor": "Target IDE (cursor / trae / windsurf)",
+          "lang": "Language (zh / en / zh-Hant)",
+          "doc": "Custom doc directory name (default: .architext)"
+        },
+        "update": {
+          "desc": "Sync latest rule templates to project, keep rules aligned with framework version.",
+          "dry_run": "Preview changes only, no actual writes"
+        },
+        "doctor": {
+          "desc": "Check project health (file integrity, config consistency, environment deps).",
+          "fix": "Auto-fix recoverable issues"
+        },
+        "task": {
+          "desc": "Manage Roadmap tasks. View progress, update status, check dependency consistency.",
+          "detail": "No args: list all tasks | --check: verify dependency consistency",
+          "example": "e.g. npx archi task INF-001 --status done"
+        },
+        "plan": {
+          "desc": "Check Feature Plan completion (auto-detects manual verification sections).",
+          "example": "e.g. npx archi plan INF-001"
+        },
+        "render": {
+          "desc": "Render JSON data files (roadmap/plan) into human-readable Markdown views."
+        },
+        "uninstall": {
+          "desc": "Remove Architext framework and all generated files (rules, docs, config)."
+        }
+      },
+      "quick": {
+        "new_project": "New project from scratch",
+        "legacy": "Take over legacy project",
+        "new_feature": "Plan a new feature",
+        "write_code": "Implement code",
+        "fix_bug": "Fix a bug",
+        "check_health": "Check project health"
+      },
+      "workflow": {
+        "flow": "Core loop: Define --> Implement --> Iterate",
+        "init": "Start",
+        "define": "Define",
+        "implement": "Implement",
+        "loop": "Iteration loop:"
+      }
+    }
   }
 }

@@ -43,6 +43,9 @@
   "render": {
     "desc": "將 JSON 資料檔案渲染為 Markdown 視圖"
   },
+  "help": {
+    "desc": "顯示 Architext 命令幫助信息"
+  },
   "scaffold": {
     "fallback": "未找到 {lang} 模板，回退使用 'zh'",
     "step_docs": "正在初始化檔案骨架...",
@@ -145,6 +148,108 @@
       }
     },
     "update": {},
-    "doctor": {}
+    "doctor": {},
+    "help": {
+      "tagline": "No Docs, No Code. — AI 原生架構協議",
+      "section": {
+        "ai": "AI Commands (在 Chat 中使用)",
+        "cli": "CLI Commands (在終端中使用)",
+        "quick": "Quick Start (快速決策)",
+        "workflow": "Typical Workflow (典型工作流)"
+      },
+      "ai": {
+        "start": {
+          "desc": "新專案冷啟動。透過訪談確立願景、技術堆疊，產生檔案骨架。",
+          "detail": "產出: Vision + Tech Stack + Roadmap + 全域檔案骨架",
+          "example": "例: /archi.start 我要做一個 Todo CLI 工具，用 Rust 寫"
+        },
+        "inherit": {
+          "desc": "接管舊專案。全量掃描程式碼，逆向推導架構，填充全域檔案。",
+          "detail": "適用於已有程式碼庫但缺少 Architext 檔案的專案"
+        },
+        "plan": {
+          "desc": "功能規劃。定義新功能或深度細化已有功能。",
+          "detail": "產出: Spec (功能邏輯) + UI (視覺設計, 如適用) + Plan (實施步驟)",
+          "example1": "例: /archi.plan 使用者登入模組",
+          "example2": "例: /archi.plan INF-001"
+        },
+        "code": {
+          "desc": "將檔案翻譯為程式碼。讀取 Plan，逐步實現，含靜態檢查與審計。",
+          "detail": "前置: 對應 Feature 須有完整的 Spec + Plan",
+          "example": "例: /archi.code INF-001"
+        },
+        "fix": {
+          "desc": "修復 Bug（非需求變更）。診斷錯誤並修復程式碼，通常不改 Spec。",
+          "detail": "自動記錄修復過程到 Plan，保持檔案一致性",
+          "example": "例: /archi.fix INF-001 登入時報 403 錯誤"
+        },
+        "edit": {
+          "desc": "局部需求變更。先改 Spec/UI 檔案，再同步修改程式碼。",
+          "detail": "變更鏈路: 更新 Spec/UI --> 追加 Plan 步驟 --> 修改程式碼",
+          "example": "例: /archi.edit INF-001 增加記住密碼功能"
+        },
+        "revise": {
+          "desc": "全域變更（技術堆疊、架構等）。修改後廣播通知相關 Feature。",
+          "detail": "影響範圍: Vision / Tech Stack / Roadmap / 相關 Feature",
+          "example": "例: /archi.revise tech_stack 從 REST 遷移到 GraphQL"
+        },
+        "map": {
+          "desc": "重新整理架構地圖。重新掃描目錄樹，更新 map.json。",
+          "detail": "當目錄結構發生變化時使用，保持 map.json 與實際檔案系統同步"
+        },
+        "help": {
+          "desc": "專案導航與上下文問答。分析專案狀態，建議下一步操作。",
+          "detail": "無參數時智慧推薦下一步；帶問題時基於專案上下文回答",
+          "example1": "例: /archi.help",
+          "example2": "例: /archi.help 這個專案的資料模型長什麼樣？"
+        }
+      },
+      "cli": {
+        "init": {
+          "desc": "初始化 Architext 框架。產生規則檔案、檔案目錄、Prompt 範本。",
+          "editor": "指定 IDE (cursor / trae / windsurf)",
+          "lang": "指定語言 (zh / en / zh-Hant)",
+          "doc": "自定義檔案目錄名 (預設 .architext)"
+        },
+        "update": {
+          "desc": "同步最新規則範本到專案，保持規則檔案與框架版本一致。",
+          "dry_run": "僅預覽變更，不實際寫入"
+        },
+        "doctor": {
+          "desc": "檢查專案健康狀況（檔案完整性、設定一致性、環境依賴）。",
+          "fix": "自動修復可修復的問題"
+        },
+        "task": {
+          "desc": "管理 Roadmap 任務。查看進度、更新狀態、檢查依賴一致性。",
+          "detail": "無參數: 列出所有任務 | --check: 檢查依賴一致性",
+          "example": "例: npx archi task INF-001 --status done"
+        },
+        "plan": {
+          "desc": "檢查指定 Feature 的 Plan 完成度（自動識別人工驗收區域）。",
+          "example": "例: npx archi plan INF-001"
+        },
+        "render": {
+          "desc": "將 JSON 資料檔案 (roadmap/plan) 渲染為人類可讀的 Markdown 視圖。"
+        },
+        "uninstall": {
+          "desc": "移除 Architext 框架及其產生的所有檔案（規則、檔案、設定）。"
+        }
+      },
+      "quick": {
+        "new_project": "新專案從零開始",
+        "legacy": "接管舊專案",
+        "new_feature": "規劃新功能",
+        "write_code": "實現程式碼",
+        "fix_bug": "修復 Bug",
+        "check_health": "檢查專案健康"
+      },
+      "workflow": {
+        "flow": "核心循環: 定義 --> 實現 --> 迭代",
+        "init": "啟動",
+        "define": "定義",
+        "implement": "實現",
+        "loop": "迭代循環:"
+      }
+    }
   }
 }

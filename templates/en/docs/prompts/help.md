@@ -1,191 +1,68 @@
 <protocol_help>
-  **Trigger**: `/archi.help [lang]`
-  **Goal**: Display the complete Architext command list, explain the DDAD (Document-Driven AI Development) workflow, and show the project directory structure.
+  **Trigger**: `/archi.help [question]`
+  **Goal**: Project navigation and contextual Q&A. Analyze current project state to recommend next actions; or answer user questions based on project context.
 
 <meta>
-    <style>Clean, Structured, Manual-Style</style>
+    <style>Concise, Contextual, Actionable</style>
     <language>English</language>
     <principles>
-      1.  **Lifecycle-Oriented**: Group by project lifecycle (Start->Define->Change->Execute), not simple alphabetical order.
-      2.  **Logic Clarity**: Clearly explain core logic (e.g. why `/archi.plan` writes docs instead of code).
-      3.  **Bilingual Support**: Output corresponding language based on `[lang]` (zh/zh-Hant/en), default is Chinese.
-      4.  **Structure Awareness**: Show project directory structure to help users understand file organization.
+      1.  **Context-Aware**: Answer based on real project state. No guessing.
+      2.  **Actionable Output**: Every output must include an executable next step (specific command + args).
+      3.  **Minimal Token**: Keep output concise. Don't repeat what the user already knows. Only present conclusions and recommendations.
+      4.  **No Audit**: No deep auditing (that's `/archi.audit`'s job). Focus on navigation and Q&A.
     </principles>
 </meta>
 
-<step_1_render>
-    **Role**: Technical Writer
-    **Action**: Output the following Markdown manual.
+<step_1_load_context>
+    **Role**: Project Observer
+    **Action**:
+    1.  Read `[[__DOCS_DIR__]]/global/roadmap.json` — get task list, statuses, dependencies.
+    2.  Scan `[[__DOCS_DIR__]]/features/` directory — get existing Features and their doc completeness (spec.md / ui.md / plan.json).
+    3.  [?question] If user provided a question, locate relevant files by semantic match (spec / plan / vision / tech_stack / data_snapshot, etc.), read as needed.
 
-    **Content**:
+    **Output**: Internal context (not shown to user).
+</step_1_load_context>
 
-    # Architext Command Manual (v1.1)
+<step_2_route>
+    **Role**: Router
+    **Action**: Branch based on input:
 
-    > **Core Philosophy**: **No Docs, No Code.**
-    > All code changes must start with documentation (Define) and end with audit (Audit).
+    | Input | Branch |
+    |:---|:---|
+    | No args | → step_3_navigate (project navigation) |
+    | Has `[question]` | → step_4_answer (contextual Q&A) |
 
-    ---
+</step_2_route>
 
-    ## Project Structure
+<step_3_navigate>
+    **Role**: Project Navigator
+    **Action**:
+    1.  **Determine project phase**:
 
-    After initialization, Architext will create the following structure in the project:
+        | Signal | Phase | Recommendation |
+        |:---|:---|:---|
+        | roadmap.json missing | Not initialized | Run `/archi.start` |
+        | Has roadmap but no Feature dirs | Started, not planned | Run `/archi.plan [description]` |
+        | Has active tasks with complete plan.json | Ready to code | Run `/archi.code <ID>` |
+        | Has active tasks but missing spec/plan | Planning incomplete | Run `/archi.plan <ID>` to complete |
+        | All tasks done | Complete | Plan new features or release |
+        | Has blocked tasks | Blocked | Show blocking reason and prerequisites |
 
-    ```
-    my-project/
-    │
-    ├── .cursor/rules/              # Cursor IDE rules directory
-    │   ├── 00_system.mdc           # System Constitution - AI Identity & Thought Loop
-    │   ├── 01_workflow.mdc         # Workflow Router - Command Recognition & Mode Switching
-    │   ├── 02_tech_stack.mdc       # Tech Laws - Tech Stack Selection & Coding Standards
-    │   ├── 03_data_governance.mdc  # Data Governance - Data Operation Constraints
-    │   ├── 90_custom_rules.mdc     # User House Rules - Team Custom Constraints
-    │   └── 99_context_glue.mdc     # Context Bridge - Code & Docs Association
-    │
-    ├── .cursor/commands/           # Cursor IDE commands directory (Cursor only)
-    │   ├── archi.start.md          # /archi.start command definition
-    │   ├── archi.plan.md           # /archi.plan command definition
-    │   ├── archi.code.md           # /archi.code command definition
-    │   ├── archi.fix.md            # /archi.fix command definition
-    │   ├── archi.edit.md           # /archi.edit command definition
-    │   └── archi.help.md           # /archi.help command definition
-    │
-    ├── .trae/rules/                # Trae IDE rules directory (same as above, extension is .md)
-    │   └── ...
-    │
-    ├── .architext/                 # Documentation Directory (default name, configurable)
-    │   │
-    │   ├── global/                 # Global Docs - Project Level Assets
-    │   │   ├── vision.md        # Vision - North Star Metrics & Design Philosophy
-    │   │   ├── roadmap.json        # Roadmap - Task Dependencies & Progress Tracking (JSON source)
-    │   │   ├── map.json            # Architecture Map - Directory Index & Logical Topology (JSON source)
-    │   │   ├── dictionary.json     # Dictionary - Business Terms & Component Registry (JSON source)
-    │   │   ├── design_tokens.json  # Design System - Colors/Fonts/Spacing (JSON source, if UI exists)
-    │   │   ├── data_snapshot.json  # Data Snapshot - Database Schema Mirror (JSON source, if Data layer exists)
-    │   │   └── error_codes.json    # Error Codes - Business Error Code Definition (JSON source)
-    │   │   
-    │   ├── prompts/                # Prompt Templates - Instruction Protocols for AI
-    │   │   ├── start.md            # Project Kickoff Protocol
-    │   │   ├── plan.md             # Feature Planning Protocol
-    │   │   ├── code.md             # Code Implementation Protocol
-    │   │   ├── edit.md             # Requirement Change Protocol
-    │   │   ├── fix.md              # Bug Fix Protocol
-    │   │   └── help.md             # Help Manual (this file)
-    │   │
-    │   ├── templates/              # Doc Templates
-    │   │   ├── spec.template.md    # Feature Spec Template (Gherkin)
-    │   │   ├── ui.template.md      # UI Design Template (ITP v3.0)
-    │   │   └── plan.template.json  # Implementation Plan Template (JSON source)
-    │   │
-    │   └── features/               # Feature Docs - Organized by Module
-    │       └── <ID>_<Slug>/        # One folder per feature
-    │           ├── spec.md         # Feature Spec - Gherkin Scenarios
-    │           ├── ui.md           # UI Design - ITP Component Tree (if applicable)
-    │           └── plan.json       # Implementation Plan - Task List (JSON source)
-    │
-    └── xxx/                        # Business Code (Actual Project Code)
-        └── ...
-    ```
+    2.  **Output format**:
+        - One-line summary of current state
+        - Recommended next action (with specific command)
+        - If multiple paths available, list by priority (max 3)
+</step_3_navigate>
 
-    **Note**:
-    - **IDE Rules Directory**: Rules files are copied to the corresponding directory (`.cursor/rules/`, `.trae/rules/`, etc.) based on the selected IDE.
-    - **IDE Commands Directory**: Cursor only. Command files are generated to `.cursor/commands/` directory, with filename format `archi.{command}.md`.
-    - **Docs Directory**: Defaults to `.architext/`, configurable to other names via `architext.json`.
-    - **Extension Diff**: Cursor rules files use `.mdc`, other IDEs use `.md`.
+<step_4_answer>
+    **Role**: Project Advisor
+    **Action**:
+    1.  Parse `[question]` semantics, locate relevant project files.
+    2.  Read relevant files, synthesize answer.
+    3.  If question involves an action (e.g. "how to do X"), include specific command suggestions.
+    4.  If insufficient info to answer, state what's missing instead of fabricating.
 
-    ---
-
-    ## 1. Initialization
-
-    | Command | Args | Role (Brief) | Core Logic |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.start`** | `[context]` | ** Project Cold Start**<br>Start a new project from scratch. | Interview Vision -> Confirm Style -> Confirm Tech Stack -> **Create Docs Skeleton**. |
-    | **`/archi.inherit`** | `(none)` | ** Legacy Takeover**<br>Take over an existing legacy project. | Full Code Scan -> Reverse Deduction -> **Fill Global Docs**. |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>Refresh directory map. | Scan File System -> **Update map.json**. |
-
-    ---
-
-    ## 2. Definition
-
-    > **Rule**: **No code** is written in this phase, only Spec/UI/Plan docs in `.architext/features/` are generated.
-
-    | Command | Args | Role (Brief) | Core Logic |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.plan`** | `[id \| context]` | ** Feature Planning**<br>Define new feature or refine existing one. | Smart Decision:<br>1. Has ID -> Read existing docs, deep refine.<br>2. No ID -> **Create New ID** -> Architecture Interview -> Generate Spec/UI/Plan. |
-    | **`/archi.adopt`** | `[context]` | ** Adopt Legacy**<br>Adopt legacy code. | Fuzzy Search Code -> **Auto Draft ID** -> Reverse Generate Spec/UI. |
-
-    ---
-
-    ## 3. Evolution
-
-    | Command | Args | Role (Brief) | Core Logic |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.edit`** | `<id> [context]` | ** Modify Spec/UI**<br>Modify **local** feature requirements. | Read Old Docs -> Inject New Req -> **Update Spec/UI** -> Append Plan. |
-    | **`/archi.revise`** | `<target> [context]` | ** Global Revision**<br>Modify **global** settings (e.g. Tech Stack). | Modify Vision/Tech/Roadmap -> **Broadcast Changes** (Notify related Features). |
-
-    ---
-
-    ## 4. Execution
-
-    | Command | Args | Role (Brief) | Core Logic |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.code`** | `<id>` | ** Write Code**<br>Translate docs to code. | Read Plan -> Generate/Modify Code -> **Static Check + Auto Audit**. |
-    | **`/archi.fix`** | `[id] <context>` | ** Bug Fix**<br>Fix Bug (Not requirement change). | Diagnose Error -> Record Plan -> **Fix Code** (Usually don't modify Spec). |
-
-    ---
-
-    ## 5. Maintenance
-
-    | Command | Args | Role (Brief) | Core Logic |
-    | :--- | :--- | :--- | :--- |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>Manually refresh architecture map. | Rescan Directory Tree -> Update `map.json` (File Topology). |
-    | **`/archi.help`** | `[lang]` | ** Manual**<br>Show this manual. | Show command list, project structure & usage. |
-
-    ---
-
-    ## Quick Decision Guide
-
-    | Scenario | Recommended Command |
-    | :--- | :--- |
-    | **New Project** from scratch | `/archi.start` |
-    | **Legacy Project** takeover | `/archi.inherit` |
-    | **New Feature** definition | `/archi.plan [Feature Description]` |
-    | **Existing Feature** deep refine | `/archi.plan [Feature_ID]` |
-    | **Legacy Code** documentation | `/archi.adopt` |
-    | **Change Req** (Local) | `/archi.edit <id> [Change Description]` |
-    | **Change Global** (Tech/Arch) | `/archi.revise <target> [Change Description]` |
-    | **Write Code** implement feature | `/archi.code <id>` |
-    | **Fix Bug** | `/archi.fix [id] <Bug Description>` |
-    | **Refresh Map** | `/archi.map` |
-
-    ---
-
-    ## Typical Workflow
-
-    ```
-    /archi.start [Project Description]     # Step 1: Project Init -> Generate Vision/Tech/Roadmap
-           ↓
-    /archi.plan [Feature Description]      # Step 2: Feature Planning -> Generate Spec/UI/Plan
-           ↓
-    /archi.code <Feature_ID>    # Step 3: Code Implementation -> Static Check + Audit
-           ↓
-    (Found Bug?)
-           ↓
-    /archi.fix [Feature_ID] <Bug Description>     # Step 4: Bug Fix (If needed)
-           ↓
-    (Requirement Change?)
-           ↓
-    /archi.edit [Feature_ID] <Change Description>    # Step 5: Req Change (If needed) -> Update Spec/UI/Plan
-           ↓
-    /archi.code <Feature_ID>    # Step 6: Continue Implementation
-    ```
-
-    ---
-
-    > ** Next Step**: 
-    > - New Project? Run `/archi.start [Your Project Description]` to start initialization.
-    > - Existing Project? Run `/archi.inherit` to take over existing codebase.
-    > - Want to plan new feature? Run `/archi.plan [Feature Description]` to start architecture interview.
-
-</step_1_render>
+    **Output**: Concise answer based on project context + relevant file references.
+</step_4_answer>
 
 </protocol_help>
