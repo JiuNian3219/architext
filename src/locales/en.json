@@ -38,8 +38,11 @@
     "list": "List tasks summary"
   },
   "plan": {
-    "desc": "Check implementation plan (plan.md) completion status",
+    "desc": "Check implementation plan (plan.json) completion status",
     "id_required": "Please specify Feature ID (e.g.: archi plan SUB-01)"
+  },
+  "render": {
+    "desc": "Render JSON data files into Markdown views"
   },
   "scaffold": {
     "fallback": "Template for {lang} not found, falling back to 'zh'",
@@ -107,7 +110,8 @@
         "updating": "Updating task [{id}] to {status}...",
         "added_class": "Added new graph class for [{id}]",
         "no_visual": "Graph node for [{id}] not found and no visual block.",
-        "done": "Task [{id}] -> {status}"
+        "done": "Task [{id}] -> {status}",
+        "unblocked": "Task [{id}] unblocked -> pending (all deps done)"
       },
       "list": {
         "empty": "No tasks found in roadmap.",
@@ -123,7 +127,36 @@
       "all_done": "All automated tasks complete!",
       "remaining": "{count} tasks remaining",
       "empty": "No checkbox tasks found in plan file",
-      "not_found": "Plan file not found for [{id}] (plan.md)"
+      "not_found": "Plan file not found for [{id}] (plan.json)"
+    },
+    "render": {
+      "empty": "No JSON data files found to render.",
+      "done": "Render complete. Generated {count} Markdown view(s).",
+      "plan": {
+        "header_comment": "<!-- ⚠️ AUTO-GENERATED from plan.json — DO NOT EDIT DIRECTLY -->",
+        "header_ai": "<!-- AI: Read plan.json, not this file -->",
+        "title": "Implementation Plan: {featureName}",
+        "feature_id": "Feature ID",
+        "status": "Status",
+        "section_decisions": "Technical Decisions",
+        "section_steps": "Implementation Steps",
+        "section_tests": "Test Plan",
+        "subsection_automated": "Automated Tests",
+        "subsection_manual": "Manual Verification"
+      },
+      "roadmap": {
+        "header_comment": "<!-- ⚠️ AUTO-GENERATED from roadmap.json — DO NOT EDIT DIRECTLY -->",
+        "header_ai": "<!-- AI: Read roadmap.json, not this file -->",
+        "title": "Project Roadmap",
+        "status": "Status",
+        "updated": "Updated",
+        "phase": "Phase",
+        "goal": "Goal",
+        "dep": "Dep",
+        "dep_none": "None",
+        "tag": "Tag",
+        "slug": "Slug"
+      }
     },
     "update": {},
     "doctor": {}

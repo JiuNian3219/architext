@@ -14,8 +14,8 @@ alwaysApply: true
 讀取或編輯程式碼檔案時，須執行以下尋址步驟:
 
 **Step 1: Check Global Map**
-- 讀取 `[[__DOCS_DIR__]]/global/01_map.md`。
-- 在 Directory Mapping / Logical Topology 中查找當前檔案所屬模組。
+- 讀取 `[[__DOCS_DIR__]]/global/map.json`。
+- 在 `directoryMapping` / `logicalTopology` 中查找當前檔案所屬模組。
 - 載入該模組註冊的 Docs Link (Spec/UI/Plan)。
 
 **Step 2: Check Explicit Context**
@@ -32,9 +32,9 @@ alwaysApply: true
 
 | 程式碼型別 | 必讀上下文 | 真理來源 |
 |:---|:---|:---|
-| **Business Logic** (Features/Entities) | Spec Document | `[[__DOCS_DIR__]]/global/01_map.md` → Module Entry |
-| **UI Components** (Pages/Widgets) [?UI] | UI Document + `[[__DOCS_DIR__]]/global/03_design_tokens.md` | `[[__DOCS_DIR__]]/global/01_map.md` + Global Rules |
-| **Data Schema** (ORM/SQL/Models) [?Data] | Data Snapshot | `[[__DOCS_DIR__]]/global/04_data_snapshot.md` |
+| **Business Logic** (Features/Entities) | Spec Document | `[[__DOCS_DIR__]]/global/map.json` → Module Entry |
+| **UI Components** (Pages/Widgets) [?UI] | UI Document + `[[__DOCS_DIR__]]/global/design_tokens.json` | `[[__DOCS_DIR__]]/global/map.json` + Global Rules |
+| **Data Schema** (ORM/SQL/Models) [?Data] | Data Snapshot | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
 | **Config / Infra** (Package.json...) | Tech Stack | `02_tech_stack.md` |
 
 ---
@@ -50,4 +50,4 @@ alwaysApply: true
 ## 4. Maintenance Hook
 
 - **Trigger**: 建立新檔案或新模組時。
-- **Action**: 須提醒使用者或自動更新 `01_map.md`，建立程式碼路徑與文件路徑的映射。
+- **Action**: 須提醒使用者或自動更新 `map.json`，建立程式碼路徑與文件路徑的映射。

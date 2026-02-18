@@ -21,7 +21,7 @@
         - Has `<id>`: Lock target `features/<ID>_<Slug>/`.
         - No `<id>`: Analyze `[context]` to search most relevant module.
           Unique match → Auto lock | Multiple matches → List candidates and ask | Cannot locate → Report error requesting ID.
-    2.  Read all docs under target directory (`spec.md`, `ui.md`, `plan.md`) and related code.
+    2.  Read all docs under target directory (`spec.md`, `ui.md`, `plan.json`) and related code.
     3.  Analyze `[context]`, combine with code logic to locate potential failure points.
     4.  **Hypothesis**: Propose 1-3 root cause hypotheses.
 
@@ -31,10 +31,10 @@
 <step_2_plan_fix>
     **Role**: Tech Lead
     **Action**:
-    - Update `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.md`, append `### Bugfix: <Bug Title>` section.
+    - Update `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`, append bugfix phase: `Bugfix: <Bug Title>`.
     - Tasks: 1) Create reproduction test (Red) 2) Apply fix (Green) 3) Regression test.
 
-    **Output**: plan.md with fix tasks appended.
+    **Output**: plan.json with fix tasks appended. Run `npx archi render` to regenerate visual `.md` files.
 </step_2_plan_fix>
 
 <step_3_execute_fix>

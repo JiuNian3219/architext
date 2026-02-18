@@ -1,7 +1,11 @@
-/** @fileoverview 解析 Plan 文件 (plan.md) 中的 checkbox 任务，按 section 分组并识别人工验收区域。 */
+/** @fileoverview 解析 plan.json，按 phase 分组并识别人工验收区域。 */
 
-import { normalizeLines } from "../../../utils/normalize-text.ts";
-import type { PlanCheckItem, PlanCheckResult, PlanSection } from "./types.ts";
+import type {
+  PlanCheckResult,
+  PlanData,
+  PlanSection,
+  PlanTask,
+} from "./types.ts";
 
 /**
  * 被视为人工验收的 section 名关键词（小写匹配）。
@@ -18,69 +22,48 @@ const MANUAL_KEYWORDS = [
 ];
 
 /**
- * 解析 Plan 文件内容，提取所有 checkbox 项并按 section 分组。
+ * 解析 plan.json 数据，提取所有任务并按 phase 分组。
  *
- * 解析策略：
- *   1. 用 ## / ### 标题跟踪"当前所在 section"
- *   2. 匹配标准 Markdown checkbox 语法（- [ ] / - [x] / * [ ] / * [x]）
- *   3. 根据 section 名是否包含 MANUAL_KEYWORDS 判断是否为人工验收区域
- *
- * @param content Plan 文件的文本内容
+ * @param data plan.json 解析后的数据
  */
-export function parsePlanCheckboxes(content: string): PlanCheckResult {
-  // 归一化：去除 BOM、统一行尾为 \n（兼容 Windows \r\n 和旧 Mac \r）
-  const lines = normalizeLines(content);
-  const items: PlanCheckItem[] = [];
-  let currentSection = "";
+export function parsePlanJson(data: PlanData): PlanCheckResult {
+  const sections: PlanSection[] = [];
 
-  for (let i = 0; i < lines.length; i++) {
-    const trimmed = lines[i].trim();
+  // 从 phases 提取自动化任务
+  for (const phase of data.phases) {
+    const isManual = MANUAL_KEYWORDS.some((kw) =>
+      phase.name.toLowerCase().includes(kw),
+    );
+    sections.push({
+      name: phase.name,
+      isManual,
+      items: phase.tasks,
+      done: phase.tasks.filter((t: PlanTask) => t.done).length,
+      total: phase.tasks.length,
+    });
+  }
 
-    // 跟踪 ## 和 ### 标题作为 section 划分
-    const headingMatch = trimmed.match(/^(#{2,3})\s+(.+)$/);
-    if (headingMatch) {
-      currentSection = headingMatch[2].trim();
-      continue;
+  // 从 tests 提取测试任务
+  if (data.tests) {
+    if (data.tests.automated && data.tests.automated.length > 0) {
+      sections.push({
+        name: "Automated Tests",
+        isManual: false,
+        items: data.tests.automated,
+        done: data.tests.automated.filter((t: PlanTask) => t.done).length,
+        total: data.tests.automated.length,
+      });
     }
-
-    // 匹配 checkbox: - [ ] text, - [x] text, * [ ] text, * [x] text
-    const checkMatch = lines[i].match(/^\s*[-*]\s*\[([ xX])\]\s*(.*)$/);
-    if (checkMatch) {
-      items.push({
-        lineNum: i + 1, // 1-based
-        content: checkMatch[2].trim(),
-        checked: checkMatch[1].toLowerCase() === "x",
-        section: currentSection,
+    if (data.tests.manual && data.tests.manual.length > 0) {
+      sections.push({
+        name: "Manual Verification",
+        isManual: true,
+        items: data.tests.manual,
+        done: data.tests.manual.filter((t: PlanTask) => t.done).length,
+        total: data.tests.manual.length,
       });
     }
   }
-
-  // 按 section 分组，保持出现顺序
-  const sectionOrder: string[] = [];
-  const sectionMap = new Map<string, PlanCheckItem[]>();
-
-  for (const item of items) {
-    const key = item.section || "(Ungrouped)";
-    if (!sectionMap.has(key)) {
-      sectionMap.set(key, []);
-      sectionOrder.push(key);
-    }
-    sectionMap.get(key)!.push(item);
-  }
-
-  const sections: PlanSection[] = sectionOrder.map((name) => {
-    const sectionItems = sectionMap.get(name)!;
-    const isManual = MANUAL_KEYWORDS.some((kw) =>
-      name.toLowerCase().includes(kw),
-    );
-    return {
-      name,
-      isManual,
-      items: sectionItems,
-      done: sectionItems.filter((item) => item.checked).length,
-      total: sectionItems.length,
-    };
-  });
 
   return { sections };
 }

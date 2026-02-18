@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: Based on the `features/<id>_<Slug>/plan.md` task list, complete feature development; follow `02_tech_stack.md` ([?UI] also follow `03_design_tokens.md`); pass build, type check, lint, formatting, test and audit.
+  **Goal**: Based on the `features/<id>_<Slug>/plan.json` task list, complete feature development; follow `02_tech_stack.md` ([?UI] also follow `design_tokens.json`); pass build, type check, lint, formatting, test and audit.
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -19,7 +19,7 @@
 <step_1_resolve>
     **Role**: System Analyst
     **Action**:
-    1.  **Resolve ID**: Parse `<id>` → Feature Name, Slug, phase/status from `[[__DOCS_DIR__]]/global/00_roadmap.md`.
+    1.  **Resolve ID**: Parse `<id>` → Feature Name, Slug, phase/status from `[[__DOCS_DIR__]]/global/roadmap.json`.
     2.  **Status Gate** — Only `active` can enter code workflow:
 
         | Status | Handling |
@@ -32,10 +32,10 @@
     3.  **Load Context** (Use Roadmap `📁 Slug` to locate):
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — Logic & Scenarios
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — Design & Components (if exists)
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md` — Task Breakdown
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — Task breakdown (contains `notes` shorthand; must reference during execution)
         - `02_tech_stack.md` — Technical Red Lines
-        - [?UI] `[[__DOCS_DIR__]]/global/03_design_tokens.md`
-        - [?Data] `[[__DOCS_DIR__]]/global/04_data_snapshot.md`
+        - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
+        - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
 
     **Output**: Atomic list of tasks to implement, marking dependencies and order.
 </step_1_resolve>
@@ -76,7 +76,7 @@
     **Role**: Validation Engineer
     **Action** (Fix and re-run on failure; commands subject to `02_tech_stack.md` Section 5):
 
-    **Automated Check**: Run `scripts/validate` (if exists); otherwise execute the checklist below manually.
+    **Automated Check**: Run `[[__DOCS_DIR__]]/scripts/validate` (if exists); otherwise execute the checklist below manually.
 
     | Phase | Check Item | Requirement |
     |:---|:---|:---|
@@ -90,7 +90,7 @@
     **Feature Verification (Mandatory)**
 
     > Prohibited from marking complete via code review or automated tests alone; must actually run and verify the target feature.
-    > If dev server is not running, execute `scripts/dev-up` first.
+    > If dev server is not running, execute `[[__DOCS_DIR__]]/scripts/dev-up` first.
 
     | Project Type | Verification Action | Pass Criteria |
     |:---|:---|:---|
@@ -102,7 +102,7 @@
     | [?Desktop] | Launch app operate target feature | Window renders, feature functional |
 
     **Evidence**: Output must include verification results (command output summary / screenshot / error log).
-    **Fallback**: If verification keeps failing and environment issues suspected → `scripts/dev-reset` → `scripts/dev-up` → retry.
+    **Fallback**: If verification keeps failing and environment issues suspected → `[[__DOCS_DIR__]]/scripts/dev-reset` → `[[__DOCS_DIR__]]/scripts/dev-up` → retry.
 
     **Output**: ✅/❌ status and reason for each check; Feature Verification evidence.
 </step_4_validate>
@@ -112,7 +112,7 @@
     **Checklist**:
     1.  **Tech Consistency**: Consistent with `02_tech_stack.md` (libraries/patterns/API style).
     2.  [?UI] **Design Compliance**: Styles use Tokens only; no hardcoded values.
-    3.  [?Data] **Data Integrity**: Compliant with `04_data_snapshot.md`; field names/types match.
+    3.  [?Data] **Data Integrity**: Compliant with `data_snapshot.json`; field names/types match.
     4.  **SOTA**: Reject outdated patterns; adopt tech_stack best practices.
     5.  [?UI] **Accessibility**: Include necessary accessibility attributes.
     6.  [?I18n] **I18n**: No hardcoded strings; must use Key/dictionary reference.
@@ -128,8 +128,8 @@
     **CLI Mandatory Execution**: The following commands must be executed in terminal; prohibited from text suggestion only.
 
     **Plan Completion Gate (Mandatory)**:
-    1.  Run `npx archi plan <ID>` to check plan.md task completion.
-    2.  Pass criteria: All `[x]` or uncompleted items only belong to 🧑 Human Intervention / 🌐 Force Majeure.
+    1.  Run `npx archi plan <ID>` to check plan.json task completion.
+    2.  Pass criteria: All tasks `done: true` or uncompleted items only belong to  Human Intervention /  Force Majeure.
     3.  Not passed: Prohibited from signing off, return to step_3 to continue.
     4.  Exempt items must annotate reason and category.
 
@@ -138,8 +138,9 @@
        - `npx archi task <ID> --status done` (or `active`). Prohibited from editing roadmap directly.
        - `npx archi task --check`; fix if failed.
     2. Output completed task list with patch links (Code Reference).
-    3. Update plan.md, check completed Checkboxes.
-    4. Provide next step suggestions and Git Commit Suggestion (Conventional Commits).
+    3. Update plan.json, mark completed tasks as done.
+    4. Run `npx archi render` to regenerate visual `.md` files.
+    5. Provide next step suggestions and Git Commit Suggestion (Conventional Commits).
 
     **Checkpoint** (Confirm before Output): □ `npx archi plan` executed □ `npx archi task --status` executed □ `npx archi task --check` executed.
 

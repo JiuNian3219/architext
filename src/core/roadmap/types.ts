@@ -1,54 +1,51 @@
+/** @fileoverview Roadmap JSON 数据模型定义，作为 roadmap.json 的 TypeScript 类型契约。 */
+
 export type TaskStatus = "pending" | "active" | "done" | "blocked";
 
+/** roadmap.json 中的单个任务 */
 export interface Task {
   id: string;
   title: string;
   status: TaskStatus;
-  lineNum: number; // 原始文件行号，用于回写
-  rawLine: string; // 原始行内容
-
-  // Metadata from indentation
   goal?: string;
   deps?: string[];
   tag?: string;
-  slug?: string; // 用于 features 文件夹命名的英文短标识 (e.g. "Subscription_CRUD")
+  slug?: string;
 }
 
-export interface GraphNode {
+/** roadmap.json 中的一个阶段 */
+export interface Phase {
   id: string;
-  styleClass?: string; // e.g., 'done', 'active'
-  lineNum: number; // class 定义所在的行号
+  name: string;
+  tasks: Task[];
 }
 
-/** Mermaid 图中的依赖边 (A --> B) */
-export interface GraphEdge {
-  from: string;
-  to: string;
-}
-
-/** Mermaid 代码块内的原始行（带行号，用于语法校验） */
-export interface MermaidLine {
-  lineNum: number; // 在原始文件中的行号
-  content: string; // 行内容（未 trim）
-}
-
+/** roadmap.json 的完整结构 */
 export interface RoadmapData {
-  tasks: Map<string, Task>;
-  nodes: Map<string, GraphNode>; // class 定义（状态映射）
-
-  // Mermaid 图结构数据
-  nodeDefinitions: Set<string>; // 图中定义了"盒子"的节点 ID（ID[label]）
-  edges: GraphEdge[]; // 图中的依赖边（A --> B）
-  classDefNames: Set<string>; // classDef 声明的样式名集合
-  mermaidLines: MermaidLine[]; // Mermaid 代码块内的原始行（用于语法校验）
-
-  // Anchors line numbers
-  listStartLine: number;
-  listEndLine: number;
-  visualStartLine: number;
-  visualEndLine: number;
+  version: number;
+  projectStatus: string;
+  lastUpdated: string;
+  phases: Phase[];
 }
 
-export interface RoadmapConfig {
-  roadmapFile: string;
+/**
+ * 从嵌套的 phases 结构中提取所有 tasks 的扁平列表。
+ * 保持阶段内的顺序。
+ */
+export function getAllTasks(data: RoadmapData): Task[] {
+  return data.phases.flatMap((phase) => phase.tasks);
+}
+
+/**
+ * 构建 taskId → Task 的查找映射。
+ * 用于 O(1) 查找和依赖检查。
+ */
+export function buildTaskMap(data: RoadmapData): Map<string, Task> {
+  const map = new Map<string, Task>();
+  for (const phase of data.phases) {
+    for (const task of phase.tasks) {
+      map.set(task.id, task);
+    }
+  }
+  return map;
 }

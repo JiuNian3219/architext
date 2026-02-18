@@ -7,6 +7,7 @@ import { initCommand } from "./commands/meta/init/index.ts";
 import { uninstallCommand } from "./commands/meta/uninstall/index.ts";
 import { updateCommand } from "./commands/meta/update/index.ts";
 import { planCommand } from "./commands/meta/plan/index.ts";
+import { renderCommand } from "./commands/meta/render/index.ts";
 import { taskCommand } from "./commands/meta/task/index.ts";
 import { handleError } from "./core/error-handler.ts";
 import { createT, getSystemLocale } from "./utils/t.ts";
@@ -72,6 +73,9 @@ cli
 
 // Plan 实现计划检查
 cli.command("plan <id>", t("plan.desc")).action(run(planCommand));
+
+// Render JSON → Markdown 视图
+cli.command("render", t("render.desc")).action(run(renderCommand));
 
 // 显示帮助信息
 cli.help();

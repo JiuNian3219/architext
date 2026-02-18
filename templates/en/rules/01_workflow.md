@@ -78,7 +78,7 @@ alwaysApply: true
 | After `/archi.plan` completes | `npx archi task <ID> --status active` |
 | After `/archi.code` completes | `npx archi task <ID> --status done` |
 | Task found to be blocked | `npx archi task <ID> --status blocked` |
-| After modifying `00_roadmap.md` | `npx archi task --check` |
+| After modifying `roadmap.json` | `npx archi task --check` |
 | Need to check project progress | `npx archi task` |
 
 > When completing `/archi.code` or `/archi.plan`, must proactively run `npx archi task <ID> --status <done|active>` to update progress.
@@ -99,5 +99,21 @@ Automatically identifies Manual Verification sections and excludes them from aut
 | Check Feature implementation progress | `npx archi plan <ID>` |
 
 > During `/archi.code` signoff phase, must first run `npx archi plan <ID>` to verify completion.
+
+### `npx archi render` — Render JSON Data as Markdown Views
+
+| Subcommand | Purpose | Example |
+|:---|:---|:---|
+| `npx archi render` | Render all JSON data files into human-readable `.md` views | `npx archi render` |
+
+**When to use**:
+
+| Scenario | Action |
+|:---|:---|
+| AI directly edited `.json` data files | `npx archi render` |
+| After `/archi.start` creates roadmap | `npx archi render` |
+| After `/archi.plan` generates plan.json | `npx archi render` |
+
+> Note: `.md` views are auto-generated; prohibited from editing directly. Modifications must go through `.json` source files.
 
 **End of Dispatcher.**

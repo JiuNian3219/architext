@@ -38,8 +38,11 @@
     "list": "列出任务概览"
   },
   "plan": {
-    "desc": "检查功能实现计划 (plan.md) 的完成度",
+    "desc": "检查功能实现计划 (plan.json) 的完成度",
     "id_required": "请指定 Feature ID (例如: archi plan SUB-01)"
+  },
+  "render": {
+    "desc": "将 JSON 数据文件渲染为 Markdown 视图"
   },
   "scaffold": {
     "fallback": "未找到 {lang} 模板，回退使用 'zh'",
@@ -107,7 +110,8 @@
         "updating": "正在更新任务 [{id}] 状态为 {status}...",
         "added_class": "已为 [{id}] 添加图节点 class 定义",
         "no_visual": "未找到 [{id}] 的图节点且无可视区块。",
-        "done": "任务 [{id}] -> {status}"
+        "done": "任务 [{id}] -> {status}",
+        "unblocked": "任务 [{id}] 已解锁 -> pending (所有依赖已完成)"
       },
       "list": {
         "empty": "Roadmap 中未找到任务。",
@@ -123,7 +127,36 @@
       "all_done": "所有自动化任务已完成！",
       "remaining": "剩余 {count} 个任务未完成",
       "empty": "Plan 文件中没有 checkbox 任务",
-      "not_found": "未找到 [{id}] 的实现计划文件 (plan.md)"
+      "not_found": "未找到 [{id}] 的实现计划文件 (plan.json)"
+    },
+    "render": {
+      "empty": "未找到可渲染的 JSON 数据文件。",
+      "done": "渲染完成，共生成 {count} 个 Markdown 视图。",
+      "plan": {
+        "header_comment": "<!-- ⚠️ 由 plan.json 自动生成 — 请勿直接编辑 -->",
+        "header_ai": "<!-- AI: 请读取 plan.json 而非此文件 -->",
+        "title": "实施计划：{featureName}",
+        "feature_id": "功能 ID",
+        "status": "状态",
+        "section_decisions": "技术决策",
+        "section_steps": "实施步骤",
+        "section_tests": "测试计划",
+        "subsection_automated": "自动化测试",
+        "subsection_manual": "人工验收"
+      },
+      "roadmap": {
+        "header_comment": "<!-- ⚠️ 由 roadmap.json 自动生成 — 请勿直接编辑 -->",
+        "header_ai": "<!-- AI: 请读取 roadmap.json 而非此文件 -->",
+        "title": "项目 Roadmap",
+        "status": "状态",
+        "updated": "更新于",
+        "phase": "阶段",
+        "goal": "目标",
+        "dep": "依赖",
+        "dep_none": "无",
+        "tag": "标签",
+        "slug": "目录"
+      }
     },
     "update": {},
     "doctor": {}

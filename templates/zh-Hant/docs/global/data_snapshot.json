@@ -1,0 +1,31 @@
+{
+  "scope": "[?Data]",
+  "models": [
+    {
+      "name": "[ModelName]",
+      "description": "[一句話說明]",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "modifiers": "PK",
+          "description": "唯一識別碼"
+        },
+        {
+          "name": "[fieldName]",
+          "type": "[type]",
+          "modifiers": "[nullable | unique | index | ...]",
+          "description": "[欄位說明]"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "[ModelA]",
+      "to": "[ModelB]",
+      "type": "[1:1 | 1:N | M:N | self-ref]",
+      "description": "[關係說明]"
+    }
+  ]
+}

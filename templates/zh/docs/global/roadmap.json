@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "projectStatus": "planning",
+  "lastUpdated": "YYYY-MM-DD",
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Infrastructure",
+      "tasks": [
+        {
+          "id": "INF-01",
+          "title": "Project Scaffolding",
+          "status": "pending",
+          "goal": "",
+          "deps": [],
+          "tag": "Infra",
+          "slug": "Project_Scaffolding"
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Core Features",
+      "tasks": [
+        {
+          "id": "FEAT-01",
+          "title": "Example Feature",
+          "status": "blocked",
+          "goal": "",
+          "deps": ["INF-01"],
+          "tag": "Core",
+          "slug": "Example_Feature"
+        }
+      ]
+    }
+  ]
+}

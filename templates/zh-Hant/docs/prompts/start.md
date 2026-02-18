@@ -37,7 +37,7 @@
       | Z | 自訂 | (請描述) | - | - |
 
       ---
-      **⌨️ INPUT**: `擴充ID (空格分隔) | Q1 | Q2 | ... | Q6 | Q7 | ...`
+      **⌨️ INPUT**: `擴充ID (空格分隔) | Q1答案 | Q2答案 | ... | Q6答案 | Q7答案 | ...`（題與題用 `|` 分隔；單題多選用空格，如 `A B | D 簡單點 | C`）
     </output_template>
 </meta>
 
@@ -139,7 +139,7 @@
 
     ---
 
-    **⌨️ INPUT**: `擴充ID | Q1 | Q2 | ... | Q6 | Q7 | ...`
+    **⌨️ INPUT**: `擴充ID | Q1答案 | Q2答案 | ... | Q6答案 | Q7答案 | ...`（題與題用 `|` 分隔；單題多選用空格）
 </step_1_strategy>
 
 <step_2_tech_gate>
@@ -173,25 +173,25 @@
     > 如專案有 UI 則顯示。**AX**: 優先 Component 庫 (Shadcn/Tailwind 等)，AI 擅長組合而非手寫 CSS；CLI/終端專案可選 Chalk/終端 UI 庫。
 
     **[Q5] 品質保障** (動態生成)
-    > **AX**: 測試是 AI 自我驗證的唯一手段。須涵蓋：靜態分析命令、測試套件、**環境腳本定義**。
+    > **AX**: 測試是 AI 自我驗證的唯一手段。須涵蓋：靜態分析命令、測試套件。
 
     **[Q6] 基礎設施** (動態生成)
     > **AX**: 配置檔越宣告式越好。
 
     ---
 
-    **⌨️ INPUT**: `Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q7 | Q8`
+    **⌨️ INPUT**: `Q1答案 | Q2答案 | Q3答案 | Q4答案 | Q5答案 | Q6答案 | Q7答案 | Q8答案`（題與題用 `|` 分隔；單題多選用空格）
 </step_2_tech_gate>
 
 <step_3_roadmap>
     **Role**: TPM
     **Goal**: 將戰略轉化為適合 AI 執行的原子任務鏈。
-    **Target**: `docs/global/00_roadmap.md`
+    **Target**: `[[__DOCS_DIR__]]/global/roadmap.json`
 
     **Action**:
     1.  **Phase 1 (Infra): The "Big Bang"**
         - 須一次性建立完整基建骨架。
-        - [INF-01] Project Scaffolding: 目錄結構、Linter、Env、Logger、Test Setup、`scripts/` 目錄（基於 `02_tech_stack.md` Section 5）：`validate`（自動化質檢：Static + Test）、`dev-up`（拉起環境：Install → Build → Dev Server → Health Check）、`dev-reset`（環境重置：Kill → Clean → Reinstall → Rebuild）。
+        - [INF-01] Project Scaffolding: 目錄結構、Linter、Env、Logger、Test Setup、`[[__DOCS_DIR__]]/scripts/`（AI 基於 `02_tech_stack.md` Section 5 自動生成，禁向使用者提問腳本實現細節）。
         - [INF-02] Core Entities (如適用): Database Schema, User/Auth Model, Global Types。
         - Phase 2 所有任務預設依賴 INF-01 (和 INF-02)。
 
@@ -199,45 +199,36 @@
         - 按 Domain 分組 (Web: User/Order/Payment; CLI: Config/User/Plugin; Script: Parser/Network/Output)。
         - 不同 Domain 間任務預設可並行。
 
-    3.  **Visualization (Mermaid)**
-        - 須在頭部定義 `classDef` (done/active/pending/blocked) 並套用。
-        - 只畫直接依賴邊，禁畫傳遞依賴。
-          例: A.Dep=[B,C], B.Dep=[C] → 圖中只畫 `C-->B-->A`，不畫 `C-->A`。
-
-    **Task Schema**:
-    ```markdown
-    ## Pending (無依賴/依賴已完成):
-    - [ ] ⏳ **[ID]** Title
-      - 🎯 Goal: <DoD - 輸入/輸出/驗收標準>
-      - 🔗 Dep: None
-      - 🏷️ Tag: <Domain>
-      - 📁 Slug: <English_Slug>
-
-    ## Blocked (有未完成依賴):
-    - [ ] 🧱 **[ID]** Title
-      - 🎯 Goal: <DoD>
-      - 🔗 Dep: [前置ID]
-      - 🏷️ Tag: <Domain>
-      - 📁 Slug: <English_Slug>
+    **Task JSON Schema**:
+    ```json
+    {
+      "id": "INF-01",
+      "title": "Project Scaffolding",
+      "status": "pending",
+      "goal": "<DoD - 輸入/輸出/驗收標準>",
+      "deps": [],
+      "tag": "Infra",
+      "slug": "Project_Scaffolding"
+    }
     ```
 
     **Initial Status Rule**:
-    - `Dep: None` 或 Dep 已完成 → `⏳ pending` + `class ID pending`
-    - `Dep: [XXX]` 未完成 → `🧱 blocked` + `class ID blocked`
+    - `deps: []` 或 deps 已完成 → `"status": "pending"`
+    - `deps: ["XXX"]` 未完成 → `"status": "blocked"`
     - 禁將所有任務都設為 pending，須根據依賴區分。
 
-    > **Slug 規則**: 用於 `features/<ID>_<Slug>/` 命名。須英文、PascalCase 或底線分隔。
+    > **Slug 規則**: 用於 `features/<ID>_<Slug>/` 命名。須英文、Snake_Case。
 
-    **Output**: 須包含 `<!-- TASKS_START/END -->` 和 `<!-- VISUAL_START/END -->` 錨點。
+    **Output**: 將完整 roadmap 寫入 `roadmap.json`，然後運行 `npx archi render` 生成視覺化 `.md` 檔案。
 </step_3_roadmap>
 
 <step_4_audit>
     **Role**: 首席審計官
     **Checklist**:
-    1.  **Vision 完整性**: `00_vision.md` 含北極星指標和設計哲學？
+    1.  **Vision 完整性**: `vision.md` 含北極星指標和設計哲學？
     2.  **Tech Stack 一致性**: `02_tech_stack.md` 與 Step 2 選擇一致？含完整技術棧宣告？
     3.  **Roadmap 合規**: 執行 `npx archi task --check` 驗證一致性。
-    4.  [?UI] **Design Tokens**: `03_design_tokens.md` 含基礎顏色/字體/間距定義？
+    4.  [?UI] **Design Tokens**: `design_tokens.json` 含基礎顏色/字體/間距定義？
 
     如有問題則靜默修正；嚴重問題標記 `⚠️ Risk Warning`。
 </step_4_audit>

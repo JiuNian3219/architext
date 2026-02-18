@@ -25,7 +25,7 @@ description: Behavioral Specification (Gherkin) for {FEATURE_NAME}.
 
 - **Then** 系統應返回 [預期結果] (e.g. 顯示成功 Toast)
 
-- **And** 資料庫記錄應 [狀態變更] (Ref: `04_data_snapshot`)
+- **And** 資料庫記錄應 [狀態變更] (Ref: `data_snapshot.json`)
 
 ### Scenario: [Edge Case Name, e.g. 網路逾時]
 
@@ -33,13 +33,13 @@ description: Behavioral Specification (Gherkin) for {FEATURE_NAME}.
 
 - **When** 使用者點擊提交按鈕
 
-- **Then** 系統應顯示 [Error Message] (Ref: `05_error_codes`)
+- **Then** 系統應顯示 [Error Message] (Ref: `error_codes.json`)
 
 - **And** 不應產生髒資料
 
 ## 3. Data Requirements
 
-<!-- [AI Instruction]: 明確資料變更，必須引用 `04_data_snapshot.md` 中的資料表結構 -->
+<!-- [AI Instruction]: 明確資料變更，必須引用 `data_snapshot.json` 中的資料表結構 -->
 
 * **Schema**: [Table Name] -> [Field] (Add/Modify)
   - Example: `Comment` -> `content` (Add), `parent_id` (Add, nullable)

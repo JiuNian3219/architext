@@ -1,0 +1,88 @@
+{
+  "governance": {
+    "coreRules": [
+      {
+        "file": "00_system.md",
+        "role": "System Role",
+        "when": "每次对话开始时 (身份设定, 核心原则)"
+      },
+      {
+        "file": "01_workflow.md",
+        "role": "SOP",
+        "when": "决定当前任务流程 (Feature vs Fix) 与验收标准"
+      },
+      {
+        "file": "02_tech_stack.md",
+        "role": "Tech Stack",
+        "when": "技术选型、代码规范、工程治理标准"
+      },
+      {
+        "file": "03_data_governance.md",
+        "role": "Data Governance",
+        "when": "读写全局 JSON 数据文件时"
+      },
+      {
+        "file": "99_context_glue.md",
+        "role": "Context Bridge",
+        "when": "触碰代码时，自动关联上下文文档"
+      }
+    ],
+    "globalReference": [
+      {
+        "file": "roadmap.json",
+        "role": "Roadmap",
+        "content": "进度追踪、里程碑、技术债管理"
+      },
+      {
+        "file": "vision.md",
+        "role": "Vision",
+        "content": "愿景、北极星指标、设计哲学"
+      },
+      {
+        "file": "map.json",
+        "role": "Map (本文件)",
+        "content": "目录结构、文件索引、逻辑拓扑"
+      },
+      {
+        "file": "dictionary.json",
+        "role": "Dictionary",
+        "content": "业务术语、公共组件注册表"
+      },
+      {
+        "file": "design_tokens.json",
+        "role": "Visuals [?UI]",
+        "content": "颜色、字体、间距变量"
+      },
+      {
+        "file": "data_snapshot.json",
+        "role": "Data [?Data]",
+        "content": "数据库 Schema 镜像"
+      },
+      {
+        "file": "error_codes.json",
+        "role": "Errors",
+        "content": "错误码与协议契约"
+      }
+    ]
+  },
+  "fileExtensions": [
+    {
+      "ext": ".spec.md",
+      "category": "Specification",
+      "purpose": "业务逻辑、算法、验收标准 (Logic)"
+    },
+    {
+      "ext": ".ui.md",
+      "category": "UI/UX",
+      "purpose": "视觉结构、交互状态、样式定义 (Visual)"
+    },
+    {
+      "ext": ".plan.md",
+      "category": "Plan",
+      "purpose": "详细步骤拆解与测试用例 (Execution)"
+    }
+  ],
+  "directoryMapping": [],
+  "logicalTopology": [],
+  "criticalUserJourneys": []
+}

@@ -1,4 +1,4 @@
-/** @fileoverview Plan 命令的核心业务逻辑，负责检查 Plan 文件的 checkbox 完成度并格式化输出。 */
+/** @fileoverview Plan 命令的核心业务逻辑，负责检查 Plan 文件的任务完成度并格式化输出。 */
 import pc from "picocolors";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
@@ -8,13 +8,13 @@ import type { PlanCheckResult } from "./types.ts";
  * 检查 Plan 的完成度并输出报告。
  *
  * 输出示例：
- *   📋 Plan 检查: SUB-01 订阅 CRUD
- *   Phase 1: 数据层与校验          [4/4] ✅
- *   Phase 2: UI 组件               [6/6] ✅
- *   Manual Verification            [0/5] (跳过 — 人工验收)
+ *   Plan 检查: SUB-01 订阅 CRUD
+ *   Phase 1: 数据层与校验          [4/4]
+ *   Phase 2: UI 组件               [6/6]
+ *   Manual Verification            [0/5] (跳过 -- 人工验收)
  *   ──────────────────────────────────────
  *   合计: 19/19 (100%)
- *   ✅ 所有自动化任务已完成！
+ *   所有自动化任务已完成！
  *
  * @param featureId Feature ID (e.g. "SUB-01")
  * @param featureName Feature 名称 (e.g. "Subscription CRUD")
@@ -70,13 +70,8 @@ export function handlePlanCheck(
       // 列出未完成的具体任务
       if (!allDone) {
         for (const item of section.items) {
-          if (!item.checked) {
-            logger.error(
-              t("unchecked_item", {
-                line: item.lineNum,
-                content: item.content,
-              }),
-            );
+          if (!item.done) {
+            logger.error(`  - ${item.id}: ${item.title}`);
           }
         }
       }

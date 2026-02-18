@@ -25,7 +25,7 @@ description: Behavioral Specification (Gherkin) for {FEATURE_NAME}.
 
 - **Then** System should return [Expected Result] (e.g. Show success Toast)
 
-- **And** Database record should [State Change] (Ref: `04_data_snapshot`)
+- **And** Database record should [State Change] (Ref: `data_snapshot.json`)
 
 ### Scenario: [Edge Case Name, e.g. Network timeout]
 
@@ -33,13 +33,13 @@ description: Behavioral Specification (Gherkin) for {FEATURE_NAME}.
 
 - **When** User clicks submit button
 
-- **Then** System should show [Error Message] (Ref: `05_error_codes`)
+- **Then** System should show [Error Message] (Ref: `error_codes.json`)
 
 - **And** Should not produce dirty data
 
 ## 3. Data Requirements
 
-<!-- [AI Instruction]: Explicit data changes, must reference table structure in `04_data_snapshot.md` -->
+<!-- [AI Instruction]: Explicit data changes, must reference table structure in `data_snapshot.json` -->
 
 * **Schema**: [Table Name] -> [Field] (Add/Modify)
   - Example: `Comment` -> `content` (Add), `parent_id` (Add, nullable)

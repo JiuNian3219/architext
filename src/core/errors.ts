@@ -40,7 +40,7 @@ export class ConfigParseError extends AppError {
 export class RoadmapNotFoundError extends AppError {
   constructor() {
     super(
-      "Roadmap file not found. Please create '00_roadmap.md' or configure 'roadmap' in architext.json",
+      "Roadmap file not found. Please create 'roadmap.json' or configure 'roadmap' in architext.json",
       "ROADMAP_NOT_FOUND",
       true,
     );
@@ -66,7 +66,7 @@ export class InvalidTaskStatusError extends AppError {
 export class PlanNotFoundError extends AppError {
   constructor(featureId: string) {
     super(
-      `Plan file not found for feature [${featureId}]. Expected at: {docDir}/features/${featureId}_*/plan.md`,
+      `Plan file not found for feature [${featureId}]. Expected at: {docDir}/features/${featureId}_*/plan.json`,
       "PLAN_NOT_FOUND",
       true,
     );

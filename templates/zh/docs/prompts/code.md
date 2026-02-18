@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: 基于 `features/<id>_<Slug>/plan.md` 任务清单，完成功能开发；遵循 `02_tech_stack.md`（[?UI] 同时遵循 `03_design_tokens.md`）；通过构建、类型、Lint、格式化、测试与审计。
+  **Goal**: 基于 `features/<id>_<Slug>/plan.json` 任务清单，完成功能开发；遵循 `02_tech_stack.md`（[?UI] 同时遵循 `design_tokens.json`）；通过构建、类型、Lint、格式化、测试与审计。
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -19,7 +19,7 @@
 <step_1_resolve>
     **Role**: 系统分析师
     **Action**:
-    1.  **Resolve ID**: 从 `[[__DOCS_DIR__]]/global/00_roadmap.md` 解析 `<id>` → Feature Name、Slug、阶段/状态。
+    1.  **Resolve ID**: 从 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Feature Name、Slug、阶段/状态。
     2.  **Status Gate** — 仅 `active` 可进入 code 流程:
 
         | 状态 | 处理 |
@@ -32,10 +32,10 @@
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 逻辑与场景
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 设计与组件(如存在)
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.md` — 任务拆解
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任务拆解（含 `notes` 速记，执行时须参照）
         - `02_tech_stack.md` — 技术红线
-        - [?UI] `[[__DOCS_DIR__]]/global/03_design_tokens.md`
-        - [?Data] `[[__DOCS_DIR__]]/global/04_data_snapshot.md`
+        - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
+        - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
 
     **Output**: 待实施任务的原子清单，标注依赖与顺序。
 </step_1_resolve>
@@ -76,7 +76,7 @@
     **Role**: 验证工程师
     **Action** (失败须修复后重跑；命令以 `02_tech_stack.md` Section 5 为准):
 
-    **Automated Check**: 运行 `scripts/validate`（如存在）；否则按以下清单逐项手动执行。
+    **Automated Check**: 运行 `[[__DOCS_DIR__]]/scripts/validate`（如存在）；否则按以下清单逐项手动执行。
 
     | Phase | 检查项 | 要求 |
     |:---|:---|:---|
@@ -90,7 +90,7 @@
     **Feature Verification (硬性要求)**
 
     > 禁仅通过代码审查或自动化测试就标记完成；须实际运行目标功能并验证。
-    > 如 dev server 未启动，先执行 `scripts/dev-up`。
+    > 如 dev server 未启动，先执行 `[[__DOCS_DIR__]]/scripts/dev-up`。
 
     | 项目类型 | 验证动作 | 通过标准 |
     |:---|:---|:---|
@@ -102,7 +102,7 @@
     | [?Desktop] | 启动应用操作目标功能 | 窗口正常，功能可用 |
 
     **Evidence**: Output 须附验证结果（命令输出摘要 / 截图 / 错误日志）。
-    **Fallback**: 验证持续失败且怀疑环境问题 → `scripts/dev-reset` → `scripts/dev-up` → 重试。
+    **Fallback**: 验证持续失败且怀疑环境问题 → `[[__DOCS_DIR__]]/scripts/dev-reset` → `[[__DOCS_DIR__]]/scripts/dev-up` → 重试。
 
     **Output**: 每项检查 ✅/❌ 状态与原因；Feature Verification 证据。
 </step_4_validate>
@@ -112,7 +112,7 @@
     **Checklist**:
     1.  **Tech Consistency**: 与 `02_tech_stack.md` 一致（库/模式/API 风格）。
     2.  [?UI] **Design Compliance**: 样式仅用 Token；无硬编码值。
-    3.  [?Data] **Data Integrity**: 符合 `04_data_snapshot.md`；字段名/类型一致。
+    3.  [?Data] **Data Integrity**: 符合 `data_snapshot.json`；字段名/类型一致。
     4.  **SOTA**: 拒绝过时模式；采用 tech_stack 最佳实践。
     5.  [?UI] **Accessibility**: 含必要无障碍属性。
     6.  [?I18n] **I18n**: 无硬编码字符串；须用 Key/字典引用。
@@ -128,18 +128,19 @@
     **CLI 必执行**: 以下命令须在终端实际执行，禁仅以文字建议代替。
 
     **Plan Completion Gate (强制)**:
-    1.  运行 `npx archi plan <ID>` 检查 plan.md 任务完成度。
-    2.  通过条件: 全部 `[x]` 或未完成项仅属于 🧑人工介入 / 🌐不可抗力。
+    1.  运行 `npx archi plan <ID>` 检查 plan.json 任务完成度。
+    2.  通过条件: 全部 `done: true` 或未完成项仅属于 人工介入 / 不可抗力。
     3.  未通过: 禁签收，回到 step_3 继续实施。
     4.  豁免项须标注原因和类别。
 
     **Signoff Action** (Gate 通过后，按序执行):
     1. **CLI 必执行** (须实际在终端执行，禁跳过):
-       - `npx archi task <ID> --status done`（或 `active`）。禁直接编辑 roadmap。
+       - `npx archi task <ID> --status done`（或 `active`）。
        - `npx archi task --check`；失败须修复。
     2. 输出完成任务清单与补丁链接(Code Reference)。
-    3. 更新 plan.md，勾选已完成 Checkbox。
-    4. 提供下一步建议与 Git Commit Suggestion（Conventional Commits）。
+    3. 更新 `plan.json`，将已完成步骤的 `done` 设为 `true`。
+    4. 运行 `npx archi render` 重新生成 `.md` 视图。
+    5. 提供下一步建议与 Git Commit Suggestion（Conventional Commits）。
 
     **Checkpoint** (Output 前须确认): □ `npx archi plan` 已执行 □ `npx archi task --status` 已执行 □ `npx archi task --check` 已执行。
 

@@ -78,7 +78,7 @@ alwaysApply: true
 | `/archi.plan` 完成後 | `npx archi task <ID> --status active` |
 | `/archi.code` 完成後 | `npx archi task <ID> --status done` |
 | 發現任務被阻塞 | `npx archi task <ID> --status blocked` |
-| 修改了 `00_roadmap.md` 後 | `npx archi task --check` |
+| 修改了 `roadmap.json` 後 | `npx archi task --check` |
 | 需了解專案進度 | `npx archi task` |
 
 > 完成 `/archi.code` 或 `/archi.plan` 時，須主動運行 `npx archi task <ID> --status <done|active>` 更新進度。
@@ -99,5 +99,21 @@ alwaysApply: true
 | 了解 Feature 實施進展 | `npx archi plan <ID>` |
 
 > 在 `/archi.code` 簽收階段，須先運行 `npx archi plan <ID>` 驗證完成度。
+
+### `npx archi render` — 渲染 JSON 資料為 Markdown 視圖
+
+| 子命令 | 用途 | 範例 |
+|:---|:---|:---|
+| `npx archi render` | 將所有 JSON 資料檔案渲染為人類可讀的 `.md` 視圖 | `npx archi render` |
+
+**何時使用**:
+
+| 情境 | 動作 |
+|:---|:---|
+| AI 直接編輯了 `.json` 資料檔案 | `npx archi render` |
+| `/archi.start` 建立 roadmap 後 | `npx archi render` |
+| `/archi.plan` 產生 plan.json 後 | `npx archi render` |
+
+> 注意: `.md` 視圖是自動產生的，禁直接編輯。修改須透過 `.json` 來源檔案進行。
 
 **End of Dispatcher.**

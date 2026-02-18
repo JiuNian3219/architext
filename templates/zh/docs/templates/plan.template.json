@@ -1,0 +1,88 @@
+{
+  "featureId": "{FEATURE_ID}",
+  "featureName": "{FEATURE_NAME}",
+  "status": "pending",
+  "decisions": [
+    { "category": "数据模型", "choice": "", "rationale": "" },
+    { "category": "交互模式", "choice": "", "rationale": "" },
+    { "category": "状态同步", "choice": "", "rationale": "" },
+    { "category": "边界处理", "choice": "", "rationale": "" },
+    { "category": "访问控制", "choice": "", "rationale": "" }
+  ],
+  "phases": [
+    {
+      "name": "Phase 1: 领域与数据",
+      "tasks": [
+        {
+          "id": "p1-1",
+          "title": "[数据结构/Schema 定义]",
+          "notes": "",
+          "done": false
+        },
+        {
+          "id": "p1-2",
+          "title": "[核心逻辑/接口实现]",
+          "notes": "",
+          "done": false
+        },
+        { "id": "p1-3", "title": "[输入校验]", "notes": "", "done": false }
+      ]
+    },
+    {
+      "name": "Phase 2: 展示层",
+      "tasks": [
+        {
+          "id": "p2-1",
+          "title": "[静态结构 (参照 spec/ui 文档)]",
+          "notes": "",
+          "done": false
+        },
+        { "id": "p2-2", "title": "[交互逻辑]", "notes": "", "done": false },
+        { "id": "p2-3", "title": "[状态管理]", "notes": "", "done": false }
+      ]
+    },
+    {
+      "name": "Phase 3: 集成",
+      "tasks": [
+        { "id": "p3-1", "title": "[端到端串联]", "notes": "", "done": false },
+        {
+          "id": "p3-2",
+          "title": "[错误处理 (参照 error_codes.json)]",
+          "notes": "",
+          "done": false
+        },
+        {
+          "id": "p3-3",
+          "title": "[边界状态 (加载/空/异常)]",
+          "notes": "",
+          "done": false
+        }
+      ]
+    }
+  ],
+  "tests": {
+    "automated": [
+      {
+        "id": "t1",
+        "title": "[验证场景 1: 正常路径]",
+        "notes": "",
+        "done": false
+      },
+      {
+        "id": "t2",
+        "title": "[验证场景 2: 边界情况]",
+        "notes": "",
+        "done": false
+      }
+    ],
+    "manual": [
+      {
+        "id": "m1",
+        "title": "[输出与文档一致性检查]",
+        "notes": "",
+        "done": false
+      },
+      { "id": "m2", "title": "[特定交互/环境验证]", "notes": "", "done": false }
+    ]
+  }
+}

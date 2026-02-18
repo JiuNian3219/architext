@@ -16,7 +16,7 @@
 <step_1_load>
     **Role**: Product Manager
     **Action**:
-    - Read `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` spec.md, ui.md, plan.md.
+    - Read `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` spec.md, ui.md, plan.json.
     - [?Major UX Change] Quick search for similar product best practices.
 </step_1_load>
 
@@ -33,10 +33,10 @@
 <step_3_update_plan>
     **Role**: Tech Lead
     **Action**:
-    - Append `### Phase X: Change Request (<Date>)` task block in plan.md.
+    - Append new phase to `plan.json` phases array: `Phase X: Change Request (<Date>)`.
     - List specific Tasks (API update, UI tweak, Test update); each must be verifiable.
 
-    **Output**: plan.md with new tasks appended.
+    **Output**: plan.json with new tasks appended. Run `npx archi render` to regenerate visual `.md` files.
 </step_3_update_plan>
 
 <step_4_summary>

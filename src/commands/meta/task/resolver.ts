@@ -6,15 +6,15 @@ import { RoadmapNotFoundError } from "../../../core/errors.ts";
 
 /** Roadmap 文件的默认候选路径（按优先级排列） */
 const DEFAULT_CANDIDATES = [
-  ".architext/global/00_roadmap.md",
-  "global/00_roadmap.md",
-  "docs/global/00_roadmap.md",
-  "00_roadmap.md",
+  ".architext/global/roadmap.json",
+  "global/roadmap.json",
+  "docs/global/roadmap.json",
+  "roadmap.json",
 ];
 
 /**
  * 解析 Roadmap 文件的绝对路径。
- * 查找优先级：architext.json#roadmap > docDir/global/00_roadmap.md > 默认候选路径
+ * 查找优先级：architext.json#roadmap > docDir/global/roadmap.json > 默认候选路径
  *
  * @param cwd 工作目录，默认 process.cwd()
  * @throws {RoadmapNotFoundError} 所有候选路径均不存在时
@@ -32,7 +32,7 @@ export async function resolveRoadmapPath(
 
   // 2. 基于 docDir 拼接标准路径
   if (config?.docDir) {
-    const candidate = path.join(cwd, config.docDir, "global/00_roadmap.md");
+    const candidate = path.join(cwd, config.docDir, "global/roadmap.json");
     if (await fs.pathExists(candidate)) return candidate;
   }
 

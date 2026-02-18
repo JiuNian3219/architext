@@ -5,7 +5,7 @@ description: UI Design & Structure (ITP v3.0) for {FEATURE_NAME}.
 # UI Design: {FEATURE_NAME}
 
 > **Protocol:** ITP v3.0 (See `02_tech_stack.md`)
-> **Reference:** `[[__DOCS_DIR__]]/global/03_design_tokens.md`
+> **Reference:** `[[__DOCS_DIR__]]/global/design_tokens.json`
 
 ## 1. Interaction Flow
 

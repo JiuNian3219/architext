@@ -1,10 +1,12 @@
-/** @fileoverview Plan 命令入口，协调 Resolver（路径解析）、Parser（checkbox 解析）和 Handler（检查输出）。 */
+/** @fileoverview Plan 命令入口，协调 Resolver（路径解析）、Parser（JSON 解析）和 Handler（检查输出）。 */
 import fs from "fs-extra";
 import { AppError } from "../../../core/errors.ts";
+import { PlanDataSchema, validateJson } from "../../../core/schemas/index.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
 import { handlePlanCheck } from "./handlers.ts";
-import { parsePlanCheckboxes } from "./parser.ts";
+import { parsePlanJson } from "./parser.ts";
 import { resolvePlanPath } from "./resolver.ts";
+import type { PlanData } from "./types.ts";
 
 /**
  * Plan 命令的主入口函数。
@@ -19,7 +21,8 @@ export async function planCommand(id: string): Promise<void> {
   }
 
   const { filePath, featureName } = await resolvePlanPath(id);
-  const content = await fs.readFile(filePath, "utf-8");
-  const result = parsePlanCheckboxes(content);
+  const raw = await fs.readJSON(filePath);
+  const data = validateJson<PlanData>(PlanDataSchema, raw, `${id}/plan.json`);
+  const result = parsePlanJson(data);
   handlePlanCheck(id, featureName, result);
 }

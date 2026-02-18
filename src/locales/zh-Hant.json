@@ -38,8 +38,11 @@
     "list": "列出任務概覽"
   },
   "plan": {
-    "desc": "檢查功能實現計畫 (plan.md) 的完成度",
+    "desc": "檢查功能實現計畫 (plan.json) 的完成度",
     "id_required": "請指定 Feature ID (例如: archi plan SUB-01)"
+  },
+  "render": {
+    "desc": "將 JSON 資料檔案渲染為 Markdown 視圖"
   },
   "scaffold": {
     "fallback": "未找到 {lang} 模板，回退使用 'zh'",
@@ -107,7 +110,8 @@
         "updating": "正在更新任務 [{id}] 狀態為 {status}...",
         "added_class": "已為 [{id}] 新增圖節點 class 定義",
         "no_visual": "未找到 [{id}] 的圖節點且無可視區塊。",
-        "done": "任務 [{id}] -> {status}"
+        "done": "任務 [{id}] -> {status}",
+        "unblocked": "任務 [{id}] 已解鎖 -> pending (所有依賴已完成)"
       },
       "list": {
         "empty": "Roadmap 中未找到任務。",
@@ -123,7 +127,36 @@
       "all_done": "所有自動化任務已完成！",
       "remaining": "剩餘 {count} 個任務未完成",
       "empty": "Plan 檔案中沒有 checkbox 任務",
-      "not_found": "未找到 [{id}] 的實現計畫檔案 (plan.md)"
+      "not_found": "未找到 [{id}] 的實現計畫檔案 (plan.json)"
+    },
+    "render": {
+      "empty": "未找到可渲染的 JSON 資料檔案。",
+      "done": "渲染完成，共產生 {count} 個 Markdown 視圖。",
+      "plan": {
+        "header_comment": "<!-- ⚠️ 由 plan.json 自動生成 — 請勿直接編輯 -->",
+        "header_ai": "<!-- AI: 請讀取 plan.json 而非此檔案 -->",
+        "title": "實施計畫：{featureName}",
+        "feature_id": "功能 ID",
+        "status": "狀態",
+        "section_decisions": "技術決策",
+        "section_steps": "實施步驟",
+        "section_tests": "測試計畫",
+        "subsection_automated": "自動化測試",
+        "subsection_manual": "人工驗收"
+      },
+      "roadmap": {
+        "header_comment": "<!-- ⚠️ 由 roadmap.json 自動生成 — 請勿直接編輯 -->",
+        "header_ai": "<!-- AI: 請讀取 roadmap.json 而非此檔案 -->",
+        "title": "專案 Roadmap",
+        "status": "狀態",
+        "updated": "更新於",
+        "phase": "階段",
+        "goal": "目標",
+        "dep": "依賴",
+        "dep_none": "無",
+        "tag": "標籤",
+        "slug": "目錄"
+      }
     },
     "update": {},
     "doctor": {}

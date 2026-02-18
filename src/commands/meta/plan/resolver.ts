@@ -1,11 +1,11 @@
-/** @fileoverview 负责解析 Plan 文件路径，通过 Feature ID 定位 features/{ID}_* /plan.md。 */
+/** @fileoverview 负责解析 Plan 文件路径，通过 Feature ID 定位 features/{ID}_* /plan.json。 */
 import fs from "fs-extra";
 import path from "path";
 import { resolveDocDir } from "../../../core/doc-dir.ts";
 import { PlanNotFoundError } from "../../../core/errors.ts";
 
 /** Plan 文件的固定文件名 */
-const PLAN_FILENAME = "plan.md";
+const PLAN_FILENAME = "plan.json";
 
 export interface PlanFileInfo {
   /** Plan 文件的绝对路径 */
@@ -16,7 +16,7 @@ export interface PlanFileInfo {
 
 /**
  * 解析 Plan 文件的绝对路径。
- * 在 {docDir}/features/ 下查找匹配 {id}_ 前缀的目录，读取其中的 plan.md。
+ * 在 {docDir}/features/ 下查找匹配 {id}_ 前缀的目录，读取其中的 plan.json。
  *
  * @param featureId Feature ID (e.g. "SUB-01")
  * @param cwd 工作目录，默认 process.cwd()

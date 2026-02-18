@@ -37,7 +37,7 @@
       | Z | Custom | (Please describe) | - | - |
 
       ---
-      **⌨️ INPUT**: `ExtensionIDs (space separated) | Q1 | Q2 | ... | Q6 | Q7 | ...`
+      **⌨️ INPUT**: `ExtensionIDs (space separated) | Q1 answer | Q2 answer | ... | Q6 answer | Q7 answer | ...` (use `|` between questions; within one question use spaces for multi-select, e.g. `A B | D keep it simple | C`)
     </output_template>
 </meta>
 
@@ -139,7 +139,7 @@
 
     ---
 
-    **⌨️ INPUT**: `ExtensionIDs | Q1 | Q2 | ... | Q6 | Q7 | ...`
+    **⌨️ INPUT**: `ExtensionIDs | Q1 answer | Q2 answer | ... | Q6 answer | Q7 answer | ...` (use `|` between questions; use spaces inside one question for multi-select)
 </step_1_strategy>
 
 <step_2_tech_gate>
@@ -173,25 +173,25 @@
     > Show if project has UI. **AX**: Prioritize Component libs (Shadcn/Tailwind etc.), AI excels at composition over raw CSS; for CLI/terminal projects, consider Chalk/terminal UI libs.
 
     **[Q5] Quality Assurance** (Dynamic)
-    > **AX**: Tests are the only means for AI self-verification. Must cover: static analysis commands, test suite, **environment script definitions**.
+    > **AX**: Tests are the only means for AI self-verification. Must cover: static analysis commands, test suite.
 
     **[Q6] Infrastructure** (Dynamic)
     > **AX**: The more declarative the config, the better.
 
     ---
 
-    **⌨️ INPUT**: `Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q7 | Q8`
+    **⌨️ INPUT**: `Q1 answer | Q2 answer | Q3 answer | Q4 answer | Q5 answer | Q6 answer | Q7 answer | Q8 answer` (use `|` between questions; use spaces inside one question for multi-select)
 </step_2_tech_gate>
 
 <step_3_roadmap>
     **Role**: TPM
     **Goal**: Convert strategy into AI-executable atomic task chain.
-    **Target**: `docs/global/00_roadmap.md`
+    **Target**: `[[__DOCS_DIR__]]/global/roadmap.json`
 
     **Action**:
     1.  **Phase 1 (Infra): The "Big Bang"**
         - Must establish complete infrastructure skeleton at once.
-        - [INF-01] Project Scaffolding: Directory structure, Linter, Env, Logger, Test Setup, `scripts/` directory (based on `02_tech_stack.md` Section 5): `validate` (automated quality check: Static + Test), `dev-up` (bring up environment: Install → Build → Dev Server → Health Check), `dev-reset` (environment reset: Kill → Clean → Reinstall → Rebuild).
+        - [INF-01] Project Scaffolding: Directory structure, Linter, Env, Logger, Test Setup, `[[__DOCS_DIR__]]/scripts/` (AI auto-generates based on `02_tech_stack.md` Section 5; prohibited from asking user about script implementation details).
         - [INF-02] Core Entities (if applicable): Database Schema, User/Auth Model, Global Types.
         - Phase 2 tasks default depend on INF-01 (and INF-02).
 
@@ -199,45 +199,36 @@
         - Group by Domain (Web: User/Order/Payment; CLI: Config/User/Plugin; Script: Parser/Network/Output).
         - Tasks in different Domains are parallel by default.
 
-    3.  **Visualization (Mermaid)**
-        - Must define `classDef` (done/active/pending/blocked) in header and apply.
-        - Draw direct dependency edges only; prohibited from drawing transitive dependencies.
-          Example: A.Dep=[B,C], B.Dep=[C] → Graph draws `C-->B-->A` only, NOT `C-->A`.
-
-    **Task Schema**:
-    ```markdown
-    ## Pending (no dependencies / all deps completed):
-    - [ ] ⏳ **[ID]** Title
-      - 🎯 Goal: <DoD - Input/Output/Acceptance Criteria>
-      - 🔗 Dep: None
-      - 🏷️ Tag: <Domain>
-      - 📁 Slug: <English_Slug>
-
-    ## Blocked (has unresolved dependencies):
-    - [ ] 🧱 **[ID]** Title
-      - 🎯 Goal: <DoD>
-      - 🔗 Dep: [Prev ID]
-      - 🏷️ Tag: <Domain>
-      - 📁 Slug: <English_Slug>
+    **Task Schema (JSON)**:
+    ```json
+    {
+      "id": "INF-01",
+      "title": "Project Scaffolding",
+      "status": "pending",
+      "goal": "<DoD - Input/Output/Acceptance Criteria>",
+      "deps": [],
+      "tag": "Infra",
+      "slug": "Project_Scaffolding"
+    }
     ```
 
     **Initial Status Rule**:
-    - `Dep: None` or Deps completed → `⏳ pending` + `class ID pending`
-    - `Dep: [XXX]` unresolved → `🧱 blocked` + `class ID blocked`
+    - `deps: []` or all deps completed → `"status": "pending"`
+    - `deps: ["XXX"]` unresolved → `"status": "blocked"`
     - Prohibited from setting all tasks to pending; must differentiate by dependency status.
 
     > **Slug Rule**: Used for `features/<ID>_<Slug>/` naming. Must be English, PascalCase or underscore-separated.
 
-    **Output**: Must include `<!-- TASKS_START/END -->` and `<!-- VISUAL_START/END -->` anchors.
+    **Output**: Write the complete roadmap to `roadmap.json`, then run `npx archi render` to generate the visual `.md` file.
 </step_3_roadmap>
 
 <step_4_audit>
     **Role**: Chief Auditor
     **Checklist**:
-    1.  **Vision Completeness**: Does `00_vision.md` contain North Star Metric and Design Philosophy?
+    1.  **Vision Completeness**: Does `vision.md` contain North Star Metric and Design Philosophy?
     2.  **Tech Stack Consistency**: Is `02_tech_stack.md` consistent with Step 2 choices? Contains complete stack declarations?
     3.  **Roadmap Compliance**: Run `npx archi task --check` to verify consistency.
-    4.  [?UI] **Design Tokens**: Does `03_design_tokens.md` contain basic color/font/spacing definitions?
+    4.  [?UI] **Design Tokens**: Does `design_tokens.json` contain basic color/font/spacing definitions?
 
     Silently fix issues; mark critical issues with `⚠️ Risk Warning`.
 </step_4_audit>

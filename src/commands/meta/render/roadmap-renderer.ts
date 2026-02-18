@@ -1,0 +1,134 @@
+/** @fileoverview 将 roadmap.json 渲染为人类可读的 Markdown 视图，含任务列表和 Mermaid 依赖图。 */
+import type { LocaleLang } from "../../../types/index.ts";
+import type {
+  RoadmapData,
+  Task,
+  TaskStatus,
+} from "../../../core/roadmap/types.ts";
+import { createT } from "../../../utils/t.ts";
+
+/** 任务状态 → checkbox 标记 */
+const STATUS_CHECK: Record<TaskStatus, string> = {
+  pending: " ",
+  active: " ",
+  done: "x",
+  blocked: " ",
+};
+
+/** 任务状态 → 图标 */
+const STATUS_ICON: Record<TaskStatus, string> = {
+  pending: "⏳",
+  active: "🟢",
+  done: "✅",
+  blocked: "🧱",
+};
+
+/** 任务状态 → Mermaid class */
+const STATUS_CLASS: Record<TaskStatus, string> = {
+  pending: "pending",
+  active: "active",
+  done: "done",
+  blocked: "blocked",
+};
+
+/**
+ * 转义 Mermaid 节点标签中的特殊字符。
+ * Mermaid 使用 `[]`、`()`、`{}`、`<>` 等作为节点形状语法，
+ * 标签内出现这些字符会导致解析错误。用双引号包裹即可安全处理。
+ */
+function escapeMermaidLabel(text: string): string {
+  return `"${text.replace(/"/g, "#quot;")}"`;
+}
+
+/**
+ * 将 RoadmapData 渲染为完整的 Markdown 文件内容。
+ * 包含：任务列表 + Mermaid 依赖图。
+ * @param data Roadmap 数据
+ * @param lang 输出语言，与项目文档语言一致（来自 architext.json#language）
+ */
+export function renderRoadmap(
+  data: RoadmapData,
+  lang: LocaleLang = "zh",
+): string {
+  const t = createT(lang, "command.render");
+  const header =
+    t("roadmap.header_comment") + "\n" + t("roadmap.header_ai") + "\n\n";
+
+  const lines: string[] = [header];
+
+  lines.push(`# ${t("roadmap.title")}\n`);
+  lines.push(
+    `> **${t("roadmap.status")}**: ${data.projectStatus} | **${t("roadmap.updated")}**: ${data.lastUpdated}\n`,
+  );
+
+  // ── Task List ──
+  lines.push(`<!-- TASKS_START -->\n`);
+
+  for (const phase of data.phases) {
+    lines.push(`## ${t("roadmap.phase")}: ${phase.name}\n`);
+    for (const task of phase.tasks) {
+      lines.push(renderTaskLine(task));
+      if (task.goal) lines.push(`  - 🎯 ${t("roadmap.goal")}: ${task.goal}`);
+      if (task.deps && task.deps.length > 0) {
+        lines.push(
+          `  - 🔗 ${t("roadmap.dep")}: ${task.deps.map((d) => `[${d}]`).join(", ")}`,
+        );
+      } else {
+        lines.push(`  - 🔗 ${t("roadmap.dep")}: ${t("roadmap.dep_none")}`);
+      }
+      if (task.tag) lines.push(`  - 🏷️ ${t("roadmap.tag")}: ${task.tag}`);
+      if (task.slug) lines.push(`  - 📁 ${t("roadmap.slug")}: ${task.slug}`);
+    }
+    lines.push("");
+  }
+
+  lines.push(`<!-- TASKS_END -->\n`);
+
+  // ── Mermaid Dependency Graph ──
+  lines.push(`<!-- VISUAL_START -->\n`);
+  lines.push("```mermaid");
+  lines.push("graph TD");
+  lines.push("");
+
+  // classDef 定义
+  lines.push("    classDef done fill:#4ade80,stroke:#16a34a,color:#000;");
+  lines.push("    classDef active fill:#60a5fa,stroke:#2563eb,color:#000;");
+  lines.push("    classDef pending fill:#e2e8f0,stroke:#94a3b8,color:#000;");
+  lines.push("    classDef blocked fill:#fca5a5,stroke:#dc2626,color:#000;");
+  lines.push("");
+
+  // 收集所有任务用于生成图
+  const allTasks: Task[] = data.phases.flatMap((p) => p.tasks);
+
+  // 节点定义 — 使用双引号包裹标签，防止特殊字符破坏 Mermaid 语法
+  for (const task of allTasks) {
+    lines.push(`    ${task.id}[${escapeMermaidLabel(task.title)}]`);
+  }
+  lines.push("");
+
+  // 依赖边
+  for (const task of allTasks) {
+    if (task.deps) {
+      for (const dep of task.deps) {
+        lines.push(`    ${dep} --> ${task.id}`);
+      }
+    }
+  }
+  lines.push("");
+
+  // class 标记
+  for (const task of allTasks) {
+    lines.push(`    class ${task.id} ${STATUS_CLASS[task.status]};`);
+  }
+
+  lines.push("```\n");
+  lines.push(`<!-- VISUAL_END -->`);
+
+  return lines.join("\n");
+}
+
+function renderTaskLine(task: Task): string {
+  const check = STATUS_CHECK[task.status];
+  const icon = STATUS_ICON[task.status];
+  return `- [${check}] ${icon} **[${task.id}]** ${task.title}`;
+}

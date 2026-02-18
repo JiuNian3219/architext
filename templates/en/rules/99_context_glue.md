@@ -14,8 +14,8 @@ alwaysApply: true
 When reading or editing code files, must execute the following addressing steps:
 
 **Step 1: Check Global Map**
-- Read `[[__DOCS_DIR__]]/global/01_map.md`.
-- Find the module the current file belongs to in Directory Mapping / Logical Topology.
+- Read `[[__DOCS_DIR__]]/global/map.json`.
+- Find the module the current file belongs to in `directoryMapping` / `logicalTopology`.
 - Load the Docs Link (Spec/UI/Plan) registered for that module.
 
 **Step 2: Check Explicit Context**
@@ -32,9 +32,9 @@ When reading or editing code files, must execute the following addressing steps:
 
 | Code Type | Required Context | Source of Truth |
 |:---|:---|:---|
-| **Business Logic** (Features/Entities) | Spec Document | `[[__DOCS_DIR__]]/global/01_map.md` → Module Entry |
-| **UI Components** (Pages/Widgets) [?UI] | UI Document + `[[__DOCS_DIR__]]/global/03_design_tokens.md` | `[[__DOCS_DIR__]]/global/01_map.md` + Global Rules |
-| **Data Schema** (ORM/SQL/Models) [?Data] | Data Snapshot | `[[__DOCS_DIR__]]/global/04_data_snapshot.md` |
+| **Business Logic** (Features/Entities) | Spec Document | `[[__DOCS_DIR__]]/global/map.json` → Module Entry |
+| **UI Components** (Pages/Widgets) [?UI] | UI Document + `[[__DOCS_DIR__]]/global/design_tokens.json` | `[[__DOCS_DIR__]]/global/map.json` + Global Rules |
+| **Data Schema** (ORM/SQL/Models) [?Data] | Data Snapshot | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
 | **Config / Infra** (Package.json...) | Tech Stack | `02_tech_stack.md` |
 
 ---
@@ -50,4 +50,4 @@ When reading or editing code files, must execute the following addressing steps:
 ## 4. Maintenance Hook
 
 - **Trigger**: When creating a new file or new module.
-- **Action**: Must remind user or automatically update `01_map.md` to establish mapping between code path and document path.
+- **Action**: Must remind user or automatically update `map.json` to establish mapping between code path and document path.

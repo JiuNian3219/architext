@@ -1,4 +1,4 @@
-/** @fileoverview Plan 命令测试，覆盖 parser（checkbox 解析）、resolver（路径解析）、handlers（检查输出）。 */
+/** @fileoverview Plan 命令测试，覆盖 parser（JSON 解析）、resolver（路径解析）、handlers（检查输出）。 */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import path from "path";
 import {
@@ -6,8 +6,11 @@ import {
   cleanupTempDir,
   createTestStructure,
 } from "../helpers/temp-dir.ts";
-import { parsePlanCheckboxes } from "../../commands/meta/plan/parser.ts";
-import type { PlanCheckResult } from "../../commands/meta/plan/types.ts";
+import { parsePlanJson } from "../../commands/meta/plan/parser.ts";
+import type {
+  PlanCheckResult,
+  PlanData,
+} from "../../commands/meta/plan/types.ts";
 import { resolvePlanPath } from "../../commands/meta/plan/resolver.ts";
 import { handlePlanCheck } from "../../commands/meta/plan/handlers.ts";
 import { PlanNotFoundError } from "../../core/errors.ts";
@@ -64,17 +67,27 @@ describe("resolveDocDir", () => {
 // Parser Tests
 // ═══════════════════════════════════════════════════════════
 
-describe("parsePlanCheckboxes", () => {
-  it("应解析已勾选和未勾选的 checkbox", () => {
-    const content = [
-      "## Implementation Steps",
-      "### Phase 1: Setup",
-      "- [x] Install dependencies",
-      "- [ ] Configure linting",
-      "- [x] Setup testing",
-    ].join("\n");
+describe("parsePlanJson", () => {
+  it("应正确解析 phases 中的任务", () => {
+    const data: PlanData = {
+      featureId: "SUB-01",
+      featureName: "Subscription CRUD",
+      status: "active",
+      decisions: [],
+      phases: [
+        {
+          name: "Phase 1: Setup",
+          tasks: [
+            { id: "p1-1", title: "Install dependencies", done: true },
+            { id: "p1-2", title: "Configure linting", done: false },
+            { id: "p1-3", title: "Setup testing", done: true },
+          ],
+        },
+      ],
+      tests: { automated: [], manual: [] },
+    };
 
-    const result = parsePlanCheckboxes(content);
+    const result = parsePlanJson(data);
 
     expect(result.sections.length).toBe(1);
     expect(result.sections[0].name).toBe("Phase 1: Setup");
@@ -82,21 +95,37 @@ describe("parsePlanCheckboxes", () => {
     expect(result.sections[0].done).toBe(2);
   });
 
-  it("应按 section 标题分组", () => {
-    const content = [
-      "### Phase 1: Data",
-      "- [x] Create schema",
-      "- [x] Add migration",
-      "### Phase 2: UI",
-      "- [ ] Build components",
-      "- [ ] Add styles",
-      "### Automated Tests",
-      "- [x] Unit test",
-    ].join("\n");
+  it("应按 phase 分组", () => {
+    const data: PlanData = {
+      featureId: "SUB-01",
+      featureName: "Test",
+      status: "active",
+      decisions: [],
+      phases: [
+        {
+          name: "Phase 1: Data",
+          tasks: [
+            { id: "p1-1", title: "Create schema", done: true },
+            { id: "p1-2", title: "Add migration", done: true },
+          ],
+        },
+        {
+          name: "Phase 2: UI",
+          tasks: [
+            { id: "p2-1", title: "Build components", done: false },
+            { id: "p2-2", title: "Add styles", done: false },
+          ],
+        },
+      ],
+      tests: {
+        automated: [{ id: "t1", title: "Unit test", done: true }],
+        manual: [],
+      },
+    };
 
-    const result = parsePlanCheckboxes(content);
+    const result = parsePlanJson(data);
 
-    expect(result.sections.length).toBe(3);
+    expect(result.sections.length).toBe(3); // 2 phases + 1 automated tests
     expect(result.sections[0].name).toBe("Phase 1: Data");
     expect(result.sections[0].done).toBe(2);
     expect(result.sections[1].name).toBe("Phase 2: UI");
@@ -106,15 +135,27 @@ describe("parsePlanCheckboxes", () => {
   });
 
   it("应识别 Manual Verification section 为人工验收", () => {
-    const content = [
-      "### Phase 1: Setup",
-      "- [x] Install deps",
-      "### Manual Verification",
-      "- [ ] Check UI matches design",
-      "- [ ] Test on mobile",
-    ].join("\n");
+    const data: PlanData = {
+      featureId: "SUB-01",
+      featureName: "Test",
+      status: "active",
+      decisions: [],
+      phases: [
+        {
+          name: "Phase 1: Setup",
+          tasks: [{ id: "p1-1", title: "Install deps", done: true }],
+        },
+      ],
+      tests: {
+        automated: [],
+        manual: [
+          { id: "m1", title: "Check UI matches design", done: false },
+          { id: "m2", title: "Test on mobile", done: false },
+        ],
+      },
+    };
 
-    const result = parsePlanCheckboxes(content);
+    const result = parsePlanJson(data);
 
     expect(result.sections.length).toBe(2);
     expect(result.sections[0].isManual).toBe(false);
@@ -122,140 +163,89 @@ describe("parsePlanCheckboxes", () => {
     expect(result.sections[1].name).toBe("Manual Verification");
   });
 
-  it("应识别中文人工验收 section", () => {
-    const content = ["### 手动验证", "- [ ] 检查 UI"].join("\n");
+  it("应识别包含人工验收关键词的 phase", () => {
+    const data: PlanData = {
+      featureId: "SUB-01",
+      featureName: "Test",
+      status: "active",
+      decisions: [],
+      phases: [
+        {
+          name: "手动验证",
+          tasks: [{ id: "m1", title: "检查 UI", done: false }],
+        },
+      ],
+      tests: { automated: [], manual: [] },
+    };
 
-    const result = parsePlanCheckboxes(content);
+    const result = parsePlanJson(data);
     expect(result.sections[0].isManual).toBe(true);
   });
 
-  it("应处理空 plan 文件", () => {
-    const result = parsePlanCheckboxes("# Empty Plan\nNo tasks here.");
+  it("应处理空 phases", () => {
+    const data: PlanData = {
+      featureId: "SUB-01",
+      featureName: "Empty",
+      status: "pending",
+      decisions: [],
+      phases: [],
+      tests: { automated: [], manual: [] },
+    };
+
+    const result = parsePlanJson(data);
     expect(result.sections.length).toBe(0);
   });
 
-  it("应支持 * 号 checkbox 语法", () => {
-    const content = [
-      "### Phase 1",
-      "* [x] Task with asterisk",
-      "* [ ] Another asterisk task",
-    ].join("\n");
-
-    const result = parsePlanCheckboxes(content);
-    expect(result.sections[0].total).toBe(2);
-    expect(result.sections[0].done).toBe(1);
-  });
-
-  it("应支持大写 X 标记", () => {
-    const content = ["### Phase 1", "- [X] Task with uppercase X"].join("\n");
-
-    const result = parsePlanCheckboxes(content);
-    expect(result.sections[0].done).toBe(1);
-  });
-
-  it("应记录正确的行号（1-based）", () => {
-    const content = [
-      "# Title",
-      "",
-      "### Phase 1",
-      "- [x] First task",
-      "- [ ] Second task",
-    ].join("\n");
-
-    const result = parsePlanCheckboxes(content);
-    expect(result.sections[0].items[0].lineNum).toBe(4);
-    expect(result.sections[0].items[1].lineNum).toBe(5);
-  });
-
-  it("应正确解析 Windows CRLF (\\r\\n) 换行的文件", () => {
-    const content =
-      "### Phase 1: Setup\r\n" +
-      "- [x] Install dependencies\r\n" +
-      "- [ ] Configure linting\r\n" +
-      "### Phase 2: Build\r\n" +
-      "- [x] Build project\r\n";
-
-    const result = parsePlanCheckboxes(content);
-
-    expect(result.sections.length).toBe(2);
-    expect(result.sections[0].name).toBe("Phase 1: Setup");
-    expect(result.sections[0].total).toBe(2);
-    expect(result.sections[0].done).toBe(1);
-    expect(result.sections[1].name).toBe("Phase 2: Build");
-    expect(result.sections[1].total).toBe(1);
-    expect(result.sections[1].done).toBe(1);
-  });
-
-  it("应正确解析带 BOM 的 UTF-8 文件", () => {
-    // UTF-8 BOM: U+FEFF
-    const content = "\uFEFF### Phase 1\n- [x] First task\n- [ ] Second task";
-
-    const result = parsePlanCheckboxes(content);
-
-    expect(result.sections.length).toBe(1);
-    expect(result.sections[0].name).toBe("Phase 1");
-    expect(result.sections[0].total).toBe(2);
-    expect(result.sections[0].done).toBe(1);
-  });
-
-  it("应处理带缩进的子任务 checkbox", () => {
-    const content = [
-      "### Phase 1: Setup",
-      "- [x] Parent task",
-      "  - [x] Sub task 1",
-      "  - [ ] Sub task 2",
-    ].join("\n");
-
-    const result = parsePlanCheckboxes(content);
-    // 所有 checkbox（包括缩进的）都应被收集
-    expect(result.sections[0].total).toBe(3);
-    expect(result.sections[0].done).toBe(2);
-  });
-
   it("应正确解析完整的真实 plan 格式", () => {
-    const content = [
-      "---",
-      "description: Implementation Plan for Feature.",
-      "---",
-      "",
-      "# Implementation Plan: SUB-01 订阅 CRUD",
-      "",
-      "> **Status:** Active",
-      "",
-      "## 1. Technical Decisions",
-      "",
-      "- **Libraries**: Zod",
-      "",
-      "## 2. Implementation Steps",
-      "",
-      "### Phase 1: 数据层与校验",
-      "",
-      "- [x] 定义 Schema",
-      "- [x] 实现 Hook",
-      "- [ ] 添加校验",
-      "",
-      "### Phase 2: UI 组件",
-      "",
-      "- [x] 列表页",
-      "- [ ] 表单",
-      "- [ ] 删除确认",
-      "",
-      "## 3. Test Plan",
-      "",
-      "### Automated Tests",
-      "",
-      "- [x] Unit test for Hook",
-      "- [ ] Integration test",
-      "",
-      "### Manual Verification",
-      "",
-      "- [ ] 检查 UI 与 ui.md 一致",
-      "- [ ] 移动端测试",
-    ].join("\n");
+    const data: PlanData = {
+      featureId: "SUB-01",
+      featureName: "订阅 CRUD",
+      status: "active",
+      decisions: [
+        {
+          category: "Libraries",
+          choice: "Zod",
+          rationale: "表单校验与 spec 场景强绑定",
+        },
+        {
+          category: "Architecture",
+          choice: "Server Actions",
+          rationale: "复用 Next.js 14 模式",
+        },
+      ],
+      phases: [
+        {
+          name: "Phase 1: 数据层与校验",
+          tasks: [
+            { id: "p1-1", title: "定义 Schema", done: true },
+            { id: "p1-2", title: "实现 Hook", done: true },
+            { id: "p1-3", title: "添加校验", done: false },
+          ],
+        },
+        {
+          name: "Phase 2: UI 组件",
+          tasks: [
+            { id: "p2-1", title: "列表页", done: true },
+            { id: "p2-2", title: "表单", done: false },
+            { id: "p2-3", title: "删除确认", done: false },
+          ],
+        },
+      ],
+      tests: {
+        automated: [
+          { id: "t1", title: "Unit test for Hook", done: true },
+          { id: "t2", title: "Integration test", done: false },
+        ],
+        manual: [
+          { id: "m1", title: "检查 UI 与 ui.md 一致", done: false },
+          { id: "m2", title: "移动端测试", done: false },
+        ],
+      },
+    };
 
-    const result = parsePlanCheckboxes(content);
+    const result = parsePlanJson(data);
 
-    // 应有 4 个 section
+    // 应有 4 个 section: 2 phases + automated + manual
     expect(result.sections.length).toBe(4);
 
     // Phase 1
@@ -307,7 +297,7 @@ describe("resolvePlanPath", () => {
       ".architext": {
         features: {
           "SUB-01_Subscription_CRUD": {
-            "plan.md": "# Plan",
+            "plan.json": JSON.stringify({ featureId: "SUB-01" }),
           },
         },
       },
@@ -320,7 +310,7 @@ describe("resolvePlanPath", () => {
         ".architext",
         "features",
         "SUB-01_Subscription_CRUD",
-        "plan.md",
+        "plan.json",
       ),
     );
     expect(result.featureName).toBe("Subscription CRUD");
@@ -337,7 +327,7 @@ describe("resolvePlanPath", () => {
       ".architext": {
         features: {
           "SUB-01_Subscription_CRUD": {
-            "plan.md": "# Plan",
+            "plan.json": JSON.stringify({ featureId: "SUB-01" }),
           },
         },
       },
@@ -379,7 +369,7 @@ describe("resolvePlanPath", () => {
       ".architext": {
         features: {
           "CAT-01_Category_Tags_System": {
-            "plan.md": "# Plan",
+            "plan.json": JSON.stringify({ featureId: "CAT-01" }),
           },
         },
       },
@@ -402,18 +392,8 @@ describe("handlePlanCheck", () => {
           name: "Phase 1: Setup",
           isManual: false,
           items: [
-            {
-              lineNum: 5,
-              content: "Install deps",
-              checked: true,
-              section: "Phase 1: Setup",
-            },
-            {
-              lineNum: 6,
-              content: "Configure",
-              checked: true,
-              section: "Phase 1: Setup",
-            },
+            { id: "p1-1", title: "Install deps", done: true },
+            { id: "p1-2", title: "Configure", done: true },
           ],
           done: 2,
           total: 2,
@@ -433,18 +413,8 @@ describe("handlePlanCheck", () => {
           name: "Phase 1: Setup",
           isManual: false,
           items: [
-            {
-              lineNum: 5,
-              content: "Install deps",
-              checked: true,
-              section: "Phase 1: Setup",
-            },
-            {
-              lineNum: 6,
-              content: "Configure linting",
-              checked: false,
-              section: "Phase 1: Setup",
-            },
+            { id: "p1-1", title: "Install deps", done: true },
+            { id: "p1-2", title: "Configure linting", done: false },
           ],
           done: 1,
           total: 2,
@@ -463,28 +433,14 @@ describe("handlePlanCheck", () => {
         {
           name: "Phase 1: Setup",
           isManual: false,
-          items: [
-            {
-              lineNum: 5,
-              content: "Task",
-              checked: true,
-              section: "Phase 1: Setup",
-            },
-          ],
+          items: [{ id: "p1-1", title: "Task", done: true }],
           done: 1,
           total: 1,
         },
         {
           name: "Manual Verification",
           isManual: true,
-          items: [
-            {
-              lineNum: 10,
-              content: "Check UI",
-              checked: false,
-              section: "Manual Verification",
-            },
-          ],
+          items: [{ id: "m1", title: "Check UI", done: false }],
           done: 0,
           total: 1,
         },

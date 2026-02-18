@@ -1,0 +1,19 @@
+{
+  "protocolMapping [?API]": [
+    {
+      "statusCode": "[400 | EXIT_1 | ...]",
+      "code": "[ERR_VALIDATION]",
+      "meaning": "[含义]",
+      "action": "[调用方行为: Toast / Exit / Retry / ...]"
+    }
+  ],
+  "businessErrors": [
+    {
+      "module": "[MODULE]",
+      "code": "ERR_[MODULE]_[REASON]",
+      "statusCode": "",
+      "message": "[用户/开发者可见的错误描述]",
+      "recovery": "[恢复建议]"
+    }
+  ]
+}

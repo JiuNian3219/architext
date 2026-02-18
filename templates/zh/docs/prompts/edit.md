@@ -16,7 +16,7 @@
 <step_1_load>
     **Role**: 产品经理
     **Action**:
-    - 读取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.md。
+    - 读取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
     - [?重大 UX 变更] 快速搜索同类产品最佳实践。
 </step_1_load>
 
@@ -33,10 +33,10 @@
 <step_3_update_plan>
     **Role**: Tech Lead
     **Action**:
-    - 在 plan.md 追加 `### Phase X: Change Request (<Date>)` 任务块。
+    - 在 `plan.json` 的 `phases` 数组中追加新 Phase 对象。
     - 列出具体 Tasks (API update, UI tweak, Test update)；每项须可验证。
 
-    **Output**: 追加了新任务的 plan.md。
+    **Output**: 追加了新任务的 plan.json，运行 `npx archi render` 更新 `.md` 视图。
 </step_3_update_plan>
 
 <step_4_summary>

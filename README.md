@@ -32,7 +32,7 @@
 *   **Meta-Framework (元框架)**:
     *   **Architecture Agnostic (架构无关)**: Architext 不绑定特定架构。
     *   支持 MFA (Modular Feature Architecture), FSD, DDD, Clean Architecture 等任意架构模式。
-    *   通过 `01_map` 定义层级，通过 `00_system` 强制执行该架构的边界规则。
+    *   通过 `map.json` 定义层级，通过 `00_system` 强制执行该架构的边界规则。
 *   **Agent Skill Adoption (技能适配)**:
     *   **Skills > Tools**: 明确区分 **Tools** (原子能力，如 `read_file`) 与 **Skills** (专家级 Know-How，如 `debug-workflow`, `feature-implementer`)。
     *   鼓励 AI 优先调用封装好的 **Agent Skills** 来解决复杂问题，获取标准化的“思维链”和“操作流”，而非仅依赖底层的工具调用。
@@ -56,6 +56,7 @@ my-project/
 │   ├── 00_system.mdc
 │   ├── 01_workflow.mdc
 │   ├── 02_tech_stack.mdc
+│   ├── 03_data_governance.mdc
 │   ├── 90_custom_rules.mdc
 │   └── 99_context_glue.mdc
 │
@@ -63,18 +64,19 @@ my-project/
 │   ├── 00_system.md
 │   ├── 01_workflow.md
 │   ├── 02_tech_stack.md
+│   ├── 03_data_governance.md
 │   ├── 90_custom_rules.md
 │   └── 99_context_glue.md
 │
 ├── .architext/                 # 文档目录（默认，可通过配置修改）
-│   ├── global/                 # 全局文档
-│   │   ├── 00_roadmap.md       # 项目进度与任务依赖图
-│   │   ├── 00_vision.md        # 项目愿景与核心目标
-│   │   ├── 01_map.md           # 架构地图与目录索引
-│   │   ├── 02_dictionary.md     # 统一术语表
-│   │   ├── 03_design_tokens.md # 设计系统 Token（如项目有 UI）
-│   │   ├── 04_data_snapshot.md # 数据模型快照（如项目有数据层）
-│   │   └── 05_error_codes.md   # 错误码契约
+│   ├── global/                 # 全局文档（JSON 为数据源，.md 由 render 命令生成）
+│   │   ├── vision.md        # 项目愿景与核心目标（纲领性文档，Markdown 格式）
+│   │   ├── roadmap.json        # 项目进度与任务依赖（Single Source of Truth）
+│   │   ├── map.json            # 架构地图与目录索引
+│   │   ├── dictionary.json     # 统一术语表
+│   │   ├── design_tokens.json  # 设计系统 Token（如项目有 UI）
+│   │   ├── data_snapshot.json  # 数据模型快照（如项目有数据层）
+│   │   └── error_codes.json    # 错误码契约
 │   │
 │   ├── prompts/                # Prompt 模板（供 AI 读取）
 │   │   ├── code.md
@@ -82,11 +84,16 @@ my-project/
 │   │   ├── start.md
 │   │   └── ...
 │   │
+│   ├── templates/              # 文档模板
+│   │   ├── spec.template.md    # 功能规格模板
+│   │   ├── ui.template.md      # UI 设计模板
+│   │   └── plan.template.json  # 实施计划 JSON 模板
+│   │
 │   └── features/               # 功能文档（按功能模块组织）
 │       └── INF-001_feature-name/
 │           ├── spec.md         # 功能规格（Gherkin）
 │           ├── ui.md           # UI 设计（如适用）
-│           └── plan.md         # 实施计划
+│           └── plan.json       # 实施计划（JSON 格式）
 │
 └── xxx/                        # 业务代码（项目实际代码）
     └── ...
@@ -106,19 +113,21 @@ my-project/
 | `00_system.md` | **宪法** | 定义架构师身份、思维循环 (Audit Loop)、工具策略 (Skill Strategy)。 |
 | `01_workflow.md` | **路由** | 识别用户意图，加载对应的 Prompt 模板 (Mode Switcher)。 |
 | `02_tech_stack.md` | **法律** | 定义技术选型红线、命名规范（适配当前架构）。 |
+| `03_data_governance.md` | **管家** | 全局 JSON 数据文件的读写治理规则（读写时机、格式约束）。 |
 | `90_custom_rules.md` | **家规** | 用户自定义的团队习惯与黑名单（高优先级）。 |
 | `99_context_glue.md` | **导航仪** | **注册制寻址**：关联代码与文档，防止失忆。 |
 
 ### B. 上下文容器 (.architext / docs)
 维持项目一致性的全局资产，通常存储在 `.architext/` 或 `docs/global/` 中。
+JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi render` 自动生成。
 
-*   `00_roadmap.md`: 项目进度全景图（DAG 依赖管理）。
-*   `00_vision.md`: 项目愿景与核心目标。
-*   `01_map.md`: 架构地图（定义架构拓扑）。
-*   `02_dictionary.md`: 统一术语表。
-*   `03_design_tokens.md`: 视觉物理量。
-*   `04_data_snapshot.md`: 数据库 Schema 镜像。
-*   `05_error_codes.md`: 错误码契约。
+*   `roadmap.json`: 项目进度全景图（DAG 依赖管理）。
+*   `vision.md`: 项目愿景、北极星指标、设计哲学（AI 规划与决策的定调依据，因叙事性内容不适合 JSON 故保持 Markdown）。
+*   `map.json`: 架构地图（定义架构拓扑）。
+*   `dictionary.json`: 统一术语表。
+*   `design_tokens.json`: 视觉物理量。
+*   `data_snapshot.json`: 数据库 Schema 镜像。
+*   `error_codes.json`: 错误码契约。
 
 ---
 
@@ -145,6 +154,20 @@ my-project/
     *   诊断 Bug -> 查阅 Error Code -> 修复代码。
 *   `/archi.help`: **Manual**
     *   显示帮助指南。
+
+
+### 🔧 User CLI 工具命令
+*   `npx archi init`: 初始化项目骨架。
+*   `npx archi update`: 更新项目骨架。
+*   `npx archi doctor`: 检查项目健康状况。
+*   `npx archi uninstall`: 卸载项目。
+*   `npx archi help`: 显示帮助指南。
+*   `npx archi version`: 显示项目版本。
+
+### 🔧 AI CLI 工具命令
+*   `npx archi task [list|check|<id> <status>]`: 查看/校验/更新 Roadmap 任务状态（直接操作 `roadmap.json`）。
+*   `npx archi plan <feature-id>`: 检查指定 Feature 的 Plan 完成度（读取 `plan.json`）。
+*   `npx archi render`: 将 JSON 数据文件生成对应的 Markdown 可读视图。
 
 ---
 

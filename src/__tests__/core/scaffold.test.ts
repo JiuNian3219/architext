@@ -51,13 +51,13 @@ describe("Scaffolder Integration", () => {
     const docDir = path.join(tempDir, ".architext");
     expect(await fs.pathExists(docDir)).toBe(true);
 
-    // 验证：是否包含全局文档
-    const mapFile = path.join(docDir, "global", "01_map.md");
+    // 验证：是否包含全局文档 (JSON 格式)
+    const mapFile = path.join(docDir, "global", "map.json");
     expect(await fs.pathExists(mapFile)).toBe(true);
 
-    // 验证：文件内容替换是否正确 (例如 [[__DOCS_DIR__]] 占位符)
+    // 验证：JSON 文件内容是有效的 JSON
     const content = await fs.readFile(mapFile, "utf-8");
-    expect(content).not.toContain("[[__DOCS_DIR__]]");
+    expect(() => JSON.parse(content)).not.toThrow();
   });
 
   it("should generate editor specific rules", async () => {

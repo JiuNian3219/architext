@@ -23,13 +23,15 @@
 <step_1_load>
     **Role**: System Analyst
     **Action**:
-    1.  **Read Roadmap**: Read `[[__DOCS_DIR__]]/global/00_roadmap.md`.
+    1.  **Read Roadmap**: Read `[[__DOCS_DIR__]]/global/roadmap.json`.
         - **Pre-flight**: Check if `<ID>` Deps are completed. If not, reject Plan (unless user forces).
-    2.  **Read Tech Stack**: `02_tech_stack.md` (technical red lines).
-    3.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/03_design_tokens.md`.
-    4.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/04_data_snapshot.md`.
-    5.  **Read Dependency Context** (if dependent tasks exist):
-        - Read dependency tasks' `spec.md` (interface contracts) and `plan.md` (implemented content).
+    2.  **Read Vision**: Read `[[__DOCS_DIR__]]/global/vision.md`.
+        - Extract North Star Metric and Design Philosophy; subsequent proposals must align with these.
+    3.  **Read Tech Stack**: `02_tech_stack.md` (technical red lines).
+    4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`.
+    5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`.
+    6.  **Read Dependency Context** (if dependent tasks exist):
+        - Read dependency tasks' `spec.md` (interface contracts) and `plan.json` (implemented content).
         - Avoid re-defining upstream interfaces; ensure integration points are precisely aligned.
 
     **Output**: Interview context materials (including key interface info from dependency tasks).
@@ -110,9 +112,9 @@
 
     ---
 
-    **Goal**: Lock `spec`, `ui`, `04_data`.
+    **Goal**: Lock `spec`, `ui`, `data_snapshot.json`.
 
-    **⌨️ INPUT (Flexible Reply)**: `A | B | ...`
+    **⌨️ INPUT (Flexible Reply)**: Reply in question order; use `|` to separate answers between questions. Within one question, use `A`, `A B` (multi-select, space-separated), or `Z: user description`. Example: `A B | D keep it simple | C`.
 </step_2_interview>
 
 <step_2_5_refinement>
@@ -125,11 +127,13 @@
     **Role**: System Admin
     **Constraint**: MUST update the following global files **BEFORE** generating Feature docs.
 
+    **Boundary**: Only register **project business domain** content. Architext framework concepts (scripts, scaffold, roadmap, plan, etc.) and framework infrastructure errors are prohibited from registration in global files.
+
     **Action Checklist**:
-    1.  **`01_map.md`**: Register `[[__DOCS_DIR__]]/features/<ID>_<Slug>` in Directory Mapping; define module responsibility and dependencies in Logical Topology.
-    2.  **`02_dictionary.md`**: Extract new terms from interview to fill table; register new public components/modules.
-    3.  [?Data] **`04_data_snapshot.md`**: Add/modify Schema based on Q1 choice. Prohibited from writing "TBD"; must write field names and types.
-    4.  **`05_error_codes.md`**: Register new business error codes based on Q4 choice.
+    1.  **`map.json`**: Register `[[__DOCS_DIR__]]/features/<ID>_<Slug>` in `directoryMapping`; define module responsibility and dependencies in `logicalTopology`.
+    2.  **`dictionary.json`**: Extract **project business** new terms from interview to fill `entities`/`verbs`; register new shared tools to `utilities`; register new public components to `components`.
+    3.  [?Data] **`data_snapshot.json`**: Add/modify Schema based on Q1 choice. Prohibited from writing "TBD"; must write field names and types.
+    4.  **`error_codes.json`**: Register new **business** error codes based on Q4 choice. Framework script errors are handled by exit code + stderr; prohibited from registration.
 
     **Output**: Change diffs of above files (brief).
 </step_3_global_sync>
@@ -148,10 +152,13 @@
     - Template: `templates/ui.template.md`.
     - Convert Q2 to ITP v3.0 description; use semantic naming mapped to design_tokens.
 
-    **3. `plan.md`** (Mandatory):
-    - Template: `templates/plan.template.md`.
+    **3. `plan.json`** (Mandatory):
+    - Template: `templates/plan.template.json`.
     - Dynamically adjust Phases by project type; ensure each Task's context is self-contained.
     - Task descriptions explicitly state "Additive Only" + "Respect Unknowns".
+    - **`decisions`**: Fill per Q1-Q5 dimensions; `choice` supports multi-select (e.g. `A B`, space-separated), custom (`Z: …`); `rationale` must explain combination meaning or custom intent for code phase; do not leave empty.
+    - **`notes`**: Fill each task's `notes` with execution shorthand (scope, spec section ref, key constraints) for `/archi.code` phase; do not leave empty.
+    - Run `npx archi render` after generation to produce readable `.md` view.
 </step_4_generate>
 
 <step_5_audit>
@@ -169,7 +176,8 @@
     **Action**:
     1.  Run `npx archi task --check` to verify Roadmap consistency.
     2.  Run `npx archi task <ID> --status active` to mark task as in-progress.
-    3.  Output summary.
+    3.  Run `npx archi render` to regenerate visual `.md` files.
+    4.  Output summary.
 
     **Output**: Feature definition summary with Decisions Summary table (Q1-Q5 choices and impacts) and Next Steps table.
 </step_6_signoff>

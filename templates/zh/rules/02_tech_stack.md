@@ -96,14 +96,14 @@ alwaysApply: false
 * **Test Command:** [例如：`pnpm test` / `pytest` / `cargo test` / `go test ./...`]
 
 ### Environment Scripts (环境脚本)
-> 须在 `/archi.start` INF-01 阶段生成 `scripts/` 目录（按 OS 生成 `.sh` / `.ps1`）。
+> **AI Internal Tooling**: 此脚本由 AI 在 INF-01 阶段基于上方命令定义自动生成，实现细节（脚本结构、失败策略、执行方式）由 AI 自决，禁向用户提问。按 OS 生成 `.sh` / `.ps1` 至 `[[__DOCS_DIR__]]/scripts/`。
 
-* **`scripts/validate`** — 自动化质检（AI 每次改完代码后执行）：Static Analysis 全项 + Test Command。
-* **`scripts/dev-up`** — 拉起开发环境：Install → Build → Start Dev Server → Health Check。
+* **`[[__DOCS_DIR__]]/scripts/validate`** — 自动化质检（AI 每次改完代码后执行）：Static Analysis 全项 + Test Command。
+* **`[[__DOCS_DIR__]]/scripts/dev-up`** — 拉起开发环境：Install → Build → Start Dev Server → Health Check。
   - **Install:** [例如：`pnpm install` / `pip install -r requirements.txt` / `cargo build` / `go mod download`]
   - **Dev Command:** [例如：`npm run dev` / `python manage.py runserver` / `cargo run` / N/A]
   - **Health Check:** [例如：`curl http://localhost:3000/api/health` / `./bin/cli --version` / `python -c "import mylib"`]
-* **`scripts/dev-reset`** — 环境重置（环境异常时执行）：Kill Processes → Clean Cache → Reinstall → Rebuild → Restart。
+* **`[[__DOCS_DIR__]]/scripts/dev-reset`** — 环境重置（环境异常时执行）：Kill Processes → Clean Cache → Reinstall → Rebuild → Restart。
 
 ---
 
@@ -134,7 +134,7 @@ alwaysApply: false
 * **Constraint**: [Architecture Constraints]
 
 ### File Placement Rules (文件归位逻辑)
-> *Context*: 定义不同类型的文件应创建在哪里。**须依据项目类型 (Web/CLI/API/Lib) 与 `01_map.md` 的目录结构自定义**，下表为占位示例。
+> *Context*: 定义不同类型的文件应创建在哪里。**须依据项目类型 (Web/CLI/API/Lib) 与 `map.json` 的目录结构自定义**，下表为占位示例。
 
 | File Type | Placement Strategy | Example (依据项目调整) |
 | :--- | :--- | :--- |

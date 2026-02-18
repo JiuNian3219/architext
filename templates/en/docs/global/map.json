@@ -1,0 +1,88 @@
+{
+  "governance": {
+    "coreRules": [
+      {
+        "file": "00_system.md",
+        "role": "System Role",
+        "when": "At the start of every session (Identity, Core Principles)"
+      },
+      {
+        "file": "01_workflow.md",
+        "role": "SOP",
+        "when": "Decides current task flow (Feature vs Fix) & Acceptance Criteria"
+      },
+      {
+        "file": "02_tech_stack.md",
+        "role": "Tech Stack",
+        "when": "Tech choices, coding standards, engineering governance"
+      },
+      {
+        "file": "03_data_governance.md",
+        "role": "Data Governance",
+        "when": "When reading/writing global JSON data files"
+      },
+      {
+        "file": "99_context_glue.md",
+        "role": "Context Bridge",
+        "when": "Automatically links context docs when touching code"
+      }
+    ],
+    "globalReference": [
+      {
+        "file": "roadmap.json",
+        "role": "Roadmap",
+        "content": "Progress tracking, milestones, technical debt management"
+      },
+      {
+        "file": "vision.md",
+        "role": "Vision",
+        "content": "Vision, North Star Metric, Design Philosophy"
+      },
+      {
+        "file": "map.json",
+        "role": "Map (This file)",
+        "content": "Directory structure, file index, logical topology"
+      },
+      {
+        "file": "dictionary.json",
+        "role": "Dictionary",
+        "content": "Business glossary, shared component registry"
+      },
+      {
+        "file": "design_tokens.json",
+        "role": "Visuals [?UI]",
+        "content": "Colors, typography, spacing variables"
+      },
+      {
+        "file": "data_snapshot.json",
+        "role": "Data [?Data]",
+        "content": "Database Schema snapshot"
+      },
+      {
+        "file": "error_codes.json",
+        "role": "Errors",
+        "content": "Error codes & protocol contracts"
+      }
+    ]
+  },
+  "fileExtensions": [
+    {
+      "ext": ".spec.md",
+      "category": "Specification",
+      "purpose": "Business Logic, Algorithms, Acceptance Criteria (Logic)"
+    },
+    {
+      "ext": ".ui.md",
+      "category": "UI/UX",
+      "purpose": "Visual Structure, Interaction States, Style Definitions (Visual)"
+    },
+    {
+      "ext": ".plan.md",
+      "category": "Plan",
+      "purpose": "Detailed Step Breakdown & Test Cases (Execution)"
+    }
+  ],
+  "directoryMapping": [],
+  "logicalTopology": [],
+  "criticalUserJourneys": []
+}

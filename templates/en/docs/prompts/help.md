@@ -37,6 +37,7 @@
     │   ├── 00_system.mdc           # System Constitution - AI Identity & Thought Loop
     │   ├── 01_workflow.mdc         # Workflow Router - Command Recognition & Mode Switching
     │   ├── 02_tech_stack.mdc       # Tech Laws - Tech Stack Selection & Coding Standards
+    │   ├── 03_data_governance.mdc  # Data Governance - Data Operation Constraints
     │   ├── 90_custom_rules.mdc     # User House Rules - Team Custom Constraints
     │   └── 99_context_glue.mdc     # Context Bridge - Code & Docs Association
     │
@@ -54,13 +55,13 @@
     ├── .architext/                 # Documentation Directory (default name, configurable)
     │   │
     │   ├── global/                 # Global Docs - Project Level Assets
-    │   │   ├── 00_roadmap.md       # Roadmap - Task Dependencies & Progress Tracking
-    │   │   ├── 00_vision.md        # Vision - North Star Metrics & Design Philosophy
-    │   │   ├── 01_map.md           # Architecture Map - Directory Index & Logical Topology
-    │   │   ├── 02_dictionary.md    # Dictionary - Business Terms & Component Registry
-    │   │   ├── 03_design_tokens.md # Design System - Colors/Fonts/Spacing (if UI exists)
-    │   │   ├── 04_data_snapshot.md # Data Snapshot - Database Schema Mirror (if Data layer exists)
-    │   │   └── 05_error_codes.md   # Error Codes - Business Error Code Definition
+    │   │   ├── vision.md        # Vision - North Star Metrics & Design Philosophy
+    │   │   ├── roadmap.json        # Roadmap - Task Dependencies & Progress Tracking (JSON source)
+    │   │   ├── map.json            # Architecture Map - Directory Index & Logical Topology (JSON source)
+    │   │   ├── dictionary.json     # Dictionary - Business Terms & Component Registry (JSON source)
+    │   │   ├── design_tokens.json  # Design System - Colors/Fonts/Spacing (JSON source, if UI exists)
+    │   │   ├── data_snapshot.json  # Data Snapshot - Database Schema Mirror (JSON source, if Data layer exists)
+    │   │   └── error_codes.json    # Error Codes - Business Error Code Definition (JSON source)
     │   │   
     │   ├── prompts/                # Prompt Templates - Instruction Protocols for AI
     │   │   ├── start.md            # Project Kickoff Protocol
@@ -73,13 +74,13 @@
     │   ├── templates/              # Doc Templates
     │   │   ├── spec.template.md    # Feature Spec Template (Gherkin)
     │   │   ├── ui.template.md      # UI Design Template (ITP v3.0)
-    │   │   └── plan.template.md    # Implementation Plan Template
+    │   │   └── plan.template.json  # Implementation Plan Template (JSON source)
     │   │
     │   └── features/               # Feature Docs - Organized by Module
     │       └── <ID>_<Slug>/        # One folder per feature
     │           ├── spec.md         # Feature Spec - Gherkin Scenarios
     │           ├── ui.md           # UI Design - ITP Component Tree (if applicable)
-    │           └── plan.md         # Implementation Plan - Task List
+    │           └── plan.json       # Implementation Plan - Task List (JSON source)
     │
     └── xxx/                        # Business Code (Actual Project Code)
         └── ...
@@ -99,7 +100,7 @@
     | :--- | :--- | :--- | :--- |
     | **`/archi.start`** | `[context]` | ** Project Cold Start**<br>Start a new project from scratch. | Interview Vision -> Confirm Style -> Confirm Tech Stack -> **Create Docs Skeleton**. |
     | **`/archi.inherit`** | `(none)` | ** Legacy Takeover**<br>Take over an existing legacy project. | Full Code Scan -> Reverse Deduction -> **Fill Global Docs**. |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>Refresh directory map. | Scan File System -> **Update 01_map.md**. |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>Refresh directory map. | Scan File System -> **Update map.json**. |
 
     ---
 
@@ -136,7 +137,7 @@
 
     | Command | Args | Role (Brief) | Core Logic |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>Manually refresh architecture map. | Rescan Directory Tree -> Update `01_map.md` (File Topology). |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>Manually refresh architecture map. | Rescan Directory Tree -> Update `map.json` (File Topology). |
     | **`/archi.help`** | `[lang]` | ** Manual**<br>Show this manual. | Show command list, project structure & usage. |
 
     ---

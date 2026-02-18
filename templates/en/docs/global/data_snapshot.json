@@ -1,0 +1,31 @@
+{
+  "scope": "[?Data]",
+  "models": [
+    {
+      "name": "[ModelName]",
+      "description": "[One-line description]",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "modifiers": "PK",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "[fieldName]",
+          "type": "[type]",
+          "modifiers": "[nullable | unique | index | ...]",
+          "description": "[Field description]"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "[ModelA]",
+      "to": "[ModelB]",
+      "type": "[1:1 | 1:N | M:N | self-ref]",
+      "description": "[Relationship description]"
+    }
+  ]
+}

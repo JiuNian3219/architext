@@ -37,6 +37,7 @@
     │   ├── 00_system.mdc           # 系統憲法 - AI 身份與思維循環
     │   ├── 01_workflow.mdc         # 工作流路由 - 指令識別與模式切換
     │   ├── 02_tech_stack.mdc       # 技術法律 - 技術選型與編碼規範
+    │   ├── 03_data_governance.mdc  # 資料治理 - 資料操作紅線與規範
     │   ├── 90_custom_rules.mdc     # 使用者家規 - 團隊自定義約束
     │   └── 99_context_glue.mdc     # 上下文橋樑 - 程式碼與文件關聯
     │
@@ -54,13 +55,13 @@
     ├── .architext/                 # 文件目錄 (預設名稱，可配置)
     │   │
     │   ├── global/                 # 全域文件 - 專案級資產
-    │   │   ├── 00_roadmap.md       # 專案路線圖 - 任務依賴與進度追蹤
-    │   │   ├── 00_vision.md        # 專案願景 - 北極星指標與設計哲學
-    │   │   ├── 01_map.md           # 架構地圖 - 目錄索引與邏輯拓樸
-    │   │   ├── 02_dictionary.md    # 術語字典 - 業務術語與元件註冊
-    │   │   ├── 03_design_tokens.md # 設計系統 - 顏色/字體/間距變數 (如有 UI)
-    │   │   ├── 04_data_snapshot.md # 數據快照 - 資料庫 Schema 鏡像 (如有數據層)
-    │   │   └── 05_error_codes.md   # 錯誤碼契約 - 業務錯誤碼定義
+    │   │   ├── vision.md        # 專案願景 - 北極星指標與設計哲學
+    │   │   ├── roadmap.json        # 專案路線圖 - 任務依賴與進度追蹤 (JSON 資料源)
+    │   │   ├── map.json            # 架構地圖 - 目錄索引與邏輯拓撲 (JSON 資料源)
+    │   │   ├── dictionary.json     # 術語字典 - 業務術語與元件註冊 (JSON 資料源)
+    │   │   ├── design_tokens.json  # 設計系統 - 顏色/字型/間距變數 (JSON 資料源, 如有 UI)
+    │   │   ├── data_snapshot.json  # 資料快照 - 資料庫 Schema 鏡像 (JSON 資料源, 如有資料層)
+    │   │   └── error_codes.json    # 錯誤碼契約 - 業務錯誤碼定義 (JSON 資料源)
     │   │
     │   ├── prompts/                # Prompt 模板 - 供 AI 讀取的指令協議
     │   │   ├── start.md            # 專案啟動協議
@@ -70,16 +71,16 @@
     │   │   ├── fix.md              # Bug 修復協議
     │   │   └── help.md             # 幫助手冊 (本檔案)
     │   │
-    │   ├── templates/              # 文件模板
-    │   │   ├── spec.template.md    # 功能規格模板 (Gherkin)
-    │   │   ├── ui.template.md      # UI 設計模板 (ITP v3.0)
-    │   │   └── plan.template.md    # 實施計畫模板
+    │   ├── templates/              # 文件範本
+    │   │   ├── spec.template.md    # 功能規格範本 (Gherkin)
+    │   │   ├── ui.template.md      # UI 設計範本 (ITP v3.0)
+    │   │   └── plan.template.json  # 實施計畫範本 (JSON 資料源)
     │   │
     │   └── features/               # 功能文件 - 按模組組織
     │       └── <ID>_<Slug>/        # 每個功能一個資料夾
     │           ├── spec.md         # 功能規格 - Gherkin 場景
     │           ├── ui.md           # UI 設計 - ITP 元件樹 (如適用)
-    │           └── plan.md         # 實施計畫 - 任務清單
+    │           └── plan.json       # 實施計畫 - 任務清單 (JSON 資料源)
     │
     └── xxx/                        # 業務程式碼 (專案實際程式碼)
         └── ...
@@ -99,7 +100,7 @@
     | :--- | :--- | :--- | :--- |
     | **`/archi.start`** | `[context]` | ** Project Cold Start**<br>新專案冷啟動。 | 訪談願景 -> 確認風格 -> 確認技術堆疊 -> **建立 Docs 骨架**。 |
     | **`/archi.inherit`** | `(none)` | ** Legacy Takeover**<br>接管現有的舊專案。 | 全量掃描程式碼 -> 逆向推導 -> **填充 Global Docs**。 |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>重新整理目錄地圖。 | 掃描檔案系統 -> **更新 01_map.md**。 |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>重新整理目錄地圖。 | 掃描檔案系統 -> **更新 map.json**。 |
 
     ---
 
@@ -136,7 +137,7 @@
 
     | Command | Args | Role (簡述) | Core Logic (核心邏輯) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>手動重新整理架構地圖。 | 重新掃描目錄樹 -> 更新 `01_map.md` (檔案拓樸)。 |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>手動重新整理架構地圖。 | 重新掃描目錄樹 -> 更新 `map.json` (檔案拓樸)。 |
     | **`/archi.help`** | `[lang]` | ** Manual**<br>顯示本說明書。 | 顯示指令列表、專案結構與用法。 |
 
     ---

@@ -30,6 +30,7 @@
     │   ├── 00_system.mdc           # 系统宪法 - AI 身份与思维循环
     │   ├── 01_workflow.mdc         # 工作流路由 - 指令识别与模式切换
     │   ├── 02_tech_stack.mdc       # 技术法律 - 技术选型与编码规范
+    │   ├── 03_data_governance.mdc  # 数据治理 - 数据操作红线与规范
     │   ├── 90_custom_rules.mdc     # 用户家规 - 团队自定义约束
     │   └── 99_context_glue.mdc     # 上下文桥梁 - 代码与文档关联
     │
@@ -47,13 +48,13 @@
     ├── .architext/                 # 文档目录 (默认名称，可配置)
     │   │
     │   ├── global/                 # 全局文档 - 项目级资产
-    │   │   ├── 00_roadmap.md       # 项目路线图 - 任务依赖与进度追踪
-    │   │   ├── 00_vision.md        # 项目愿景 - 北极星指标与设计哲学
-    │   │   ├── 01_map.md           # 架构地图 - 目录索引与逻辑拓扑
-    │   │   ├── 02_dictionary.md    # 术语字典 - 业务术语与组件注册
-    │   │   ├── 03_design_tokens.md # 设计系统 - 颜色/字体/间距变量 (如有 UI)
-    │   │   ├── 04_data_snapshot.md # 数据快照 - 数据库 Schema 镜像 (如有数据层)
-    │   │   └── 05_error_codes.md   # 错误码契约 - 业务错误码定义
+    │   │   ├── vision.md        # 项目愿景 - 北极星指标与设计哲学
+    │   │   ├── roadmap.json        # 项目路线图 - 任务依赖与进度追踪 (JSON 数据源)
+    │   │   ├── map.json            # 架构地图 - 目录索引与逻辑拓扑 (JSON 数据源)
+    │   │   ├── dictionary.json     # 术语字典 - 业务术语与组件注册 (JSON 数据源)
+    │   │   ├── design_tokens.json  # 设计系统 - 颜色/字体/间距变量 (JSON 数据源, 如有 UI)
+    │   │   ├── data_snapshot.json  # 数据快照 - 数据库 Schema 镜像 (JSON 数据源, 如有数据层)
+    │   │   └── error_codes.json    # 错误码契约 - 业务错误码定义 (JSON 数据源)
     │   │
     │   ├── prompts/                # Prompt 模板 - 供 AI 读取的指令协议
     │   │   ├── start.md            # 项目启动协议
@@ -66,13 +67,13 @@
     │   ├── templates/              # 文档模板
     │   │   ├── spec.template.md    # 功能规格模板 (Gherkin)
     │   │   ├── ui.template.md      # UI 设计模板 (ITP v3.0)
-    │   │   └── plan.template.md    # 实施计划模板
+    │   │   └── plan.template.json  # 实施计划模板 (JSON 数据源)
     │   │
     │   └── features/               # 功能文档 - 按模块组织
     │       └── <ID>_<Slug>/        # 每个功能一个文件夹
     │           ├── spec.md         # 功能规格 - Gherkin 场景
     │           ├── ui.md           # UI 设计 - ITP 组件树 (如适用)
-    │           └── plan.md         # 实施计划 - 任务清单
+    │           └── plan.json       # 实施计划 - 任务清单 (JSON 数据源)
     │
     └── xxx/                        # 业务代码 (项目实际代码)
         └── ...
@@ -92,7 +93,7 @@
     | :--- | :--- | :--- | :--- |
     | **`/archi.start`** | `[context]` | ** Project Cold Start**<br>新项目冷启动。 | 访谈愿景 -> 确认风格 -> 确认技术栈 -> **创建 Docs 骨架**。 |
     | **`/archi.inherit`** | `(none)` | ** Legacy Takeover**<br>接管现有的旧项目。 | 全量扫描代码 -> 逆向推导 -> **填充 Global Docs**。 |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>刷新目录地图。 | 扫描文件系统 -> **更新 01_map.md**。 |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>刷新目录地图。 | 扫描文件系统 -> **更新 map.json**。 |
 
     ---
 
@@ -129,7 +130,7 @@
 
     | Command | Args | Role (简述) | Core Logic (核心逻辑) |
     | :--- | :--- | :--- | :--- |
-    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>手动刷新架构地图。 | 重新扫描目录树 -> 更新 `01_map.md` (文件拓扑)。 |
+    | **`/archi.map`** | `(none)` | ** Refresh Map**<br>手动刷新架构地图。 | 重新扫描目录树 -> 更新 `map.json` (文件拓扑)。 |
     | **`/archi.help`** | `[lang]` | ** Manual**<br>显示本说明书。 | 显示指令列表、项目结构与用法。 |
 
     ---

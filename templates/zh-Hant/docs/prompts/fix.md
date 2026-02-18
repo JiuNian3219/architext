@@ -21,7 +21,7 @@
         - 有 `<id>`: 鎖定 `features/<ID>_<Slug>/`。
         - 無 `<id>`: 分析 `[context]` 搜尋最相關模組。
           唯一匹配 → 自動鎖定 | 多個匹配 → 列出候選詢問 | 無法定位 → 報錯請求指定 ID。
-    2.  讀取目標目錄下所有文件 (`spec.md`, `ui.md`, `plan.md`) 與相關程式碼。
+    2.  讀取目標目錄下所有檔案 (`spec.md`, `ui.md`, `plan.json`) 與相關程式碼。
     3.  分析 `[context]`，結合程式碼邏輯定位潛在故障點。
     4.  **Hypothesis**: 提出 1-3 個根因假設。
 
@@ -31,10 +31,10 @@
 <step_2_plan_fix>
     **Role**: Tech Lead
     **Action**:
-    - 更新 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.md`，追加 `### Bugfix: <Bug Title>` 章節。
+    - 更新 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`，在 `phases` 中追加 Bugfix Phase。
     - Tasks: 1) 建立複現測試(Red) 2) 修復(Green) 3) 迴歸測試。
 
-    **Output**: 追加了修復任務的 plan.md。
+    **Output**: 追加了修復任務的 plan.json，執行 `npx archi render` 更新視圖。
 </step_2_plan_fix>
 
 <step_3_execute_fix>

@@ -23,13 +23,15 @@
 <step_1_load>
     **Role**: 系統分析師
     **Action**:
-    1.  **Read Roadmap**: 讀取 `[[__DOCS_DIR__]]/global/00_roadmap.md`。
+    1.  **Read Roadmap**: 讀取 `[[__DOCS_DIR__]]/global/roadmap.json`。
         - **Pre-flight**: 檢查 `<ID>` 的 Dep 是否已完成。未完成則拒絕 Plan（除非使用者強制）。
-    2.  **Read Tech Stack**: `02_tech_stack.md` (技術紅線)。
-    3.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/03_design_tokens.md`。
-    4.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/04_data_snapshot.md`。
-    5.  **Read Dependency Context** (如有依賴任務):
-        - 讀取依賴任務的 `spec.md` (介面契約) 和 `plan.md` (已實作內容)。
+    2.  **Read Vision**: 讀取 `[[__DOCS_DIR__]]/global/vision.md`。
+        - 提取北極星指標和設計哲學，後續方案須與此對齊。
+    3.  **Read Tech Stack**: `02_tech_stack.md` (技術紅線)。
+    4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`。
+    5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
+    6.  **Read Dependency Context** (如有依賴任務):
+        - 讀取依賴任務的 `spec.md` (介面契約) 和 `plan.json` (已實作內容)。
         - 避免重複定義上游介面，確保對接點精確對齊。
 
     **Output**: 訪談上下文素材（含依賴任務的關鍵介面資訊）。
@@ -110,9 +112,9 @@
 
     ---
 
-    **Goal**: 鎖定 `spec`, `ui`, `04_data`。
+    **Goal**: 鎖定 `spec`, `ui`, `data_snapshot.json`。
 
-    **⌨️ INPUT (靈活回覆)**: `A | B | ...`
+    **⌨️ INPUT (靈活回覆)**: 依題號順序回覆，題與題之間用 `|` 分隔；單題內支援 `A`、`A B`（多選，空格分隔）或 `Z: 使用者描述`。範例：`A B | D 簡單點 | C`。
 </step_2_interview>
 
 <step_2_5_refinement>
@@ -125,11 +127,13 @@
     **Role**: 系統管理員
     **Constraint**: 在生成 Feature 文件**之前**，須先更新以下全域檔案。
 
+    **Boundary**: 僅註冊**專案業務域**內容。Architext 框架概念（scripts、scaffold、roadmap、plan 等）和框架基礎設施錯誤禁註冊到全域檔案。
+
     **Action Checklist**:
-    1.  **`01_map.md`**: 在 Directory Mapping 註冊 `[[__DOCS_DIR__]]/features/<ID>_<Slug>`；在 Logical Topology 定義模組職責與依賴。
-    2.  **`02_dictionary.md`**: 提取訪談新術語填入表格；註冊新公共元件/模組。
-    3.  [?Data] **`04_data_snapshot.md`**: 根據 Q1 選擇新增/修改 Schema。禁寫「待定」，須寫出欄位名和型別。
-    4.  **`05_error_codes.md`**: 根據 Q4 選擇註冊新業務錯誤碼。
+    1.  **`map.json`**: 在 `directoryMapping` 註冊 `[[__DOCS_DIR__]]/features/<ID>_<Slug>`；在 `logicalTopology` 定義模組職責與依賴。
+    2.  **`dictionary.json`**: 提取訪談中的**專案業務**新術語填入 `entities`/`verbs`；註冊新共用工具到 `utilities`；註冊新公共元件到 `components`。
+    3.  [?Data] **`data_snapshot.json`**: 根據 Q1 選擇新增/修改 Schema。禁寫「待定」，須寫出欄位名和型別。
+    4.  **`error_codes.json`**: 根據 Q4 選擇註冊新**業務**錯誤碼。框架腳本錯誤由 exit code + stderr 處理，禁註冊。
 
     **Output**: 上述檔案的變更 Diff (簡要)。
 </step_3_global_sync>
@@ -148,10 +152,13 @@
     - 範本: `templates/ui.template.md`。
     - 將 Q2 轉化為 ITP v3.0 描述；使用語意化命名映射 design_tokens。
 
-    **3. `plan.md`** (必須):
-    - 範本: `templates/plan.template.md`。
+    **3. `plan.json`** (必須):
+    - 範本: `templates/plan.template.json`。
     - 根據專案型別動態調整 Phase；確保每個 Task 上下文自包含。
     - 任務描述中明確 "Additive Only" + "Respect Unknowns"。
+    - **`decisions`**: 按 Q1-Q5 維度填寫；`choice` 支援多選（如 `A B`，空格分隔）、自訂（`Z: …`）；`rationale` 須填寫組合含義或自訂意圖，供 code 階段參照，禁留空。
+    - **`notes`**: 每個 task 的 `notes` 須填寫執行時速記（範圍、spec 段落引用、關鍵約束），供 `/archi.code` 階段精確定位，禁留空。
+    - 生成後執行 `npx archi render` 生成可讀的 `.md` 視圖。
 </step_4_generate>
 
 <step_5_audit>

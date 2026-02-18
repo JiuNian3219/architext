@@ -1,0 +1,35 @@
+{
+  "entities": [
+    {
+      "term": "[业务术语]",
+      "definition": "[一句话定义]",
+      "codeName": "[PascalCase / camelCase]",
+      "forbiddenSynonyms": [],
+      "reference": "[来源: spec / vision / feature ID]"
+    }
+  ],
+  "verbs": [
+    {
+      "verb": "[业务动作]",
+      "definition": "[一句话定义]",
+      "codeName": "[camelCase]",
+      "context": "[使用场景]",
+      "reference": "[来源]"
+    }
+  ],
+  "utilities": [
+    {
+      "name": "[工具名, 如 logger]",
+      "path": "[文件路径, 如 src/utils/logger.ts]",
+      "purpose": "[用途说明]",
+      "replaces": "[替代的原始 API, 如 console.log]"
+    }
+  ],
+  "components [?UI]": [
+    {
+      "name": "[组件名]",
+      "path": "[文件路径]",
+      "purpose": "[用途说明]"
+    }
+  ]
+}

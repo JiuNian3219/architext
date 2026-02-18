@@ -42,7 +42,7 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 
 ## 4. Design & Experience [?UI]
 
-> **Note:** This section applies only to projects with UI. For specific color values and radius definitions, strictly refer to `[[__DOCS_DIR__]]/global/03_design_tokens.md`.
+> **Note:** This section applies only to projects with UI. For specific color values and radius definitions, strictly refer to `[[__DOCS_DIR__]]/global/design_tokens.json`.
 
 ### Visual Style
 
