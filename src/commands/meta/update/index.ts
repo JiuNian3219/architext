@@ -4,10 +4,7 @@ import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
 
 // 暂时没有实现
-export async function updateCommand(options: {
-  dryRun: boolean;
-  editor?: string;
-}) {
+export async function updateCommand(options: { dryRun: boolean }) {
   logger.clear();
   const t = createT(getSystemLocale());
 
