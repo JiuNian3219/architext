@@ -47,6 +47,14 @@ describe("Scaffolder Integration", () => {
     // 检查 prompts 目录
     const promptsDir = path.join(docDir, "prompts");
     expect(await fs.pathExists(promptsDir)).toBe(true);
+
+    // 检查 scripts 和 features 空目录（用于存放未来计划和脚本）
+    const scriptsDir = path.join(docDir, "scripts");
+    const featuresDir = path.join(docDir, "features");
+    expect(await fs.pathExists(scriptsDir)).toBe(true);
+    expect(await fs.pathExists(featuresDir)).toBe(true);
+    expect(await fs.readdir(scriptsDir)).toEqual([]);
+    expect(await fs.readdir(featuresDir)).toEqual([]);
   });
 
   it("应该创建 IDE 规则文件", async () => {

@@ -32,6 +32,10 @@ export class Scaffolder {
     const sourceDir = path.join(templateRoot, templateLang);
     const targetDir = path.resolve(process.cwd(), docDir);
 
+    // 确保 [[__DOCS_DIR__]] 下的 scripts 和 features 空目录存在（用于存放未来计划和脚本）
+    await fs.ensureDir(path.join(targetDir, "scripts"));
+    await fs.ensureDir(path.join(targetDir, "features"));
+
     const replacements = {
       [GLOBAL_RULES.PLACEHOLDERS.DOCS_DIR]: docDir,
       [GLOBAL_RULES.PLACEHOLDERS.RULES_DIR]: path
