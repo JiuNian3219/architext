@@ -150,6 +150,8 @@ JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi ren
 ### ⚡ Execution (执行 - 代码阶段)
 *   `/archi.code`: **Implementation**
     *   读取 Plan -> 调用 Agent Skill -> 编写代码 -> 运行审计。
+*   `/archi.audit`: **Deep Code Audit**
+    *   独立深度代码审查。带 ID 审查指定任务代码；无 ID 执行项目级体检。
 *   `/archi.fix`: **Debugging**
     *   诊断 Bug -> 查阅 Error Code -> 修复代码。
 *   `/archi.help`: **Manual**

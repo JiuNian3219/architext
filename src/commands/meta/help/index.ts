@@ -72,6 +72,11 @@ export async function helpCommand(): Promise<void> {
       t("ai.code.detail"),
       t("ai.code.example"),
     ]),
+    cmd("/archi.audit [id]", t("ai.audit.desc"), [
+      t("ai.audit.detail"),
+      t("ai.audit.example1"),
+      t("ai.audit.example2"),
+    ]),
     cmd("/archi.fix [id] <context>", t("ai.fix.desc"), [
       t("ai.fix.detail"),
       t("ai.fix.example"),
@@ -121,7 +126,7 @@ export async function helpCommand(): Promise<void> {
     tip(t("quick.new_feature"), "/archi.plan [desc]"),
     tip(t("quick.write_code"), "/archi.code <id>"),
     tip(t("quick.fix_bug"), "/archi.fix [id] <desc>"),
-    tip(t("quick.check_health"), "npx archi doctor"),
+    tip(t("quick.check_health"), "/archi.audit"),
     "",
   ].join("\n");
 

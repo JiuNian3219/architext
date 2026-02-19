@@ -178,6 +178,12 @@
           "detail": "Prerequisite: Feature must have complete Spec + Plan",
           "example": "e.g. /archi.code INF-001"
         },
+        "audit": {
+          "desc": "Independent deep code audit. Find bugs, gaps, and compliance issues.",
+          "detail": "With ID: audit specific task's code | No ID: project-level health check",
+          "example1": "e.g. /archi.audit INF-001",
+          "example2": "e.g. /archi.audit"
+        },
         "fix": {
           "desc": "Fix a bug (not a requirement change). Diagnose and fix code, usually no Spec change.",
           "detail": "Auto-records fix process to Plan for documentation consistency",

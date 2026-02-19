@@ -178,6 +178,12 @@
           "detail": "前置: 对应 Feature 须有完整的 Spec + Plan",
           "example": "例: /archi.code INF-001"
         },
+        "audit": {
+          "desc": "独立深度代码审查。找 Bug、找缺漏、查合规。",
+          "detail": "带 ID: 审查指定任务的代码实现 | 无 ID: 项目级健康体检",
+          "example1": "例: /archi.audit INF-001",
+          "example2": "例: /archi.audit"
+        },
         "fix": {
           "desc": "修复 Bug（非需求变更）。诊断错误并修复代码，通常不改 Spec。",
           "detail": "自动记录修复过程到 Plan，保持文档一致性",
