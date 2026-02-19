@@ -31,7 +31,7 @@
 <step_2_plan_fix>
     **Role**: Tech Lead
     **Action**:
-    - 更新 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`，在 `phases` 中追加 Bugfix Phase。
+    - 更新 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`，在 `phases` 陣列中追加 phase 物件，`name` 為 `Bugfix: <Bug Title>`。
     - Tasks: 1) 建立複現測試(Red) 2) 修復(Green) 3) 迴歸測試。
 
     **Output**: 追加了修復任務的 plan.json，執行 `npx archi render` 更新視圖。

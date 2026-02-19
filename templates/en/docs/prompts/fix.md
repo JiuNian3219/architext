@@ -31,7 +31,7 @@
 <step_2_plan_fix>
     **Role**: Tech Lead
     **Action**:
-    - Update `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`, append bugfix phase: `Bugfix: <Bug Title>`.
+    - Update `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`, append to `phases` array a phase object with `name`: `Bugfix: <Bug Title>`.
     - Tasks: 1) Create reproduction test (Red) 2) Apply fix (Green) 3) Regression test.
 
     **Output**: plan.json with fix tasks appended. Run `npx archi render` to regenerate visual `.md` files.
