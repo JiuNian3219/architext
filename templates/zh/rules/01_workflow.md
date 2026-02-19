@@ -58,7 +58,7 @@ alwaysApply: true
 
 ### Working Directory Rule (Critical)
 
-> 执行任何 `npx archi` 命令前，须确保终端在项目根目录（`.architext/` 所在目录）。
+> 执行任何 `npx archi` 命令前，须确保终端在项目根目录（`[[__DOCS_DIR__]]/` 所在目录）。
 > 不确定时先确认当前目录。禁在子目录直接运行。
 
 ### `npx archi task` — Roadmap 任务管理

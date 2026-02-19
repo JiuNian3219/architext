@@ -58,7 +58,7 @@ alwaysApply: true
 
 ### Working Directory Rule (Critical)
 
-> Before executing any `npx archi` command, must ensure terminal is at project root (directory containing `.architext/`).
+> Before executing any `npx archi` command, must ensure terminal is at project root (directory containing `[[__DOCS_DIR__]]/`).
 > If unsure, confirm current directory first. Forbidden to run directly from subdirectories.
 
 ### `npx archi task` — Roadmap Task Management

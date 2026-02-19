@@ -58,7 +58,7 @@ alwaysApply: true
 
 ### Working Directory Rule (Critical)
 
-> 執行任何 `npx archi` 命令前，須確保終端在專案根目錄（`.architext/` 所在目錄）。
+> 執行任何 `npx archi` 命令前，須確保終端在專案根目錄（`[[__DOCS_DIR__]]/` 所在目錄）。
 > 不確定時先確認當前目錄。禁在子目錄直接運行。
 
 ### `npx archi task` — Roadmap 任務管理

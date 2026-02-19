@@ -117,8 +117,8 @@ my-project/
 | `90_custom_rules.md` | **家规** | 用户自定义的团队习惯与黑名单（高优先级）。 |
 | `99_context_glue.md` | **导航仪** | **注册制寻址**：关联代码与文档，防止失忆。 |
 
-### B. 上下文容器 (.architext / docs)
-维持项目一致性的全局资产，通常存储在 `.architext/` 或 `docs/global/` 中。
+### B. 上下文容器 (.architext)
+维持项目一致性的全局资产，通常存储在 `.architext/` 中。
 JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi render` 自动生成。
 
 *   `roadmap.json`: 项目进度全景图（DAG 依赖管理）。
