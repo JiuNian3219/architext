@@ -197,9 +197,9 @@
           "example": "例: /archi.edit INF-001 增加记住密码功能"
         },
         "revise": {
-          "desc": "全局变更（技术栈、架构等）。修改后广播通知相关 Feature。",
-          "detail": "影响范围: Vision / Tech Stack / Roadmap / 相关 Feature",
-          "example": "例: /archi.revise tech_stack 从 REST 迁移到 GraphQL"
+          "desc": "全局变更（技术栈、架构等）。分析影响范围，经确认后级联更新相关 Feature。",
+          "detail": "影响范围: Vision / Tech Stack / Roadmap / 相关 Feature 文档",
+          "example": "例: /archi.revise 从 REST 迁移到 GraphQL"
         },
         "map": {
           "desc": "刷新架构地图。重新扫描目录树，更新 map.json。",

@@ -126,7 +126,7 @@
     |:---|:---|
     | Bug (logic error, edge case miss) | `/archi.fix <ID> <description>` |
     | Spec gap (feature not fully implemented) | `/archi.edit <ID> <supplement>` |
-    | Architecture-level issue (global violation) | `/archi.revise <scope>` |
+    | Architecture-level issue (global violation) | `/archi.revise <description>` |
     | Incomplete feature (plan falsely marked done) | `/archi.code <ID>` |
     | Minor issue (naming, comments, simplification) | Address in next `/archi.code` |
 

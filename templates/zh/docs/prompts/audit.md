@@ -126,7 +126,7 @@
     |:---|:---|
     | Bug（逻辑错误、边界遗漏） | `/archi.fix <ID> <描述>` |
     | Spec 缺漏（功能未完整实现） | `/archi.edit <ID> <补充描述>` |
-    | 架构级问题（全局违规） | `/archi.revise <scope>` |
+    | 架构级问题（全局违规） | `/archi.revise <描述>` |
     | 功能未完成（plan 虚标 done） | `/archi.code <ID>` |
     | 小问题（命名、注释、简化） | 下次 `/archi.code` 时一并处理 |
 

@@ -197,9 +197,9 @@
           "example": "例: /archi.edit INF-001 增加記住密碼功能"
         },
         "revise": {
-          "desc": "全域變更（技術堆疊、架構等）。修改後廣播通知相關 Feature。",
-          "detail": "影響範圍: Vision / Tech Stack / Roadmap / 相關 Feature",
-          "example": "例: /archi.revise tech_stack 從 REST 遷移到 GraphQL"
+          "desc": "全域變更（技術堆疊、架構等）。分析影響範圍，經確認後級聯更新相關 Feature。",
+          "detail": "影響範圍: Vision / Tech Stack / Roadmap / 相關 Feature 檔案",
+          "example": "例: /archi.revise 從 REST 遷移到 GraphQL"
         },
         "map": {
           "desc": "重新整理架構地圖。重新掃描目錄樹，更新 map.json。",

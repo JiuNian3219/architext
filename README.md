@@ -148,6 +148,8 @@ JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi ren
     *   产出 `Spec` (逻辑), `UI` (视觉), `Plan` (步骤)。
 *   `/archi.edit`: **Spec Modification**
     *   局部变更（先改 Spec 后改代码）。
+*   `/archi.revise`: **Global Revision**
+    *   全局变更（技术栈、架构、愿景等）。分析影响 -> 用户确认 -> 级联更新 Feature 文档。
 
 ### ⚡ Execution (执行 - 代码阶段)
 *   `/archi.code`: **Implementation**

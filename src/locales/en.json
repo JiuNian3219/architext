@@ -197,9 +197,9 @@
           "example": "e.g. /archi.edit INF-001 add remember-me feature"
         },
         "revise": {
-          "desc": "Global change (tech stack, architecture). Broadcasts to affected Features.",
-          "detail": "Scope: Vision / Tech Stack / Roadmap / Related Features",
-          "example": "e.g. /archi.revise tech_stack migrate from REST to GraphQL"
+          "desc": "Global change (tech stack, architecture). Analyzes impact, cascades updates to affected Features after confirmation.",
+          "detail": "Scope: Vision / Tech Stack / Roadmap / Related Feature docs",
+          "example": "e.g. /archi.revise migrate from REST to GraphQL"
         },
         "map": {
           "desc": "Refresh architecture map. Rescan directory tree, update map.json.",

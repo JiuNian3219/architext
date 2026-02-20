@@ -85,7 +85,7 @@ export async function helpCommand(): Promise<void> {
       t("ai.edit.detail"),
       t("ai.edit.example"),
     ]),
-    cmd("/archi.revise <target> [context]", t("ai.revise.desc"), [
+    cmd("/archi.revise [context]", t("ai.revise.desc"), [
       t("ai.revise.detail"),
       t("ai.revise.example"),
     ]),
