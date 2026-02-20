@@ -1,57 +1,60 @@
 ---
-description: UI Design & Structure (ITP v3.0) for {FEATURE_NAME}.
+description: UI Structure (ITP v3.0) for {FEATURE_NAME}.
+glue: ui.preview.html — Visual reference file, open in browser to preview
 ---
 
-# UI Design: {FEATURE_NAME}
+# UI: {FEATURE_NAME}
 
-> **Protocol:** ITP v3.0 (See `02_tech_stack.md`)
-> **Reference:** `[[__DOCS_DIR__]]/global/design_tokens.json`
+> **Protocol:** ITP v3.0 | **Tokens:** `[[__DOCS_DIR__]]/global/design_tokens.json` | **Preview:** `ui.preview.html`
 
-## 1. Interaction Flow
+## 1. Visual Intent
 
-<!-- [AI Instruction]: Brief user interaction steps, describe the complete flow from trigger to completion -->
+<!-- [AI]: Describe visual intent; code phase uses this to determine visual presentation -->
 
-1. User clicks [Entry Point]. (e.g. "Add Comment" button)
+| Aspect | Description |
+|:---|:---|
+| Mood | [e.g. Clean & Professional / Playful & Vibrant / Dark & Technical] |
+| Visual Weight | [e.g. Page focal point on CTA button; header area takes 30% visual weight] |
+| Density | [e.g. Spacious — generous whitespace, card spacing gap-6; or Compact — info-dense, gap-2] |
+| Key Presets | [e.g. card, button-primary, input — ref design_tokens.json componentPresets] |
 
-2. UI shows [Loading State]. (e.g. Skeleton loader)
+## 2. Component Tree
 
-3. User completes action. (e.g. Submit form)
-
-4. System provides feedback. (e.g. Success toast)
-
-## 2. Component Structure (ITP Description)
-
-<!-- [AI Instruction]: Describe component tree using ITP syntax.
-  Naming: PrefixFunction (Btn, Box, Txt, Inp, List)
-  Syntax: Name [Layout] (Props) -> #Interaction
--->
+<!-- [AI]: ITP syntax; must reference componentPresets -->
 
 ```text
-// AI: Replace with actual structure based on requirements
 Page{Name} [Col, Fill, Bg:Base]
-BoxHeader [Row, Between, P:4]
-TxtTitle [H2] (Text: {FEATURE_NAME})
+  BoxHeader [Row, Between, P:4]
+    TxtTitle [H2] (Text: {FEATURE_NAME})
+    BoxActions [Row, Gap:2]
+      #ActionButtons
 
-BoxContent [Col, Gap:4]
-#Children_Components
-// e.g. InpSearch [Fill]
-// e.g. ListResults [Col]
+  BoxContent [Col, Gap:4, P:4]
+    #Children
+
+  BoxFooter [Row, Between, P:4, Border-t]
+    #FooterContent
 ```
 
-## 3. Visual States
+## 3. Interactions
 
-<!-- [AI Instruction]: Define all possible UI states, ensuring edge cases are covered -->
+| Trigger | Target | Action |
+|:---|:---|:---|
+| #EntryPoint click | Page | Mount + fetch data |
+| #Submit click | API | POST -> success: Toast / error: Toast |
 
-* **Loading**: [e.g. Skeleton row x 3, use `bg-muted` token]
+## 4. States
 
-* **Empty**: [e.g. Illustration "No Data", use `text-muted-foreground` token]
+| State | Render |
+|:---|:---|
+| `loading` | Skeleton x3 (Preset: skeleton) |
+| `empty` | Illustration + Txt:Muted (Preset: emptyState) |
+| `error` | Toast:Destructive + BtnRetry |
+| `success` | Toast:Primary |
 
-* **Error**: [e.g. Toast with Retry button, use `bg-destructive` token]
+## 5. Responsive
 
-* **Success**: [e.g. Success message, use `bg-primary` token]
-
-## 4. Responsive Strategy
-
-* **Mobile**: [e.g. Sidebar hidden]
-
-* **Desktop**: [e.g. Sidebar visible]
+| Breakpoint | Adaptation |
+|:---|:---|
+| < sm (640px) | Single-col, sidebar hidden |
+| >= lg (1024px) | Sidebar visible, multi-col |

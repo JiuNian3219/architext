@@ -16,15 +16,15 @@
 <step_1_load>
     **Role**: Product Manager
     **Action**:
-    - Read `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` spec.md, ui.md, plan.json.
+    - Read `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` spec.md, ui.md, ui.preview.html, plan.json.
     - [?Major UX Change] Quick search for similar product best practices.
 </step_1_load>
 
 <step_2_refine_docs>
     **Role**: Requirements Analyst & Designer
     **Action**:
-    - Modify spec.md (logic/rule changes) and ui.md (interface/interaction changes) based on `[context]`.
-    - [?UI Modification] Introduce designer perspective, ensure compliance with design_tokens.
+    - Modify spec.md (logic/rule changes) and ui.md (structure/interaction changes) based on `[context]`.
+    - [?UI Modification] Also update `ui.preview.html`; introduce designer perspective, ensure compliance with design_tokens and componentPresets.
     - Ask user questions (A/B/C/D options) to confirm details when requirements are vague.
 
     **Output**: Updated Spec and UI documents.

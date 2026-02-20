@@ -37,7 +37,8 @@
         - `[[__DOCS_DIR__]]/global/vision.md` — Project directional baseline
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — Feature logic
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — Task checklist
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — Visual design (if exists)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — Component structure (ITP, if exists)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.preview.html` — Visual reference (if exists)
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md` — Previous audit report (if exists, for comparison)
         - `02_tech_stack.md` — Technical red lines
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
@@ -70,7 +71,7 @@
     | 7 | **Tech Stack Compliance** | Against `02_tech_stack.md`: forbidden patterns, outdated APIs, hardcoded values |
     | 8 | **Security** | Sensitive info leakage, unvalidated input, injection risks, permission checks |
     | 9 | **Performance** | Unnecessary full imports/large loops/useless computation/memory leaks/N+1 queries |
-    | 10 | [?UI] **Design Compliance** | Styles use Tokens only; no hardcoded Hex/px/rem |
+    | 10 | [?UI] **Design Compliance** | Styles use visual patterns from Tokens/Presets; no hardcoded magic values; implementation visually consistent with `ui.preview.html` |
     | 11 | [?Data] **Data Integrity** | Field names/types consistent with `data_snapshot.json` |
     | 12 | [?I18n] **I18n Compliance** | No hardcoded strings; must use Key/dictionary references |
 

@@ -16,15 +16,15 @@
 <step_1_load>
     **Role**: 產品經理
     **Action**:
-    - 讀取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
+    - 讀取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、ui.preview.html、plan.json。
     - [?重大 UX 變更] 快速搜尋同類產品最佳實務。
 </step_1_load>
 
 <step_2_refine_docs>
     **Role**: 需求分析師 & 設計師
     **Action**:
-    - 根據 `[context]` 修改 spec.md（邏輯/規則變更）和 ui.md（介面/互動變更）。
-    - [?UI 修改] 引入設計師視角，確保符合 design_tokens。
+    - 根據 `[context]` 修改 spec.md（邏輯/規則變更）和 ui.md（結構/互動變更）。
+    - [?UI 修改] 同步更新 `ui.preview.html`，引入設計師視角，確保符合 design_tokens 和 componentPresets。
     - 需求模糊時向使用者提問 (A/B/C/D 選項) 確認細節。
 
     **Output**: 更新後的 Spec 和 UI 文件。

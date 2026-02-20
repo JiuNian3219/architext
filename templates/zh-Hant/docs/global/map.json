@@ -74,7 +74,12 @@
     {
       "file": "ui.md",
       "category": "UI/UX",
-      "purpose": "視覺結構、互動狀態、樣式定義 (Visual)"
+      "purpose": "元件結構(ITP)、互動、狀態 — AI 讀取的結構真相源"
+    },
+    {
+      "file": "ui.preview.html",
+      "category": "UI/UX",
+      "purpose": "視覺預覽 — 瀏覽器開啟檢視效果，人類審查用"
     },
     {
       "file": "plan.json",

@@ -17,7 +17,7 @@
     **Role**: Project Observer
     **Action**:
     1.  Read `[[__DOCS_DIR__]]/global/roadmap.json` — get task list, statuses, dependencies.
-    2.  Scan `[[__DOCS_DIR__]]/features/` directory — get existing Features and their doc completeness (spec.md / ui.md / plan.json).
+    2.  Scan `[[__DOCS_DIR__]]/features/` directory — get existing Features and their doc completeness (spec.md / ui.md / ui.preview.html / plan.json).
     3.  [?question] If user provided a question, locate relevant files by semantic match (spec / plan / vision / tech_stack / data_snapshot, etc.), read as needed.
 
     **Output**: Internal context (not shown to user).

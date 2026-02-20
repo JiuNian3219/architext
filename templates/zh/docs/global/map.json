@@ -74,7 +74,12 @@
     {
       "file": "ui.md",
       "category": "UI/UX",
-      "purpose": "视觉结构、交互状态、样式定义 (Visual)"
+      "purpose": "组件结构(ITP)、交互、状态 — AI 读取的结构真相源"
+    },
+    {
+      "file": "ui.preview.html",
+      "category": "UI/UX",
+      "purpose": "视觉预览 — 浏览器打开查看效果，人类审查用"
     },
     {
       "file": "plan.json",

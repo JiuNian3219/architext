@@ -6,7 +6,7 @@
     <style>Diagnostic, Surgical, Spec-Compliant</style>
     <language>English</language>
     <principles>
-      1.  **Spec Immutable**: Prohibited from modifying `spec.md` / `ui.md` (unless Bug itself is a documentation error).
+      1.  **Spec Immutable**: Prohibited from modifying `spec.md` / `ui.md` / `ui.preview.html` (unless Bug itself is a documentation error).
       2.  **Reproduction**: Must conceive reproduction steps or test cases first.
       3.  **Root Cause**: Must analyze root cause, not patch the surface.
       4.  **Test-Driven**: Fix plan must include new test cases.
@@ -21,7 +21,7 @@
         - Has `<id>`: Lock target `features/<ID>_<Slug>/`.
         - No `<id>`: Analyze `[context]` to search most relevant module.
           Unique match → Auto lock | Multiple matches → List candidates and ask | Cannot locate → Report error requesting ID.
-    2.  Read all docs under target directory (`spec.md`, `ui.md`, `plan.json`) and related code.
+    2.  Read all docs under target directory (`spec.md`, `ui.md`, `ui.preview.html`, `plan.json`) and related code.
     3.  Analyze `[context]`, combine with code logic to locate potential failure points.
     4.  **Hypothesis**: Propose 1-3 root cause hypotheses.
 

@@ -31,7 +31,8 @@
 
     3.  **Load Context** (Use Roadmap `📁 Slug` to locate):
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — Logic & Scenarios
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — Design & Components (if exists)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — Component structure (ITP, if exists)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.preview.html` — Visual reference (if exists, for style confirmation)
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — Task breakdown (contains `notes` shorthand; must reference during execution)
         - `02_tech_stack.md` — Technical Red Lines
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
@@ -58,7 +59,7 @@
     **Protocol**:
     - **Read First**: Must read target file before modification; follow existing code style.
     - **Use Existing Stack**: Use only technologies and libraries declared in `02_tech_stack.md`.
-    - [?UI] **Design Tokens Only**: Styles strictly use Tokens; prohibited hardcoding Hex/px/rem.
+    - [?UI] **Design Tokens Only**: Styles strictly use visual patterns defined by Tokens/Presets; prohibited hardcoding magic values (colors, sizes, spacing, etc.).
     - **Type-Safe**: Complete type definitions; use the project tech stack's type system to guard boundaries.
     - **Code Organization**: Follow the architecture pattern and file placement strategy defined in `02_tech_stack.md`.
     - **Comments**: Explain Why, not What; reject nonsense comments.
@@ -111,7 +112,7 @@
     **Role**: Chief Auditor
     **Checklist**:
     1.  **Tech Consistency**: Consistent with `02_tech_stack.md` (libraries/patterns/API style).
-    2.  [?UI] **Design Compliance**: Styles use Tokens only; no hardcoded values.
+    2.  [?UI] **Design Compliance**: Styles use Token/Preset visual patterns only; no hardcoded magic values.
     3.  [?Data] **Data Integrity**: Compliant with `data_snapshot.json`; field names/types match.
     4.  **SOTA**: Reject outdated patterns; adopt tech_stack best practices.
     5.  [?UI] **Accessibility**: Include necessary accessibility attributes.

@@ -53,33 +53,47 @@ alwaysApply: false
 
 ---
 
-## 4. UI Protocol: ITP v3.0 (Atomic Standard) [Optional - Only for UI Projects]
-<!-- Core UI Description Protocol, all .ui.md files must follow this DSL -->
+## 4. UI Protocol: ITP v3.0 (Dual-Artifact) [Optional - Only for UI Projects]
+<!-- Core UI Description Protocol -->
 > **Note:** If project has no UI (e.g. CLI, Backend API, Library), remove this section.
 
-### 4.1 Naming (PrefixFunction)
-Component naming must follow `Prefix+Function` format, arbitrary naming is forbidden:
-* **Btn**: Button (e.g., `BtnSubmit`)
-* **Inp**: Input (e.g., `InpEmail`)
-* **Txt**: Text/Label (e.g., `TxtTitle`)
-* **Box**: Container/Div (e.g., `BoxHeader`)
-* **Img**: Image/Icon (e.g., `ImgAvatar`)
-* **List/Card/Modal**: As named.
+### 4.1 Dual-Artifact Strategy
 
-### 4.2 Syntax Structure
+Each UI feature produces two artifacts with separated concerns:
+
+| Artifact | Format | Reader | Responsibility |
+|:---|:---|:---|:---|
+| `ui.md` | ITP v3.0 DSL | AI (code/audit) | Component tree, interactions, visual intent, states — structural source of truth |
+| `ui.preview.html` | HTML + Tailwind CDN | Human (browser) | Visual preview — open directly to see the effect |
+
+- `ui.md` is a machine spec for AI; does not need to be human-comfortable
+- `ui.preview.html` uses HTML + Tailwind as a **universal preview medium** (well-trained in AI, zero-dependency, low error rate); independent of the project's actual tech stack
+- Both must stay consistent; code phase uses `ui.md` as source, implements equivalent visual effect with the **project's own tech stack**
+
+### 4.2 Naming (PrefixFunction)
+Component naming must follow `Prefix+Function` format:
+* **Btn**: Button | **Inp**: Input | **Txt**: Text/Label
+* **Box**: Container | **Img**: Image/Icon | **List/Card/Modal**: As named.
+
+### 4.3 Syntax Structure
 * **Definition**: `Name [Layout] (Style/Content) -> #Interaction`
 * **Layout Keywords**: `[Row]`, `[Col]`, `[Center]`, `[Between]`, `[Fill]`, `[Grid]`
 * **Example**:
 ```
-
     BoxHeader [Row, Between]
       TxtTitle [H2] (Text: "Login")
       BtnClose [Ghost] (Icon: X) -> #CloseModal
-
 ```
 
-### 4.3 Delta Syntax
-* **Usage**: Used to modify existing UI snapshots (`pages/*.md`).
+### 4.4 Component Presets
+`design_tokens.json` contains `componentPresets` describing **visual patterns** for common components (layout, spacing, radius, shadow, etc.) using Tailwind classes.
+- Tailwind classes serve as a "reference implementation", not mandatory copy-paste code
+- `ui.md` references preset names via `(Preset: card)`
+- `ui.preview.html` directly uses Tailwind classes for rendering preview
+- **Code phase**: implement equivalent visual effect using the project's tech stack (e.g. component library's `<Card>`, SwiftUI `.cardStyle()`, Flutter `Card()`, etc.); the goal is visual consistency, not class consistency
+
+### 4.5 Delta Syntax
+* **Usage**: Used to modify existing UI snapshots.
 * **Format**: `@Locator { + Add, ~ Modify, - Remove }`
 
 ---

@@ -74,7 +74,12 @@
     {
       "file": "ui.md",
       "category": "UI/UX",
-      "purpose": "Visual Structure, Interaction States, Style Definitions (Visual)"
+      "purpose": "Component structure (ITP), interactions, states — structural source of truth for AI"
+    },
+    {
+      "file": "ui.preview.html",
+      "category": "UI/UX",
+      "purpose": "Visual preview — open in browser to see the effect, for human review"
     },
     {
       "file": "plan.json",

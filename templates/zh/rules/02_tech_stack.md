@@ -50,33 +50,47 @@ alwaysApply: false
 
 ---
 
-## 4. UI Protocol: ITP v3.0 (Atomic Standard) [可选 - 仅适用于有 UI 的项目]
-<!-- 核心 UI 描述协议，所有 .ui.md 文件必须遵循此 DSL -->
+## 4. UI Protocol: ITP v3.0 (Dual-Artifact) [可选 - 仅适用于有 UI 的项目]
+<!-- 核心 UI 描述协议 -->
 > **Note:** 如果项目没有 UI（如 CLI、Backend API、Library），可以删除此章节。
 
-### 4.1 Naming (PrefixFunction)
-组件命名必须遵循 `前缀+功能` 格式，严禁随意命名：
-* **Btn**: Button (e.g., `BtnSubmit`)
-* **Inp**: Input (e.g., `InpEmail`)
-* **Txt**: Text/Label (e.g., `TxtTitle`)
-* **Box**: Container/Div (e.g., `BoxHeader`)
-* **Img**: Image/Icon (e.g., `ImgAvatar`)
-* **List/Card/Modal**: As named.
+### 4.1 Dual-Artifact Strategy (双制品策略)
 
-### 4.2 Syntax Structure (语法结构)
+每个 UI 功能产出两个制品，职责分离：
+
+| 制品 | 格式 | 读者 | 职责 |
+|:---|:---|:---|:---|
+| `ui.md` | ITP v3.0 DSL | AI (code/audit) | 组件树、交互、视觉意图、状态 — 结构真相源 |
+| `ui.preview.html` | HTML + Tailwind CDN | 人类 (浏览器) | 视觉预览 — 可直接打开查看效果 |
+
+- `ui.md` 是给 AI 读的机器规格书，不需人类舒适阅读
+- `ui.preview.html` 使用 HTML + Tailwind 作为**通用预览介质**（AI 训练充分、零依赖、出错率低），与项目实际技术栈无关
+- 两者须保持一致；code 阶段以 `ui.md` 为准，用**项目自身技术栈**实现等价视觉效果
+
+### 4.2 Naming (PrefixFunction)
+组件命名须遵循 `前缀+功能` 格式：
+* **Btn**: Button | **Inp**: Input | **Txt**: Text/Label
+* **Box**: Container | **Img**: Image/Icon | **List/Card/Modal**: As named.
+
+### 4.3 Syntax Structure (语法结构)
 * **Definition**: `Name [Layout] (Style/Content) -> #Interaction`
 * **Layout Keywords**: `[Row]`, `[Col]`, `[Center]`, `[Between]`, `[Fill]`, `[Grid]`
 * **Example**:
 ```
-
     BoxHeader [Row, Between]
       TxtTitle [H2] (Text: "Login")
       BtnClose [Ghost] (Icon: X) -> #CloseModal
-
 ```
 
-### 4.3 Delta Syntax (差分更新)
-* **Usage**: 用于修改现有 UI 快照 (`pages/*.md`)。
+### 4.4 Component Presets (组件预设)
+`design_tokens.json` 中的 `componentPresets` 用 Tailwind class 描述常用组件的**视觉模式**（布局、间距、圆角、阴影等）。
+- Tailwind class 是"参考实现"，不是必须照抄的代码
+- `ui.md` 中通过 `(Preset: card)` 引用预设名称
+- `ui.preview.html` 中直接使用 Tailwind class 渲染预览
+- **code 阶段**：用项目技术栈实现等价视觉效果（如组件库的 `<Card>`、SwiftUI 的 `.cardStyle()`、Flutter 的 `Card()` 等）；核心是视觉一致，不是 class 一致
+
+### 4.5 Delta Syntax (差分更新)
+* **Usage**: 用于修改现有 UI 快照。
 * **Format**: `@Locator { + Add, ~ Modify, - Remove }`
 
 ---

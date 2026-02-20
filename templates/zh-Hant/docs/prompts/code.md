@@ -31,7 +31,8 @@
 
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 邏輯與場景
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 設計與元件(如存在)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 元件結構(ITP, 如存在)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.preview.html` — 視覺參考(如存在，用於確認風格)
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任務拆解（含 `notes` 速記，執行時須參照）
         - `02_tech_stack.md` — 技術紅線
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
@@ -58,7 +59,7 @@
     **Protocol**:
     - **Read First**: 修改前須讀取目標檔案；遵循專案現有程式碼風格。
     - **Use Existing Stack**: 僅用 `02_tech_stack.md` 宣告的技術與庫。
-    - [?UI] **Design Tokens Only**: 樣式嚴格使用 Token；禁硬編碼 Hex/px/rem。
+    - [?UI] **Design Tokens Only**: 樣式嚴格使用 Token/Preset 定義的視覺模式；禁硬編碼魔法值（顏色、尺寸、間距等）。
     - **Type-Safe**: 補齊型別定義；用專案技術棧的型別系統守護邊界。
     - **Code Organization**: 遵循 `02_tech_stack.md` 中定義的架構模式與檔案歸位策略。
     - **Comments**: 解釋 Why 而非 What；拒絕廢話註解。
@@ -111,7 +112,7 @@
     **Role**: 首席審計官
     **Checklist**:
     1.  **Tech Consistency**: 與 `02_tech_stack.md` 一致（庫/模式/API 風格）。
-    2.  [?UI] **Design Compliance**: 樣式僅用 Token；無硬編碼值。
+    2.  [?UI] **Design Compliance**: 樣式僅用 Token/Preset 視覺模式；無硬編碼魔法值。
     3.  [?Data] **Data Integrity**: 符合 `data_snapshot.json`；欄位名/型別一致。
     4.  **SOTA**: 拒絕過時模式；採用 tech_stack 最佳實務。
     5.  [?UI] **Accessibility**: 含必要無障礙屬性。

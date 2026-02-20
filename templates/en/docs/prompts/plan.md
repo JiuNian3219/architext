@@ -148,9 +148,9 @@
     - Convert Q1 + Q4 to Gherkin Scenarios.
     - If upstream task, must include explicit Interface/Type definitions.
 
-    **2. `ui.md`** [?UI]:
-    - Template: `templates/ui.template.md`.
-    - Convert Q2 to ITP v3.0 description; use semantic naming mapped to design_tokens.
+    **2. `ui.md` + `ui.preview.html`** [?UI]:
+    - **`ui.md`**: Template `templates/ui.template.md`. Convert Q2 to ITP v3.0 description; reference componentPresets from `design_tokens.json`.
+    - **`ui.preview.html`**: Template `templates/ui.preview.template.html`. Generate browser-openable visual preview based on `ui.md` component tree; must include all states (Default/Loading/Empty/Error); use Tailwind CDN + actual color values from design_tokens. Prompt user to open in browser to confirm visual appearance after generation.
 
     **3. `plan.json`** (Mandatory):
     - Template: `templates/plan.template.json`.

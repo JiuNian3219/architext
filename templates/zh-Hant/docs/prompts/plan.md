@@ -148,9 +148,9 @@
     - 將 Q1 + Q4 轉化為 Gherkin Scenarios。
     - 若為上游任務，須包含明確的 Interface/Type 定義。
 
-    **2. `ui.md`** [?UI]:
-    - 範本: `templates/ui.template.md`。
-    - 將 Q2 轉化為 ITP v3.0 描述；使用語意化命名映射 design_tokens。
+    **2. `ui.md` + `ui.preview.html`** [?UI]:
+    - **`ui.md`**: 範本 `templates/ui.template.md`。將 Q2 轉化為 ITP v3.0 描述；引用 `design_tokens.json` 中的 componentPresets。
+    - **`ui.preview.html`**: 範本 `templates/ui.preview.template.html`。基於 `ui.md` 元件樹生成可瀏覽器開啟的視覺預覽；須包含所有狀態(Default/Loading/Empty/Error)；使用 Tailwind CDN + design_tokens 中的實際顏色值。須在生成後提示使用者瀏覽器開啟確認視覺效果。
 
     **3. `plan.json`** (必須):
     - 範本: `templates/plan.template.json`。

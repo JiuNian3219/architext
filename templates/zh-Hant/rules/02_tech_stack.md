@@ -50,33 +50,47 @@ alwaysApply: false
 
 ---
 
-## 4. UI Protocol: ITP v3.0 (Atomic Standard) [可選 - 僅適用於有 UI 的專案]
-<!-- 核心 UI 描述協議，所有 .ui.md 檔案必須遵循此 DSL -->
+## 4. UI Protocol: ITP v3.0 (Dual-Artifact) [可選 - 僅適用於有 UI 的專案]
+<!-- 核心 UI 描述協議 -->
 > **Note:** 如果專案沒有 UI（如 CLI、Backend API、Library），可以刪除此章節。
 
-### 4.1 Naming (PrefixFunction)
-組件命名必須遵循 `前綴+功能` 格式，嚴禁隨意命名：
-* **Btn**: Button (e.g., `BtnSubmit`)
-* **Inp**: Input (e.g., `InpEmail`)
-* **Txt**: Text/Label (e.g., `TxtTitle`)
-* **Box**: Container/Div (e.g., `BoxHeader`)
-* **Img**: Image/Icon (e.g., `ImgAvatar`)
-* **List/Card/Modal**: As named.
+### 4.1 Dual-Artifact Strategy (雙製品策略)
 
-### 4.2 Syntax Structure (語法結構)
+每個 UI 功能產出兩個製品，職責分離：
+
+| 製品 | 格式 | 讀者 | 職責 |
+|:---|:---|:---|:---|
+| `ui.md` | ITP v3.0 DSL | AI (code/audit) | 元件樹、互動、視覺意圖、狀態 — 結構真相源 |
+| `ui.preview.html` | HTML + Tailwind CDN | 人類 (瀏覽器) | 視覺預覽 — 可直接開啟檢視效果 |
+
+- `ui.md` 是給 AI 讀的機器規格書，不需人類舒適閱讀
+- `ui.preview.html` 使用 HTML + Tailwind 作為**通用預覽介質**（AI 訓練充分、零依賴、出錯率低），與專案實際技術棧無關
+- 兩者須保持一致；code 階段以 `ui.md` 為準，用**專案自身技術棧**實現等價視覺效果
+
+### 4.2 Naming (PrefixFunction)
+元件命名須遵循 `前綴+功能` 格式：
+* **Btn**: Button | **Inp**: Input | **Txt**: Text/Label
+* **Box**: Container | **Img**: Image/Icon | **List/Card/Modal**: As named.
+
+### 4.3 Syntax Structure (語法結構)
 * **Definition**: `Name [Layout] (Style/Content) -> #Interaction`
 * **Layout Keywords**: `[Row]`, `[Col]`, `[Center]`, `[Between]`, `[Fill]`, `[Grid]`
 * **Example**:
 ```
-
     BoxHeader [Row, Between]
       TxtTitle [H2] (Text: "Login")
       BtnClose [Ghost] (Icon: X) -> #CloseModal
-
 ```
 
-### 4.3 Delta Syntax (差分更新)
-* **Usage**: 用於修改現有 UI 快照 (`pages/*.md`)。
+### 4.4 Component Presets (元件預設)
+`design_tokens.json` 中的 `componentPresets` 用 Tailwind class 描述常用元件的**視覺模式**（佈局、間距、圓角、陰影等）。
+- Tailwind class 是「參考實現」，不是必須照抄的程式碼
+- `ui.md` 中透過 `(Preset: card)` 引用預設名稱
+- `ui.preview.html` 中直接使用 Tailwind class 渲染預覽
+- **code 階段**：用專案技術棧實現等價視覺效果（如元件庫的 `<Card>`、SwiftUI 的 `.cardStyle()`、Flutter 的 `Card()` 等）；核心是視覺一致，不是 class 一致
+
+### 4.5 Delta Syntax (差分更新)
+* **Usage**: 用於修改現有 UI 快照。
 * **Format**: `@Locator { + Add, ~ Modify, - Remove }`
 
 ---

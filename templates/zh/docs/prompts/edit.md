@@ -16,15 +16,15 @@
 <step_1_load>
     **Role**: 产品经理
     **Action**:
-    - 读取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
+    - 读取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、ui.preview.html、plan.json。
     - [?重大 UX 变更] 快速搜索同类产品最佳实践。
 </step_1_load>
 
 <step_2_refine_docs>
     **Role**: 需求分析师 & 设计师
     **Action**:
-    - 根据 `[context]` 修改 spec.md（逻辑/规则变更）和 ui.md（界面/交互变更）。
-    - [?UI 修改] 引入设计师视角，确保符合 design_tokens。
+    - 根据 `[context]` 修改 spec.md（逻辑/规则变更）和 ui.md（结构/交互变更）。
+    - [?UI 修改] 同步更新 `ui.preview.html`，引入设计师视角，确保符合 design_tokens 和 componentPresets。
     - 需求模糊时向用户提问 (A/B/C/D 选项) 确认细节。
 
     **Output**: 更新后的 Spec 和 UI 文档。

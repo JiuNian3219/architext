@@ -86,13 +86,15 @@ my-project/
 │   │
 │   ├── templates/              # 文档模板
 │   │   ├── spec.template.md    # 功能规格模板
-│   │   ├── ui.template.md      # UI 设计模板
+│   │   ├── ui.template.md      # UI 结构模板（ITP, AI 读取）
+│   │   ├── ui.preview.template.html  # UI 视觉预览模板（人类浏览器查看）
 │   │   └── plan.template.json  # 实施计划 JSON 模板
 │   │
 │   └── features/               # 功能文档（按功能模块组织）
 │       └── INF-001_feature-name/
 │           ├── spec.md         # 功能规格（Gherkin）
-│           ├── ui.md           # UI 设计（如适用）
+│           ├── ui.md           # UI 组件结构（ITP, 如适用）
+│           ├── ui.preview.html # UI 视觉预览（浏览器打开查看效果）
 │           └── plan.json       # 实施计划（JSON 格式）
 │
 └── xxx/                        # 业务代码（项目实际代码）

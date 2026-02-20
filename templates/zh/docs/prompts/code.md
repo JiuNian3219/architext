@@ -31,7 +31,8 @@
 
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 逻辑与场景
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 设计与组件(如存在)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 组件结构(ITP, 如存在)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.preview.html` — 视觉参考(如存在，用于确认风格)
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任务拆解（含 `notes` 速记，执行时须参照）
         - `02_tech_stack.md` — 技术红线
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
@@ -58,7 +59,7 @@
     **Protocol**:
     - **Read First**: 修改前须读取目标文件；遵循项目现有代码风格。
     - **Use Existing Stack**: 仅用 `02_tech_stack.md` 声明的技术与库。
-    - [?UI] **Design Tokens Only**: 样式严格使用 Token；禁硬编码 Hex/px/rem。
+    - [?UI] **Design Tokens Only**: 样式严格使用 Token/Preset 定义的视觉模式；禁硬编码魔法值（颜色、尺寸、间距等）。
     - **Type-Safe**: 补齐类型定义；用项目技术栈的类型系统守护边界。
     - **Code Organization**: 遵循 `02_tech_stack.md` 中定义的架构模式与文件归位策略。
     - **Comments**: 解释 Why 而非 What；拒绝废话注释。
@@ -111,7 +112,7 @@
     **Role**: 首席审计官
     **Checklist**:
     1.  **Tech Consistency**: 与 `02_tech_stack.md` 一致（库/模式/API 风格）。
-    2.  [?UI] **Design Compliance**: 样式仅用 Token；无硬编码值。
+    2.  [?UI] **Design Compliance**: 样式仅用 Token/Preset 视觉模式；无硬编码魔法值。
     3.  [?Data] **Data Integrity**: 符合 `data_snapshot.json`；字段名/类型一致。
     4.  **SOTA**: 拒绝过时模式；采用 tech_stack 最佳实践。
     5.  [?UI] **Accessibility**: 含必要无障碍属性。

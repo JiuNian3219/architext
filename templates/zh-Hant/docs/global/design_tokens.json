@@ -160,5 +160,23 @@
         "usage": "Modal open/close"
       }
     ]
+  },
+  "componentPresets": {
+    "card": "bg-card rounded-lg shadow-sm border border-border p-6",
+    "cardHeader": "flex items-center justify-between pb-4 border-b border-border",
+    "button-primary": "bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm font-medium shadow-sm hover:opacity-90 transition-opacity",
+    "button-secondary": "bg-card text-foreground rounded-md px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors",
+    "button-ghost": "bg-transparent hover:bg-muted rounded-md px-3 py-2 text-sm transition-colors",
+    "button-destructive": "bg-destructive text-destructive-foreground rounded-md px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity",
+    "input": "w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors",
+    "label": "text-sm font-medium text-foreground",
+    "badge": "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+    "emptyState": "flex flex-col items-center justify-center py-16 text-muted-foreground gap-3",
+    "skeleton": "animate-pulse rounded-md bg-muted",
+    "toast": "rounded-lg shadow-md border border-border p-4 flex items-start gap-3",
+    "divider": "h-px bg-border my-4",
+    "pageContainer": "max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8",
+    "sectionHeader": "flex items-center justify-between mb-6",
+    "navItem": "flex items-center gap-2 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
   }
 }
