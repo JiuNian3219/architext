@@ -113,8 +113,9 @@
     **Action**:
     1. Ask only about gaps; do not ask what Brief already answers.
     2. Each question: 3–5 options + `[Z] Custom`, mark AI recommendation with `[Recommended]`.
-    3. Each question must include AI+/AI- columns (brief pros/cons from AI Agent view).
-    4. Total questions: 3–6 (merge related ones).
+    3. **Option description must state concrete behavior**: what the option is, what the project looks like if chosen, when it fits. No one-word labels. User should understand "what choosing A means".
+    4. **AI+/AI- must be full sentences**: specific advantages and risks from AI Agent view. Never write "None" — every option has tradeoffs.
+    5. Total questions: 3–6 (merge related ones).
 
     **Output Format**:
     ```
@@ -123,9 +124,9 @@
     **[Q1] Question title**
     > Why this info is needed (one sentence)
 
-    | ID | Option | Brief | AI+ | AI- |
+    | ID | Option | Description | AI+ | AI- |
     |:---|:---|:---|:---|:---|
-    | A [Recommended] | ... | ... | ... | ... |
+    | A [Recommended] | Option name | What it is + what happens if chosen + when it fits (2-3 sentences) | Full sentence | Full sentence |
     | B | ... | ... | ... | ... |
     | C | ... | ... | ... | ... |
     | Z | Custom | (please describe) | - | - |
