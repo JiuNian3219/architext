@@ -47,12 +47,27 @@
 **语言/运行时**: [例：TypeScript + Node.js 22]
 **核心框架**: [例：Next.js 15 / Fastify / Tauri]
 **包管理器**: [例：pnpm / npm / yarn / cargo]
+**构建工具**: [例：Vite / tsup / Webpack / esbuild / cargo / go build]
+**Linter / Formatter**: [例：ESLint + Prettier / Biome / ruff / clippy + rustfmt]
 <!-- @slot:tech -->
 **部署目标**: [例：Vercel / Docker / npm publish / 二进制分发]
 **关键第三方库**: [例：Zod, TanStack Query, Lucia Auth]
 
 **技术红线** (禁用的技术/方案):
 - [例：不用 jQuery；不用 CSS-in-JS]
+
+---
+
+## 工程规范
+
+> 团队已有的工程约定。不确定的留空，AI 会基于技术栈推荐合理默认值。
+
+**仓库形态**: [Monorepo (Turborepo/Nx/pnpm workspaces) / 单体仓库]
+**架构模式**: [例：MFA / FSD / Clean Architecture / 分层架构 / 无偏好（AI 推荐）]
+**目录结构**: [已有明确结构 → 简述关键目录 / 无（AI 基于架构模式生成）]
+**分支策略**: [例：Trunk-based / Git Flow / GitHub Flow]
+**Commit 规范**: [例：Conventional Commits (feat/fix/chore) / 自定义 → 简述]
+**测试偏好**: [例：Vitest / Jest / pytest / 无特殊要求]
 
 ---
 

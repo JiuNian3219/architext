@@ -47,12 +47,27 @@
 **Language/runtime**: [e.g.: TypeScript + Node.js 22]
 **Core framework**: [e.g.: Next.js 15 / Fastify / Tauri]
 **Package manager**: [e.g.: pnpm / npm / yarn / cargo]
+**Build tool**: [e.g.: Vite / tsup / Webpack / esbuild / cargo / go build]
+**Linter / Formatter**: [e.g.: ESLint + Prettier / Biome / ruff / clippy + rustfmt]
 <!-- @slot:tech -->
 **Deployment target**: [e.g.: Vercel / Docker / npm publish / binary distribution]
 **Key third-party libraries**: [e.g.: Zod, TanStack Query, Lucia Auth]
 
 **Technical red lines** (banned tech/approaches):
 - [e.g.: No jQuery; no CSS-in-JS]
+
+---
+
+## Engineering Standards
+
+> Existing team conventions. Leave blank if unsure; AI will recommend sensible defaults based on your tech stack.
+
+**Repository structure**: [Monorepo (Turborepo/Nx/pnpm workspaces) / single repo]
+**Architecture pattern**: [e.g.: MFA / FSD / Clean Architecture / layered / no preference (AI recommends)]
+**Directory structure**: [already defined → describe key dirs / none (AI generates based on pattern)]
+**Branching strategy**: [e.g.: Trunk-based / Git Flow / GitHub Flow]
+**Commit convention**: [e.g.: Conventional Commits (feat/fix/chore) / custom → describe]
+**Testing preference**: [e.g.: Vitest / Jest / pytest / no special requirements]
 
 ---
 
