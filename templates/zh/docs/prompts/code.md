@@ -68,6 +68,7 @@
     - **Robustness**: 显式处理边界(Loading/Error/Empty/Timeout)；禁只写 Happy Path。
     - **SOTA**: 遵循 tech_stack 定义的最佳实践；拒绝明确禁止的过时模式。
     - **Scaffold Safety**: 脚手架在非空目录可能覆盖文件 — 须在新目录生成并保护 `[[__DOCS_DIR__]]/`；删除/覆盖操作须先列清单并确认。
+    - **.gitkeep Cleanup**: 空目录可用 `.gitkeep` 占位以便 Git 跟踪；向目录新增其他文件时须删除该目录下的 `.gitkeep`。
     - **Patch Output**: 以补丁形式输出变更，附 Code Reference。
 
     **Action**: 按 Phase A/B/C 逐项实施；每项产出完整、工程化的代码（含必要测试）；新增文件/目录须与 tech_stack 一致。

@@ -68,6 +68,7 @@
     - **Robustness**: Explicitly handle edge cases (Loading/Error/Empty/Timeout); prohibit writing only Happy Path.
     - **SOTA**: Follow tech_stack best practices; reject explicitly forbidden outdated patterns.
     - **Scaffold Safety**: Scaffolds in non-empty directories may overwrite files — must generate in new directory and protect `[[__DOCS_DIR__]]/`; delete/overwrite operations must list manifest and confirm first.
+    - **.gitkeep Cleanup**: Empty dirs may use `.gitkeep` for Git tracking; when adding other files to a dir, must remove that dir's `.gitkeep`.
     - **Patch Output**: Output changes as patches, with Code References.
 
     **Action**: Implement Phase A/B/C step by step; produce complete, production-quality code (with necessary tests); new files/directories must align with tech_stack.

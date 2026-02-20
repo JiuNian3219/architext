@@ -166,6 +166,7 @@ Component naming must follow `Prefix+Function` format:
 ---
 
 ## 8. Anti-Patterns
+* **No Orphan .gitkeep:** Empty dirs may use `.gitkeep` for Git tracking; remove `.gitkeep` when dir has other files.
 * **No [Tech 1]:** [e.g. No Redux - This project is too heavy, do not use.]
 * **No [Tech 2]:** [e.g. No Raw SQL - Must use ORM to prevent injection.]
 * **No [Pattern 1]:** [e.g. Forbidden to fetch data directly inside components, must encapsulate in Service layer.]

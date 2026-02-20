@@ -74,6 +74,7 @@
     | 10 | [?UI] **Design Compliance** | Styles use visual patterns from Tokens/Presets; no hardcoded magic values; implementation visually consistent with `ui.preview.html` |
     | 11 | [?Data] **Data Integrity** | Field names/types consistent with `data_snapshot.json` |
     | 12 | [?I18n] **I18n Compliance** | No hardcoded strings; must use Key/dictionary references |
+    | 13 | **Orphan .gitkeep** | Dir has other files but still contains `.gitkeep` — must remove |
 
     **Output**: Findings list grouped by dimension, each with severity, location, description.
 </step_2_task>
@@ -90,6 +91,7 @@
     | 4 | **Documentation Completeness** | Each Feature has spec.md + plan.json; detect orphan directories |
     | 5 | **Tech Stack Global Compliance** | Spot-check key entry points and modules for global violations |
     | 6 | **Cross-Feature Consistency** | Duplicate logic, naming conflicts, interface inconsistencies |
+    | 7 | **Orphan .gitkeep** | Dir has other files but still contains `.gitkeep` — must remove |
 
     After scanning, prioritize and recommend Features needing deep audit:
     - `done` but plan not fully completed

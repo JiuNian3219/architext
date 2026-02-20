@@ -161,6 +161,7 @@ alwaysApply: false
 ---
 
 ## 8. Anti-Patterns (負面清單)
+* **No Orphan .gitkeep:** 空目錄可用 `.gitkeep` 占位以便 Git 追蹤；目錄已有其他檔案時須刪除 `.gitkeep`。
 * **No [技術 1]:** [例如：No Redux - 本專案過重，勿用。]
 * **No [技術 2]:** [例如：No Raw SQL - 必須使用 ORM 防止注入。]
 * **No [模式 1]:** [例如：禁止在組件內部直接 fetch 數據，必須封裝在 Service 層。]

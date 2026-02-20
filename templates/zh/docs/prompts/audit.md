@@ -74,6 +74,7 @@
     | 10 | [?UI] **Design 合规** | 样式是否用 Token/Preset 定义的视觉模式；无硬编码魔法值；实现与 `ui.preview.html` 视觉一致 |
     | 11 | [?Data] **数据一致性** | 字段名/类型与 `data_snapshot.json` 是否一致 |
     | 12 | [?I18n] **I18n 合规** | 无硬编码字符串；须用 Key/字典引用 |
+    | 13 | **Orphan .gitkeep** | 目录已有其他文件时仍存在 `.gitkeep` — 须删除 |
 
     **Output**: 按维度分组的发现列表，每项含级别、位置、描述。
 </step_2_task>
@@ -90,6 +91,7 @@
     | 4 | **文档完整度** | 各 Feature 是否有 spec.md + plan.json；有无孤儿目录 |
     | 5 | **Tech Stack 全局合规** | 抽查关键入口与模块，检测全局性违规 |
     | 6 | **跨 Feature 一致性** | 重复逻辑、命名冲突、接口不一致 |
+    | 7 | **Orphan .gitkeep** | 目录已有其他文件时仍存在 `.gitkeep` — 须删除 |
 
     扫描后标注优先级，推荐需深度审查的 Feature：
     - `done` 但 plan 未全部完成的
