@@ -149,10 +149,11 @@ alwaysApply: false
 
 ### File Placement Rules (檔案歸位邏輯)
 > *Context*: 定義不同類型的檔案應創建在哪裡。**須依據專案類型 (Web/CLI/API/Lib) 與 `map.json` 的目錄結構自訂**，下表為佔位示例。
+> **Critical**: 建立新檔案前須查此表。此表填充後即為強制約束，禁憑 AI 預設習慣自行放置。
 
 | File Type | Placement Strategy | Example (依據專案調整) |
 | :--- | :--- | :--- |
-| **Unit Tests** | [e.g. Colocation 或 Centralized] | `utils/date.test.ts` / `__tests__/` |
+| **Unit Tests** | [e.g. Centralized 或 Colocation] | `__tests__/utils/date.test.ts` / `utils/date.test.ts` |
 | **Interfaces/Types** | [e.g. Near usage 或 Global types] | `types/user.d.ts` / `domain/user.entity.ts` |
 | **Assets/Images** [?UI] | [e.g. Public 或 Module assets] | `public/images` / `assets/` |
 | **Styles** [?UI] | [e.g. 按元件或全域] | `Button.module.css` / `global.css` |
@@ -162,6 +163,7 @@ alwaysApply: false
 
 ## 8. Anti-Patterns (負面清單)
 * **No Orphan .gitkeep:** 空目錄可用 `.gitkeep` 占位以便 Git 追蹤；目錄已有其他檔案時須刪除 `.gitkeep`。
+* **No Rogue File Placement:** 建立新檔案前須查 §3 File Placement Rules 表，禁憑 AI 訓練資料的預設習慣自行放置（尤其是測試檔案）。
 * **No [技術 1]:** [例如：No Redux - 本專案過重，勿用。]
 * **No [技術 2]:** [例如：No Raw SQL - 必須使用 ORM 防止注入。]
 * **No [模式 1]:** [例如：禁止在組件內部直接 fetch 數據，必須封裝在 Service 層。]

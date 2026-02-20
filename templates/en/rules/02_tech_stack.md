@@ -154,10 +154,11 @@ Component naming must follow `Prefix+Function` format:
 
 ### File Placement Rules
 > *Context*: Defines where different types of files should be created. **Must adapt to project type (Web/CLI/API/Lib) and directory structure in `map.json`**; table below is placeholder.
+> **Critical**: Check this table before creating any new file. Once populated, this table is a hard constraint — placement must not rely on AI's default training bias.
 
 | File Type | Placement Strategy | Example (adapt per project) |
 | :--- | :--- | :--- |
-| **Unit Tests** | [e.g. Colocation or Centralized] | `utils/date.test.ts` / `__tests__/` |
+| **Unit Tests** | [e.g. Centralized or Colocation] | `__tests__/utils/date.test.ts` / `utils/date.test.ts` |
 | **Interfaces/Types** | [e.g. Near usage or Global types] | `types/user.d.ts` / `domain/user.entity.ts` |
 | **Assets/Images** [?UI] | [e.g. Public or Module assets] | `public/images` / `assets/` |
 | **Styles** [?UI] | [e.g. Per-component or Global] | `Button.module.css` / `global.css` |
@@ -167,6 +168,7 @@ Component naming must follow `Prefix+Function` format:
 
 ## 8. Anti-Patterns
 * **No Orphan .gitkeep:** Empty dirs may use `.gitkeep` for Git tracking; remove `.gitkeep` when dir has other files.
+* **No Rogue File Placement:** Check §3 File Placement Rules before creating any new file — placement must not rely on AI training-data defaults (especially for test files).
 * **No [Tech 1]:** [e.g. No Redux - This project is too heavy, do not use.]
 * **No [Tech 2]:** [e.g. No Raw SQL - Must use ORM to prevent injection.]
 * **No [Pattern 1]:** [e.g. Forbidden to fetch data directly inside components, must encapsulate in Service layer.]
