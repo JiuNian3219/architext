@@ -13,6 +13,7 @@
     "editor": "Target IDE, multiple selection is supported, separated by commas",
     "lang": "Rules and document skeleton language",
     "doc": "Custom document path, default is .architext",
+    "type": "Project type (web|api|cli|lib|fullstack|hybrid)",
     "failed": "Initialization failed"
   },
   "update": {
@@ -64,6 +65,7 @@
       "title": "Initialize Architext Framework for deploying standardized AI context protocols & IDE rules.",
       "select_editor": "Select target editors",
       "select_lang": "Select documentation language",
+      "select_type": "Select project type",
       "select_doc_dir": "Enter documentation directory",
       "config_exists": "Existing config (architext.json) detected. Overwrite?",
       "config_saved": "Config saved to architext.json",
@@ -212,10 +214,11 @@
       },
       "cli": {
         "init": {
-          "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates.",
+          "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates, Project Brief.",
           "editor": "Target IDE (cursor / trae / windsurf)",
           "lang": "Language (zh / en / zh-Hant)",
-          "doc": "Custom doc directory name (default: .architext)"
+          "doc": "Custom doc directory name (default: .architext)",
+          "type": "Project type (web / api / cli / lib / fullstack / hybrid)"
         },
         "update": {
           "desc": "Sync latest rule templates to project, keep rules aligned with framework version.",

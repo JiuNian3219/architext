@@ -1,16 +1,19 @@
-/** @fileoverview 处理 init 命令的用户交互流程，收集语言、编辑器和文档目录等配置信息。 */
+/** @fileoverview 处理 init 命令的用户交互流程，收集语言、编辑器、项目类型和文档目录等配置信息。 */
 
 import { confirm, isCancel, multiselect, select } from "@clack/prompts";
 import { loadConfig } from "../../../core/config.ts";
 import {
   EDITOR_CONFIGS,
   LANGUAGE_CONFIGS,
+  PROJECT_TYPE_PRESETS,
   SUPPORTED_EDITORS,
+  SUPPORTED_PROJECT_TYPES,
 } from "../../../core/rules.ts";
 import type {
   ArchitextConfig,
   InitConfig,
   LocaleLang,
+  ProjectType,
   SupportedEditor,
 } from "../../../types/index.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
@@ -103,6 +106,34 @@ async function askEditors(
 }
 
 /**
+ * 询问项目类型（单选），内部映射到一组特征标签。
+ * @param preselected 命令行预设的项目类型
+ * @returns 项目类型，或 null（用户取消时）
+ */
+async function askProjectType(
+  preselected?: string,
+): Promise<ProjectType | null> {
+  if (preselected) {
+    const trimmed = preselected.trim() as ProjectType;
+    if (SUPPORTED_PROJECT_TYPES.includes(trimmed)) return trimmed;
+  }
+
+  const response = await select({
+    message: t("select_type"),
+    options: SUPPORTED_PROJECT_TYPES.map((key) => ({
+      value: key,
+      label: `${PROJECT_TYPE_PRESETS[key].label}  (${PROJECT_TYPE_PRESETS[key].features.join(", ")})`,
+    })),
+  });
+
+  if (isCancel(response)) {
+    return null;
+  }
+
+  return response as ProjectType;
+}
+
+/**
  * 收集 init 命令所需的全部配置信息。
  * @param options 命令行传入的预设选项
  * @returns 初始化配置，或 null（用户取消时）
@@ -111,6 +142,7 @@ export async function collectInitConfig(options: {
   editor?: string;
   language?: LocaleLang;
   doc?: string;
+  type?: string;
 }): Promise<InitConfig | null> {
   const existingConfig = await loadConfig();
 
@@ -123,8 +155,13 @@ export async function collectInitConfig(options: {
   const editors = await askEditors(options.editor);
   if (!editors) return null;
 
+  const projectType = await askProjectType(options.type);
+  if (!projectType) return null;
+
+  const features = PROJECT_TYPE_PRESETS[projectType].features;
+
   const docDir =
     options.doc || (existingConfig?.docDir as string) || ".architext";
 
-  return { language, editors, docDir };
+  return { language, editors, docDir, features };
 }

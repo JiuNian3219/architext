@@ -33,6 +33,7 @@ describe("Scaffolder Integration", () => {
       language: "zh",
       docDir: ".architext",
       editors: ["cursor"],
+      features: [],
     };
 
     await Scaffolder.run(config);
@@ -62,6 +63,7 @@ describe("Scaffolder Integration", () => {
       language: "zh",
       docDir: ".architext",
       editors: ["cursor"],
+      features: [],
     };
 
     await Scaffolder.run(config);
@@ -80,6 +82,7 @@ describe("Scaffolder Integration", () => {
       language: "zh",
       docDir: ".architext",
       editors: ["cursor"],
+      features: [],
     };
 
     await Scaffolder.run(config);
@@ -98,6 +101,7 @@ describe("Scaffolder Integration", () => {
       language: "zh",
       docDir: ".architext",
       editors: ["cursor"],
+      features: [],
     };
 
     await Scaffolder.run(config);
@@ -120,6 +124,7 @@ describe("Scaffolder Integration", () => {
       language: "zh",
       docDir: ".architext",
       editors: ["cursor", "trae"],
+      features: [],
     };
 
     await Scaffolder.run(config);
@@ -136,6 +141,7 @@ describe("Scaffolder Integration", () => {
       language: "nonexistent" as LocaleLang,
       docDir: ".architext",
       editors: ["cursor"],
+      features: [],
     };
 
     // 应该不抛出错误，而是回退到默认语言

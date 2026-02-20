@@ -1,211 +1,209 @@
 <protocol_kickoff>
-  **Trigger**: `/archi.start [context]`
+  **Trigger**: `/archi.start [file_path]`
   **Phase**: Strategic Initialization
-  **Goal**: Establish Project Constitution (Vision/Tech/Roadmap) through "Domain Detection → Intent Extraction → Deep Alignment → Architecture Deduction".
+  **Goal**: Establish Project Constitution (Vision/Tech/Roadmap) from Project Brief.
 
 <meta>
     <style>Strict, Professional, CLI-Like</style>
     <language>English</language>
     <principles>
-      1.  **Structure over Chat**: Output must be like a structured config panel; no chatty filler.
-      2.  **AI-Native Perspective**: All option Pros/Cons written from AI Agent perspective. Focus: Context Locality, Type Safety, Hallucination Risk, Self-Correction. Default to best practices.
-      3.  **User Agency First**: Prioritize extracting explicit requirements from `[context]`, mark as `✅ Core`.
-      4.  **Rich Menu**: Generate 6-10 extension features for the domain type.
-      5.  **Option Z Everywhere**: Must include `[Z] Custom`.
+      1.  **Brief-Driven**: User-provided Brief file is the core input; no feature brainstorming from thin air.
+      2.  **AI-Native Perspective**: All recommendations/completions from AI Agent perspective. Focus: Context Locality, Type Safety, Hallucination Risk, Self-Correction.
+      3.  **User Agency First**: User-filled choices in Brief must be adopted directly; do not question or replace.
+      4.  **Minimal Questions**: Ask only for information gaps; skip Step 2 when Brief is sufficient.
+      5.  **Option Z Everywhere**: Supplementary questions must include `[Z] Custom`.
     </principles>
-
-    <output_template>
-      ### ARCHITEXT DOMAIN DETECTOR
-      > **Status**: [Scanning Context...] -> [Domain Type Detected]
-
-      ### FEATURE MATRIX
-      **✅ Core Modules (Core - Auto Activated)**
-      1. [User Feature 1]
-      2. [User Feature 2]
-
-      **⬜ Extension Menu (Extensions)**
-      | ID | Feature | Brief | Use Case | AI Implementation View |
-      |:---|:---|:---|:---|:---|
-      | [A] | Feature | Desc | When | Impact |
-      | [Z] | **Custom** | (Please describe) | - | - |
-
-      ### STRATEGIC DECISIONS (ADR)
-      **[Q1] Decision Title**
-      | ID | Option | Brief | AI+ | AI- |
-      |:---|:---|:---|:---|:---|
-      | A | ... | ... | ... | ... |
-      | Z | Custom | (Please describe) | - | - |
-
-      ---
-      **⌨️ INPUT**: `ExtensionIDs (space separated) | Q1 answer | Q2 answer | ... | Q6 answer | Q7 answer | ...` (use `|` between questions; within one question use spaces for multi-select, e.g. `A B | D keep it simple | C`)
-    </output_template>
 </meta>
 
-<step_0_benchmark>
-    **Role**: Industry Researcher
-    **Action**: Analyze context, list 1-3 benchmark products or open-source projects with brief reference value.
-</step_0_benchmark>
+<step_0_ingest>
+    **Role**: Intelligence Analyst
+    **Action**:
+    1. Parse `[file_path]` from trigger:
+       - If path provided → read that file
+       - If not → search `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
+       - If neither exists or empty → goto `<fallback_interview>`
 
-<step_1_strategy>
+    2. **Resource Accessibility Check** (must complete before parsing):
+       Scan Brief for all external references (URLs, file paths, images). Try to access each; classify:
+
+       | Status | Handling |
+       |:---|:---|
+       | Accessible | Read content, include in analysis |
+       | Inaccessible (auth required/404/private) | Mark `[unreadable]`, report to user later |
+       | Non-link references (e.g. "reference Linear's interaction") | Process normally, no fetch |
+
+       > Purpose: Avoid AI pretending it read resources it cannot access, leading to mismatched output.
+
+    3. Parse Brief sections, extract:
+       - Project feature tags (UI/Data/CLI/Lib/API — inferred from tech fields and paragraphs)
+       - Core feature list
+       - Pre-defined design decisions (user's preset design for specific features/pages/flows)
+       - Tech preferences (distinguish "confirmed" vs "blank/recommend")
+       - Existing resources and context
+       - Boundaries and constraints
+       - Reference projects
+       - Supplementary notes (rules/terminology/background)
+
+    > Brief is a one-time input file; user may delete after processing.
+
+    **Output**:
+    - If any resources inaccessible → **Immediately output Resource Accessibility Report** to user, list unreadable links, ask for alternatives (screenshot, paste content, text description). Wait for user reply before continuing.
+    - If all accessible or no external refs → Internal summary (no user output), proceed to `<step_1_gap_analysis>`.
+</step_0_ingest>
+
+<step_1_gap_analysis>
     **Role**: Chief Product Officer (CPO)
-    **Input**: `[context]` provided by user.
+    **Input**: Step 0 parsing result.
+
+    **Action**: Check Brief completeness, identify information gaps.
+
+    **Checklist**:
+
+    | Item | Criteria | Gap Level |
+    |:---|:---|:---|
+    | Project identity | Name + one-line description + problem statement all filled | Required |
+    | Target users | At least core user role described | Required |
+    | Core features | At least 2 concrete features, each with description | Required |
+    | Tech stack – core | Language/runtime + core framework filled (non-empty) | Required |
+    | Tech stack – optional | DB/ORM/CSS/deploy etc. blanks | Can supplement |
+    | Project starting point | New project or existing codebase (affects architecture) | Required |
+    | Existing resources | Design/brand/existing API/3rd-party services explicit? | Can supplement |
+    | Style/tone | [?UI] Visual keywords / [?CLI] Output style / [?API] Doc approach | Can supplement |
+    | Boundaries | At least 1 anti-goal or hard constraint declared | Suggested |
+    | Success metrics | Concrete quantifiable metrics filled | Suggested |
+    | Reference projects | At least 1 reference listed | Suggested |
+
+    **Gap levels**:
+    - **Required**: Must ask in Step 2
+    - **Can supplement**: AI can recommend but better to confirm
+    - **Suggested**: AI can infer, does not block flow
+
+    **Decision**:
+    - No "Required" gaps + no "Can supplement" gaps → skip Step 2, go to Step 3
+    - Otherwise → go to Step 2
+
+    **Output**: Brief analysis summary:
+    ```
+    ### BRIEF Analysis Report
+    > **Project**: [name] | **Features**: [activated UI/Data/CLI/Lib/API tags]
+
+    **Confirmed**:
+    - [list of filled items]
+
+    **Gaps (require supplement)**:
+    - [gap 1]
+    - [gap 2]
+
+    **AI will auto-complete** (no action):
+    - [items AI can infer]
+    ```
+</step_1_gap_analysis>
+
+<step_2_supplementary>
+    **Role**: Product Advisor
+    **Trigger**: Only when Step 1 finds "Required" or "Can supplement" gaps.
+    **Input**: Step 1 gap list.
+
+    **Core rule: Multiple choice first**
+    - No open-ended questions. All questions must be **multiple choice**.
+    - AI recommends default option (mark `[Recommended]`); user confirms or switches.
+    - Each question must include `[Z] Custom` fallback.
+    - Lower decision cost: user does not need expertise to pick a reasonable option.
 
     **Action**:
-    1. **Domain Classification**: Identify project type (Web/CLI/Backend/Library/Mobile/AI etc.).
-    2. **Feature Matrix**: Extract Core features; brainstorm 6-10 Extensions.
-    3. **Strategic Gap Analysis**: Generate 6 fixed strategic questions + 2-3 project-specific questions.
+    1. Ask only about gaps; do not ask what Brief already answers.
+    2. Each question: 3–5 options + `[Z] Custom`, mark AI recommendation with `[Recommended]`.
+    3. Each question must include AI+/AI- columns (brief pros/cons from AI Agent view).
+    4. Total questions: 3–6 (merge related ones).
+
+    **Output Format**:
+    ```
+    ### Supplementary Confirmation
+
+    **[Q1] Question title**
+    > Why this info is needed (one sentence)
+
+    | ID | Option | Brief | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A [Recommended] | ... | ... | ... | ... |
+    | B | ... | ... | ... | ... |
+    | C | ... | ... | ... | ... |
+    | Z | Custom | (please describe) | - | - |
 
     ---
+    **INPUT**: `Q1 answer | Q2 answer | ...` (use `|` between questions; space for multi-select within one)
+    ```
+</step_2_supplementary>
 
-    **[Q1] Product DNA & Target Audience**
-    > Decides complexity boundary and external dependency level.
+<step_3_constitution>
+    **Role**: Chief Architect
+    **Input**: Full Brief text + Step 2 answers (if any).
 
-    | ID | Option | Brief | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Pure Tool | Extreme efficiency, no deps | Closed context, low hallucination | Requires high-quality algorithms |
-    | B | Community / Social | Connection focused | Standardized data models | Scattered RBAC, heavy reasoning load |
-    | C | Commercial / SaaS | Monetization efficiency | Fixed flows (Stripe/Auth) | Requires 3rd-party SDK integration, high token usage |
-    | D | Content / Media | Content distribution | Simple structure (CRUD) | Many unstructured data edge cases |
-    | E | Enterprise / Internal | Stability & compliance | Clear rules, strong-typing friendly | Extremely tedious form validation logic |
-    | F | Open Source / DevKit | Ecosystem expansion | Standard design patterns | Requires massive docs and tests |
-    | Z | Custom | (Please describe) | - | - |
+    **Action**: Generate project constitution files in one pass. All Brief content must be consumed and routed; nothing omitted.
 
-    **[Q2] Visual & Interaction Personality** [?UI]
-    > If project has UI, decides frontend code generation style and complexity; CLI/API projects may skip.
+    ### Information Routing Rules
 
-    | ID | Option | Brief | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Minimalist / Clean | Minimalist whitespace | Simple CSS, layout hard to break | Requires precise spacing |
-    | B | Playful / Gamified | Lively animations | None | Complex animation state management, prone to visual bugs |
-    | C | Professional / Data-Dense | Info dense | High component reuse | Complex data mock and edge rendering |
-    | D | Developer / Terminal | Terminal style | Pure text processing, AI excels | ANSI Escape prone to errors |
-    | E | Brutalist / Neo | Anti-conventional | Free layout | Non-standard CSS, poor cross-browser consistency |
-    | F | Native / System | Native style | Mature component libs, stable generation | Low customization flexibility |
-    | Z | Custom | (Please describe) | - | - |
+    | Brief content | Target file |
+    |:---|:---|
+    | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
+    | Tech stack, deploy target, 3rd-party libs/services | `02_tech_stack.md` |
+    | Style/tone (UI/CLI/API) | `02_tech_stack.md` (UI Protocol / Output Convention) |
+    | Core feature list | `[[__DOCS_DIR__]]/global/roadmap.json` |
+    | **Pre-defined design decisions** | Inject into related tasks' `goal` in Roadmap; treat as hard constraint in `/archi.plan` |
+    | Boundaries and anti-goals | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
+    | Existing resources (design/brand/existing API) | `[[__DOCS_DIR__]]/global/vision.md` + `02_tech_stack.md` by content |
+    | **Rules/conventions/preferences** from supplementary notes | `90_custom_rules.md` |
+    | **Domain terminology** from supplementary notes | `[[__DOCS_DIR__]]/global/dictionary.json` |
+    | **Other background info** from supplementary notes | `[[__DOCS_DIR__]]/global/vision.md` Context |
 
-    **[Q3] Scale & Infrastructure**
-    > Decides infrastructure complexity.
+    > Key: Any rule-like content (e.g. "comments in English", "no any") in supplementary notes must go to `90_custom_rules.md`, not discarded.
 
-    | ID | Option | Brief | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Hobby / Prototype | Single/Serverless | Zero ops, just business code | None |
-    | B | Startup / Growth | Standard web architecture | Most common pattern in training data | Requires Docker/DB config |
-    | C | High Traffic | High concurrency | None | Cache/MQ middleware, heavy context load |
-    | D | Data Heavy | Massive data | Strong SQL generation capability | Complex query optimization hard to automate |
-    | E | Offline / Local | Local run | None | Data sync algorithms (CRDT/Sync) extremely hard to generate correctly |
-    | F | Enterprise Deployment | Private deployment | None | K8s configs verbose and error-prone |
-    | Z | Custom | (Please describe) | - | - |
+    ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
+    - Fill from Brief project overview: Core Vision, Target Audience
+    - Fill from Brief boundaries: Boundaries
+    - Fill from Brief style/tone (if any): Design & Experience
+    - Derive Product Principles from Brief references
+    - Extract background context from Brief existing resources + supplementary notes
+    - Fill all `[ ]` placeholders; do not retain template example text
 
-    **[Q4] Data Sensitivity & Compliance**
-    > Decides security architecture tier and compliance requirements.
+    ### 3.2 Tech Stack (`02_tech_stack.md`)
+    - Confirmed tech in Brief → write directly
+    - Blank/"recommend" in Brief → AI recommends by project features; mark `(AI Recommended)` and brief rationale
+    - Brief 3rd-party services/API → write in corresponding Section
+    - **AX Optimization**: Prefer AI-friendly tech (Static Typing, Popular Frameworks, Convention-over-Configuration)
+    - Fill all Section 1-8 (Global Mandates, Technology Selection, Coding Standards, UI Protocol[?UI], Testing, Deployment, Architecture, Anti-Patterns)
+    - Section 5 Testing: Environment Scripts must be complete
 
-    | ID | Option | Brief | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Public Data | No PII, no compliance required | No encryption overhead, fast dev | None |
-    | B | User Data (PII) | Contains email/phone/address etc | Standard patterns (bcrypt/JWT) | GDPR/privacy policies add boundaries |
-    | C | Financial / Payment | PCI-DSS compliance | Stripe etc. SDKs well-encapsulated | Audit logs/encryption layers complex |
-    | D | Medical / Health | HIPAA or equivalent | None | Data isolation/access control extremely strict |
-    | E | No Persistence | Pure computation/transformation tool | Stateless, minimal context | None |
-    | Z | Custom | (Please describe) | - | - |
+    ### 3.3 Custom Rules (`90_custom_rules.md`)
+    - Extract rule-like content from Brief supplementary notes
+    - Convert Brief tech red lines into concrete prohibitions
+    - If user provided nothing, keep template default
 
-    **[Q5] Integration Landscape**
-    > Decides system boundary and external dependency complexity.
+    ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+    Derive task chain from Brief core feature list.
 
-    | ID | Option | Brief | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Standalone | No external dependencies | Closed context, zero integration risk | None |
-    | B | API Consumer | Calls external APIs/services | Standard SDK call patterns | 3rd-party API changes/rate limits unpredictable |
-    | C | API Provider | Exposes APIs externally | REST/GraphQL generation mature | Version compat/doc maintenance |
-    | D | Platform Plugin/Extension | Embedded in host platform (VS Code/Figma/Slack etc) | None | Platform API training data scarce, version fragmentation |
-    | E | Bidirectional Integration | Both consumes and provides APIs | None | Interface contract management complex |
-    | Z | Custom | (Please describe) | - | - |
+    **Phase 1 (Infra): The "Big Bang"**
+    - Must create complete infra skeleton in one pass.
+    - [INF-01] Project Scaffolding: directory structure, Linter, Env, Logger, Test Setup, `[[__DOCS_DIR__]]/scripts/` (AI auto-generates from `02_tech_stack.md` Section 5; do not ask user about script details).
+    - [INF-02] Core Entities (if applicable): Database Schema, User/Auth Model, Global Types.
+    - Phase 2 tasks default depend on INF-01 (and INF-02).
 
-    **[Q6] Resource & Asset Strategy**
-    > Decides how AI handles non-code resources (images/icons/audio/video/fonts).
+    **Phase 2 (Feature): Domain Partitioning**
+    - Each Brief core feature → one or more Feature tasks
+    - Group by Domain; different Domains parallel by default
 
-    | ID | Option | Brief | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Placeholders Only | Placeholder images/icons, user replaces later | Zero binary deps, pure code focus | None |
-    | B | Icon/Asset Libraries | Lucide/Heroicons + Unsplash/Pexels | Deterministic references, no broken links | Library lock-in |
-    | C | Programmatic Generation | SVG/CSS/Canvas graphics | AI excels at SVG generation | Complex illustrations impossible |
-    | D | External CDN/Service | Reference external CDN or asset services | URL-based, simple | External dependency, may break |
-    | E | Local Asset Pipeline | User provides assets, AI writes processing pipeline | Clear boundary, AI handles code only | Requires user prep |
-    | Z | Custom | (Please describe) | - | - |
+    **Pre-defined design decisions injection**:
+    If Brief "Pre-defined design decisions" section contains specific design for a feature/page/flow, inject into that Feature task's `goal` as hard constraint for `/archi.plan`. Format:
+    - Append to `goal`: `\n[User Preset] <decision summary>`
+    - If decision spans multiple features, annotate each related task
 
-    **[Q7-Q9] Project-Specific Questions** (Dynamically Generated)
-    > Based on `[context]` analysis, generate 2-3 critical decision questions specific to this project.
-    > Each question must use table format: ≥3 options + AI+/AI- columns + `[Z] Custom`.
-    > Focus: ambiguities in context, domain-specific trade-offs, unstated critical assumptions.
-
-    ---
-
-    **⌨️ INPUT**: `ExtensionIDs | Q1 answer | Q2 answer | ... | Q6 answer | Q7 answer | ...` (use `|` between questions; use spaces inside one question for multi-select)
-</step_1_strategy>
-
-<step_2_tech_gate>
-    **Role**: CTO
-    **Input**: Step 1 selection results.
-
-    **Action**:
-    - **AX Optimization**: Prioritize AI-friendly tech when recommending stack (Static Typing, Popular Frameworks).
-    - Explain why the stack suits AI generation and maintenance.
-
-    **Required Questions**:
-
-    **[Q1] Core Language & Runtime**
-
-    | ID | Option | Brief | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | TypeScript/Node | Fullstack | Richest training data, types aid error correction | Tedious config |
-    | B | TypeScript/Bun | Modern runtime | Zero config, saves tokens | Edge APIs have less training data |
-    | C | Rust | System level | Compiler errors excellent for loop repair | Borrow Checker reasoning cost high |
-    | D | Go | Backend | Simple syntax, only one way to write | `if err != nil` consumes many tokens |
-    | E | Python | Fast development | Pseudocode-like, extremely fast generation | Dynamic typing causes hard-to-debug runtime errors |
-    | F | Java/Kotlin | Enterprise | Strong typing, powerful IDE analysis | Extreme boilerplate, easily exceeds Context Window |
-
-    **[Q2] Core Framework** (Dynamic)
-    > **AX**: Prioritize "Convention over Configuration" frameworks to reduce AI decision burden.
-
-    **[Q3] Data Persistence** (Dynamic)
-    > **AX**: Prioritize Schema-typed ORMs (Prisma/Drizzle).
-
-    **[Q4] Interface & Comm** [?UI] (Dynamic)
-    > Show if project has UI. **AX**: Prioritize Component libs (Shadcn/Tailwind etc.), AI excels at composition over raw CSS; for CLI/terminal projects, consider Chalk/terminal UI libs.
-
-    **[Q5] Quality Assurance** (Dynamic)
-    > **AX**: Tests are the only means for AI self-verification. Must cover: static analysis commands, test suite.
-
-    **[Q6] Infrastructure** (Dynamic)
-    > **AX**: The more declarative the config, the better.
-
-    ---
-
-    **⌨️ INPUT**: `Q1 answer | Q2 answer | Q3 answer | Q4 answer | Q5 answer | Q6 answer | Q7 answer | Q8 answer` (use `|` between questions; use spaces inside one question for multi-select)
-</step_2_tech_gate>
-
-<step_3_roadmap>
-    **Role**: TPM
-    **Goal**: Convert strategy into AI-executable atomic task chain.
-    **Target**: `[[__DOCS_DIR__]]/global/roadmap.json`
-
-    **Action**:
-    1.  **Phase 1 (Infra): The "Big Bang"**
-        - Must establish complete infrastructure skeleton at once.
-        - [INF-01] Project Scaffolding: Directory structure, Linter, Env, Logger, Test Setup, `[[__DOCS_DIR__]]/scripts/` (AI auto-generates based on `02_tech_stack.md` Section 5; prohibited from asking user about script implementation details).
-        - [INF-02] Core Entities (if applicable): Database Schema, User/Auth Model, Global Types.
-        - Phase 2 tasks default depend on INF-01 (and INF-02).
-
-    2.  **Phase 2 (Feature): Domain Partitioning**
-        - Group by Domain (Web: User/Order/Payment; CLI: Config/User/Plugin; Script: Parser/Network/Output).
-        - Tasks in different Domains are parallel by default.
-
-    **Task Schema (JSON)**:
+    **Task JSON Schema**:
     ```json
     {
       "id": "INF-01",
       "title": "Project Scaffolding",
       "status": "pending",
-      "goal": "<DoD - Input/Output/Acceptance Criteria>",
+      "goal": "<DoD - input/output/acceptance criteria>",
       "deps": [],
       "tag": "Infra",
       "slug": "Project_Scaffolding"
@@ -213,32 +211,63 @@
     ```
 
     **Initial Status Rule**:
-    - `deps: []` or all deps completed → `"status": "pending"`
-    - `deps: ["XXX"]` unresolved → `"status": "blocked"`
-    - Prohibited from setting all tasks to pending; must differentiate by dependency status.
+    - `deps: []` or deps done → `"status": "pending"`
+    - `deps: ["XXX"]` not done → `"status": "blocked"`
 
-    > **Slug Rule**: Used for `features/<ID>_<Slug>/` naming. Must be English, PascalCase or underscore-separated.
+    > **Slug**: For `features/<ID>_<Slug>/` naming. Must be English, Snake_Case.
 
-    **Output**: Write the complete roadmap to `roadmap.json`, then run `npx archi render` to generate the visual `.md` file.
-</step_3_roadmap>
+    ### 3.5 Other global docs (as needed)
+    - `dictionary.json`: Extract domain terms from Brief
+    - [?UI] `design_tokens.json`: Base tokens from UI style
+    - `error_codes.json`: Predefine core error codes from feature list
+
+    **Output**: Write all files, then run `npx archi render` to generate visual `.md`.
+</step_3_constitution>
 
 <step_4_audit>
     **Role**: Chief Auditor
     **Checklist**:
-    1.  **Vision Completeness**: Does `vision.md` contain North Star Metric and Design Philosophy?
-    2.  **Tech Stack Consistency**: Is `02_tech_stack.md` consistent with Step 2 choices? Contains complete stack declarations?
-    3.  **Roadmap Compliance**: Run `npx archi task --check` to verify consistency.
-    4.  [?UI] **Design Tokens**: Does `design_tokens.json` contain basic color/font/spacing definitions?
+    1.  **Vision completeness**: Does `vision.md` include North Star metric and design philosophy?
+    2.  **Tech Stack consistency**: Is `02_tech_stack.md` aligned with Brief preferences? Contains full stack?
+    3.  **Custom Rules**: Did Brief supplementary notes/tech red lines get written to `90_custom_rules.md`?
+    4.  **Roadmap compliance**: Run `npx archi task --check` to verify.
+    5.  [?UI] **Design Tokens**: Does `design_tokens.json` have base color/font/spacing definitions?
+    6.  **Brief alignment**: All Brief core features mapped to Roadmap tasks?
+    7.  **Zero omission**: All user-provided content routed to correct files?
 
-    Silently fix issues; mark critical issues with `⚠️ Risk Warning`.
+    Silently fix issues; mark critical ones with `Risk Warning`.
 </step_4_audit>
 
 <step_5_signoff>
     **Action**:
-    1.  Run `npx archi task` to output task progress overview.
+    1.  Run `npx archi task` to output task progress.
     2.  Output summary.
 
-    **Output**: Project initialization summary with Decisions Summary table (Q1-Q6 + project-specific choices and impacts) and Next Steps table. Recommend running `/archi.plan INF-01`.
+    **Output**: Project init summary including:
+    - **Brief adoption**: Key decisions adopted from Brief
+    - **AI completions**: Tech/decisions AI recommended and rationale
+    - **Roadmap overview**: Task count and phase distribution
+    - **Next Steps table**: Recommend running `/archi.plan INF-01`
 </step_5_signoff>
+
+<fallback_interview>
+    **Trigger**: Brief file not found or empty.
+    **Role**: Product Advisor
+
+    **Action**:
+    1. Tell user `project-brief.md` not found. Suggest:
+       - Check project root for the file (should have been generated by `npx archi init`)
+       - If lost, re-run `npx archi init` to regenerate
+       - Or continue conversation and provide info via interview
+    2. If user continues via conversation, guide in this order:
+       a. What is the project? (name, one-line description, problem solved)
+       b. Who is it for? (target users)
+       c. Core features? (at least 2–3)
+       d. Tech stack? (language/framework, confirmed parts)
+       e. Constraints? (anti-goals, timeline, compatibility)
+    3. After collection, write to `project-brief.md` (project root), then goto `<step_1_gap_analysis>`.
+
+    > Fallback for backward compatibility; Brief remains the primary flow.
+</fallback_interview>
 
 </protocol_kickoff>

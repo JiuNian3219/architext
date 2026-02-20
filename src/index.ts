@@ -36,6 +36,7 @@ cli
   .option("-e, --editor <type>", t("init.editor"))
   .option("-l, --language <lang>", t("init.lang"))
   .option("-d, --doc <path>", t("init.doc"))
+  .option("-t, --type <type>", t("init.type"))
   .action(run(initCommand));
 
 // Update 同步最新规则

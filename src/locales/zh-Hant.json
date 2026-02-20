@@ -13,6 +13,7 @@
     "editor": "框架目標 IDE，可多選，逗號分隔",
     "lang": "規則與檔案骨架語言",
     "doc": "自定義檔案路徑，預設使用.architext",
+    "type": "專案型別 (web|api|cli|lib|fullstack|hybrid)",
     "failed": "初始化失敗"
   },
   "update": {
@@ -64,6 +65,7 @@
       "title": "初始化 Architext 框架，用於部署標準化的 AI 上下文協議與 IDE 規則。",
       "select_editor": "請選擇您的目標編輯器",
       "select_lang": "請選擇專案文件語言",
+      "select_type": "請選擇專案型別",
       "select_doc_dir": "請輸入文件目錄",
       "config_exists": "檢測到現有設定檔 (architext.json)。是否覆蓋？",
       "config_saved": "設定已儲存到 architext.json",
@@ -212,10 +214,11 @@
       },
       "cli": {
         "init": {
-          "desc": "初始化 Architext 框架。產生規則檔案、檔案目錄、Prompt 範本。",
+          "desc": "初始化 Architext 框架。產生規則檔案、檔案目錄、Prompt 範本、Project Brief。",
           "editor": "指定 IDE (cursor / trae / windsurf)",
           "lang": "指定語言 (zh / en / zh-Hant)",
-          "doc": "自定義檔案目錄名 (預設 .architext)"
+          "doc": "自定義檔案目錄名 (預設 .architext)",
+          "type": "專案型別 (web / api / cli / lib / fullstack / hybrid)"
         },
         "update": {
           "desc": "同步最新規則範本到專案，保持規則檔案與框架版本一致。",

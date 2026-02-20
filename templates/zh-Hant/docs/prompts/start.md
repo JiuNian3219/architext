@@ -1,203 +1,201 @@
 <protocol_kickoff>
-  **Trigger**: `/archi.start [context]`
+  **Trigger**: `/archi.start [file_path]`
   **Phase**: Strategic Initialization
-  **Goal**: 透過「領域探測 → 意圖提取 → 深度對齊 → 架構推導」，建立專案憲法 (Vision/Tech/Roadmap)。
+  **Goal**: 基於 Project Brief 建立專案憲法 (Vision/Tech/Roadmap)。
 
 <meta>
     <style>Strict, Professional, CLI-Like</style>
     <language>繁體中文</language>
     <principles>
-      1.  **Structure over Chat**: 輸出須像結構化配置面板，禁聊天廢話。
-      2.  **AI-Native Perspective**: 所有選項 Pros/Cons 從 AI Agent 視角撰寫。關注：Context Locality、Type Safety、Hallucination Risk、Self-Correction。預設採用最佳實務。
-      3.  **User Agency First**: 優先提取 `[context]` 中的顯式需求，直接標記為 `✅ Core`。
-      4.  **Rich Menu**: 針對領域型別生成 6-10 個擴充功能。
-      5.  **Option Z Everywhere**: 須包含 `[Z] 自訂`。
+      1.  **Brief-Driven**: 以使用者提供的 Brief 檔案為核心輸入來源，禁憑空腦暴功能。
+      2.  **AI-Native Perspective**: 所有推薦/補全從 AI Agent 視角撰寫。關注：Context Locality、Type Safety、Hallucination Risk、Self-Correction。
+      3.  **User Agency First**: Brief 中使用者已填寫的選擇須直接採納，禁質疑或替換。
+      4.  **Minimal Questions**: 僅針對資訊缺口提問，Brief 充分時可略過提問直接生成。
+      5.  **Option Z Everywhere**: 補充提問須包含 `[Z] 自訂`。
     </principles>
-
-    <output_template>
-      ### ARCHITEXT 領域探測器
-      > **Status**: [掃描上下文...] -> [偵測到領域型別]
-
-      ### FEATURE MATRIX
-      **✅ 核心模組 (Core - 已自動啟用)**
-      1. [User Feature 1]
-      2. [User Feature 2]
-
-      **⬜ 擴充選單 (Extensions)**
-      | ID | 功能 | 簡述 | 適用場景 | AI 實施視角 |
-      |:---|:---|:---|:---|:---|
-      | [A] | Feature | Desc | When | Impact |
-      | [Z] | **自訂** | (請描述) | - | - |
-
-      ### STRATEGIC DECISIONS (ADR)
-      **[Q1] 決策標題**
-      | ID | 選項 | 簡述 | AI+ | AI- |
-      |:---|:---|:---|:---|:---|
-      | A | ... | ... | ... | ... |
-      | Z | 自訂 | (請描述) | - | - |
-
-      ---
-      **⌨️ INPUT**: `擴充ID (空格分隔) | Q1答案 | Q2答案 | ... | Q6答案 | Q7答案 | ...`（題與題用 `|` 分隔；單題多選用空格，如 `A B | D 簡單點 | C`）
-    </output_template>
 </meta>
 
-<step_0_benchmark>
-    **Role**: 行業研究員
-    **Action**: 分析上下文，列出 1-3 個標竿產品或開源專案，簡要說明參考價值。
-</step_0_benchmark>
+<step_0_ingest>
+    **Role**: 情報分析官
+    **Action**:
+    1. 解析觸發命令中的 `[file_path]`：
+       - 如提供了路徑 → 讀取該檔案
+       - 如未提供路徑 → 依次查找 `project-brief.md`（專案根目錄）、`[[__DOCS_DIR__]]/project-brief.md`
+       - 如均不存在或為空 → 跳轉 `<fallback_interview>`
 
-<step_1_strategy>
+    2. **資源可達性檢查**（須在解析前完成）：
+       掃描 Brief 全文，識別所有外部引用（URL、檔案路徑、圖片）。逐一嘗試存取，將結果分為三類：
+
+       | 狀態 | 處理 |
+       |:---|:---|
+       | 可存取 | 讀取內容，納入後續分析 |
+       | 不可存取（需認證/404/私有連結） | 標記為 `[不可讀]`，後續向使用者報告 |
+       | 非連結的描述性引用（如「參考 Linear 的互動」） | 正常處理，無需存取 |
+
+       > 此步驟目的：避免 AI 假裝已讀取實際無法存取的資源，導致後續產出與使用者預期脫節。
+
+    3. 解析 Brief 各 Section，提取：
+       - 專案特徵標籤 (UI/Data/CLI/Lib/API — 由 Brief 中存在的技術偏好欄位和段落推斷)
+       - 核心功能列表
+       - 已有設計決策（使用者對特定功能/頁面/流程的預定設計）
+       - 技術偏好（區分「已確定」與「留空/推薦」）
+       - 已有資源與上下文
+       - 邊界與約束
+       - 參考專案
+       - 補充說明（規則/術語/背景資訊）
+
+    > Brief 是一次性輸入檔案，處理完成後使用者可自行刪除。
+
+    **Output**:
+    - 如有不可存取的資源 → **立即向使用者輸出資源可達性報告**，列出無法讀取的連結，請使用者提供替代方式（如截圖、貼上內容、文字描述）。等待使用者回覆後再繼續。
+    - 如所有資源可達或無外部引用 → 內部摘要（不輸出給使用者），進入 `<step_1_gap_analysis>`。
+</step_0_ingest>
+
+<step_1_gap_analysis>
     **Role**: 首席產品戰略官 (CPO)
-    **Input**: 使用者提供的 `[context]`。
+    **Input**: Step 0 解析結果。
+
+    **Action**: 逐項檢查 Brief 完整性，識別資訊缺口。
+
+    **檢查清單**:
+
+    | 檢查項 | 判定標準 | 缺口級別 |
+    |:---|:---|:---|
+    | 專案身份 | 名稱 + 一句話描述 + 問題陳述均已填寫 | 必須 |
+    | 目標使用者 | 至少描述了核心使用者角色 | 必須 |
+    | 核心功能 | 至少列出 2 個具體功能且每項有描述 | 必須 |
+    | 技術棧-核心 | 語言/執行環境 + 核心框架已填寫（非留空） | 必須 |
+    | 技術棧-選填 | 資料庫/ORM/CSS 方案/部署等留空項 | 可補 |
+    | 專案起點 | 全新 or 已有程式碼（影響架構決策） | 必須 |
+    | 已有資源 | 設計稿/品牌/已有 API/第三方服務是否明確 | 可補 |
+    | 風格調性 | [?UI] 視覺關鍵字 / [?CLI] 輸出風格 / [?API] 文件方案 | 可補 |
+    | 邊界 | 至少聲明 1 個反目標或硬性約束 | 建議 |
+    | 成功指標 | 已填寫具體可量化指標 | 建議 |
+    | 參考專案 | 至少列出 1 個參照 | 建議 |
+
+    **缺口分級**:
+    - **必須**: 缺失則無法生成產物，須在 Step 2 提問
+    - **可補**: AI 可基於上下文推薦，但最好確認
+    - **建議**: AI 可自行推導，不阻塞流程
+
+    **Decision**:
+    - 無「必須」級缺口 + 無「可補」級缺口 → 略過 Step 2，直接進入 Step 3
+    - 有缺口 → 進入 Step 2
+
+    **Output**: 向使用者輸出 Brief 分析摘要：
+    ```
+    ### BRIEF 分析報告
+    > **專案**: [名稱] | **特徵**: [UI/Data/CLI/Lib/API 中已啟用的標籤]
+
+    **已確認資訊**:
+    - [已填寫的關鍵資訊列表]
+
+    **資訊缺口** (須補充):
+    - [缺口 1]
+    - [缺口 2]
+
+    **AI 將自動補全** (無需操作):
+    - [AI 可自行推導的項]
+    ```
+</step_1_gap_analysis>
+
+<step_2_supplementary>
+    **Role**: 產品顧問
+    **Trigger**: 僅當 Step 1 發現「必須」或「可補」級缺口時執行。
+    **Input**: Step 1 的缺口列表。
+
+    **核心規則: 選擇題優先**
+    - 禁開放式提問（如「你想用什麼資料庫？」）。所有問題須以**選擇題**形式呈現。
+    - AI 基於專案上下文給出推薦預設選項（標 `[推薦]`），使用者只需確認或換選。
+    - 每題必含 `[Z] 自訂` 兜底選項。
+    - 降低使用者決策成本：使用者不需專業知識也能選出合理方案。
 
     **Action**:
-    1. **Domain Classification**: 識別專案型別 (Web/CLI/Backend/Library/Mobile/AI 等)。
-    2. **Feature Matrix**: 提取 Core 功能；腦力激盪 6-10 個 Extensions。
-    3. **Strategic Gap Analysis**: 生成 6 個固定戰略問題 + 2-3 個專案專屬問題。
+    1. 僅針對缺口產生提問，禁提問 Brief 中已明確回答的內容。
+    2. 每個問題提供 3-5 個選項 + `[Z] 自訂`，AI 推薦項標註 `[推薦]`。
+    3. 每個問題須包含 AI+/AI- 列（從 AI Agent 執行視角簡述優劣）。
+    4. 總問題數控制在 3-6 個（合併相關問題）。
+
+    **Output Format**:
+    ```
+    ### 補充確認
+
+    **[Q1] 問題標題**
+    > 為什麼需要這個資訊（一句話）
+
+    | ID | 選項 | 簡述 | AI+ | AI- |
+    |:---|:---|:---|:---|:---|
+    | A [推薦] | ... | ... | ... | ... |
+    | B | ... | ... | ... | ... |
+    | C | ... | ... | ... | ... |
+    | Z | 自訂 | (請描述) | - | - |
 
     ---
+    **INPUT**: `Q1答案 | Q2答案 | ...`（題與題用 `|` 分隔；單題多選用空格）
+    ```
+</step_2_supplementary>
 
-    **[Q1] 產品基因 & 目標使用者**
-    > 決定複雜度邊界和外部依賴程度。
+<step_3_constitution>
+    **Role**: 首席架構師
+    **Input**: Brief 全文 + Step 2 補充回答（如有）。
 
-    | ID | 選項 | 簡述 | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | 純粹工具 | 極致效率，無依賴 | 上下文封閉，幻覺低 | 需高品質演算法 |
-    | B | 社群/社交 | 強調連接 | 資料模型標準化 | RBAC 分散，推理負擔重 |
-    | C | 商業化/SaaS | 變現效率 | 流程固定(Stripe/Auth) | 需整合第三方 SDK，Token 消耗大 |
-    | D | 內容/媒體 | 內容分發 | 結構簡單(CRUD) | 非結構化資料邊界情況多 |
-    | E | 企業/內部 | 穩定合規 | 規則明確，強型別友好 | 表單驗證邏輯極繁瑣 |
-    | F | 開源/DevKit | 生態擴充 | 設計模式標準 | 需大量文件和測試 |
-    | Z | 自訂 | (請描述) | - | - |
+    **Action**: 一次性生成專案憲法檔案。Brief 中的所有資訊須被消化並路由到對應檔案，禁遺漏。
 
-    **[Q2] 視覺與互動個性** [?UI]
-    > 如專案有 UI/介面，決定前端程式碼生成風格和複雜度；CLI/API 專案可略過。
+    ### 資訊路由規則
 
-    | ID | 選項 | 簡述 | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Minimalist / Clean | 極簡留白 | CSS 簡單，佈局不易崩 | 需精準間距 |
-    | B | Playful / Gamified | 活潑動畫 | 無 | 動畫狀態管理複雜，易出視覺 Bug |
-    | C | Professional / Data-Dense | 資訊密集 | 元件複用率高 | 資料 Mock 與邊界渲染複雜 |
-    | D | Developer / Terminal | 終端風格 | 純文字處理，AI 擅長 | ANSI Escape 易出錯 |
-    | E | Brutalist / Neo | 反常規 | 佈局自由 | 非標準 CSS 多，跨瀏覽器一致性差 |
-    | F | Native / System | 原生風格 | 成熟元件庫，生成穩定 | 定製靈活性低 |
-    | Z | 自訂 | (請描述) | - | - |
+    | Brief 內容 | 目標檔案 |
+    |:---|:---|
+    | 專案身份、目標使用者、成功指標、參考靈感 | `[[__DOCS_DIR__]]/global/vision.md` |
+    | 技術棧、部署目標、第三方庫/服務 | `02_tech_stack.md` |
+    | 風格調性（UI/CLI/API） | `02_tech_stack.md` (UI Protocol / Output Convention) |
+    | 核心功能列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
+    | **已有設計決策** | Roadmap 對應任務的 `goal` 欄位中注入，並在 `/archi.plan` 時作為硬約束 |
+    | 邊界與反目標 | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
+    | 已有資源（設計稿/品牌/已有 API） | `[[__DOCS_DIR__]]/global/vision.md` + `02_tech_stack.md` 按內容歸屬 |
+    | 補充說明中的**規則/約定/偏好** | `90_custom_rules.md` |
+    | 補充說明中的**領域術語** | `[[__DOCS_DIR__]]/global/dictionary.json` |
+    | 補充說明中的**其他背景資訊** | `[[__DOCS_DIR__]]/global/vision.md` Context |
 
-    **[Q3] Scale & Infrastructure**
-    > 決定基礎設施複雜度。
+    > 關鍵: 使用者在「補充說明」中寫的任何規則性內容（如「程式碼註解用英文」、「禁止使用 any」）須寫入 `90_custom_rules.md`，而非丟棄。
 
-    | ID | 選項 | 簡述 | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Hobby / Prototype | 單機/Serverless | 零運維，只需業務程式碼 | 無 |
-    | B | Startup / Growth | 標準 Web 架構 | 訓練資料中最常見模式 | 需配置 Docker/DB |
-    | C | High Traffic | 高併發 | 無 | 快取/MQ 等中介軟體，上下文負載重 |
-    | D | Data Heavy | 海量資料 | SQL 生成能力強 | 複雜查詢最佳化難自動化 |
-    | E | Offline / Local | 本地執行 | 無 | 資料同步演算法(CRDT/Sync)極難正確生成 |
-    | F | Enterprise Deployment | 私有化部署 | 無 | K8s 配置冗長易錯 |
-    | Z | 自訂 | (請描述) | - | - |
+    ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
+    - 從 Brief 專案概述填充 Core Vision 和 Target Audience
+    - 從 Brief 邊界與約束填充 Boundaries
+    - 從 Brief 風格調性（如有）填充 Design & Experience
+    - 從 Brief 參考與靈感推導 Product Principles
+    - 從 Brief 已有資源、補充說明提取背景上下文
+    - 須填滿所有 `[ ]` 佔位符，禁保留範本範例文字
 
-    **[Q4] 資料敏感度 & 合規**
-    > 決定安全架構層級和合規要求。
+    ### 3.2 Tech Stack (`02_tech_stack.md`)
+    - Brief 中已確定的技術選擇 → 直接寫入
+    - Brief 中留空/寫「推薦」的 → AI 基於專案特徵推薦，須在輸出中標註 `(AI 推薦)` 並簡述理由
+    - Brief 中已有的第三方服務/API → 寫入對應 Section
+    - **AX Optimization**: 推薦時優先 AI 友善型技術 (Static Typing, Popular Frameworks, Convention-over-Configuration)
+    - 須填充完整的 Section 1-8（Global Mandates、Technology Selection、Coding Standards、UI Protocol[?UI]、Testing、Deployment、Architecture、Anti-Patterns）
+    - `Section 5 Testing` 中的 Environment Scripts 定義須完整
 
-    | ID | 選項 | 簡述 | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | 公開資料 | 無 PII，無合規要求 | 無加密負擔，開發快 | 無 |
-    | B | 使用者資料 (PII) | 含信箱/手機/地址等 | 標準模式(bcrypt/JWT) | GDPR/隱私策略增加邊界 |
-    | C | 金融/支付 | PCI-DSS 合規 | Stripe 等 SDK 封裝良好 | 審計日誌/加密層複雜 |
-    | D | 醫療/健康 | HIPAA 或同等合規 | 無 | 資料隔離/存取控制極嚴格 |
-    | E | 無持久化 | 純計算/轉換工具 | 無狀態，上下文極簡 | 無 |
-    | Z | 自訂 | (請描述) | - | - |
+    ### 3.3 Custom Rules (`90_custom_rules.md`)
+    - 從 Brief 補充說明中提取規則性內容寫入
+    - 從 Brief 技術紅線轉化為具體禁止規則
+    - 如使用者未提供任何自訂規則，保持範本預設內容
 
-    **[Q5] 整合生態**
-    > 決定系統邊界和外部依賴複雜度。
+    ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+    基於 Brief 核心功能列表推導任務鏈。
 
-    | ID | 選項 | 簡述 | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | 獨立執行 | 無外部依賴 | 封閉上下文，零整合風險 | 無 |
-    | B | API 消費者 | 呼叫外部 API/服務 | SDK 呼叫模式標準 | 第三方 API 變更/限流難預測 |
-    | C | API 提供者 | 對外暴露 API | REST/GraphQL 生成成熟 | 版本相容/文件維護 |
-    | D | 平台外掛/擴充 | 嵌入宿主平台 (VS Code/Figma/Slack 等) | 無 | 平台 API 訓練資料少，版本碎片化 |
-    | E | 雙向整合 | 既消費又提供 API | 無 | 介面契約管理複雜 |
-    | Z | 自訂 | (請描述) | - | - |
+    **Phase 1 (Infra): The "Big Bang"**
+    - 須一次性建立完整基建骨架。
+    - [INF-01] Project Scaffolding: 目錄結構、Linter、Env、Logger、Test Setup、`[[__DOCS_DIR__]]/scripts/`（AI 基於 `02_tech_stack.md` Section 5 自動生成，禁向使用者提問腳本實作細節）。
+    - [INF-02] Core Entities (如適用): Database Schema, User/Auth Model, Global Types。
+    - Phase 2 所有任務預設依賴 INF-01 (和 INF-02)。
 
-    **[Q6] 資源 & 素材策略**
-    > 決定 AI 如何處理非程式碼資源 (圖片/圖示/音訊/影片/字型)。
+    **Phase 2 (Feature): Domain Partitioning**
+    - Brief 中每個核心功能 → 一個或多個 Feature 任務
+    - 按 Domain 分組，不同 Domain 間任務預設可並行
 
-    | ID | 選項 | 簡述 | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | 純佔位符 | placeholder 圖片/圖示，使用者後續替換 | 零二進位依賴，純程式碼聚焦 | 無 |
-    | B | 圖示/素材庫 | Lucide/Heroicons + Unsplash/Pexels | 引用確定性高，無斷鏈 | 庫鎖定 |
-    | C | 程式化生成 | SVG/CSS/Canvas 生成圖形 | AI 擅長 SVG 生成 | 複雜插畫無法實現 |
-    | D | 外部 CDN/服務 | 引用外部 CDN 或資源服務 | URL 引用，簡單 | 外部依賴，可能失效 |
-    | E | 本地資源流水線 | 使用者提供素材，AI 編寫處理流水線 | 邊界清晰，AI 只寫程式碼 | 需使用者預先準備素材 |
-    | Z | 自訂 | (請描述) | - | - |
-
-    **[Q7-Q9] 專案專屬問題** (動態生成)
-    > 基於 `[context]` 分析，生成 2-3 個針對該專案的關鍵決策問題。
-    > 每個問題須: 表格格式，≥3 選項 + AI+/AI- 列 + `[Z] 自訂`。
-    > 聚焦: context 中的模糊地帶、領域特有權衡、未宣告的關鍵假設。
-
-    ---
-
-    **⌨️ INPUT**: `擴充ID | Q1答案 | Q2答案 | ... | Q6答案 | Q7答案 | ...`（題與題用 `|` 分隔；單題多選用空格）
-</step_1_strategy>
-
-<step_2_tech_gate>
-    **Role**: 技術總監 (CTO)
-    **Input**: Step 1 的選擇結果。
-
-    **Action**:
-    - **AX Optimization**: 推薦技術棧時優先 AI 友好型技術 (Static Typing, Popular Frameworks)。
-    - 解釋為什麼該技術棧適合 AI 生成與維護。
-
-    **Required Questions**:
-
-    **[Q1] 核心語言與執行環境**
-
-    | ID | 選項 | 簡述 | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | TypeScript/Node | 全棧 | 訓練資料最豐富，型別輔助糾錯 | 配置繁瑣 |
-    | B | TypeScript/Bun | 現代執行環境 | 零配置，減少 Token | 邊緣 API 訓練資料少 |
-    | C | Rust | 系統級 | 編譯器錯誤資訊極佳，可 Loop 修復 | Borrow Checker 推理成本高 |
-    | D | Go | 後端 | 語法簡單，只有一種寫法 | `if err != nil` 佔大量 Token |
-    | E | Python | 快速開發 | 偽代碼即程式碼，生成極快 | 動態型別致執行時錯誤難排查 |
-    | F | Java/Kotlin | 企業級 | 強型別，IDE 分析強 | Boilerplate 極多，易超 Context Window |
-
-    **[Q2] 核心框架** (動態生成)
-    > **AX**: 優先「約定大於配置」框架，減少 AI 決策負擔。
-
-    **[Q3] 資料持久化** (動態生成)
-    > **AX**: 優先 Schema 強型別 ORM (Prisma/Drizzle)。
-
-    **[Q4] 互動介面** [?UI] (動態生成)
-    > 如專案有 UI 則顯示。**AX**: 優先 Component 庫 (Shadcn/Tailwind 等)，AI 擅長組合而非手寫 CSS；CLI/終端專案可選 Chalk/終端 UI 庫。
-
-    **[Q5] 品質保障** (動態生成)
-    > **AX**: 測試是 AI 自我驗證的唯一手段。須涵蓋：靜態分析命令、測試套件。
-
-    **[Q6] 基礎設施** (動態生成)
-    > **AX**: 配置檔越宣告式越好。
-
-    ---
-
-    **⌨️ INPUT**: `Q1答案 | Q2答案 | Q3答案 | Q4答案 | Q5答案 | Q6答案 | Q7答案 | Q8答案`（題與題用 `|` 分隔；單題多選用空格）
-</step_2_tech_gate>
-
-<step_3_roadmap>
-    **Role**: TPM
-    **Goal**: 將戰略轉化為適合 AI 執行的原子任務鏈。
-    **Target**: `[[__DOCS_DIR__]]/global/roadmap.json`
-
-    **Action**:
-    1.  **Phase 1 (Infra): The "Big Bang"**
-        - 須一次性建立完整基建骨架。
-        - [INF-01] Project Scaffolding: 目錄結構、Linter、Env、Logger、Test Setup、`[[__DOCS_DIR__]]/scripts/`（AI 基於 `02_tech_stack.md` Section 5 自動生成，禁向使用者提問腳本實現細節）。
-        - [INF-02] Core Entities (如適用): Database Schema, User/Auth Model, Global Types。
-        - Phase 2 所有任務預設依賴 INF-01 (和 INF-02)。
-
-    2.  **Phase 2 (Feature): Domain Partitioning**
-        - 按 Domain 分組 (Web: User/Order/Payment; CLI: Config/User/Plugin; Script: Parser/Network/Output)。
-        - 不同 Domain 間任務預設可並行。
+    **已有設計決策注入**:
+    如 Brief 的「已有設計決策」段中包含某個功能/頁面/流程的具體設計，須將其注入到對應 Feature 任務的 `goal` 欄位中，作為 `/archi.plan` 階段的硬約束。格式:
+    - `goal` 中追加以 `\n[使用者預設] <決策內容摘要>`
+    - 如決策涉及多個功能，在每個相關任務中都標註
 
     **Task JSON Schema**:
     ```json
@@ -215,22 +213,29 @@
     **Initial Status Rule**:
     - `deps: []` 或 deps 已完成 → `"status": "pending"`
     - `deps: ["XXX"]` 未完成 → `"status": "blocked"`
-    - 禁將所有任務都設為 pending，須根據依賴區分。
 
-    > **Slug 規則**: 用於 `features/<ID>_<Slug>/` 命名。須英文、Snake_Case。
+    > **Slug**: 用於 `features/<ID>_<Slug>/` 命名。須英文、Snake_Case。
 
-    **Output**: 將完整 roadmap 寫入 `roadmap.json`，然後運行 `npx archi render` 生成視覺化 `.md` 檔案。
-</step_3_roadmap>
+    ### 3.5 其他全域文件 (按需)
+    - `dictionary.json`: 從 Brief 提取領域術語
+    - [?UI] `design_tokens.json`: 基於 UI 風格生成基礎 Token
+    - `error_codes.json`: 基於功能列表預定義核心錯誤碼
+
+    **Output**: 寫入所有檔案，然後執行 `npx archi render` 生成視覺化 `.md`。
+</step_3_constitution>
 
 <step_4_audit>
     **Role**: 首席審計官
     **Checklist**:
     1.  **Vision 完整性**: `vision.md` 含北極星指標和設計哲學？
-    2.  **Tech Stack 一致性**: `02_tech_stack.md` 與 Step 2 選擇一致？含完整技術棧宣告？
-    3.  **Roadmap 合規**: 執行 `npx archi task --check` 驗證一致性。
-    4.  [?UI] **Design Tokens**: `design_tokens.json` 含基礎顏色/字體/間距定義？
+    2.  **Tech Stack 一致性**: `02_tech_stack.md` 與 Brief 技術偏好一致？含完整技術棧宣告？
+    3.  **Custom Rules**: Brief 補充說明/技術紅線中的規則是否已寫入 `90_custom_rules.md`？
+    4.  **Roadmap 合規**: 執行 `npx archi task --check` 驗證一致性。
+    5.  [?UI] **Design Tokens**: `design_tokens.json` 含基礎顏色/字體/間距定義？
+    6.  **Brief 對齊**: 所有 Brief 中聲明的核心功能均已映射到 Roadmap 任務？
+    7.  **資訊零遺漏**: Brief 中所有使用者填寫的內容均已路由到對應檔案？
 
-    如有問題則靜默修正；嚴重問題標記 `⚠️ Risk Warning`。
+    如有問題則靜默修正；嚴重問題標記 `Risk Warning`。
 </step_4_audit>
 
 <step_5_signoff>
@@ -238,7 +243,31 @@
     1.  執行 `npx archi task` 輸出任務進度概覽。
     2.  輸出總結。
 
-    **Output**: 專案初始化摘要，含 Decisions Summary 表格（Q1-Q6 + 專屬問題選擇及影響）和 Next Steps 表格。推薦執行 `/archi.plan INF-01`。
+    **Output**: 專案初始化摘要，含：
+    - **Brief 來源確認**: 列出從 Brief 中採納的關鍵決策
+    - **AI 補全項**: 列出 AI 自動推薦的技術/決策及理由
+    - **Roadmap 概覽**: 任務數量和階段分布
+    - **Next Steps 表格**: 推薦執行 `/archi.plan INF-01`
 </step_5_signoff>
+
+<fallback_interview>
+    **Trigger**: Brief 檔案不存在或為空。
+    **Role**: 產品顧問
+
+    **Action**:
+    1. 告知使用者 `project-brief.md` 未找到。建議：
+       - 檢查專案根目錄是否有該檔案（`npx archi init` 時應已生成）
+       - 如檔案遺失，可重新執行 `npx archi init` 覆蓋生成
+       - 或繼續對話，透過訪談方式提供資訊
+    2. 如使用者選擇繼續對話，按以下順序引導：
+       a. 專案是什麼？（名稱、一句話描述、解決什麼問題）
+       b. 給誰用？（目標使用者）
+       c. 核心功能有哪些？（至少 2-3 個）
+       d. 用什麼技術？（語言/框架，已確定的部分）
+       e. 有什麼約束？（不做的事、時間、相容性要求）
+    3. 收集完畢後，將資訊寫入 `project-brief.md`（專案根目錄），然後跳轉 `<step_1_gap_analysis>`。
+
+    > 此模式為向後相容，核心流程仍以 Brief 為準。
+</fallback_interview>
 
 </protocol_kickoff>

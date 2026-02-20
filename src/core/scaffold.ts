@@ -2,11 +2,22 @@
 
 import fs from "fs-extra";
 import path from "path";
-import { FileOperation, FileOpType, InitConfig } from "../types/index.ts";
+import {
+  FileOperation,
+  FileOpType,
+  InitConfig,
+  ProjectFeature,
+} from "../types/index.ts";
 import { logger } from "../utils/logger.ts";
 import { createT, getSystemLocale } from "../utils/t.ts";
 import { ConflictResolver } from "./conflict.ts";
-import { EDITOR_CONFIGS, GLOBAL_RULES } from "./rules.ts";
+import {
+  BRIEF_BASE_NAME,
+  BRIEF_MODULES_NAME,
+  BRIEF_OUTPUT_NAME,
+  EDITOR_CONFIGS,
+  GLOBAL_RULES,
+} from "./rules.ts";
 import { TemplateManager } from "./template.ts";
 
 export type ScaffoldOptions = InitConfig;
@@ -19,7 +30,7 @@ export class Scaffolder {
    * @param options 初始化配置选项
    */
   static async run(options: ScaffoldOptions) {
-    const { language, docDir, editors } = options;
+    const { language, docDir, editors, features = [] } = options;
     const templateRoot = await TemplateManager.getRoot();
 
     // 如果请求的语言模板不存在（例如 zh-Hant 尚未完善），则回退到默认的中文模板，确保初始化流程不中断
@@ -123,7 +134,7 @@ export class Scaffolder {
       }
     }
 
-    // 处理文件冲突
+    // 处理文件冲突（Brief 单独处理，不进入常规 operations）
     const finalOperations = await ConflictResolver.resolve(operations);
 
     const groups = ["docs", "ide"];
@@ -140,12 +151,71 @@ export class Scaffolder {
       }
     }
 
-    // 处理未分组的操作 (如果有)
     const otherOps = finalOperations.filter((op) => !op.group);
     if (otherOps.length > 0) {
       await TemplateManager.execute(otherOps);
     }
 
+    await this.generateBrief(sourceDir, features, replacements);
+
     logger.success(t("complete"));
+  }
+
+  /**
+   * 读取 _base.md + _modules.md，根据选中的特征标签提取模块片段插入骨架，写入项目根目录。
+   * _modules.md 中标记格式: `<!-- @tech:tag -->...<!-- @end -->` / `<!-- @style:tag -->...<!-- @end -->`
+   * _base.md 中插槽: `<!-- @slot:tech -->` / `<!-- @slot:style -->`
+   *
+   * @param sourceDir 源目录
+   * @param features 项目特征
+   * @param replacements 替换变量
+   */
+  private static async generateBrief(
+    sourceDir: string,
+    features: ProjectFeature[],
+    replacements: Record<string, string>,
+  ) {
+    const briefsDir = path.join(sourceDir, GLOBAL_RULES.PATHS.BRIEFS_SOURCE);
+    const basePath = path.join(briefsDir, BRIEF_BASE_NAME);
+
+    if (!(await fs.pathExists(basePath))) return;
+
+    let base = await fs.readFile(basePath, "utf-8");
+
+    const modulesPath = path.join(briefsDir, BRIEF_MODULES_NAME);
+    const modules = (await fs.pathExists(modulesPath))
+      ? await fs.readFile(modulesPath, "utf-8")
+      : "";
+
+    const featureTags = new Set<string>(features);
+
+    const techSnippets: string[] = [];
+    const styleSnippets: string[] = [];
+
+    const blockRe = /<!-- @(tech|style):(\w+) -->\n([\s\S]*?)<!-- @end -->/g;
+    let match;
+    while ((match = blockRe.exec(modules)) !== null) {
+      const [, slot, tag, content] = match;
+      if (!featureTags.has(tag)) continue;
+      const trimmed = content.trimEnd();
+      if (slot === "tech") techSnippets.push(trimmed);
+      else if (slot === "style") styleSnippets.push(trimmed);
+    }
+
+    base = base.replace("<!-- @slot:tech -->", techSnippets.join("\n"));
+    base = base.replace(
+      "<!-- @slot:style -->",
+      styleSnippets.length > 0 ? styleSnippets.join("\n\n") + "\n\n" : "",
+    );
+
+    for (const [key, value] of Object.entries(replacements)) {
+      const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      base = base.replace(new RegExp(escapedKey, "g"), value);
+    }
+
+    base = base.replace(/\n{3,}/g, "\n\n");
+
+    const destPath = path.join(process.cwd(), BRIEF_OUTPUT_NAME);
+    await fs.writeFile(destPath, base, "utf-8");
   }
 }

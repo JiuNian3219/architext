@@ -11,6 +11,22 @@ export type LocaleLang = "zh" | "zh-Hant" | "en";
 export type SupportedEditor = "trae" | "cursor" | "windsurf" | "vscode";
 
 /**
+ * 项目特征标签（内部驱动 Brief 模板拼装的原子单元）
+ */
+export type ProjectFeature = "ui" | "data" | "cli" | "lib" | "api";
+
+/**
+ * 项目类型（用户面向的预设，每种类型映射到一组 features）
+ */
+export type ProjectType =
+  | "web"
+  | "api"
+  | "cli"
+  | "lib"
+  | "fullstack"
+  | "hybrid";
+
+/**
  * Commands 配置（用于支持编辑器的自定义命令功能）
  */
 export interface EditorCommandsConfig {
@@ -40,6 +56,7 @@ export interface EditorRuleConfig {
 export interface ArchitextConfig {
   language: string;
   docDir: string;
+  features?: ProjectFeature[];
   roadmap?: string;
   editors: SupportedEditor[];
   version?: string;
@@ -55,6 +72,7 @@ export interface InitOptions {
   editor?: string;
   language?: LocaleLang;
   doc?: string;
+  type?: string;
 }
 
 /**
@@ -65,6 +83,7 @@ export interface InitConfig {
   language: LocaleLang;
   editors: SupportedEditor[];
   docDir: string;
+  features: ProjectFeature[];
 }
 
 /**

@@ -31,6 +31,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
     language: config.language,
     editors: config.editors,
     docDir: config.docDir,
+    features: config.features,
   });
 
   try {

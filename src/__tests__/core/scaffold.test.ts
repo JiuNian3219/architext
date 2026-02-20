@@ -6,7 +6,6 @@ import { InitConfig } from "../../types/index.ts";
 import { createTempDir, cleanupTempDir } from "../helpers/temp-dir.ts";
 import path from "path";
 import fs from "fs-extra";
-import { GLOBAL_RULES } from "../../core/rules.ts";
 
 // 确保我们使用真实的 fs 操作，而不是 mock 的
 vi.mock("fs-extra", async () => {
@@ -42,6 +41,7 @@ describe("Scaffolder Integration", () => {
       language: "zh",
       editors: ["cursor"],
       docDir: ".architext",
+      features: ["ui"],
     };
 
     // 执行生成
@@ -64,7 +64,8 @@ describe("Scaffolder Integration", () => {
     const config: InitConfig = {
       language: "en",
       editors: ["cursor"],
-      docDir: "docs", // 自定义文档目录名
+      docDir: "docs",
+      features: ["ui"],
     };
 
     await Scaffolder.run(config);
