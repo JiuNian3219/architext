@@ -1,6 +1,6 @@
 /** @fileoverview 测试国际化工具函数 (t.ts) */
 
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { createT, getSystemLocale } from "../../utils/t.ts";
 
 describe("getSystemLocale", () => {

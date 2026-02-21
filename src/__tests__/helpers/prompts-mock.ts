@@ -43,7 +43,7 @@ export function setupPromptsMock() {
         start: vi.fn(),
         stop: vi.fn(),
       }),
-      group: vi.fn().mockImplementation(async (steps) => {
+      group: vi.fn().mockImplementation(async (_steps) => {
         // 在 group 中，通常会执行 steps，我们这里简单返回注入的值
         // 真实场景中 steps 是一个回调函数映射，这里简化处理，直接返回注入的配置
         return mockPrompts._injectedValues;
