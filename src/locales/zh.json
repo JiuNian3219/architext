@@ -27,8 +27,7 @@
     "desc": "移除 Architext 框架及其生成的文件"
   },
   "doctor": {
-    "desc": "环境自检，检查 Architext 环境是否正常",
-    "fix": "自动修复，修复 Architext 环境中的问题",
+    "desc": "项目健康检查：配置、目录结构、全局文档与 IDE 规则",
     "failed": "环境自检失败",
     "success": "系统检查通过：一切正常"
   },
@@ -190,7 +189,62 @@
         "plan_error": "{file}: 结构不兼容（请手动检查）"
       }
     },
-    "doctor": {},
+    "doctor": {
+      "title": "Architext 项目健康检查",
+      "no_config": "未找到配置文件，后续检查已跳过",
+      "group": {
+        "config": "项目配置",
+        "doc_structure": "文档目录结构",
+        "global_files": "全局文档",
+        "ide_rules": "IDE 规则"
+      },
+      "summary": {
+        "result": "结果: {parts}",
+        "passed": "{n} 通过",
+        "warned": "{n} 警告",
+        "failed": "{n} 失败"
+      },
+      "success": "项目健康检查通过，一切正常",
+      "with_warnings": "检查完成，存在警告，建议关注",
+      "with_errors": "检查完成，存在问题，请修复后重试",
+      "check": {
+        "config": {
+          "not_found": "配置文件不存在",
+          "hint_init": "运行 npx archi init 初始化项目",
+          "format_label": "配置文件格式",
+          "format_fail": "JSON 解析失败，文件可能已损坏",
+          "editors_label": "编辑器配置",
+          "editors_empty": "未配置任何编辑器",
+          "editors_invalid": "含无效编辑器: {list}",
+          "editors_ok": "编辑器: {list}",
+          "lang_label": "语言配置",
+          "lang_invalid": "不支持的语言: {lang}",
+          "lang_ok": "语言: {lang}",
+          "doc_dir": "文档目录: {dir}",
+          "doc_dir_unset": "(未设置)",
+          "doc_dir_empty": "docDir 字段为空"
+        },
+        "dir": {
+          "missing": "目录不存在",
+          "hint_init": "运行 npx archi init 重新初始化",
+          "hint_update": "运行 npx archi update 恢复",
+          "hint_features": "手动创建即可：mkdir {docDir}/features"
+        },
+        "global": {
+          "required_missing": "必要文档缺失",
+          "optional_missing": "文档缺失（不影响运行）",
+          "parse_fail": "JSON 解析失败",
+          "roadmap_ok": "roadmap.json (Schema v{version} 兼容)",
+          "roadmap_hint": "运行 npx archi update 尝试自动修复"
+        },
+        "rules": {
+          "dir_missing": "规则目录不存在",
+          "dir_hint": "运行 npx archi update 恢复规则文件",
+          "file_missing": "规则文件缺失",
+          "file_hint": "运行 npx archi update 恢复"
+        }
+      }
+    },
     "help": {
       "tagline": "No Docs, No Code. — AI 原生架构协议",
       "section": {
@@ -275,8 +329,7 @@
           "dry_run": "仅预览变更，不实际写入"
         },
         "doctor": {
-          "desc": "检查项目健康状况（文件完整性、配置一致性、环境依赖）。",
-          "fix": "自动修复可修复的问题"
+          "desc": "只读健康扫描：配置有效性、目录完整性、全局文档 Schema、IDE 规则文件。"
         },
         "task": {
           "desc": "管理 Roadmap 任务。查看进度、更新状态、检查依赖一致性。",

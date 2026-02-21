@@ -116,9 +116,7 @@ export async function helpCommand(): Promise<void> {
     cmd("npx archi update [--dry-run]", t("cli.update.desc"), [
       `--dry-run  ${t("cli.update.dry_run")}`,
     ]),
-    cmd("npx archi doctor [--fix]", t("cli.doctor.desc"), [
-      `--fix  ${t("cli.doctor.fix")}`,
-    ]),
+    cmd("npx archi doctor", t("cli.doctor.desc")),
     cmd("npx archi task [id] [--status <s>] [--check]", t("cli.task.desc"), [
       t("cli.task.detail"),
       t("cli.task.example"),

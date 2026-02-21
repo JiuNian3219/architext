@@ -27,8 +27,7 @@
     "desc": "Remove Architext framework and generated files"
   },
   "doctor": {
-    "desc": "System check, check Architext environment is normal",
-    "fix": "Auto fix, fix problems in Architext environment",
+    "desc": "Project health check: config, doc structure, global files and IDE rules",
     "failed": "System check failed",
     "success": "System Check: All Good"
   },
@@ -190,7 +189,62 @@
         "plan_error": "{file}: schema incompatible (please review manually)"
       }
     },
-    "doctor": {},
+    "doctor": {
+      "title": "Architext Project Health Check",
+      "no_config": "Config file not found, remaining checks skipped",
+      "group": {
+        "config": "Configuration",
+        "doc_structure": "Doc Directory Structure",
+        "global_files": "Global Files",
+        "ide_rules": "IDE Rules"
+      },
+      "summary": {
+        "result": "Result: {parts}",
+        "passed": "{n} passed",
+        "warned": "{n} warnings",
+        "failed": "{n} failed"
+      },
+      "success": "Health check passed — everything looks good",
+      "with_warnings": "Check complete with warnings — review recommended",
+      "with_errors": "Check complete with errors — please fix before proceeding",
+      "check": {
+        "config": {
+          "not_found": "Config file not found",
+          "hint_init": "Run npx archi init to initialize the project",
+          "format_label": "Config file format",
+          "format_fail": "JSON parse failed — file may be corrupted",
+          "editors_label": "Editor config",
+          "editors_empty": "No editors configured",
+          "editors_invalid": "Contains invalid editors: {list}",
+          "editors_ok": "Editors: {list}",
+          "lang_label": "Language config",
+          "lang_invalid": "Unsupported language: {lang}",
+          "lang_ok": "Language: {lang}",
+          "doc_dir": "Doc dir: {dir}",
+          "doc_dir_unset": "(not set)",
+          "doc_dir_empty": "docDir field is empty"
+        },
+        "dir": {
+          "missing": "Directory not found",
+          "hint_init": "Run npx archi init to reinitialize",
+          "hint_update": "Run npx archi update to restore",
+          "hint_features": "Create manually: mkdir {docDir}/features"
+        },
+        "global": {
+          "required_missing": "Required file missing",
+          "optional_missing": "File missing (non-blocking)",
+          "parse_fail": "JSON parse failed",
+          "roadmap_ok": "roadmap.json (Schema v{version} compatible)",
+          "roadmap_hint": "Run npx archi update to attempt auto-fix"
+        },
+        "rules": {
+          "dir_missing": "Rules directory not found",
+          "dir_hint": "Run npx archi update to restore rule files",
+          "file_missing": "Rule file missing",
+          "file_hint": "Run npx archi update to restore"
+        }
+      }
+    },
     "help": {
       "tagline": "No Docs, No Code. — AI-Native Architecture Protocol",
       "section": {
@@ -275,8 +329,7 @@
           "dry_run": "Preview changes only, no actual writes"
         },
         "doctor": {
-          "desc": "Check project health (file integrity, config consistency, environment deps).",
-          "fix": "Auto-fix recoverable issues"
+          "desc": "Read-only health scan: config validity, directory integrity, global file schemas, IDE rule files."
         },
         "task": {
           "desc": "Manage Roadmap tasks. View progress, update status, check dependency consistency.",

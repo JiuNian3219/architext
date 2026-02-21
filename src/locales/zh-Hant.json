@@ -27,8 +27,7 @@
     "desc": "移除 Architext 框架及其生成的檔案"
   },
   "doctor": {
-    "desc": "環境自檢，檢查 Architext 環境是否正常",
-    "fix": "自動修復，修復 Architext 環境中的問題",
+    "desc": "專案健康檢查：設定、目錄結構、全域文件與 IDE 規則",
     "failed": "環境自檢失敗",
     "success": "系統檢查通過：一切正常"
   },
@@ -190,7 +189,62 @@
         "plan_error": "{file}: 結構不相容（請手動檢查）"
       }
     },
-    "doctor": {},
+    "doctor": {
+      "title": "Architext 專案健康檢查",
+      "no_config": "未找到設定檔，後續檢查已跳過",
+      "group": {
+        "config": "專案設定",
+        "doc_structure": "文件目錄結構",
+        "global_files": "全域文件",
+        "ide_rules": "IDE 規則"
+      },
+      "summary": {
+        "result": "結果: {parts}",
+        "passed": "{n} 通過",
+        "warned": "{n} 警告",
+        "failed": "{n} 失敗"
+      },
+      "success": "專案健康檢查通過，一切正常",
+      "with_warnings": "檢查完成，存在警告，建議關注",
+      "with_errors": "檢查完成，存在問題，請修復後重試",
+      "check": {
+        "config": {
+          "not_found": "設定檔不存在",
+          "hint_init": "執行 npx archi init 初始化專案",
+          "format_label": "設定檔格式",
+          "format_fail": "JSON 解析失敗，檔案可能已損毀",
+          "editors_label": "編輯器設定",
+          "editors_empty": "未設定任何編輯器",
+          "editors_invalid": "含無效編輯器: {list}",
+          "editors_ok": "編輯器: {list}",
+          "lang_label": "語言設定",
+          "lang_invalid": "不支援的語言: {lang}",
+          "lang_ok": "語言: {lang}",
+          "doc_dir": "文件目錄: {dir}",
+          "doc_dir_unset": "(未設定)",
+          "doc_dir_empty": "docDir 欄位為空"
+        },
+        "dir": {
+          "missing": "目錄不存在",
+          "hint_init": "執行 npx archi init 重新初始化",
+          "hint_update": "執行 npx archi update 恢復",
+          "hint_features": "手動建立即可：mkdir {docDir}/features"
+        },
+        "global": {
+          "required_missing": "必要文件缺失",
+          "optional_missing": "文件缺失（不影響運行）",
+          "parse_fail": "JSON 解析失敗",
+          "roadmap_ok": "roadmap.json (Schema v{version} 相容)",
+          "roadmap_hint": "執行 npx archi update 嘗試自動修復"
+        },
+        "rules": {
+          "dir_missing": "規則目錄不存在",
+          "dir_hint": "執行 npx archi update 恢復規則檔案",
+          "file_missing": "規則檔案缺失",
+          "file_hint": "執行 npx archi update 恢復"
+        }
+      }
+    },
     "help": {
       "tagline": "No Docs, No Code. — AI 原生架構協議",
       "section": {
@@ -275,8 +329,7 @@
           "dry_run": "僅預覽變更，不實際寫入"
         },
         "doctor": {
-          "desc": "檢查專案健康狀況（檔案完整性、設定一致性、環境依賴）。",
-          "fix": "自動修復可修復的問題"
+          "desc": "唯讀健康掃描：設定有效性、目錄完整性、全域文件 Schema、IDE 規則檔案。"
         },
         "task": {
           "desc": "管理 Roadmap 任務。查看進度、更新狀態、檢查依賴一致性。",

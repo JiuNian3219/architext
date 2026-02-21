@@ -47,17 +47,13 @@ cli
   .action(run(updateCommand));
 
 // Doctor 环境自检
-cli
-  .command("doctor", t("doctor.desc"))
-  .option("-x, --fix", t("doctor.fix"), { default: false })
-  .action(async (options) => {
-    try {
-      // doctorCommand 接收的参数结构稍有不同，手动适配一下
-      await doctorCommand({ fix: options.fix || false });
-    } catch (error) {
-      handleError(error);
-    }
-  });
+cli.command("doctor", t("doctor.desc")).action(async () => {
+  try {
+    await doctorCommand();
+  } catch (error) {
+    handleError(error);
+  }
+});
 
 // Uninstall 移除框架
 cli
