@@ -1,9 +1,9 @@
 <protocol_plan>
-  **Trigger**: `/archi.plan [context]`
+  **Trigger**: `/archi.plan <ID> [context]`
   **Goal**: Define Feature Spec/UI/Plan through deep architecture interview.
-  **Logic**:
-  - If input is **ID** (exists in Roadmap): Directly read context.
-  - If input is **Context** (new requirement): Auto generate ID, append to Roadmap, then start interview.
+  **Input**:
+  - `<ID>` (required): An existing task ID from the Roadmap. Tasks must be created first via `/archi.scope` or `/archi.inherit`.
+  - `[context]` (optional): Known context for the task (e.g., requirement descriptions, references, constraints). When provided, serves as pre-loaded input for step_2 interview, reducing questions.
 
 <constraints_cursor>
     **Mode Lock**: This protocol MUST execute in **Agent Mode (Normal Mode)**. Prohibited from switching to Plan Mode or any read-only mode.
@@ -32,6 +32,10 @@
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`.
     6.  **Read Dependency Context** (if dependent tasks exist):
         - Read dependency tasks' `spec.md` (interface contracts) and `plan.json` (implemented content).
+        - **Stub Compatibility**: If a dependency's Spec-Status is Stub:
+          a. Read source files listed in the stub's "Associated Files" section as supplementary context.
+          b. Extract the module's public interfaces/exported types from code.
+          c. Use extracted results as upstream interface reference for this plan (do not modify the stub itself).
         - Avoid re-defining upstream interfaces; ensure integration points are precisely aligned.
 
     **Output**: Present a **Feature Context Brief** to the user:

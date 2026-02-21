@@ -17,8 +17,32 @@
     **Role**: 产品经理
     **Action**:
     - 读取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、ui.preview.html、plan.json。
+    - 检测 spec.md 中的 `Spec-Status` 字段：
+      - `Full` → 正常流程，进入 step_2。
+      - `Stub` → 进入 step_1_5_enrich。
     - [?重大 UX 变更] 快速搜索同类产品最佳实践。
 </step_1_load>
+
+<step_1_5_enrich>
+    **Role**: 逆向工程师
+    **Trigger**: spec.md 中 `Spec-Status: Stub`（由 `/archi.inherit` 生成的轻量快照）。
+
+    **Action**:
+    1. 告知用户："该功能仅有轻量快照，须先补全完整 spec 才能执行修改。"
+    2. 从 stub 的"关联文件"section 提取源码路径。
+    3. 逐一读取关联文件，中度扫描（入口 + 核心逻辑）。
+    4. 基于代码分析，将 stub 补全为完整 spec：
+       - 保留原有概述和关键流程
+       - 补充 Gherkin Scenarios（覆盖正常流程 + 异常路径）
+       - 补充接口/类型定义（如该功能是其他功能的上游）
+    5. 更新 `Spec-Status: Stub → Full`。
+    6. [?UI] 如模块有 UI → 同步生成 `ui.md` + `ui.preview.html`。
+    7. 生成 `plan.json`（全部 task 为 done，记录已实现内容）。
+    8. 向用户输出补全后的 spec 摘要。
+
+    **Gate**: 用户确认补全内容正确后，继续 step_2_refine_docs。
+    **异常**: 关联文件不存在/已移动 → 提示用户更新路径。
+</step_1_5_enrich>
 
 <step_2_refine_docs>
     **Role**: 需求分析师 & 设计师

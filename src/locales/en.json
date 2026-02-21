@@ -169,11 +169,16 @@
           "desc": "Take over a legacy project. Full code scan, reverse-engineer architecture, fill docs.",
           "detail": "For existing codebases lacking Architext documentation"
         },
+        "scope": {
+          "desc": "Requirement decomposition. Break large requirements into Roadmap tasks with dependencies.",
+          "detail": "Output: Multiple Roadmap tasks (with ID/goal/deps)",
+          "example": "e.g. /archi.scope add multi-language support system"
+        },
         "plan": {
-          "desc": "Feature planning. Define new features or deep-refine existing ones.",
+          "desc": "Deep feature planning. Architecture interview for existing Roadmap tasks, generate full docs.",
           "detail": "Output: Spec (logic) + UI (visual, if applicable) + Plan (steps)",
-          "example1": "e.g. /archi.plan user login module",
-          "example2": "e.g. /archi.plan INF-001"
+          "example1": "e.g. /archi.plan INF-001 needs OAuth login support",
+          "example2": "e.g. /archi.plan FEAT-01"
         },
         "code": {
           "desc": "Translate docs to code. Read Plan, implement step by step with checks & audit.",

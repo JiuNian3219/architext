@@ -141,10 +141,14 @@ JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi ren
 *   `/archi.start`: **Project Initiation**
     *   **Context Setup**: 确立技术栈 -> 生成 Roadmap 与全局文档骨架。
     *   **Architecture Choice**: 选择适合的架构模板（如 MFA, FSD 或 Custom）。
+*   `/archi.inherit`: **Legacy Adoption**
+    *   逆向分析已有代码仓库 -> 生成文档骨架。
+    *   已有功能登记为 `LEG-xx` (done)，生成轻量 Stub Spec。
+    *   与 `/archi.start` 互斥：新项目用 start，已有项目用 inherit。
 
 ### 📝 Definition (定义 - 纯文档阶段)
 *   `/archi.plan`: **Deep Planning**
-    *   深度架构访谈 -> 同步全局资产。
+    *   对 Roadmap 中已有任务做深度架构访谈 -> 同步全局资产。
     *   产出 `Spec` (逻辑), `UI` (视觉), `Plan` (步骤)。
 *   `/archi.edit`: **Spec Modification**
     *   局部变更（先改 Spec 后改代码）。

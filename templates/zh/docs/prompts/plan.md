@@ -1,9 +1,9 @@
 <protocol_plan>
-  **Trigger**: `/archi.plan [context]`
+  **Trigger**: `/archi.plan <ID> [context]`
   **Goal**: 通过深度架构访谈，定义功能的 Spec/UI/Plan。
-  **Logic**:
-  - 若输入为 **ID** (在 Roadmap 中存在): 直接读取上下文。
-  - 若输入为 **Context** (新需求): 自动生成 ID，追加到 Roadmap，再开始访谈。
+  **Input**:
+  - `<ID>` (必填): Roadmap 中已存在的任务 ID。须先通过 `/archi.scope` 或 `/archi.inherit` 创建任务。
+  - `[context]` (可选): 任务的已知上下文（如用户需求描述、参考资料、约束条件）。提供时作为 step_2 访谈的前置输入，减少提问。
 
 <constraints_cursor>
     **Mode Lock**: 本协议须在 **Agent Mode (Normal Mode)** 下执行。禁切换到 Plan Mode 或其他只读模式。
@@ -32,6 +32,10 @@
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
     6.  **Read Dependency Context** (如有依赖任务):
         - 读取依赖任务的 `spec.md` (接口契约) 和 `plan.json` (已实现内容)。
+        - **Stub 兼容**: 如依赖任务的 Spec-Status 为 Stub：
+          a. 读取 stub 中"关联文件"列出的源码文件作为补充上下文。
+          b. 从代码中提取该模块的公共接口/导出类型。
+          c. 将提取结果作为本次规划的上游接口参考（不修改 stub 本身）。
         - 避免重复定义上游接口，确保对接点精确对齐。
 
     **Output**: 向用户输出 **Feature Context Brief**：

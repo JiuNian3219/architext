@@ -169,11 +169,16 @@
           "desc": "接管舊專案。全量掃描程式碼，逆向推導架構，填充全域檔案。",
           "detail": "適用於已有程式碼庫但缺少 Architext 檔案的專案"
         },
+        "scope": {
+          "desc": "需求分解。將大需求拆解為多個 Roadmap 任務並建立依賴關係。",
+          "detail": "產出: 多個 Roadmap 任務 (含 ID/目標/依賴)",
+          "example": "例: /archi.scope 給專案添加多語言支援系統"
+        },
         "plan": {
-          "desc": "功能規劃。定義新功能或深度細化已有功能。",
+          "desc": "功能深度規劃。對 Roadmap 中已有任務做架構訪談，產生完整文件。",
           "detail": "產出: Spec (功能邏輯) + UI (視覺設計, 如適用) + Plan (實施步驟)",
-          "example1": "例: /archi.plan 使用者登入模組",
-          "example2": "例: /archi.plan INF-001"
+          "example1": "例: /archi.plan INF-001 需要支援 OAuth 登入",
+          "example2": "例: /archi.plan FEAT-01"
         },
         "code": {
           "desc": "將檔案翻譯為程式碼。讀取 Plan，逐步實現，含靜態檢查與審計。",
