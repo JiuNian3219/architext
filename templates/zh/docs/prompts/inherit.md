@@ -251,7 +251,7 @@
     |:---|:---|:---|
     | 1 | 审查 vision.md | 确认 AI 补全的愿景描述是否准确 |
     | 2 | `/archi.adopt LEG-xx` | 对核心模块补全完整 spec |
-    | 3 | `/archi.scope <功能描述>` | 规划新功能/大模块 |
+    | 3 | `/archi.scope [file_path]` | 规划新功能/大模块 |
     | 4 | `/archi.plan <任务ID>` | 对单个任务做深度规划 |
 </step_5_signoff>
 

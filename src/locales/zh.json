@@ -44,6 +44,9 @@
   "render": {
     "desc": "将 JSON 数据文件渲染为 Markdown 视图"
   },
+  "template": {
+    "desc": "获取模板文件到项目根目录"
+  },
   "help": {
     "desc": "显示 Architext 命令帮助信息"
   },
@@ -120,6 +123,13 @@
       "empty": "Plan 文件中没有 checkbox 任务",
       "not_found": "未找到 [{id}] 的实现计划文件 (plan.json)"
     },
+    "template": {
+      "usage": "用法: npx archi template <name>  可用模板:",
+      "unknown": "未知模板 \"{name}\"。可用模板: {available}",
+      "exists": "{path} 已存在，跳过。如需覆盖请先删除。",
+      "done": "已生成 {path}，填写后运行 /archi.scope 开始分解。",
+      "not_found": "模板文件 {name} 未找到。请先运行 npx archi init。"
+    },
     "render": {
       "empty": "未找到可渲染的 JSON 数据文件。",
       "done": "渲染完成，共生成 {count} 个 Markdown 视图。",
@@ -170,9 +180,9 @@
           "detail": "适用于已有代码库但缺少 Architext 文档的项目"
         },
         "scope": {
-          "desc": "需求分解。将大需求拆解为多个 Roadmap 任务并建立依赖关系。",
-          "detail": "产出: 多个 Roadmap 任务 (含 ID/目标/依赖)",
-          "example": "例: /archi.scope 给项目添加多语言支持系统"
+          "desc": "需求分解。读取 Scope Brief，将大需求拆解为多个 Roadmap 任务并建立依赖关系。",
+          "detail": "产出: 多个 Roadmap 任务 (含 ID/目标/依赖)。无 Brief 时自动进入访谈模式",
+          "example": "例: /archi.scope scope-brief.md"
         },
         "plan": {
           "desc": "功能深度规划。对 Roadmap 中已有任务做架构访谈，生成完整文档。",
@@ -244,6 +254,10 @@
         },
         "render": {
           "desc": "将 JSON 数据文件 (roadmap/plan) 渲染为人类可读的 Markdown 视图。"
+        },
+        "template": {
+          "desc": "获取模板文件到项目根目录供填写。",
+          "example": "例: npx archi template scope-brief"
         },
         "uninstall": {
           "desc": "移除 Architext 框架及其生成的所有文件（规则、文档、配置）。"

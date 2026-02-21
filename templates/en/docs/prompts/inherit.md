@@ -251,7 +251,7 @@
     |:---|:---|:---|
     | 1 | Review vision.md | Confirm AI-inferred vision description is accurate |
     | 2 | `/archi.adopt LEG-xx` | Enrich core module stubs into full specs |
-    | 3 | `/archi.scope <feature description>` | Plan new features/major modules |
+    | 3 | `/archi.scope [file_path]` | Plan new features/major modules |
     | 4 | `/archi.plan <task ID>` | Deep-plan individual tasks |
 </step_5_signoff>
 

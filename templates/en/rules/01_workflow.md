@@ -17,6 +17,7 @@ alwaysApply: true
 |:---|:---|:---|
 | `/archi.start` | `[[__DOCS_DIR__]]/prompts/start.md` | Load CPO → Project Initiation |
 | `/archi.inherit` | `[[__DOCS_DIR__]]/prompts/inherit.md` | Load Legacy Analyst → Reverse Engineering |
+| `/archi.scope` | `[[__DOCS_DIR__]]/prompts/scope.md` | Load Strategist → Requirement Decomposition |
 | `/archi.plan` | `[[__DOCS_DIR__]]/prompts/plan.md` | Load Planner → Deep Interview |
 | `/archi.adopt` | `[[__DOCS_DIR__]]/prompts/adopt.md` | Load Adoption Protocol → Map Registration |
 | `/archi.edit` | `[[__DOCS_DIR__]]/prompts/edit.md` | Load Editor → Spec Modification |
@@ -113,6 +114,7 @@ Automatically identifies Manual Verification sections and excludes them from aut
 |:---|:---|
 | AI directly edited `.json` data files | `npx archi render` |
 | After `/archi.start` creates roadmap | `npx archi render` |
+| After `/archi.scope` updates roadmap | `npx archi render` |
 | After `/archi.plan` generates plan.json | `npx archi render` |
 
 > Note: `.md` views are auto-generated; prohibited from editing directly. Modifications must go through `.json` source files.

@@ -44,6 +44,9 @@
   "render": {
     "desc": "Render JSON data files into Markdown views"
   },
+  "template": {
+    "desc": "Fetch template files to project root"
+  },
   "help": {
     "desc": "Display Architext command help information"
   },
@@ -120,6 +123,13 @@
       "empty": "No checkbox tasks found in plan file",
       "not_found": "Plan file not found for [{id}] (plan.json)"
     },
+    "template": {
+      "usage": "Usage: npx archi template <name>  Available templates:",
+      "unknown": "Unknown template \"{name}\". Available: {available}",
+      "exists": "{path} already exists, skipped. Delete it first to regenerate.",
+      "done": "Generated {path}. Fill it in and run /archi.scope to start decomposition.",
+      "not_found": "Template file {name} not found. Run npx archi init first."
+    },
     "render": {
       "empty": "No JSON data files found to render.",
       "done": "Render complete. Generated {count} Markdown view(s).",
@@ -170,9 +180,9 @@
           "detail": "For existing codebases lacking Architext documentation"
         },
         "scope": {
-          "desc": "Requirement decomposition. Break large requirements into Roadmap tasks with dependencies.",
-          "detail": "Output: Multiple Roadmap tasks (with ID/goal/deps)",
-          "example": "e.g. /archi.scope add multi-language support system"
+          "desc": "Requirement decomposition. Read Scope Brief, break large requirements into Roadmap tasks with dependencies.",
+          "detail": "Output: Multiple Roadmap tasks (with ID/goal/deps). Falls back to interview mode without Brief",
+          "example": "e.g. /archi.scope scope-brief.md"
         },
         "plan": {
           "desc": "Deep feature planning. Architecture interview for existing Roadmap tasks, generate full docs.",
@@ -244,6 +254,10 @@
         },
         "render": {
           "desc": "Render JSON data files (roadmap/plan) into human-readable Markdown views."
+        },
+        "template": {
+          "desc": "Fetch template files to project root for filling.",
+          "example": "e.g. npx archi template scope-brief"
         },
         "uninstall": {
           "desc": "Remove Architext framework and all generated files (rules, docs, config)."

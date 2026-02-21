@@ -44,6 +44,9 @@
   "render": {
     "desc": "將 JSON 資料檔案渲染為 Markdown 視圖"
   },
+  "template": {
+    "desc": "取得範本檔案到專案根目錄"
+  },
   "help": {
     "desc": "顯示 Architext 命令幫助信息"
   },
@@ -120,6 +123,13 @@
       "empty": "Plan 檔案中沒有 checkbox 任務",
       "not_found": "未找到 [{id}] 的實現計畫檔案 (plan.json)"
     },
+    "template": {
+      "usage": "用法: npx archi template <name>  可用範本:",
+      "unknown": "未知範本 \"{name}\"。可用範本: {available}",
+      "exists": "{path} 已存在，跳過。如需覆蓋請先刪除。",
+      "done": "已產生 {path}，填寫後執行 /archi.scope 開始分解。",
+      "not_found": "範本檔案 {name} 未找到。請先執行 npx archi init。"
+    },
     "render": {
       "empty": "未找到可渲染的 JSON 資料檔案。",
       "done": "渲染完成，共產生 {count} 個 Markdown 視圖。",
@@ -170,9 +180,9 @@
           "detail": "適用於已有程式碼庫但缺少 Architext 檔案的專案"
         },
         "scope": {
-          "desc": "需求分解。將大需求拆解為多個 Roadmap 任務並建立依賴關係。",
-          "detail": "產出: 多個 Roadmap 任務 (含 ID/目標/依賴)",
-          "example": "例: /archi.scope 給專案添加多語言支援系統"
+          "desc": "需求分解。讀取 Scope Brief，將大需求拆解為多個 Roadmap 任務並建立依賴關係。",
+          "detail": "產出: 多個 Roadmap 任務 (含 ID/目標/依賴)。無 Brief 時自動進入訪談模式",
+          "example": "例: /archi.scope scope-brief.md"
         },
         "plan": {
           "desc": "功能深度規劃。對 Roadmap 中已有任務做架構訪談，產生完整文件。",
@@ -244,6 +254,10 @@
         },
         "render": {
           "desc": "將 JSON 資料檔案 (roadmap/plan) 渲染為人類可讀的 Markdown 視圖。"
+        },
+        "template": {
+          "desc": "取得範本檔案到專案根目錄供填寫。",
+          "example": "例: npx archi template scope-brief"
         },
         "uninstall": {
           "desc": "移除 Architext 框架及其產生的所有檔案（規則、檔案、設定）。"

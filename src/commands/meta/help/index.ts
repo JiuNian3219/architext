@@ -63,7 +63,7 @@ export async function helpCommand(): Promise<void> {
       t("ai.start.example"),
     ]),
     cmd("/archi.inherit", t("ai.inherit.desc"), [t("ai.inherit.detail")]),
-    cmd("/archi.scope [context]", t("ai.scope.desc"), [
+    cmd("/archi.scope [file_path]", t("ai.scope.desc"), [
       t("ai.scope.detail"),
       t("ai.scope.example"),
     ]),
@@ -120,6 +120,9 @@ export async function helpCommand(): Promise<void> {
     ]),
     cmd("npx archi plan <id>", t("cli.plan.desc"), [t("cli.plan.example")]),
     cmd("npx archi render", t("cli.render.desc")),
+    cmd("npx archi template <name>", t("cli.template.desc"), [
+      t("cli.template.example"),
+    ]),
     cmd("npx archi uninstall", t("cli.uninstall.desc")),
   ].join("\n");
 
@@ -127,7 +130,7 @@ export async function helpCommand(): Promise<void> {
     section(t("section.quick")),
     tip(t("quick.new_project"), "/archi.start [desc]"),
     tip(t("quick.legacy"), "/archi.inherit"),
-    tip(t("quick.new_feature"), "/archi.scope [desc]"),
+    tip(t("quick.new_feature"), "/archi.scope [file_path]"),
     tip(t("quick.write_code"), "/archi.code <id>"),
     tip(t("quick.fix_bug"), "/archi.fix [id] <desc>"),
     tip(t("quick.check_health"), "/archi.audit"),

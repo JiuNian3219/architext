@@ -10,6 +10,7 @@ import { planCommand } from "./commands/meta/plan/index.ts";
 import { renderCommand } from "./commands/meta/render/index.ts";
 import { taskCommand } from "./commands/meta/task/index.ts";
 import { helpCommand } from "./commands/meta/help/index.ts";
+import { templateCommand } from "./commands/meta/template/index.ts";
 import { handleError } from "./core/error-handler.ts";
 import { createT, getSystemLocale } from "./utils/t.ts";
 
@@ -77,6 +78,9 @@ cli.command("plan <id>", t("plan.desc")).action(run(planCommand));
 
 // Render JSON → Markdown 视图
 cli.command("render", t("render.desc")).action(run(renderCommand));
+
+// Template 获取模板文件
+cli.command("template [name]", t("template.desc")).action(run(templateCommand));
 
 // Help 参考手册
 cli.command("help", t("help.desc")).action(run(helpCommand));

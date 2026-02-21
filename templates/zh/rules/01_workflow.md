@@ -17,6 +17,7 @@ alwaysApply: true
 |:---|:---|:---|
 | `/archi.start` | `[[__DOCS_DIR__]]/prompts/start.md` | Load CPO → Project Initiation |
 | `/archi.inherit` | `[[__DOCS_DIR__]]/prompts/inherit.md` | Load Legacy Analyst → Reverse Engineering |
+| `/archi.scope` | `[[__DOCS_DIR__]]/prompts/scope.md` | Load Strategist → Requirement Decomposition |
 | `/archi.plan` | `[[__DOCS_DIR__]]/prompts/plan.md` | Load Planner → Deep Interview |
 | `/archi.adopt` | `[[__DOCS_DIR__]]/prompts/adopt.md` | Load Adoption Protocol → Map Registration |
 | `/archi.edit` | `[[__DOCS_DIR__]]/prompts/edit.md` | Load Editor → Spec Modification |
@@ -113,6 +114,7 @@ alwaysApply: true
 |:---|:---|
 | AI 直接编辑了 `.json` 数据文件 | `npx archi render` |
 | `/archi.start` 创建 roadmap 后 | `npx archi render` |
+| `/archi.scope` 更新 roadmap 后 | `npx archi render` |
 | `/archi.plan` 生成 plan.json 后 | `npx archi render` |
 
 > 注意: `.md` 视图是自动生成的，禁直接编辑。修改须通过 `.json` 源文件进行。

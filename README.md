@@ -88,7 +88,8 @@ my-project/
 │   │   ├── spec.template.md    # 功能规格模板
 │   │   ├── ui.template.md      # UI 结构模板（ITP, AI 读取）
 │   │   ├── ui.preview.template.html  # UI 视觉预览模板（人类浏览器查看）
-│   │   └── plan.template.json  # 实施计划 JSON 模板
+│   │   ├── plan.template.json  # 实施计划 JSON 模板
+│   │   └── scope-brief.template.md  # 需求分解 Brief 模板（/archi.scope 用）
 │   │
 │   └── features/               # 功能文档（按功能模块组织）
 │       └── INF-001_feature-name/
@@ -147,6 +148,10 @@ JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi ren
     *   与 `/archi.start` 互斥：新项目用 start，已有项目用 inherit。
 
 ### 📝 Definition (定义 - 纯文档阶段)
+*   `/archi.scope`: **Requirement Decomposition**
+    *   读取 Scope Brief -> 将大需求分解为多个 Roadmap 任务。
+    *   建立任务间依赖关系，评估对已有功能的影响。
+    *   与 `/archi.start` 的 Roadmap 生成互补：start 从零建立，scope 增量追加。
 *   `/archi.plan`: **Deep Planning**
     *   对 Roadmap 中已有任务做深度架构访谈 -> 同步全局资产。
     *   产出 `Spec` (逻辑), `UI` (视觉), `Plan` (步骤)。
@@ -170,6 +175,7 @@ JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi ren
 *   `npx archi init`: 初始化项目骨架。
 *   `npx archi update`: 更新项目骨架。
 *   `npx archi doctor`: 检查项目健康状况。
+*   `npx archi template <name>`: 获取模板文件到项目根目录（如 `scope-brief`）。
 *   `npx archi uninstall`: 卸载项目。
 *   `npx archi --help` / `npx archi -h`: 显示帮助指南。
 *   `npx archi --version` / `npx archi -V`: 显示项目版本。
