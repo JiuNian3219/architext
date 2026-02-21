@@ -43,7 +43,7 @@
         |:---|:---|:---|
         | roadmap.json 不存在 | 未初始化 | 新项目 → `/archi.start`；已有代码 → `/archi.inherit` |
         | 有 roadmap 但无 Feature 目录 | 已启动，未规划 | 运行 `/archi.scope` 规划新功能 |
-        | 有 Legacy stub (Spec-Status: Stub) | 已继承，未补全 | 运行 `/archi.adopt LEG-xx` 补全 spec |
+        | 有 Legacy stub (Spec-Status: Stub) | 已继承，未补全 | 运行 `/archi.edit LEG-xx` 补全 spec |
         | 有 active 任务且 plan.json 完整 | 可编码 | 运行 `/archi.code <ID>` |
         | 有 active 任务但缺 spec/plan | 规划未完成 | 运行 `/archi.plan <ID>` 补全 |
         | 所有任务 done | 已完成 | 运行 `/archi.scope` 规划新功能或发布 |

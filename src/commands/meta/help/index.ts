@@ -58,7 +58,7 @@ export async function helpCommand(): Promise<void> {
 
   const aiSection = [
     section(t("section.ai")),
-    cmd("/archi.start [context]", t("ai.start.desc"), [
+    cmd("/archi.start [file_path]", t("ai.start.desc"), [
       t("ai.start.detail"),
       t("ai.start.example"),
     ]),
@@ -94,6 +94,10 @@ export async function helpCommand(): Promise<void> {
       t("ai.revise.example"),
     ]),
     cmd("/archi.map", t("ai.map.desc"), [t("ai.map.detail")]),
+    cmd("/archi.remove <id>", t("ai.remove.desc"), [
+      t("ai.remove.detail"),
+      t("ai.remove.example"),
+    ]),
     cmd("/archi.help [question]", t("ai.help.desc"), [
       t("ai.help.detail"),
       t("ai.help.example1"),
@@ -139,13 +143,17 @@ export async function helpCommand(): Promise<void> {
 
   const workflow = [
     section(t("section.workflow")),
-    `  ${color.dim(t("workflow.flow"))}`,
-    "",
+    `  ${color.dim(t("workflow.init_flow"))}`,
     `  ${color.cyan("/archi.start")} ${color.dim("-->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
-    `  ${color.dim(`     ${t("workflow.init")}           ${t("workflow.define")}          ${t("workflow.implement")}`)}`,
     "",
-    `  ${color.dim(t("workflow.loop"))}`,
-    `  ${color.cyan("/archi.edit")} ${color.dim("/")} ${color.cyan("/archi.fix")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
+    `  ${color.dim(t("workflow.new_feature"))}`,
+    `  ${color.cyan("/archi.scope")} ${color.dim("-->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
+    "",
+    `  ${color.dim(t("workflow.change_spec"))}`,
+    `  ${color.cyan("/archi.edit")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
+    "",
+    `  ${color.dim(t("workflow.standalone"))}`,
+    `  ${color.cyan("/archi.fix")}  ${color.cyan("/archi.revise")}  ${color.cyan("/archi.audit")}  ${color.cyan("/archi.remove")}`,
     "",
   ].join("\n");
 

@@ -220,6 +220,11 @@
           "desc": "刷新架构地图。重新扫描目录树，更新 map.json。",
           "detail": "当目录结构发生变化时使用，保持 map.json 与实际文件系统同步"
         },
+        "remove": {
+          "desc": "特性下线。全链路清除：影响分析 → 删除文档+代码 → 清理全局引用。",
+          "detail": "清理范围: Feature 文档 / 业务代码 / roadmap / map / context_glue",
+          "example": "例: /archi.remove FEAT-003"
+        },
         "help": {
           "desc": "项目导航与上下文问答。分析项目状态，建议下一步操作。",
           "detail": "无参数时智能推荐下一步；带问题时基于项目上下文回答",
@@ -272,11 +277,10 @@
         "check_health": "检查项目健康"
       },
       "workflow": {
-        "flow": "核心循环: 定义 --> 实现 --> 迭代",
-        "init": "启动",
-        "define": "定义",
-        "implement": "实现",
-        "loop": "迭代循环:"
+        "init_flow": "首次启动:",
+        "new_feature": "新增功能:",
+        "change_spec": "需求变更:",
+        "standalone": "独立操作:"
       }
     }
   }

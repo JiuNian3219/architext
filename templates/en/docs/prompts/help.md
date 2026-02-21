@@ -43,7 +43,7 @@
         |:---|:---|:---|
         | roadmap.json missing | Not initialized | New project → `/archi.start`; existing code → `/archi.inherit` |
         | Has roadmap but no Feature dirs | Started, not planned | Run `/archi.scope` to plan new features |
-        | Has Legacy stubs (Spec-Status: Stub) | Inherited, not enriched | Run `/archi.adopt LEG-xx` to enrich spec |
+        | Has Legacy stubs (Spec-Status: Stub) | Inherited, not enriched | Run `/archi.edit LEG-xx` to enrich spec |
         | Has active tasks with complete plan.json | Ready to code | Run `/archi.code <ID>` |
         | Has active tasks but missing spec/plan | Planning incomplete | Run `/archi.plan <ID>` to complete |
         | All tasks done | Complete | Run `/archi.scope` to plan new features or release |

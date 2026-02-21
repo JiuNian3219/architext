@@ -167,8 +167,18 @@ JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi ren
     *   独立深度代码审查。带 ID 审查指定任务代码；无 ID 执行项目级体检。
 *   `/archi.fix`: **Debugging**
     *   诊断 Bug -> 查阅 Error Code -> 修复代码。
+
+### 🔧 Maintenance (维护)
+*   `/archi.map`: **Map Refresh**
+    *   扫描实际目录结构 vs `map.json`，做架构归类，更新架构地图。
+    *   适用场景：手动修改文件后、大规模重构后、目录结构变动时。
+*   `/archi.remove`: **Feature Decommission**
+    *   全链路特性下线：影响分析 -> 用户确认 -> 删除文档+代码 -> 清理全局引用。
+    *   清理范围：Feature 文档、业务代码、roadmap/map/context_glue 中的引用。
+
+### 📖 Utility (辅助)
 *   `/archi.help`: **Manual**
-    *   显示帮助指南。
+    *   项目导航与上下文问答。分析项目状态，推荐下一步操作。
 
 
 ### 🔧 User CLI 工具命令

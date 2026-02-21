@@ -220,6 +220,11 @@
           "desc": "重新整理架構地圖。重新掃描目錄樹，更新 map.json。",
           "detail": "當目錄結構發生變化時使用，保持 map.json 與實際檔案系統同步"
         },
+        "remove": {
+          "desc": "特性下線。全鏈路清除：影響分析 → 刪除檔案+程式碼 → 清理全域引用。",
+          "detail": "清理範圍: Feature 檔案 / 業務程式碼 / roadmap / map / context_glue",
+          "example": "例: /archi.remove FEAT-003"
+        },
         "help": {
           "desc": "專案導航與上下文問答。分析專案狀態，建議下一步操作。",
           "detail": "無參數時智慧推薦下一步；帶問題時基於專案上下文回答",
@@ -272,11 +277,10 @@
         "check_health": "檢查專案健康"
       },
       "workflow": {
-        "flow": "核心循環: 定義 --> 實現 --> 迭代",
-        "init": "啟動",
-        "define": "定義",
-        "implement": "實現",
-        "loop": "迭代循環:"
+        "init_flow": "專案啟動:",
+        "new_feature": "新增功能:",
+        "change_spec": "需求變更:",
+        "standalone": "獨立操作:"
       }
     }
   }

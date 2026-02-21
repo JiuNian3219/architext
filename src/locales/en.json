@@ -220,6 +220,11 @@
           "desc": "Refresh architecture map. Rescan directory tree, update map.json.",
           "detail": "Use when directory structure changes to keep map.json in sync"
         },
+        "remove": {
+          "desc": "Decommission a feature. Full cleanup: impact analysis → delete docs+code → purge global refs.",
+          "detail": "Scope: Feature docs / business code / roadmap / map / context_glue",
+          "example": "e.g. /archi.remove FEAT-003"
+        },
         "help": {
           "desc": "Project navigator & contextual Q&A. Analyze state, suggest next actions.",
           "detail": "No args: smart next-step recommendation; with question: project-aware answer",
@@ -272,11 +277,10 @@
         "check_health": "Check project health"
       },
       "workflow": {
-        "flow": "Core loop: Define --> Implement --> Iterate",
-        "init": "Start",
-        "define": "Define",
-        "implement": "Implement",
-        "loop": "Iteration loop:"
+        "init_flow": "Initial setup",
+        "new_feature": "New feature:",
+        "change_spec": "Spec change:",
+        "standalone": "Standalone ops:"
       }
     }
   }
