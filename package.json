@@ -1,6 +1,6 @@
 {
   "name": "architext",
-  "version": "0.0.3",
+  "version": "0.0.1",
   "description": "The DDAD (Document-Driven AI Development) protocol and prompt scaffolder for AI-native engineering.",
   "type": "module",
   "scripts": {
@@ -23,11 +23,28 @@
       "prettier --write"
     ]
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "bin": {
     "architext": "./dist/index.js",
     "archi": "./dist/index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "architext",
+    "ddad",
+    "document-driven",
+    "ai",
+    "llm",
+    "prompt-engineering",
+    "scaffold",
+    "cli",
+    "architecture",
+    "spec",
+    "template",
+    "code-generation"
+  ],
   "author": "JiuNian3219 <qin0yu0lou@gmail.com>",
   "license": "MIT",
   "devDependencies": {
