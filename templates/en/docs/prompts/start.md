@@ -172,8 +172,13 @@
     - Blank/"recommend" in Brief → AI recommends by project features; mark `(AI Recommended)` and brief rationale
     - Brief 3rd-party services/API → write in corresponding Section
     - **AX Optimization**: Prefer AI-friendly tech (Static Typing, Popular Frameworks, Convention-over-Configuration)
-    - Fill all Section 1-8 (Global Mandates, Technology Selection, Coding Standards, UI Protocol[?UI], Testing, Deployment, Architecture, Anti-Patterns)
+    - Fill all Section 1-9 (Global Mandates, Technology Selection, Coding Standards, UI Protocol[?UI], Testing, Deployment, Architecture, Anti-Patterns, **Project Conventions**)
     - Section 5 Testing: Environment Scripts must be complete
+    - **Section 9 Project Conventions**: Establish global architecture conventions based on Brief and project features. `/archi.plan` will auto-inherit these instead of re-asking per feature:
+      - **Error Handling**: Infer from project type — [?UI] Fail Fast + Form Validation; [?CLI] Fail Fast (stderr); [?API] Schema Validation + Fail Fast; space-separated for multi-select
+      - [?UI] **Data Flow**: Based on realtime needs — no realtime → Standard Request (+ SWR/React Query if applicable); Brief mentions realtime/collab → Realtime
+      - [?Web/API] **Auth & Access**: Based on Brief user roles — single role → Authenticated; multi-role → RBAC; no auth mentioned → leave empty for per-feature decision in Plan
+      - Each item must have Strategy/Default + Rationale (rationale must be specific to this project)
 
     ### 3.3 Custom Rules (`90_custom_rules.md`)
     - Extract rule-like content from Brief supplementary notes

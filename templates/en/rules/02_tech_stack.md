@@ -174,3 +174,21 @@ Component naming must follow `Prefix+Function` format:
 * **No [Pattern 1]:** [e.g. Forbidden to fetch data directly inside components, must encapsulate in Service layer.]
 * **No [Pattern 2]:** [e.g. Forbidden to use `any` type (TypeScript) / Forbidden to use `unsafe` code (Rust).]
 * **No [Pattern 3]:** [e.g. Forbidden to use `console.log` in production code, must use unified Logger.]
+
+---
+
+## 9. Project Conventions
+> Global architecture conventions established by `/archi.start`. `/archi.plan` auto-inherits these; no per-feature re-asking unless the feature has specific needs.
+> If a feature needs to deviate from a convention, the deviation rationale must be stated in the proposal.
+
+### Error Handling
+* **Strategy:** [e.g. Fail Fast + Form Validation / Fail Fast (stderr) / Schema Validation + Fail Fast]
+* **Rationale:** [e.g. Form-heavy app requiring frontend validation + backend fail-fast]
+
+### Data Flow [?UI]
+* **Default:** [e.g. Standard Request + SWR / Realtime (Socket) / Polling]
+* **Rationale:** [e.g. Most pages are CRUD; SWR for cache and revalidation]
+
+### Auth & Access [?Web/API]
+* **Mechanism:** [e.g. JWT + RBAC / Session + Owner Only / API Key]
+* **Rationale:** [e.g. Multi-role admin system requiring fine-grained access control]

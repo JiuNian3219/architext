@@ -27,7 +27,8 @@
         - **Pre-flight**: Check if `<ID>` Deps are completed. If not, reject Plan (unless user forces).
     2.  **Read Vision**: Read `[[__DOCS_DIR__]]/global/vision.md`.
         - Extract North Star Metric and Design Philosophy; subsequent proposals must align with these.
-    3.  **Read Tech Stack**: `02_tech_stack.md` (technical red lines).
+    3.  **Read Tech Stack**: `02_tech_stack.md` (technical red lines + **Section 9 Project Conventions**).
+        - Extract global architecture conventions from Section 9 (Error Handling / Data Flow / Auth & Access) for convention inheritance in step_2.
     4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`.
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`.
     6.  **Read Dependency Context** (if dependent tasks exist):
@@ -47,6 +48,7 @@
     **Project Features**: [activated UI/Data/CLI/Lib/API tags]
     **Technical Constraints**: [key red lines from 02_tech_stack.md]
     **Design Philosophy**: [North Star Metric and design principles from vision.md]
+    **Project Conventions**: [from 02_tech_stack.md §9 — Error Handling: X | Data Flow: X | Auth: X, or "Not set" if absent]
     ```
     Retain full context materials internally, proceed to step_2.
 </step_1_load>
@@ -86,11 +88,12 @@
     For each applicable dimension, AI directly provides a **recommended approach** with rationale, rather than presenting the full option table.
 
     **Rules**:
-    1. Select applicable dimensions by project tags (UI/Data/CLI/Lib/API); skip inapplicable ones
-    2. For each applicable dimension: AI picks the **best recommended option** from the reference library, writes rationale (1-2 sentences, specific to this feature)
-    3. Only when a dimension has **two or more viable options whose choice significantly impacts implementation**, expand to a full option table for user decision
-    4. Expanded option table rules unchanged: 3-5 options + `[Z] Custom`; descriptions must state concrete behavior; AI+/AI- must be full sentences, never "None"
-    5. **Feature Contextualization (Critical)**: Must use entity names, operation names, and business flow from the feature design to describe options; no generic copy-paste
+    1. **Convention Inheritance**: Read project conventions from `02_tech_stack.md` Section 9. Dimensions with existing conventions → inherit as recommendation, mark source as `Project Convention`, do NOT expand option table (unless this feature has a **clear specific need** to deviate). Dimensions without conventions → follow rules below.
+    2. Select applicable dimensions by project tags (UI/Data/CLI/Lib/API); skip inapplicable ones
+    3. For each applicable dimension: AI picks the **best recommended option** from the reference library, writes rationale (1-2 sentences, specific to this feature)
+    4. Only when a dimension has **two or more viable options whose choice significantly impacts implementation**, expand to a full option table for user decision
+    5. Expanded option table rules unchanged: 3-5 options + `[Z] Custom`; descriptions must state concrete behavior; AI+/AI- must be full sentences, never "None"
+    6. **Feature Contextualization (Critical)**: Must use entity names, operation names, and business flow from the feature design to describe options; no generic copy-paste
 
     #### Output Format
 
@@ -101,12 +104,12 @@
     [Output per complexity level, see Part 1 above]
 
     ### Architecture Recommendations
-    | Dimension | Recommended | Rationale |
-    |:---|:---|:---|
-    | Core Structure | [Recommended option] | [1-2 sentences specific to this feature] |
-    | Interaction Pattern | [Recommended option] | [Rationale] |
-    | Error Handling | [Recommended option] | [Rationale] |
-    | ... | ... | ... |
+    | Dimension | Recommended | Source | Rationale |
+    |:---|:---|:---|:---|
+    | Core Structure | [Recommended option] | Feature | [1-2 sentences specific to this feature] |
+    | Interaction Pattern | [Recommended option] | Feature | [Rationale] |
+    | Error Handling | [Convention value] | Project Convention | ref: 02_tech_stack.md §9 |
+    | ... | ... | ... | ... |
 
     [Only expand option table for dimensions requiring user decision]:
     **[Q<n>] Question title**
@@ -246,9 +249,10 @@
 
     ---
 
-    ### Dimension 3: Data Flow (Conditional)
+    ### Dimension 3: Data Flow (Conditional + Convention Inheritance)
 
     **Ask when**: Project has [?UI+Data] or [?UI+API]; skip for pure [?CLI]/[?Lib].
+    **Convention Inheritance**: If `02_tech_stack.md` §9 Data Flow has a value → auto-inherit, do not ask. Only expand option table when this feature needs to deviate from project default (e.g. needs Realtime while project default is Standard Request).
 
     #### [?UI] State Sync & Data Flow
     > How data flows between frontend and backend.
@@ -266,9 +270,10 @@
 
     ---
 
-    ### Dimension 4: Error Handling (Required)
+    ### Dimension 4: Error Handling (Convention Inheritance)
 
-    > How this feature handles exceptions and edge cases.
+    > `02_tech_stack.md` §9 establishes the project-level error handling strategy → auto-inherit, do not ask.
+    > Only supplement when this feature has **special exception scenarios not covered by the project convention** (e.g. feature needs Undo/Redo but project convention only has Fail Fast).
 
     **Reference options** (AI adjusts wording by project type):
     | ID | Option | Description | AI+ | AI- |
@@ -283,12 +288,13 @@
 
     ---
 
-    ### Dimension 5: Access & Scope (Conditional)
+    ### Dimension 5: Access & Scope (Conditional + Convention Inheritance)
 
     **Ask when**: Project has [?Web/API] for auth; or [?Lib] for encapsulation; pure [?CLI] usually skip.
+    **Convention Inheritance**: If `02_tech_stack.md` §9 Auth & Access has a value → auth **mechanism** is inherited (e.g. JWT/RBAC), but **permission level** remains a per-feature decision (e.g. Public vs Owner Only for a specific feature).
 
     #### [?Web/API] Access Control
-    > Who can perform this operation and see what data.
+    > Who can perform this operation and see what data. Auth mechanism inherits from project convention; only the permission level for this feature needs to be decided here.
 
     **Reference options**:
     | ID | Option | Description | AI+ | AI- |

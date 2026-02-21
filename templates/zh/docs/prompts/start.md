@@ -172,8 +172,13 @@
     - Brief 中留空/写"推荐"的 → AI 基于项目特征推荐，须在输出中标注 `(AI 推荐)` 并简述理由
     - Brief 中已有的第三方服务/API → 写入对应 Section
     - **AX Optimization**: 推荐时优先 AI 友好型技术 (Static Typing, Popular Frameworks, Convention-over-Configuration)
-    - 须填充完整的 Section 1-8（Global Mandates、Technology Selection、Coding Standards、UI Protocol[?UI]、Testing、Deployment、Architecture、Anti-Patterns）
+    - 须填充完整的 Section 1-9（Global Mandates、Technology Selection、Coding Standards、UI Protocol[?UI]、Testing、Deployment、Architecture、Anti-Patterns、**Project Conventions**）
     - `Section 5 Testing` 中的 Environment Scripts 定义须完整
+    - **Section 9 Project Conventions**: 基于 Brief 和项目特征确立全局架构约定，`/archi.plan` 将自动继承这些约定而非逐功能重复提问：
+      - **Error Handling**: 根据项目类型推断 — [?UI] Fail Fast + Form Validation; [?CLI] Fail Fast (stderr); [?API] Schema Validation + Fail Fast; 多选时空格分隔
+      - [?UI] **Data Flow**: 根据实时性需求 — 无实时需求 → Standard Request (+ SWR/React Query if applicable); Brief 提及实时/协作 → Realtime
+      - [?Web/API] **Auth & Access**: 根据 Brief 用户角色 — 单角色 → Authenticated; 多角色 → RBAC; 无权限描述 → 留空待 Plan 阶段逐功能确认
+      - 每项须填写 Strategy/Default + Rationale（理由须结合此项目的具体场景）
 
     ### 3.3 Custom Rules (`90_custom_rules.md`)
     - 从 Brief 补充说明中提取规则性内容写入

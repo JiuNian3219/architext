@@ -169,3 +169,21 @@ alwaysApply: false
 * **No [模式 1]:** [例如：禁止在组件内部直接 fetch 数据，必须封装在 Service 层。]
 * **No [模式 2]:** [例如：禁止使用 `any` 类型（TypeScript）/ 禁止使用 `unsafe` 代码（Rust）。]
 * **No [模式 3]:** [例如：禁止使用 `console.log` 生产代码，必须使用统一的 Logger。]
+
+---
+
+## 9. Project Conventions (项目约定)
+> 全局架构约定，由 `/archi.start` 确立。`/archi.plan` 自动继承，功能无特殊需求时不再逐一提问。
+> 功能若需偏离约定，须在提案中明确说明偏离理由。
+
+### Error Handling (错误处理策略)
+* **Strategy:** [例如：Fail Fast + Form Validation / Fail Fast (stderr) / Schema Validation + Fail Fast]
+* **Rationale:** [例如：表单密集型应用，需前端实时校验 + 后端快速失败]
+
+### Data Flow (数据流模式) [?UI]
+* **Default:** [例如：Standard Request + SWR / Realtime (Socket) / Polling]
+* **Rationale:** [例如：大部分页面为 CRUD 读写，SWR 做缓存和重新验证]
+
+### Auth & Access (认证与权限) [?Web/API]
+* **Mechanism:** [例如：JWT + RBAC / Session + Owner Only / API Key]
+* **Rationale:** [例如：多角色后台管理系统，需细粒度权限控制]
