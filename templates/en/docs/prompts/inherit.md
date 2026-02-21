@@ -212,6 +212,9 @@
     - `directoryMapping`: Each core directory → `{ "path", "layer", "responsibility", "publicAPI" }`
     - `logicalTopology`: Inter-module dependencies → `{ "from", "to", "type" }` (imports / calls / extends)
     - `criticalUserJourneys`: Core flows → `{ "name", "steps": ["module → module → ..."] }`
+    - `featureRelations`: Scan code to identify "aggregator modules" and record them.
+      **Recognition patterns**: A module that iterates/enumerates/dynamically loads modules of the same type (e.g., `for (const cmd of allCommands)`, `Object.values(registry)`, reading a directory then dynamic import), or is described as "aggregating/listing/registering all X".
+      Record format: `{ "aggregator": "<ID or file path>", "sources": "<source range description>", "evidence": "<code basis>", "checkNote": "When features of this type are added or removed, check whether <aggregator> needs to be updated" }`
 
     ### 3.7 Other Global Documents (as needed)
     - `dictionary.json`: Extract domain terminology from code

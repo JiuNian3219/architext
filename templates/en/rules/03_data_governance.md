@@ -14,7 +14,7 @@ alwaysApply: true
 | File | Type | Read When | Write When |
 |:---|:---|:---|:---|
 | `roadmap.json` | Roadmap | `/archi.plan`, `/archi.code` start | `/archi.start` creates; AI direct edit or `npx archi task` updates status |
-| `map.json` | Architecture Map | When touching code (via context_glue) | `/archi.plan` Step 3 (global sync); `/archi.map` |
+| `map.json` | Architecture Map | When touching code (via context_glue) | `/archi.plan` Step 3 (global sync); `/archi.inherit` Step 3.6; `/archi.map` |
 | `dictionary.json` | Glossary | When generating variable names | `/archi.plan` Step 3; proactively add new terms |
 | `design_tokens.json` | Design Tokens [?UI] | When generating UI code | `/archi.start` creates; update on design changes |
 | `data_snapshot.json` | Data Snapshot [?Data] | `/archi.plan` Q1 design; `/archi.code` implementation | Plan phase designs Schema; Code phase syncs actual changes |
@@ -56,6 +56,7 @@ alwaysApply: true
 
 - **Directory Mapping**: Must reflect the real physical file tree.
 - **Logical Topology**: Must register each Feature Module's responsibility.
+- **Feature Relations**: Records linkage relationships between aggregator features and their sources. Each entry: `{ aggregator, sources, evidence, checkNote }`. Written by AI during `/archi.plan` (when planning an aggregator feature) or `/archi.inherit` (during reverse scanning); no manual maintenance needed.
 - **Self-Correction**: If code references violate the hierarchy defined in topology, must report error and stop generation.
 - **Extensible**: If existing fields cannot adequately describe the project architecture, you may add fields to items (e.g. `tags`, `owner`) or add new top-level keys.
 

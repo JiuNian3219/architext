@@ -212,6 +212,9 @@
     - `directoryMapping`: 每个核心目录 → `{ "path", "layer", "responsibility", "publicAPI" }`
     - `logicalTopology`: 模块间依赖 → `{ "from", "to", "type" }` (imports / calls / extends)
     - `criticalUserJourneys`: 核心流程 → `{ "name", "steps": ["module → module → ..."] }`
+    - `featureRelations`: 扫描代码，识别「聚合型模块」并记录。
+      **识别特征**: 某模块遍历/枚举/动态加载同类模块（如 `for (const cmd of allCommands)`、`Object.values(registry)`、读取目录后动态 import），或其描述为「汇总/列举/注册所有 X」。
+      每条记录格式: `{ "aggregator": "<ID 或文件路径>", "sources": "<来源范围描述>", "evidence": "<代码依据>", "checkNote": "此类功能新增或删除时，检查 <aggregator> 是否需要同步" }`
 
     ### 3.7 其他全局文档（按需）
     - `dictionary.json`: 从代码提取领域术语

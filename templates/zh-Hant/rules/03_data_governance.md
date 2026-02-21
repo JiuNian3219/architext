@@ -14,7 +14,7 @@ alwaysApply: true
 | 檔案 | 型別 | 讀取時機 | 寫入時機 |
 |:---|:---|:---|:---|
 | `roadmap.json` | 路線圖 | `/archi.plan`, `/archi.code` 開始時 | `/archi.start` 建立; AI 直接編輯或 `npx archi task` 更新狀態 |
-| `map.json` | 架構地圖 | 觸碰程式碼時 (via context_glue) | `/archi.plan` Step 3 (全域同步); `/archi.map` |
+| `map.json` | 架構地圖 | 觸碰程式碼時 (via context_glue) | `/archi.plan` Step 3 (全域同步); `/archi.inherit` Step 3.6; `/archi.map` |
 | `dictionary.json` | 術語字典 | 生成變數名稱時 | `/archi.plan` Step 3; 發現新術語時主動新增 |
 | `design_tokens.json` | 設計令牌 [?UI] | 生成 UI 程式碼時 | `/archi.start` 建立; 設計變更時更新 |
 | `data_snapshot.json` | 資料快照 [?Data] | `/archi.plan` Q1 設計; `/archi.code` 實作時 | Plan 階段設計 Schema; Code 階段同步實際變更 |
@@ -56,6 +56,7 @@ alwaysApply: true
 
 - **Directory Mapping**: 須反映真實實體檔案樹。
 - **Logical Topology**: 須註冊每個 Feature Module 的職責。
+- **Feature Relations**: 記錄聚合型功能與其來源的聯動關係。每條結構為 `{ aggregator, sources, evidence, checkNote }`；由 AI 在 `/archi.plan`（規劃聚合型功能時）或 `/archi.inherit`（逆向掃描時）寫入，無需使用者手動維護。
 - **自我校正**: 若程式碼引用違反拓撲定義的層級關係，須報錯並停止產生。
 - **可擴展**: 若現有欄位不足以描述專案架構，可在 item 中自行新增欄位（如 `tags`、`owner`），或新增頂層 key。
 

@@ -345,6 +345,16 @@
     2.  **`dictionary.json`**: Extract **project business** new terms from the proposal to fill `entities`/`verbs`; register new shared tools to `utilities`; register new public components to `components`.
     3.  [?Data] **`data_snapshot.json`**: Add/modify Schema based on Core Structure recommendation. Prohibited from writing "TBD"; must write field names and types.
     4.  **`error_codes.json`**: Register new **business** error codes based on Error Handling recommendation. Framework script errors are handled by exit code + stderr; prohibited from registration.
+    5.  **`map.json` featureRelations**: Determine if this feature is an "aggregator" — i.e., its core responsibility is to **list, summarize, or dynamically reflect** a class of other features (e.g., "list all commands", "aggregate all page entries", "register all routes"). If yes, append one record to `featureRelations`:
+        ```json
+        {
+          "aggregator": "<this feature ID or file path>",
+          "sources": "<one-sentence description of what is aggregated, e.g. 'all CLI command features'>",
+          "evidence": "<basis, e.g. 'spec.md §X states this feature dynamically lists all Y-type features'>",
+          "checkNote": "When features of this type are added or removed, check whether <aggregator> needs to be updated"
+        }
+        ```
+        If not an aggregator, skip this step.
 
     **Output**: Change diffs of above files (brief).
 </step_3_global_sync>

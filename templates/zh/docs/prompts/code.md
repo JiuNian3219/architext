@@ -122,6 +122,7 @@
     8.  **Security**: 无敏感信息泄露；输入有校验。
     9.  **Static Check Zero**: 所有静态检查问题已解决。
     10. **step_4 Gate**: 确认 step_4 所有检查（Static + Test + Feature Verification）已通过。
+    11. **联动检查**: 读取 `[[__DOCS_DIR__]]/global/map.json` 中的 `featureRelations` 数组，将本次实现的功能与各条 `sources` 字段做语义对比。命中时输出提示：`⚠️ 联动: [aggregator] — [checkNote]`，提醒在当前实现完成后确认聚合方是否需要同步。`featureRelations` 为空则跳过。
 
     细节问题可 Auto-Fix 并说明；重大风险标注 `⚠️ Risk` 并提出替代方案。
 </step_5_audit>

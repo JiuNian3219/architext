@@ -54,12 +54,22 @@
     | 檔案 | 掃描內容 |
     |:---|:---|
     | `roadmap.json` | 任務條目 + 其他任務 `deps` 中的引用 |
-    | `map.json` | 模組註冊條目 |
+    | `map.json` | 模組註冊條目 + `featureRelations` 中以被刪 Feature 為 aggregator 的條目 |
     | `99_context_glue.md` | 關聯條目 |
     | `dictionary.json` | 該 Feature 獨佔的術語（僅標記，不自動刪） |
     | `error_codes.json` | 該 Feature 獨佔的錯誤碼（僅標記，不自動刪） |
 
-    ### 2.4 跨 Feature 引用
+    ### 2.4 聚合聯動檢查
+
+    讀取 `map.json.featureRelations`，判斷被刪 Feature 是否屬於某聚合方的 `sources` 覆蓋範圍。
+
+    | 情況 | 處理 |
+    |:---|:---|
+    | 不在任何聚合方的 sources 範圍內 | 無需特殊處理 |
+    | 在聚合方 sources 範圍內 | 在影響報告中列出，提示刪除後須檢查聚合方內容是否需要同步移除 |
+    | 被刪 Feature 本身是 aggregator | 同時移除 `featureRelations` 中該條記錄 |
+
+    ### 2.5 跨 Feature 引用
 
     掃描其他 Feature 的 `spec.md`，檢查是否引用了被刪 Feature 的介面、元件或資料。發現引用則標註為 `[Breaking]`。
 
@@ -87,6 +97,11 @@
     - dictionary.json: [term1], [term2]
     - error_codes.json: [ERR_XXX]
 
+    **[?有]聚合聯動** (須檢查):
+    | 聚合方 | checkNote |
+    |:---|:---|
+    | [aggregator ID/路徑] | [checkNote 內容] |
+
     **[?有]跨 Feature 引用 [Breaking]**:
     | 引用方 | 引用內容 | 建議 |
     |:---|:---|:---|
@@ -108,10 +123,11 @@
     | 1 | 刪除程式碼檔案/目錄 | step_2 識別的程式碼路徑 |
     | 2 | 刪除 Feature 檔案目錄 | `[[__DOCS_DIR__]]/features/<id>_<slug>/` |
     | 3 | 更新 `roadmap.json` | 移除任務條目；清理其他任務 `deps` 中對 `<id>` 的引用 |
-    | 4 | 更新 `map.json` | 移除該 Feature 註冊的模組條目 |
+    | 4 | 更新 `map.json` | 移除模組條目；若該 Feature 本身是 aggregator，同時移除其 `featureRelations` 條目 |
     | 5 | 更新 `99_context_glue.md` | 移除該 Feature 的關聯條目 |
     | 6 | [?有獨佔術語] 更新 `dictionary.json` | 移除或標註廢棄 |
     | 7 | [?有獨佔錯誤碼] 更新 `error_codes.json` | 移除或標註廢棄 |
+    | 8 | [?有聚合聯動] 檢查聚合方程式碼 | 確認聚合方中對被刪 Feature 的引用已清理 |
 
     每步完成後記錄操作日誌（檔案路徑 + 操作型別）。
 </step_3_execute>

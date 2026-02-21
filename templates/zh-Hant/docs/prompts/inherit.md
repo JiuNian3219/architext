@@ -212,6 +212,9 @@
     - `directoryMapping`: 每個核心目錄 → `{ "path", "layer", "responsibility", "publicAPI" }`
     - `logicalTopology`: 模組間依賴 → `{ "from", "to", "type" }` (imports / calls / extends)
     - `criticalUserJourneys`: 核心流程 → `{ "name", "steps": ["module → module → ..."] }`
+    - `featureRelations`: 掃描程式碼，識別「聚合型模組」並記錄。
+      **識別特徵**: 某模組遍歷/枚舉/動態載入同類模組（如 `for (const cmd of allCommands)`、`Object.values(registry)`、讀取目錄後動態 import），或其描述為「彙總/列舉/註冊所有 X」。
+      每條記錄格式: `{ "aggregator": "<ID 或檔案路徑>", "sources": "<來源範圍描述>", "evidence": "<程式碼依據>", "checkNote": "此類功能新增或刪除時，檢查 <aggregator> 是否需要同步" }`
 
     ### 3.7 其他全域文件（按需）
     - `dictionary.json`: 從程式碼提取領域術語

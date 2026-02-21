@@ -89,5 +89,6 @@
   ],
   "directoryMapping": [],
   "logicalTopology": [],
-  "criticalUserJourneys": []
+  "criticalUserJourneys": [],
+  "featureRelations": []
 }

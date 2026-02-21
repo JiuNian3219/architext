@@ -54,12 +54,22 @@
     | File | Scan Target |
     |:---|:---|
     | `roadmap.json` | Task entry + `deps` references in other tasks |
-    | `map.json` | Module registry entries |
+    | `map.json` | Module registry entries + `featureRelations` entries where the deleted Feature is the aggregator |
     | `99_context_glue.md` | Association entries |
     | `dictionary.json` | Terms exclusive to this Feature (flag only, no auto-delete) |
     | `error_codes.json` | Error codes exclusive to this Feature (flag only, no auto-delete) |
 
-    ### 2.4 Cross-Feature References
+    ### 2.4 Aggregation Linkage Check
+
+    Read `map.json.featureRelations`; determine whether the deleted Feature falls within any aggregator's `sources` coverage.
+
+    | Situation | Handling |
+    |:---|:---|
+    | Not in any aggregator's sources range | No special handling |
+    | In an aggregator's sources range | List in impact report; prompt to check if aggregator content needs to be cleaned up after deletion |
+    | Deleted Feature is itself an aggregator | Also remove its entry from `featureRelations` |
+
+    ### 2.5 Cross-Feature References
 
     Scan other Features' `spec.md` for references to the target Feature's interfaces, components, or data. Flag as `[Breaking]`.
 
@@ -87,6 +97,11 @@
     - dictionary.json: [term1], [term2]
     - error_codes.json: [ERR_XXX]
 
+    **[?present] Aggregation linkage** (check needed):
+    | Aggregator | checkNote |
+    |:---|:---|
+    | [aggregator ID/path] | [checkNote content] |
+
     **[?present] Cross-Feature references [Breaking]**:
     | Referencing Feature | Reference Content | Suggestion |
     |:---|:---|:---|
@@ -108,10 +123,11 @@
     | 1 | Delete code files/directories | Code paths from step_2 |
     | 2 | Delete Feature doc directory | `[[__DOCS_DIR__]]/features/<id>_<slug>/` |
     | 3 | Update `roadmap.json` | Remove task entry; clean `deps` refs to `<id>` in other tasks |
-    | 4 | Update `map.json` | Remove module entries for this Feature |
+    | 4 | Update `map.json` | Remove module entries; if this Feature is an aggregator, also remove its `featureRelations` entry |
     | 5 | Update `99_context_glue.md` | Remove association entries for this Feature |
     | 6 | [?exclusive terms] Update `dictionary.json` | Remove or mark deprecated |
     | 7 | [?exclusive codes] Update `error_codes.json` | Remove or mark deprecated |
+    | 8 | [?aggregation linkage] Check aggregator code | Verify aggregator no longer references the deleted Feature |
 
     Log each operation (file path + operation type) as it completes.
 </step_3_execute>

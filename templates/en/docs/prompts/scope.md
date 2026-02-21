@@ -58,6 +58,7 @@
     2. **Feature List Completeness**: Does the feature list sufficiently support the initiative goal?
     3. **Impact Assessment**: Brief "Affected Existing Features" → verify against roadmap/features for existence and status.
     4. **Gap Identification**: Check Brief for critical missing information.
+    5. **Linkage Check**: Read `map.json.featureRelations`; semantically compare the new feature's description against each `sources` field to determine if it falls within any aggregator's coverage. Surface a linkage reminder in the summary if matched.
 
     **Gap Levels**:
     - **Required**: Missing prevents reasonable decomposition (e.g., empty feature list)
@@ -82,6 +83,11 @@
     | Feature | Status | Estimated Impact |
     |:---|:---|:---|
     | [ID: Name] | [done/active/stub] | [needs modification/extension/no impact] |
+
+    **[?matched] Linkage Reminder**:
+    | Aggregator | checkNote |
+    |:---|:---|
+    | [aggregator ID/path] | [checkNote content] |
 
     **Information Gaps** (to be addressed):
     - [gap list]

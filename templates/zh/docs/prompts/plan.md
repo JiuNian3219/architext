@@ -345,6 +345,16 @@
     2.  **`dictionary.json`**: 提取提案中的**项目业务**新术语填入 `entities`/`verbs`；注册新共享工具到 `utilities`；注册新公共组件到 `components`。
     3.  [?Data] **`data_snapshot.json`**: 根据架构建议中核心结构的选择新增/修改 Schema。禁写"待定"，须写出字段名和类型。
     4.  **`error_codes.json`**: 根据架构建议中错误处理的选择注册新**业务**错误码。框架脚本错误由 exit code + stderr 处理，禁注册。
+    5.  **`map.json` featureRelations**: 判断本功能是否属于「聚合型功能」——即其核心职责是**列举、汇总或动态反映**其他一类功能（如「列出所有命令」「汇总所有页面入口」「注册所有路由」）。若是，在 `featureRelations` 中追加一条记录：
+        ```json
+        {
+          "aggregator": "<本功能 ID 或文件路径>",
+          "sources": "<一句话描述聚合来源范围，如'所有 CLI 命令类功能'>",
+          "evidence": "<依据，如'spec.md §X 描述本功能会动态列出所有 Y 类功能'>",
+          "checkNote": "此类功能新增或删除时，检查 <aggregator> 是否需要同步"
+        }
+        ```
+        若非聚合型功能，跳过此步。
 
     **Output**: 上述文件的变更 Diff (简要)。
 </step_3_global_sync>

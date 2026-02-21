@@ -122,6 +122,7 @@
     8.  **Security**: No sensitive info leakage; inputs validated.
     9.  **Static Check Zero**: All static check issues resolved.
     10. **step_4 Gate**: Confirm all step_4 checks (Static + Test + Feature Verification) have passed.
+    11. **Linkage Check**: Read the `featureRelations` array from `[[__DOCS_DIR__]]/global/map.json`; semantically compare the current feature against each `sources` field. If matched, output: `⚠️ Linkage: [aggregator] — [checkNote]`, reminding to confirm whether the aggregator needs to be updated after this implementation. Skip if `featureRelations` is empty.
 
     Detail issues can be Auto-Fixed with explanation; major risks marked `⚠️ Risk` with alternatives proposed.
 </step_5_audit>
