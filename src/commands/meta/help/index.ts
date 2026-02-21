@@ -1,6 +1,7 @@
 /** @fileoverview Help 命令入口，输出 Architext 彩色终端参考手册（命令列表 + 参数 + 示例）。 */
 import color from "picocolors";
 import pkg from "../../../../package.json" with { type: "json" };
+import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
 
 const t = createT(getSystemLocale(), "command.help");
@@ -157,5 +158,5 @@ export async function helpCommand(): Promise<void> {
     "",
   ].join("\n");
 
-  console.log([header, aiSection, cliSection, quickStart, workflow].join("\n"));
+  logger.info([header, aiSection, cliSection, quickStart, workflow].join("\n"));
 }
