@@ -159,7 +159,37 @@
         "slug": "目录"
       }
     },
-    "update": {},
+    "update": {
+      "title": "Architext 升级向导",
+      "no_config": "未找到配置文件 (architext.json)，请先运行 npx archi init",
+      "cancel": "已取消更新",
+      "success": "更新完成！",
+      "failed": "更新失败",
+      "version_checking": "检查最新版本...",
+      "version_check_skip": "版本检查已跳过（网络不可用）",
+      "version_outdated": "发现新版 v{latest}（当前 v{current}）",
+      "version_upgrade_hint": "升级命令: {cmd}",
+      "version_up_to_date": "已是最新版 v{version}",
+      "updating_silent": "更新提示词模板与文档模板...",
+      "updated_silent": "已更新 {count} 个模板文件",
+      "rules_overwrite_warning": "以下框架规则文件将被完全覆盖，如有自定义修改请先手动备份：",
+      "rules_confirm": "确认覆盖以上规则文件？",
+      "schema_auditing": "Schema 兼容性审计...",
+      "summary": "更新汇总",
+      "summary_updated": "已更新规则: {list}",
+      "summary_templated": "新版模板 → {docDir}/templates/02_tech_stack.template.md（请手动合并）",
+      "summary_skipped": "已跳过: {list}",
+      "schema": {
+        "parse_error": "JSON 解析失败，文件可能已损坏",
+        "version_too_new": "文件版本 (v{current}) 高于 CLI 期望版本 (v{expected})，请先升级 CLI",
+        "roadmap_migrated": "{file}: 已从 v{from} 迁移至 v{to}",
+        "roadmap_ok": "{file}: 结构兼容",
+        "roadmap_error": "{file}: 结构不兼容",
+        "no_plans": "未找到 plan.json 文件，跳过审计",
+        "plans_ok": "所有 {count} 个 plan.json 结构兼容",
+        "plan_error": "{file}: 结构不兼容（请手动检查）"
+      }
+    },
     "doctor": {},
     "help": {
       "tagline": "No Docs, No Code. — AI 原生架构协议",

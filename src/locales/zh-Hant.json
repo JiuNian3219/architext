@@ -159,7 +159,37 @@
         "slug": "目錄"
       }
     },
-    "update": {},
+    "update": {
+      "title": "Architext 升級精靈",
+      "no_config": "未找到設定檔 (architext.json)，請先執行 npx archi init",
+      "cancel": "已取消更新",
+      "success": "更新完成！",
+      "failed": "更新失敗",
+      "version_checking": "檢查最新版本...",
+      "version_check_skip": "版本檢查已略過（網路不可用）",
+      "version_outdated": "發現新版 v{latest}（目前 v{current}）",
+      "version_upgrade_hint": "升級指令: {cmd}",
+      "version_up_to_date": "已是最新版 v{version}",
+      "updating_silent": "更新提示詞範本與文件範本...",
+      "updated_silent": "已更新 {count} 個範本檔案",
+      "rules_overwrite_warning": "以下框架規則檔案將被完全覆蓋，如有自訂修改請先手動備份：",
+      "rules_confirm": "確認覆蓋以上規則檔案？",
+      "schema_auditing": "Schema 相容性審計...",
+      "summary": "更新彙總",
+      "summary_updated": "已更新規則: {list}",
+      "summary_templated": "新版範本 → {docDir}/templates/02_tech_stack.template.md（請手動合併）",
+      "summary_skipped": "已略過: {list}",
+      "schema": {
+        "parse_error": "JSON 解析失敗，檔案可能已損毀",
+        "version_too_new": "檔案版本 (v{current}) 高於 CLI 期望版本 (v{expected})，請先升級 CLI",
+        "roadmap_migrated": "{file}: 已從 v{from} 遷移至 v{to}",
+        "roadmap_ok": "{file}: 結構相容",
+        "roadmap_error": "{file}: 結構不相容",
+        "no_plans": "未找到 plan.json 檔案，略過審計",
+        "plans_ok": "所有 {count} 個 plan.json 結構相容",
+        "plan_error": "{file}: 結構不相容（請手動檢查）"
+      }
+    },
     "doctor": {},
     "help": {
       "tagline": "No Docs, No Code. — AI 原生架構協議",

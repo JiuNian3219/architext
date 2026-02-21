@@ -159,7 +159,37 @@
         "slug": "Slug"
       }
     },
-    "update": {},
+    "update": {
+      "title": "Architext Update Wizard",
+      "no_config": "No config file (architext.json) found. Please run npx archi init first.",
+      "cancel": "Update cancelled",
+      "success": "Update complete!",
+      "failed": "Update failed",
+      "version_checking": "Checking latest version...",
+      "version_check_skip": "Version check skipped (network unavailable)",
+      "version_outdated": "New version v{latest} available (current: v{current})",
+      "version_upgrade_hint": "Upgrade command: {cmd}",
+      "version_up_to_date": "Already up to date: v{version}",
+      "updating_silent": "Updating prompt and document templates...",
+      "updated_silent": "Updated {count} template files",
+      "rules_overwrite_warning": "The following framework rule files will be fully overwritten. Back them up if you have custom changes:",
+      "rules_confirm": "Confirm overwriting the above rule files?",
+      "schema_auditing": "Running Schema compatibility audit...",
+      "summary": "Update Summary",
+      "summary_updated": "Rules updated: {list}",
+      "summary_templated": "New template → {docDir}/templates/02_tech_stack.template.md (merge manually)",
+      "summary_skipped": "Skipped: {list}",
+      "schema": {
+        "parse_error": "JSON parse failed — file may be corrupted",
+        "version_too_new": "File version (v{current}) is newer than CLI expected version (v{expected}). Please upgrade the CLI.",
+        "roadmap_migrated": "{file}: migrated from v{from} to v{to}",
+        "roadmap_ok": "{file}: schema compatible",
+        "roadmap_error": "{file}: schema incompatible",
+        "no_plans": "No plan.json files found, skipping audit",
+        "plans_ok": "All {count} plan.json files are schema-compatible",
+        "plan_error": "{file}: schema incompatible (please review manually)"
+      }
+    },
     "doctor": {},
     "help": {
       "tagline": "No Docs, No Code. — AI-Native Architecture Protocol",
