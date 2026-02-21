@@ -66,4 +66,11 @@ describe("logger", () => {
       expect.stringContaining("test fail"),
     );
   });
+
+  it("raw 应原样输出，不添加颜色", () => {
+    const msg = "plain text";
+    logger.raw(msg);
+    expect(console.log).toHaveBeenCalledTimes(1);
+    expect(console.log).toHaveBeenCalledWith(msg);
+  });
 });

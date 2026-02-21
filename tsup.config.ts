@@ -1,5 +1,6 @@
 import fs from "fs-extra";
 import { defineConfig } from "tsup";
+import { logger } from "./src/utils/logger.ts";
 
 export default defineConfig({
   entry: ["src/index.ts"],
@@ -10,15 +11,17 @@ export default defineConfig({
   minify: true,
   shims: true,
   onSuccess: async () => {
-    console.log("📦 [Asset Copy] Starting to copy templates...");
+    logger.info("[Asset Copy] Starting to copy templates...");
     try {
       await fs.copy("templates", "dist/templates", {
         overwrite: true,
         filter: (src) => !src.includes(".DS_Store"),
       });
-      console.log("✅ [Asset Copy] Templates copied to dist/templates");
+      logger.success("[Asset Copy] Templates copied to dist/templates");
     } catch (err) {
-      console.error("❌ [Asset Copy] Failed:", err);
+      logger.error(
+        `[Asset Copy] Failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
       process.exit(1);
     }
   },

@@ -158,5 +158,5 @@ export async function helpCommand(): Promise<void> {
     "",
   ].join("\n");
 
-  logger.info([header, aiSection, cliSection, quickStart, workflow].join("\n"));
+  logger.raw([header, aiSection, cliSection, quickStart, workflow].join("\n"));
 }

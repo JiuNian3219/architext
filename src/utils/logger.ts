@@ -13,6 +13,11 @@ export const logger = {
   done: (msg: string) => console.log(color.green(`✔ ${msg}`)),
   fail: (msg: string) => console.error(color.red(`✖ ${msg}`)),
 
+  /**
+   * 原样输出，不添加颜色。用于已包含 ANSI 代码的预格式化内容（如 help 手册）。
+   */
+  raw: (msg: string) => console.log(msg),
+
   /** 清空终端，统一封装以符合 No console.log 规范。 */
   clear: () => console.clear(),
 };
