@@ -1,6 +1,7 @@
 /** @fileoverview 测试配置管理器 (config.ts) */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import type { LocaleLang } from "../../types/index.ts";
 import { loadConfig, saveConfig, CONFIG_NAME } from "../../core/config.ts";
 import { ConfigParseError } from "../../core/errors.ts";
 import * as fs from "fs-extra";
@@ -101,7 +102,7 @@ describe("config", () => {
   describe("saveConfig", () => {
     it("应该保存配置文件", async () => {
       const configData = {
-        language: "zh",
+        language: "zh" as LocaleLang,
         docDir: ".architext",
         editors: ["cursor"] as const,
       };
@@ -125,7 +126,7 @@ describe("config", () => {
 
     it("应该自动添加 updatedAt 字段", async () => {
       const configData = {
-        language: "zh",
+        language: "zh" as LocaleLang,
         docDir: ".architext",
         editors: ["cursor"] as const,
       };
@@ -146,7 +147,7 @@ describe("config", () => {
 
     it("应该使用默认的当前工作目录", async () => {
       const configData = {
-        language: "en",
+        language: "en" as LocaleLang,
         docDir: "docs",
         editors: ["trae"] as const,
       };
