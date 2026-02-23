@@ -3,19 +3,13 @@ import fs from "fs-extra";
 import path from "path";
 import { resolveDocDir } from "../../../core/doc-dir.ts";
 import { AppError } from "../../../core/errors.ts";
+import { TEMPLATE_REGISTRY } from "../../../core/rules.ts";
 import { TemplateManager } from "../../../core/template.ts";
 import { loadConfig } from "../../../core/config.ts";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
 
 const t = createT(getSystemLocale(), "command.template");
-
-const TEMPLATE_REGISTRY: Record<string, { file: string; output: string }> = {
-  "scope-brief": {
-    file: "scope-brief.template.md",
-    output: "scope-brief.md",
-  },
-};
 
 /**
  * 解析项目语言配置，用于定位正确语言版本的模板

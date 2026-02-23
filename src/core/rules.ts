@@ -98,6 +98,24 @@ export const SUPPORTED_PROJECT_TYPES = Object.keys(
   PROJECT_TYPE_PRESETS,
 ) as ProjectType[];
 
+/**
+ * 文档模板注册表：供 `npx archi template <name>` 使用。
+ * 新增模板时在此注册，无需修改 template 命令逻辑。
+ */
+export interface TemplateEntry {
+  /** 模板源文件名（位于 templates/<lang>/docs/templates/ 或 docDir/templates/） */
+  file: string;
+  /** 输出到项目根目录的文件名 */
+  output: string;
+}
+
+export const TEMPLATE_REGISTRY: Record<string, TemplateEntry> = {
+  "scope-brief": {
+    file: "scope-brief.template.md",
+    output: "scope-brief.md",
+  },
+};
+
 /** 模板源目录中的骨架文件名 */
 export const BRIEF_BASE_NAME = "_base.md";
 /** 方向模块注册表文件名，包含所有 @tech:tag / @style:tag 片段 */
