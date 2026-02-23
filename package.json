@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
-    "dev": "ts-node src/index.ts",
+    "dev": "tsx src/index.ts",
     "lint": "eslint . && prettier --check .",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -64,8 +64,8 @@
     "prettier": "^3.8.1",
     "stylelint": "^17.0.0",
     "stylelint-config-standard": "^40.0.0",
-    "ts-node": "^10.9.2",
     "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.53.1",
     "vitest": "^4.0.18"
