@@ -37,7 +37,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
 
   try {
     await Scaffolder.run(config, {
-      resolveConflicts: ConflictResolver.resolve,
+      resolveConflicts: ConflictResolver.resolve.bind(ConflictResolver),
     });
   } catch (error) {
     // ConflictResolver 在文件冲突时可能抛出 UserCancelError
