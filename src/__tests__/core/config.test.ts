@@ -51,6 +51,34 @@ describe("config", () => {
       await expect(loadConfig(tempDir)).rejects.toThrow(ConfigParseError);
     });
 
+    it("结构不完整（如缺少 editors）应抛出 ConfigParseError 并给出友好提示", async () => {
+      const invalidConfig = {
+        language: "zh",
+        docDir: ".architext",
+        // editors 缺失
+        updatedAt: "2024-01-01T00:00:00.000Z",
+      };
+      const configPath = path.join(tempDir, CONFIG_NAME);
+      await fs.writeJSON(configPath, invalidConfig, { spaces: 2 });
+
+      await expect(loadConfig(tempDir)).rejects.toThrow(ConfigParseError);
+      await expect(loadConfig(tempDir)).rejects.toThrow(/结构校验失败/);
+      await expect(loadConfig(tempDir)).rejects.toThrow(/editors/);
+    });
+
+    it("editors 为空数组应抛出 ConfigParseError", async () => {
+      const invalidConfig = {
+        language: "zh",
+        docDir: ".architext",
+        editors: [],
+        updatedAt: "2024-01-01T00:00:00.000Z",
+      };
+      const configPath = path.join(tempDir, CONFIG_NAME);
+      await fs.writeJSON(configPath, invalidConfig, { spaces: 2 });
+
+      await expect(loadConfig(tempDir)).rejects.toThrow(ConfigParseError);
+    });
+
     it("应该使用默认的当前工作目录", async () => {
       const configData = {
         language: "zh",

@@ -2,15 +2,33 @@
 import { ArchitextConfig } from "@/types/index.ts";
 import fs from "fs-extra";
 import path from "path";
+import { ZodError } from "zod";
+import { ArchitextConfigSchema } from "./schemas/config.schema.ts";
 import { ConfigParseError } from "./errors.ts";
 
 export const CONFIG_NAME = "architext.json";
 
 /**
+ * 将 Zod 校验错误格式化为用户可读的提示信息
+ *
+ * @param err - Zod 校验错误
+ * @returns 格式化后的错误信息
+ */
+function formatZodErrors(err: ZodError): string {
+  const details = err.issues
+    .map((issue) => {
+      const pathStr = issue.path.length > 0 ? issue.path.join(".") : "(root)";
+      return `  - ${pathStr}: ${issue.message}`;
+    })
+    .join("\n");
+  return `${CONFIG_NAME} schema validation failed:\n${details}`;
+}
+
+/**
  * 加载项目配置文件 (architext.json)
  * @param cwd 当前工作目录，默认当前执行目录
  * @returns 解析后的配置对象或 null（文件不存在）
- * @throws ConfigParseError 当配置文件存在但 JSON 格式错误时
+ * @throws ConfigParseError 当配置文件存在但 JSON 格式错误或结构不完整时
  */
 export async function loadConfig(
   cwd: string = process.cwd(),
@@ -21,8 +39,9 @@ export async function loadConfig(
     return null;
   }
 
+  let raw: unknown;
   try {
-    return await fs.readJSON(configPath);
+    raw = await fs.readJSON(configPath);
   } catch (error: unknown) {
     // 明确抛出解析错误，避免被误判为“无配置”
     if (error instanceof SyntaxError) {
@@ -32,6 +51,13 @@ export async function loadConfig(
     }
     throw error;
   }
+
+  const result = ArchitextConfigSchema.safeParse(raw);
+  if (!result.success) {
+    throw new ConfigParseError(formatZodErrors(result.error));
+  }
+
+  return result.data as ArchitextConfig;
 }
 
 /**

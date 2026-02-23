@@ -17,6 +17,7 @@ export {
   DesignTokensSchema,
   MapSchema,
 } from "./global.schema.ts";
+export { ArchitextConfigSchema } from "./config.schema.ts";
 
 /**
  * 使用 Zod Schema 校验数据，校验失败时抛出格式友好的 AppError。
