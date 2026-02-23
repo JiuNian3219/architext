@@ -37,15 +37,28 @@ function escapeMermaidText(text: string): string {
 }
 
 /**
+ * goal 文本中的分句符（`;` `；` `.` `。`）后插入 `<br/>`，符号本身保留。
+ * 连续空白折叠，避免换行后产生多余前导空格。
+ */
+function formatGoalLines(goal: string): string {
+  return goal
+    .replace(/([;；.。])\s*/g, "$1<br/>")
+    .trimEnd()
+    .replace(/<br\/>$/, "");
+}
+
+/**
  * 构建 Mermaid 节点标签（双引号包裹）。
- * 格式：`<b>{标题}</b>[<br/>{goal}]`
- * - 标题加粗，goal 作为普通字号的第二行（可选）
+ * 格式：`<b>{标题}</b>[<br/>{goal 各句}]`
+ * - 标题加粗，goal 按分句符换行
  * - 状态由 classDef 背景色区分，无需额外 icon
+ *
+ * @param task 任务
  */
 function buildNodeLabel(task: Task): string {
   const title = escapeMermaidText(task.title);
   if (task.goal) {
-    const goal = escapeMermaidText(task.goal);
+    const goal = formatGoalLines(escapeMermaidText(task.goal));
     return `"<b>${title}</b><br/>${goal}"`;
   }
   return `"<b>${title}</b>"`;

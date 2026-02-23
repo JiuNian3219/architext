@@ -207,6 +207,106 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
       );
     });
 
+    it("goal 中的英文分号后应插入 <br/>，符号保留", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        phases: [
+          {
+            id: "p1",
+            name: "P",
+            tasks: [
+              {
+                id: "T1",
+                title: "Task",
+                status: "pending",
+                goal: "Step A; Step B; Step C",
+              },
+            ],
+          },
+        ],
+      };
+      expect(renderRoadmap(data)).toContain(
+        'T1["<b>Task</b><br/>Step A;<br/>Step B;<br/>Step C"]',
+      );
+    });
+
+    it("goal 中的中文分号后应插入 <br/>，符号保留", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        phases: [
+          {
+            id: "p1",
+            name: "P",
+            tasks: [
+              {
+                id: "T1",
+                title: "任务",
+                status: "pending",
+                goal: "步骤A；步骤B；步骤C",
+              },
+            ],
+          },
+        ],
+      };
+      expect(renderRoadmap(data)).toContain(
+        'T1["<b>任务</b><br/>步骤A；<br/>步骤B；<br/>步骤C"]',
+      );
+    });
+
+    it("goal 中的英文句号后应插入 <br/>，末尾 <br/> 去除", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        phases: [
+          {
+            id: "p1",
+            name: "P",
+            tasks: [
+              {
+                id: "T1",
+                title: "Task",
+                status: "pending",
+                goal: "Do A. Do B.",
+              },
+            ],
+          },
+        ],
+      };
+      expect(renderRoadmap(data)).toContain(
+        'T1["<b>Task</b><br/>Do A.<br/>Do B."]',
+      );
+    });
+
+    it("goal 中的中文句号后应插入 <br/>，末尾 <br/> 去除", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        phases: [
+          {
+            id: "p1",
+            name: "P",
+            tasks: [
+              {
+                id: "T1",
+                title: "任务",
+                status: "pending",
+                goal: "做A。做B。",
+              },
+            ],
+          },
+        ],
+      };
+      expect(renderRoadmap(data)).toContain(
+        'T1["<b>任务</b><br/>做A。<br/>做B。"]',
+      );
+    });
+
     it("没有 goal 的节点不含 <br/>", () => {
       const data = buildRoadmap([{ id: "T1", title: "Simple Task" }]);
       const output = renderRoadmap(data);
