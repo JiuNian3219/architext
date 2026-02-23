@@ -54,7 +54,7 @@ export interface EditorRuleConfig {
  * architext.json 配置文件结构
  */
 export interface ArchitextConfig {
-  language: string;
+  language: LocaleLang;
   docDir: string;
   features?: ProjectFeature[];
   roadmap?: string;

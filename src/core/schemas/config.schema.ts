@@ -15,9 +15,12 @@ const InitConfigSchema = z.object({
   features: z.array(ProjectFeatureSchema),
 });
 
+/** 支持的语言（与 LocaleLang 保持一致） */
+const LocaleLangSchema = z.enum(["zh", "zh-Hant", "en"]);
+
 /** architext.json 完整结构 */
 export const ArchitextConfigSchema = z.object({
-  language: z.string().min(1),
+  language: LocaleLangSchema,
   docDir: z.string().min(1),
   features: z.array(ProjectFeatureSchema).optional(),
   roadmap: z.string().optional(),

@@ -63,7 +63,7 @@ async function askLanguage(
       value: key,
       label: config.label,
     })),
-    initialValue: (existingConfig?.language as LocaleLang) || "zh",
+    initialValue: existingConfig?.language ?? "zh",
   });
 
   if (isCancel(response)) {

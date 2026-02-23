@@ -25,9 +25,7 @@ const t = createT(getSystemLocale(), "command.render");
  */
 async function resolveRenderLang(): Promise<LocaleLang> {
   const config = await loadConfig();
-  const lang = config?.language;
-  if (lang === "zh" || lang === "zh-Hant" || lang === "en") return lang;
-  return getSystemLocale();
+  return config?.language ?? getSystemLocale();
 }
 
 /**
