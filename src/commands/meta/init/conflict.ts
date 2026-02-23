@@ -1,12 +1,12 @@
-/** @fileoverview 冲突解决器，负责检测目标路径是否已存在文件，并提供交互式的解决策略（覆盖、跳过、取消）。 */
+/** @fileoverview init 命令专属的冲突解决器，检测目标路径是否已存在文件，并提供交互式解决策略（覆盖、跳过、取消）。 */
 
 import { select } from "@clack/prompts";
 import fs from "fs-extra";
 import path from "path";
-import { FileOperation } from "../types/index.ts";
-import { logger } from "../utils/logger.ts";
-import { createT, getSystemLocale } from "../utils/t.ts";
-import { UserCancelError } from "./errors.ts";
+import { FileOperation } from "../../../types/index.ts";
+import { logger } from "../../../utils/logger.ts";
+import { createT, getSystemLocale } from "../../../utils/t.ts";
+import { UserCancelError } from "../../../core/errors.ts";
 
 const t = createT(getSystemLocale(), "command.init");
 
@@ -34,7 +34,6 @@ export class ConflictResolver {
     }
 
     if (action === "skip") {
-      // 过滤掉所有在冲突列表中的操作
       const conflictDestSet = new Set(conflicts);
       return operations.filter(
         (op) => !conflictDestSet.has(path.relative(process.cwd(), op.dest)),
@@ -46,8 +45,6 @@ export class ConflictResolver {
 
   /**
    * 检测操作计划中所有目标路径是否已存在文件
-   * @param operations 原始操作计划
-   * @returns 冲突文件的相对路径列表
    */
   private static async detectConflicts(
     operations: FileOperation[],
@@ -63,8 +60,6 @@ export class ConflictResolver {
 
   /**
    * 交互式询问用户解决策略
-   * @param conflicts 冲突文件的相对路径列表
-   * @returns 用户选择的操作策略（覆盖、跳过、取消）
    */
   private static async promptAction(
     conflicts: string[],

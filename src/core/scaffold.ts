@@ -10,7 +10,6 @@ import {
 } from "../types/index.ts";
 import { logger } from "../utils/logger.ts";
 import { createT, getSystemLocale } from "../utils/t.ts";
-import { ConflictResolver } from "./conflict.ts";
 import {
   BRIEF_BASE_NAME,
   BRIEF_MODULES_NAME,
@@ -22,14 +21,21 @@ import { TemplateManager } from "./template.ts";
 
 export type ScaffoldOptions = InitConfig;
 
+/** 脚手架运行时可选的扩展选项（由调用方注入，避免 core 依赖 commands 层） */
+export interface ScaffoldRunOptions {
+  /** 冲突解决器，由 init 命令注入；未提供时跳过冲突检测 */
+  resolveConflicts?: (operations: FileOperation[]) => Promise<FileOperation[]>;
+}
+
 const t = createT(getSystemLocale(), "scaffold");
 
 export class Scaffolder {
   /**
    * 执行脚手架初始化流程，根据配置生成文档骨架、安装核心规则并分发 IDE 配置文件
    * @param options 初始化配置选项
+   * @param runOptions 运行时可选项（如 resolveConflicts，由 init 命令注入）
    */
-  static async run(options: ScaffoldOptions) {
+  static async run(options: ScaffoldOptions, runOptions?: ScaffoldRunOptions) {
     const { language, docDir, editors, features = [] } = options;
     const templateRoot = await TemplateManager.getRoot();
 
@@ -135,7 +141,10 @@ export class Scaffolder {
     }
 
     // 处理文件冲突（Brief 单独处理，不进入常规 operations）
-    const finalOperations = await ConflictResolver.resolve(operations);
+    // resolveConflicts 由 init 命令注入，core 层不依赖 commands
+    const finalOperations = runOptions?.resolveConflicts
+      ? await runOptions.resolveConflicts(operations)
+      : operations;
 
     const groups = ["docs", "ide"];
     const groupLabels: Record<string, string> = {

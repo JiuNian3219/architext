@@ -7,6 +7,7 @@ import { UserCancelError } from "../../../core/errors.ts";
 import { Scaffolder } from "../../../core/scaffold.ts";
 import type { InitOptions } from "../../../types/index.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
+import { ConflictResolver } from "./conflict.ts";
 import { collectInitConfig } from "./prompts.ts";
 
 const t = createT(getSystemLocale(), "command.init");
@@ -35,7 +36,9 @@ export async function initCommand(options: InitOptions): Promise<void> {
   });
 
   try {
-    await Scaffolder.run(config);
+    await Scaffolder.run(config, {
+      resolveConflicts: ConflictResolver.resolve,
+    });
   } catch (error) {
     // ConflictResolver 在文件冲突时可能抛出 UserCancelError
     if (error instanceof UserCancelError) {
