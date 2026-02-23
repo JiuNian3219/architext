@@ -106,11 +106,14 @@ export function renderRoadmap(
   }
   lines.push("");
 
-  // 依赖边
+  // 依赖边（仅输出直接依赖，跳过可经由更长路径传递的冗余边）
+  const redundantEdges = computeRedundantEdges(allTasks);
   for (const task of allTasks) {
     if (task.deps) {
       for (const dep of task.deps) {
-        lines.push(`    ${dep} --> ${task.id}`);
+        if (!redundantEdges.has(`${dep}-->${task.id}`)) {
+          lines.push(`    ${dep} --> ${task.id}`);
+        }
       }
     }
   }
@@ -131,4 +134,71 @@ function renderTaskLine(task: Task): string {
   const check = STATUS_CHECK[task.status];
   const icon = STATUS_ICON[task.status];
   return `- [${check}] ${icon} **[${task.id}]** ${task.title}`;
+}
+
+/**
+ * BFS 判断在有向图中 `from` 是否可以到达 `to`。
+ *
+ * @param from 起始节点
+ * @param to 目标节点
+ * @param forwardAdj 正向邻接表
+ * @returns 是否可以到达
+ */
+function canReach(
+  from: string,
+  to: string,
+  forwardAdj: Map<string, Set<string>>,
+): boolean {
+  const visited = new Set<string>();
+  const queue = [from];
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    if (node === to) return true;
+    if (visited.has(node)) continue;
+    visited.add(node);
+    for (const next of forwardAdj.get(node) ?? []) {
+      queue.push(next);
+    }
+  }
+  return false;
+}
+
+/**
+ * 传递规约：
+ * 计算所有冗余的依赖边 —— 即可通过长度 ≥ 2 的路径隐式到达的边。
+ *
+ * 例：A→B、A→C、B→C 中，A→C 是冗余的（A→B→C 已隐含），
+ * 规约后只保留 A→B 和 B→C，图变为线性链。
+ *
+ * deps 字段仍保留原始依赖（用于文档/校验），此函数仅影响图的渲染。
+ *
+ * @param tasks 任务列表
+ * @returns 冗余的依赖边集合
+ */
+function computeRedundantEdges(tasks: Task[]): Set<string> {
+  // 构建正向邻接表：dep → 依赖它的 task 集合
+  const forwardAdj = new Map<string, Set<string>>();
+  for (const task of tasks) {
+    for (const dep of task.deps ?? []) {
+      if (!forwardAdj.has(dep)) forwardAdj.set(dep, new Set());
+      forwardAdj.get(dep)!.add(task.id);
+    }
+  }
+
+  const redundant = new Set<string>();
+
+  for (const task of tasks) {
+    for (const dep of task.deps ?? []) {
+      // 检查 dep → task.id 是否可通过其他邻居中转到达
+      for (const neighbor of forwardAdj.get(dep) ?? []) {
+        if (neighbor === task.id) continue; // 跳过直接边本身
+        if (canReach(neighbor, task.id, forwardAdj)) {
+          redundant.add(`${dep}-->${task.id}`);
+          break;
+        }
+      }
+    }
+  }
+
+  return redundant;
 }
