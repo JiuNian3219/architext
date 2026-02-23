@@ -19,9 +19,10 @@ export const handleError = (error: unknown) => {
 
   // 应用级已知错误
   if (error instanceof AppError) {
-    logger.error(t("internal", { code: error.code, msg: error.message }));
-
-    if (!error.isUserError) {
+    if (error.isUserError) {
+      logger.error(t("internal", { code: error.code, msg: error.message }));
+    } else {
+      // Stack 已含 message，无需再格式化输出，避免重复
       logger.error(error.stack || error.message);
     }
     process.exit(1);
