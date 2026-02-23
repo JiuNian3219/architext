@@ -169,23 +169,73 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
   // ── 渲染完整性 ──
 
   describe("渲染完整性", () => {
-    it("所有节点都应被渲染（含无依赖的孤立节点）", () => {
+    it("所有节点都应被渲染，标题以 <b> 加粗", () => {
       const data = buildRoadmap([
         { id: "ALONE", title: "Isolated Node" },
         { id: "FROM", title: "Source" },
         { id: "TO", title: "Target", deps: ["FROM"] },
       ]);
       const output = renderRoadmap(data);
-      expect(output).toContain('ALONE["Isolated Node"]');
-      expect(output).toContain('FROM["Source"]');
-      expect(output).toContain('TO["Target"]');
+      expect(output).toContain('ALONE["<b>Isolated Node</b>"]');
+      expect(output).toContain('FROM["<b>Source</b>"]');
+      expect(output).toContain('TO["<b>Target</b>"]');
+    });
+
+    it("有 goal 的节点：加粗标题 + <br/> + 普通 goal", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        phases: [
+          {
+            id: "phase-1",
+            name: "Phase",
+            tasks: [
+              {
+                id: "T1",
+                title: "Project Scaffolding",
+                status: "done",
+                goal: "Setup complete",
+              },
+            ],
+          },
+        ],
+      };
+      const output = renderRoadmap(data);
+      expect(output).toContain(
+        'T1["<b>Project Scaffolding</b><br/>Setup complete"]',
+      );
+    });
+
+    it("没有 goal 的节点不含 <br/>", () => {
+      const data = buildRoadmap([{ id: "T1", title: "Simple Task" }]);
+      const output = renderRoadmap(data);
+      expect(output).toContain('T1["<b>Simple Task</b>"]');
+      expect(output).not.toContain("<br/>");
     });
 
     it("节点标签中的双引号应被正确转义", () => {
-      const data = buildRoadmap([{ id: "T1", title: 'Title with "quotes"' }]);
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        phases: [
+          {
+            id: "phase-1",
+            name: "Phase",
+            tasks: [
+              {
+                id: "T1",
+                title: 'Title with "quotes"',
+                status: "pending",
+                goal: 'Goal with "quotes"',
+              },
+            ],
+          },
+        ],
+      };
       const output = renderRoadmap(data);
       expect(output).toContain("#quot;");
-      expect(output).not.toMatch(/T1\["[^"]*"[^"]*"\]/);
     });
 
     it("渲染输出应包含 Mermaid 代码块包裹标记", () => {

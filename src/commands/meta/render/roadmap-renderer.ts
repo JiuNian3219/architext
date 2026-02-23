@@ -31,13 +31,24 @@ const STATUS_CLASS: Record<TaskStatus, string> = {
   blocked: "blocked",
 };
 
+/** 转义单段文本中会破坏 Mermaid 节点语法的双引号。 */
+function escapeMermaidText(text: string): string {
+  return text.replace(/"/g, "#quot;");
+}
+
 /**
- * 转义 Mermaid 节点标签中的特殊字符。
- * Mermaid 使用 `[]`、`()`、`{}`、`<>` 等作为节点形状语法，
- * 标签内出现这些字符会导致解析错误。用双引号包裹即可安全处理。
+ * 构建 Mermaid 节点标签（双引号包裹）。
+ * 格式：`<b>{标题}</b>[<br/>{goal}]`
+ * - 标题加粗，goal 作为普通字号的第二行（可选）
+ * - 状态由 classDef 背景色区分，无需额外 icon
  */
-function escapeMermaidLabel(text: string): string {
-  return `"${text.replace(/"/g, "#quot;")}"`;
+function buildNodeLabel(task: Task): string {
+  const title = escapeMermaidText(task.title);
+  if (task.goal) {
+    const goal = escapeMermaidText(task.goal);
+    return `"<b>${title}</b><br/>${goal}"`;
+  }
+  return `"<b>${title}</b>"`;
 }
 
 /**
@@ -100,9 +111,9 @@ export function renderRoadmap(
   // 收集所有任务用于生成图
   const allTasks: Task[] = data.phases.flatMap((p) => p.tasks);
 
-  // 节点定义 — 使用双引号包裹标签，防止特殊字符破坏 Mermaid 语法
+  // 节点定义 — 标题 + goal（如有）双行显示
   for (const task of allTasks) {
-    lines.push(`    ${task.id}[${escapeMermaidLabel(task.title)}]`);
+    lines.push(`    ${task.id}[${buildNodeLabel(task)}]`);
   }
   lines.push("");
 
