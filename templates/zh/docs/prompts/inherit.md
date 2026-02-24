@@ -123,13 +123,15 @@
 
     ### 信息路由规则
 
+    > 规则文件（`02_tech_stack`、`90_custom_rules` 等）已由 IDE 注入当前上下文，AI 已知其路径，直接写入即可。
+
     | 代码中的信息 | 目标文件 |
     |:---|:---|
     | README 项目描述、目标用户、特性列表 | `[[__DOCS_DIR__]]/global/vision.md` |
-    | 依赖清单、配置文件、代码模式 | `02_tech_stack.md` |
+    | 依赖清单、配置文件、代码模式 | 规则文件 `02_tech_stack` |
     | 目录结构、模块依赖、用户旅程 | `[[__DOCS_DIR__]]/global/map.json` |
     | 领域术语、缩写、命名约定 | `[[__DOCS_DIR__]]/global/dictionary.json` |
-    | eslint/prettier 等已有规范 | `90_custom_rules.md` |
+    | eslint/prettier 等已有规范 | 规则文件 `90_custom_rules` |
     | 代码中的错误码定义 | `[[__DOCS_DIR__]]/global/error_codes.json` |
     | [?UI] CSS 变量/主题配置 | `[[__DOCS_DIR__]]/global/design_tokens.json` |
     | [?Data] Schema/Migration 文件 | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
@@ -139,12 +141,12 @@
     - 无法推导的项标注 `(AI 补全 — 建议用户审查)`
     - 禁保留模板占位符
 
-    ### 3.2 Tech Stack (`02_tech_stack.md`)
+    ### 3.2 Tech Stack (规则文件 `02_tech_stack`)
     - 已有依赖/配置 → 直接写入
     - 代码中可见的规范（命名、结构） → 写入 Coding Standards
     - 须填充完整 Section 1-8
 
-    ### 3.3 Custom Rules (`90_custom_rules.md`)
+    ### 3.3 Custom Rules (规则文件 `90_custom_rules`)
     - 从 eslint/prettier/editorconfig 等提取规则
     - 从代码模式中识别团队约定（如 named export 偏好、async/await 风格）
 
@@ -229,7 +231,7 @@
     **Role**: 审计官
     **Checklist**:
     1.  **Vision 对齐**: vision.md 与代码实际功能一致？
-    2.  **Tech Stack 一致**: 02_tech_stack.md 与 package.json/config 一致？
+    2.  **Tech Stack 一致**: 规则文件 `02_tech_stack` 与 package.json/config 一致？
     3.  **Map 覆盖**: map.json 覆盖所有核心目录？
     4.  **Roadmap 完整**: phase-0 覆盖所有已识别功能模块？
     5.  **Stub 齐全**: 每个 LEG-xx 都有对应 features/ 目录和 spec.md？

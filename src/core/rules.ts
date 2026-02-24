@@ -34,7 +34,6 @@ export const GLOBAL_RULES = {
   // 占位符定义
   PLACEHOLDERS: {
     DOCS_DIR: "[[__DOCS_DIR__]]",
-    RULES_DIR: "[[__RULES_DIR__]]",
   },
 } as const;
 

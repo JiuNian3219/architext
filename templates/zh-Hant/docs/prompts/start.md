@@ -115,20 +115,22 @@
 
     ### 資訊路由規則
 
+    > 規則檔案（`02_tech_stack`、`90_custom_rules` 等）已由 IDE 注入當前上下文，AI 已知其路徑，直接寫入即可。
+
     | Brief 內容 | 目標檔案 |
     |:---|:---|
     | 專案身份、目標使用者、成功指標、參考靈感 | `[[__DOCS_DIR__]]/global/vision.md` |
-    | 技術棧、部署目標、第三方庫/服務 | `02_tech_stack.md` |
-    | 風格調性（UI/CLI/API） | `02_tech_stack.md` (UI Protocol / Output Convention) |
+    | 技術棧、部署目標、第三方庫/服務 | 規則檔案 `02_tech_stack` |
+    | 風格調性（UI/CLI/API） | 規則檔案 `02_tech_stack` (UI Protocol / Output Convention) |
     | 核心功能列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **已有設計決策** | Roadmap 對應任務的 `goal` 欄位中注入，並在 `/archi.plan` 時作為硬約束 |
     | 邊界與反目標 | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
-    | 已有資源（設計稿/品牌/已有 API） | `[[__DOCS_DIR__]]/global/vision.md` + `02_tech_stack.md` 按內容歸屬 |
-    | 補充說明中的**規則/約定/偏好** | `90_custom_rules.md` |
+    | 已有資源（設計稿/品牌/已有 API） | `[[__DOCS_DIR__]]/global/vision.md` + 規則檔案 `02_tech_stack` 按內容歸屬 |
+    | 補充說明中的**規則/約定/偏好** | 規則檔案 `90_custom_rules` |
     | 補充說明中的**領域術語** | `[[__DOCS_DIR__]]/global/dictionary.json` |
     | 補充說明中的**其他背景資訊** | `[[__DOCS_DIR__]]/global/vision.md` Context |
 
-    > 關鍵: 使用者在「補充說明」中寫的任何規則性內容（如「程式碼註解用英文」、「禁止使用 any」）須寫入 `90_custom_rules.md`，而非丟棄。
+    > 關鍵: 使用者在「補充說明」中寫的任何規則性內容（如「程式碼註解用英文」、「禁止使用 any」）須寫入規則檔案 `90_custom_rules`，而非丟棄。
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
     - 從 Brief 專案概述填充 Core Vision 和 Target Audience
@@ -138,7 +140,7 @@
     - 從 Brief 已有資源、補充說明提取背景上下文
     - 須填滿所有 `[ ]` 佔位符，禁保留範本範例文字
 
-    ### 3.2 Tech Stack (`02_tech_stack.md`)
+    ### 3.2 Tech Stack (規則檔案 `02_tech_stack`)
     - Brief 中已確定的技術選擇 → 直接寫入
     - Brief 中留空/寫「推薦」的 → AI 基於專案特徵推薦，須在輸出中標註 `(AI 推薦)` 並簡述理由
     - Brief 中已有的第三方服務/API → 寫入對應 Section
@@ -151,7 +153,7 @@
       - [?Web/API] **Auth & Access**: 根據 Brief 使用者角色 — 單角色 → Authenticated; 多角色 → RBAC; 無權限描述 → 留空待 Plan 階段逐功能確認
       - 每項須填寫 Strategy/Default + Rationale（理由須結合此專案的具體場景）
 
-    ### 3.3 Custom Rules (`90_custom_rules.md`)
+    ### 3.3 Custom Rules (規則檔案 `90_custom_rules`)
     - 從 Brief 補充說明中提取規則性內容寫入
     - 從 Brief 技術紅線轉化為具體禁止規則
     - 如使用者未提供任何自訂規則，保持範本預設內容
@@ -171,8 +173,8 @@
     **Role**: 首席審計官
     **Checklist**:
     1.  **Vision 完整性**: `vision.md` 含北極星指標和設計哲學？
-    2.  **Tech Stack 一致性**: `02_tech_stack.md` 與 Brief 技術偏好一致？含完整技術棧宣告？
-    3.  **Custom Rules**: Brief 補充說明/技術紅線中的規則是否已寫入 `90_custom_rules.md`？
+    2.  **Tech Stack 一致性**: 規則檔案 `02_tech_stack` 與 Brief 技術偏好一致？含完整技術棧宣告？
+    3.  **Custom Rules**: Brief 補充說明/技術紅線中的規則是否已寫入規則檔案 `90_custom_rules`？
     4.  **Roadmap 合規**: 執行 `npx archi task --check` 驗證一致性。
     5.  [?UI] **Design Tokens**: `design_tokens.json` 含基礎顏色/字體/間距定義？
     6.  **Brief 對齊**: 所有 Brief 中聲明的核心功能均已映射到 Roadmap 任務？

@@ -56,9 +56,6 @@ export class Scaffolder {
 
     const replacements = {
       [GLOBAL_RULES.PLACEHOLDERS.DOCS_DIR]: docDir,
-      [GLOBAL_RULES.PLACEHOLDERS.RULES_DIR]: path
-        .join(docDir, GLOBAL_RULES.PATHS.RULES_TARGET)
-        .replace(/\\/g, "/"),
     };
 
     // 判断所选编辑器中是否有任何一个支持 Agent Skills（如 Cursor）

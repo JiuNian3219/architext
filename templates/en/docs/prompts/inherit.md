@@ -123,13 +123,15 @@
 
     ### Information Routing Rules
 
+    > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by the IDE — the AI knows their paths; write directly.
+
     | Information from Code | Target File |
     |:---|:---|
     | README project description, target users, feature list | `[[__DOCS_DIR__]]/global/vision.md` |
-    | Dependency list, config files, code patterns | `02_tech_stack.md` |
+    | Dependency list, config files, code patterns | rule file `02_tech_stack` |
     | Directory structure, module dependencies, user journeys | `[[__DOCS_DIR__]]/global/map.json` |
     | Domain terminology, abbreviations, naming conventions | `[[__DOCS_DIR__]]/global/dictionary.json` |
-    | eslint/prettier and existing standards | `90_custom_rules.md` |
+    | eslint/prettier and existing standards | rule file `90_custom_rules` |
     | Error code definitions in code | `[[__DOCS_DIR__]]/global/error_codes.json` |
     | [?UI] CSS variables/theme config | `[[__DOCS_DIR__]]/global/design_tokens.json` |
     | [?Data] Schema/Migration files | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
@@ -139,12 +141,12 @@
     - Items that cannot be derived: mark `(AI Inferred — user review recommended)`
     - Do not retain template placeholders
 
-    ### 3.2 Tech Stack (`02_tech_stack.md`)
+    ### 3.2 Tech Stack (rule file `02_tech_stack`)
     - Existing dependencies/config → write directly
     - Visible code conventions (naming, structure) → write to Coding Standards
     - Must populate complete Section 1-8
 
-    ### 3.3 Custom Rules (`90_custom_rules.md`)
+    ### 3.3 Custom Rules (rule file `90_custom_rules`)
     - Extract rules from eslint/prettier/editorconfig
     - Identify team conventions from code patterns (e.g., named export preference, async/await style)
 
@@ -229,7 +231,7 @@
     **Role**: Chief Auditor
     **Checklist**:
     1.  **Vision Alignment**: Does vision.md match actual code functionality?
-    2.  **Tech Stack Consistency**: Does 02_tech_stack.md match package.json/config?
+    2.  **Tech Stack Consistency**: Does rule file `02_tech_stack` match package.json/config?
     3.  **Map Coverage**: Does map.json cover all core directories?
     4.  **Roadmap Completeness**: Does phase-0 cover all identified functional modules?
     5.  **Stub Completeness**: Does every LEG-xx have a corresponding features/ directory and spec.md?

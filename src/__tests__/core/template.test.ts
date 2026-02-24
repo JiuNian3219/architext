@@ -119,24 +119,17 @@ describe("TemplateManager", () => {
       const srcFile = path.join(tempDir, "source.md");
       const destFile = path.join(tempDir, "dest.md");
 
-      await fs.writeFile(
-        srcFile,
-        "Docs dir: [[__DOCS_DIR__]], Rules dir: [[__RULES_DIR__]]",
-        "utf-8",
-      );
+      await fs.writeFile(srcFile, "Docs dir: [[__DOCS_DIR__]]", "utf-8");
 
       const replacements = {
         "[[__DOCS_DIR__]]": ".architext",
-        "[[__RULES_DIR__]]": ".architext/rules",
       };
 
       await TemplateManager.processFile(srcFile, destFile, replacements);
 
       const content = await fs.readFile(destFile, "utf-8");
       expect(content).toContain(".architext");
-      expect(content).toContain(".architext/rules");
       expect(content).not.toContain("[[__DOCS_DIR__]]");
-      expect(content).not.toContain("[[__RULES_DIR__]]");
     });
 
     it("应该转义特殊字符", async () => {

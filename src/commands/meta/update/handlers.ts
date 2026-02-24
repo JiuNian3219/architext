@@ -50,16 +50,10 @@ async function resolveTemplateLang(
 
 /**
  * 构造占位符替换映射
- *
- * @param config - 配置
- * @returns 占位符替换映射
  */
 function buildReplacements(config: ArchitextConfig): Record<string, string> {
   return {
     [GLOBAL_RULES.PLACEHOLDERS.DOCS_DIR]: config.docDir,
-    [GLOBAL_RULES.PLACEHOLDERS.RULES_DIR]: path
-      .join(config.docDir, GLOBAL_RULES.PATHS.RULES_TARGET)
-      .replace(/\\/g, "/"),
   };
 }
 

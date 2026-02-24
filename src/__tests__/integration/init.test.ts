@@ -192,7 +192,6 @@ describe("Scaffolder Integration", () => {
     if (await fs.pathExists(skillFile)) {
       const content = await fs.readFile(skillFile, "utf-8");
       expect(content).not.toContain("[[__DOCS_DIR__]]");
-      expect(content).not.toContain("[[__RULES_DIR__]]");
     }
   });
 

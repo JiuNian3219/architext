@@ -115,20 +115,22 @@
 
     ### Information Routing Rules
 
+    > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by the IDE — the AI knows their paths; write directly.
+
     | Brief content | Target file |
     |:---|:---|
     | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
-    | Tech stack, deploy target, 3rd-party libs/services | `02_tech_stack.md` |
-    | Style/tone (UI/CLI/API) | `02_tech_stack.md` (UI Protocol / Output Convention) |
+    | Tech stack, deploy target, 3rd-party libs/services | rule file `02_tech_stack` |
+    | Style/tone (UI/CLI/API) | rule file `02_tech_stack` (UI Protocol / Output Convention) |
     | Core feature list | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **Pre-defined design decisions** | Inject into related tasks' `goal` in Roadmap; treat as hard constraint in `/archi.plan` |
     | Boundaries and anti-goals | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
-    | Existing resources (design/brand/existing API) | `[[__DOCS_DIR__]]/global/vision.md` + `02_tech_stack.md` by content |
-    | **Rules/conventions/preferences** from supplementary notes | `90_custom_rules.md` |
+    | Existing resources (design/brand/existing API) | `[[__DOCS_DIR__]]/global/vision.md` + rule file `02_tech_stack` by content |
+    | **Rules/conventions/preferences** from supplementary notes | rule file `90_custom_rules` |
     | **Domain terminology** from supplementary notes | `[[__DOCS_DIR__]]/global/dictionary.json` |
     | **Other background info** from supplementary notes | `[[__DOCS_DIR__]]/global/vision.md` Context |
 
-    > Key: Any rule-like content (e.g. "comments in English", "no any") in supplementary notes must go to `90_custom_rules.md`, not discarded.
+    > Key: Any rule-like content (e.g. "comments in English", "no any") in supplementary notes must go to rule file `90_custom_rules`, not discarded.
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
     - Fill from Brief project overview: Core Vision, Target Audience
@@ -138,7 +140,7 @@
     - Extract background context from Brief existing resources + supplementary notes
     - Fill all `[ ]` placeholders; do not retain template example text
 
-    ### 3.2 Tech Stack (`02_tech_stack.md`)
+    ### 3.2 Tech Stack (rule file `02_tech_stack`)
     - Confirmed tech in Brief → write directly
     - Blank/"recommend" in Brief → AI recommends by project features; mark `(AI Recommended)` and brief rationale
     - Brief 3rd-party services/API → write in corresponding Section
@@ -151,7 +153,7 @@
       - [?Web/API] **Auth & Access**: Based on Brief user roles — single role → Authenticated; multi-role → RBAC; no auth mentioned → leave empty for per-feature decision in Plan
       - Each item must have Strategy/Default + Rationale (rationale must be specific to this project)
 
-    ### 3.3 Custom Rules (`90_custom_rules.md`)
+    ### 3.3 Custom Rules (rule file `90_custom_rules`)
     - Extract rule-like content from Brief supplementary notes
     - Convert Brief tech red lines into concrete prohibitions
     - If user provided nothing, keep template default
@@ -171,8 +173,8 @@
     **Role**: Chief Auditor
     **Checklist**:
     1.  **Vision completeness**: Does `vision.md` include North Star metric and design philosophy?
-    2.  **Tech Stack consistency**: Is `02_tech_stack.md` aligned with Brief preferences? Contains full stack?
-    3.  **Custom Rules**: Did Brief supplementary notes/tech red lines get written to `90_custom_rules.md`?
+    2.  **Tech Stack consistency**: Is rule file `02_tech_stack` aligned with Brief preferences? Contains full stack?
+    3.  **Custom Rules**: Did Brief supplementary notes/tech red lines get written to rule file `90_custom_rules`?
     4.  **Roadmap compliance**: Run `npx archi task --check` to verify.
     5.  [?UI] **Design Tokens**: Does `design_tokens.json` have base color/font/spacing definitions?
     6.  **Brief alignment**: All Brief core features mapped to Roadmap tasks?
