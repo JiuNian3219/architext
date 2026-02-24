@@ -93,6 +93,7 @@
 
     > Prohibited from marking complete via code review or automated tests alone; must actually run and verify the target feature.
     > If dev server is not running, execute `[[__DOCS_DIR__]]/scripts/dev-up` first.
+    > **Read `notes.Verify` first**: Read the `Verify: [...]` portion at the end of the current task's `notes` field and use that operation as the concrete e2e step. Fall back to the table below only if the `notes` field has no `Verify` entry.
 
     | Project Type | Verification Action | Pass Criteria |
     |:---|:---|:---|

@@ -180,7 +180,8 @@
     - 根據專案型別動態調整 Phase；確保每個 Task 上下文自包含。
     - 任務描述中明確 "Additive Only" + "Respect Unknowns"。
     - **`decisions`**: 按各維度填寫；`choice` 支援多選（如 `A B`，空格分隔）、自訂（`Z: …`）；`rationale` 須填寫理由，供 code 階段參照，禁留空。
-    - **`notes`**: 每個 task 的 `notes` 須填寫執行時速記（範圍、spec 段落引用、關鍵約束），供 `/archi.code` 階段精確定位，禁留空。
+    - **`notes`**: 每個 task 的 `notes` 須填寫：`[範圍] · [spec 引用] · [關鍵約束] · 驗證: [具體操作]`；供 `/archi.code` step_4 精確定位並執行 e2e，禁留空。
+      > 示例：`實作 POST /auth/login · spec §3.1 · JWT 禁含 password · 驗證: curl POST /auth/login 返回 200 + token 欄位`
     - 生成後執行 `npx archi render` 生成可讀的 `.md` 視圖。
 </step_4_generate>
 

@@ -1,4 +1,4 @@
-﻿<protocol_plan>
+<protocol_plan>
   **Trigger**: `/archi.plan <ID> [context]`
   **Goal**: 通过深度架构访谈，定义功能的 Spec/UI/Plan。
   **Input**:
@@ -181,7 +181,8 @@
     - 根据项目类型动态调整 Phase；确保每个 Task 上下文自包含。
     - 任务描述中明确 "Additive Only" + "Respect Unknowns"。
     - **`decisions`**: 按各维度填写；`choice` 支持多选（如 `A B`，空格分隔）、自定义（`Z: …`）；`rationale` 须填写理由，供 code 阶段参照，禁留空。
-    - **`notes`**: 每个 task 的 `notes` 须填写执行时速记（范围、spec 段落引用、关键约束），供 `/archi.code` 阶段精确定位，禁留空。
+    - **`notes`**: 每个 task 的 `notes` 须填写：`[范围] · [spec 引用] · [关键约束] · 验证: [具体操作]`；供 `/archi.code` step_4 精确定位并执行 e2e，禁留空。
+      > 示例：`实现 POST /auth/login · spec §3.1 · JWT 禁含 password · 验证: curl POST /auth/login 返回 200 + token 字段`
     - 生成后运行 `npx archi render` 生成可读的 `.md` 视图。
 </step_4_generate>
 

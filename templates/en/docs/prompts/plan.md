@@ -1,4 +1,4 @@
-﻿<protocol_plan>
+<protocol_plan>
   **Trigger**: `/archi.plan <ID> [context]`
   **Goal**: Define Feature Spec/UI/Plan through deep architecture interview.
   **Input**:
@@ -180,7 +180,8 @@
     - Dynamically adjust Phases by project type; ensure each Task's context is self-contained.
     - Task descriptions explicitly state "Additive Only" + "Respect Unknowns".
     - **`decisions`**: Fill per dimension; `choice` supports multi-select (e.g. `A B`, space-separated), custom (`Z: …`); `rationale` must explain reasoning for code phase; do not leave empty.
-    - **`notes`**: Fill each task's `notes` with execution shorthand (scope, spec section ref, key constraints) for `/archi.code` phase; do not leave empty.
+    - **`notes`**: Fill each task's `notes` with: `[scope] · [spec ref] · [key constraints] · Verify: [concrete operation]`; used by `/archi.code` step_4 to locate context and run e2e; do not leave empty.
+      > Example: `Implement POST /auth/login · spec §3.1 · JWT must not contain password · Verify: curl POST /auth/login returns 200 + token field`
     - Run `npx archi render` after generation to produce readable `.md` view.
 </step_4_generate>
 
