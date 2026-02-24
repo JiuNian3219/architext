@@ -102,38 +102,9 @@
 <step_2_supplementary>
     **Role**: Product Advisor
     **Trigger**: Only when Step 1 finds "Required" or "Can supplement" gaps.
-    **Input**: Step 1 gap list.
+    **Input**: Step 1 gap list. Max 3–6 questions.
 
-    **Core rule: Multiple choice first**
-    - No open-ended questions. All questions must be **multiple choice**.
-    - AI recommends default option (mark `[Recommended]`); user confirms or switches.
-    - Each question must include `[Z] Custom` fallback.
-    - Lower decision cost: user does not need expertise to pick a reasonable option.
-
-    **Action**:
-    1. Ask only about gaps; do not ask what Brief already answers.
-    2. Each question: 3–5 options + `[Z] Custom`, mark AI recommendation with `[Recommended]`.
-    3. **Option description must state concrete behavior**: what the option is, what the project looks like if chosen, when it fits. No one-word labels. User should understand "what choosing A means".
-    4. **AI+/AI- must be full sentences**: specific advantages and risks from AI Agent view. Never write "None" — every option has tradeoffs.
-    5. Total questions: 3–6 (merge related ones).
-
-    **Output Format**:
-    ```
-    ### Supplementary Confirmation
-
-    **[Q1] Question title**
-    > Why this info is needed (one sentence)
-
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A [Recommended] | Option name | What it is + what happens if chosen + when it fits (2-3 sentences) | Full sentence | Full sentence |
-    | B | ... | ... | ... | ... |
-    | C | ... | ... | ... | ... |
-    | Z | Custom | (please describe) | - | - |
-
-    ---
-    **INPUT**: `Q1 answer | Q2 answer | ...` (use `|` between questions; space for multi-select within one)
-    ```
+    [[SKILL: Follow `archi-interview-protocol` Skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
 </step_2_supplementary>
 
 <step_3_constitution>

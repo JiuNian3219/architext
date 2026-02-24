@@ -100,37 +100,9 @@
 <step_2_5_supplementary>
     **Role**: Product Consultant
     **Trigger**: Only when Step 2 identifies "Required" or "Recommended" gaps.
+    **Input**: Step 2 gap list. Max 3 questions.
 
-    **Core Rule: Multiple-Choice First**
-    - No open-ended questions. All questions must be **multiple-choice**.
-    - AI provides recommended default option (marked `[Recommended]`); user only needs to confirm or switch.
-    - Every question must include `[Z] Custom` fallback option.
-    - Lower user decision cost: users should be able to choose reasonably without domain expertise.
-
-    **Action**:
-    1. Only generate questions for gaps; never ask about information already provided in Brief.
-    2. Each question provides 3-5 options + `[Z] Custom`, AI recommended option marked `[Recommended]`.
-    3. **Option descriptions must describe concrete behavior**: what this option is, how the project changes if selected, what scenarios it suits. No one-word summaries.
-    4. **AI+/AI- must be complete sentences**: explain specific advantages and risk reasons from AI Agent execution perspective. Never write "None" — every approach has trade-offs.
-    5. Total questions capped at 3 (merge related questions).
-
-    **Output Format**:
-    ```
-    ### Supplementary Confirmation
-
-    **[Q1] Question Title**
-    > Why this information is needed (one sentence)
-
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A [Recommended] | Option name | What it is + what changes + suitable scenarios (2-3 sentences) | Complete sentence | Complete sentence |
-    | B | ... | ... | ... | ... |
-    | C | ... | ... | ... | ... |
-    | Z | Custom | (please describe) | - | - |
-
-    ---
-    **INPUT**: `Q1answer | Q2answer | ...` (separate questions with `|`; multi-select within one question with spaces)
-    ```
+    [[SKILL: Follow `archi-interview-protocol` Skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
 </step_2_5_supplementary>
 
 <step_3_decompose>

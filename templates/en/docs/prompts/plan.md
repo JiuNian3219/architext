@@ -1,4 +1,4 @@
-<protocol_plan>
+﻿<protocol_plan>
   **Trigger**: `/archi.plan <ID> [context]`
   **Goal**: Define Feature Spec/UI/Plan through deep architecture interview.
   **Input**:
@@ -83,17 +83,12 @@
 
     **Universal requirement**: Use this feature's specific entity names and operation names; no generic descriptions
 
+
     #### Part 2: Architecture Recommendations
 
-    For each applicable dimension, AI directly provides a **recommended approach** with rationale, rather than presenting the full option table.
+    [[SKILL: Follow `archi-plan-options` Skill's three-step selection logic (Convention Inheritance -> Tag Routing -> Recommend vs. Expand) to generate architecture recommendations across five dimensions.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-plan-options/SKILL.md` and follow its three-step logic)]]
 
-    **Rules**:
-    1. **Convention Inheritance**: Read project conventions from `02_tech_stack.md` Section 9. Dimensions with existing conventions → inherit as recommendation, mark source as `Project Convention`, do NOT expand option table (unless this feature has a **clear specific need** to deviate). Dimensions without conventions → follow rules below.
-    2. Select applicable dimensions by project tags (UI/Data/CLI/Lib/API); skip inapplicable ones
-    3. For each applicable dimension: AI picks the **best recommended option** from the reference library, writes rationale (1-2 sentences, specific to this feature)
-    4. Only when a dimension has **two or more viable options whose choice significantly impacts implementation**, expand to a full option table for user decision
-    5. Expanded option table rules unchanged: 3-5 options + `[Z] Custom`; descriptions must state concrete behavior; AI+/AI- must be full sentences, never "None"
-    6. **Feature Contextualization (Critical)**: Must use entity names, operation names, and business flow from the feature design to describe options; no generic copy-paste
+    When expanding a Q-table, follow the format in [[SKILL: `archi-interview-protocol` Skill's standard output format]][[NO-SKILL: `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md`]].
 
     #### Output Format
 
@@ -127,200 +122,6 @@
     > - Dimension override: "Core Structure=C, Error Handling=B D"
     > - Question answer: "Q1=B"
     ```
-
-    ---
-
-    ### Reference Option Library (AI internal use, not directly shown to user)
-
-    The following are reference option libraries for each dimension. AI references these when selecting
-    recommendations or expanding option tables in Part 2, but must rewrite using this feature's context.
-
-    ---
-
-    ### Dimension 1: Core Structure (Required)
-
-    Route by project tags to the corresponding option library:
-
-    #### [?Data] Data Model & Relation Strategy
-    > How this feature's data is stored and organized.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Flat / Single Entity | All data in a single table/document, no foreign keys. E.g. "system_settings" table with one row per user's config. Fits independent entities, fixed fields, no cross-table joins | Context stays in one file; AI generates CRUD without cross-file tracking, lowest error rate | When data has natural hierarchy, flattening causes redundancy; splitting later is costly |
-    | B | 1:N Relation | One parent has many children via FK. E.g. "User→Posts", post table has userId. Fits clear parent-child, children depend on parent | Most common pattern; AI generates JOINs and cascades accurately | Must maintain two Models + relation logic; AI may omit cascade delete/update or nested serialization |
-    | C | M:N Relation | Two entities many-to-many via junction table. E.g. "Student↔Course" via enrollment. Fits mutually independent entities that need linking | Junction structure is standard, relation is clear | Easy to miss junction table and transactions; junction often needs extra fields (e.g. enrolledAt) that AI forgets |
-    | D | Recursive / Tree | Self-reference forms tree. E.g. "comment replies", "nested folders", parentId points to self. Fits variable-depth hierarchy, categories, trees | Single table for any depth, schema is simple | Recursive query/rendering risks infinite loop or stack overflow; AI often misses recursion base case |
-    | E | JSON / EAV | JSON column or Entity-Attribute-Value for dynamic fields. E.g. custom form fields vary by user. Fits schema that varies by user/scenario | Schema flexible; new fields need no migration | Lose DB-level type checks and indexes; AI cannot infer structure from schema, runtime type errors likely |
-    | F | Virtual / Computed | Data derived from other fields, not stored. E.g. "order total = price × qty". Fits derived data, aggregates, formatting | No migration; data always consistent with source | Logic scattered in query layer; AI may produce N+1 or inefficient aggregates |
-    | Z | Custom | (Describe your schema) | - | - |
-
-    #### [?CLI] Input/Output & Config Design
-    > How this feature receives input and what output format it produces.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Pure Args/Flags | All input via CLI args, e.g. `cmd --name foo --verbose`. No interaction. Fits scripts, CI/CD pipelines | Input is explicit; AI infers parser and help | Many args hurt recall; complex nested config hard to express in CLI |
-    | B | Interactive Prompts | Step-by-step prompts after run: "Project name?" → "Template?" → "Confirm?". Fits init wizards, config generators | Each prompt step is isolated; AI generates logic step-wise | Must handle Ctrl+C, back, defaults; tests need stdin mock |
-    | C | Hybrid (Args + Prompts) | Prefer CLI args; prompt for missing values. E.g. `cmd --name foo` skips name prompt. Fits both scripts and manual use | Best of both; modern CLI practice | Must keep arg parsing and prompts consistent |
-    | D | Config File | Read from config, e.g. `cmd --config config.json`. Fits many params, versioned config | JSON Schema for validation; AI can generate parser from Schema | Handle file missing, malformed, Schema migration |
-    | E | Stdin / Pipe | Data from stdin/pipe, e.g. `cat data.json | cmd process`. Fits data pipelines, Unix composition | Clear Parser contract | Streaming and encoding (UTF-8 BOM, etc.) error-prone |
-    | Z | Custom | (Describe your I/O approach) | - | - |
-
-    #### [?Lib] Public API & Type Design
-    > How this feature is exposed to consumers.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Single Function | Export one or few functions, `import { fn } from 'lib'`. Fits stateless utilities (format, validate, convert) | Simplest interface; AI generates examples and tests accurately | Function signature grows as features expand |
-    | B | Class / Instance | Export class, `new MyLib(config)` then call methods. Fits stateful modules with multiple operations | Class structure is clear; AI understands lifecycle | Deep inheritance complicates context; AI can mix up this binding |
-    | C | Builder / Fluent | Chain calls: `lib.create().withName('x').build()`. Fits many optional configs, progressive build | Chain narrows types in TS; type-safe | Order constraints and generics are complex; AI may misgenerate types |
-    | D | Config Object | Accept config object: `init({ name: 'x', plugins: [...] })`. Fits many init params | interface/Zod defines shape; AI infers behavior well | Config bloat, default merging complexity |
-    | E | Plugin / Middleware | Slim core, extend via plugins. E.g. Express middleware, Vite plugins. Fits highly extensible frameworks | Core stays small; AI can generate plugins independently | Plugin interaction, order, type safety hard |
-    | Z | Custom | (Describe your API design) | - | - |
-
-    #### [?API] Interface & Route Design
-    > API endpoint structure and call style for this feature.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | RESTful CRUD | Standard REST: GET/POST/GET/:id/PUT/DELETE for resources. Fits clear entities, standard CRUD | REST is ubiquitous; AI has strong training data | Complex queries and cross-resource ops strain pure REST |
-    | B | RPC-Style Actions | Action endpoints, e.g. `POST /send-invite`, `POST /calculate-price`. Fits actions not mapping to CRUD | Endpoint semantics explicit; AI infers from name | No uniform convention; naming drift, endpoint bloat |
-    | C | GraphQL | Single endpoint + query language; client picks fields. Fits changing frontend needs | Schema as docs; strong typing; flexible queries | Resolver N+1, fine-grained auth complex; DataLoader bugs common |
-    | D | Nested Sub-resource | Nested routes for hierarchy: `GET /users/:id/posts`, `POST /teams/:id/members` | Routes reflect data; AI infers query logic | Deep nesting makes URLs long; must validate parent ownership |
-    | Z | Custom | (Describe your API design) | - | - |
-
-    ---
-
-    ### Dimension 2: Interaction Pattern (Required)
-
-    #### [?UI] Presentation & Interaction Mode
-    > What UI the user sees and how they interact.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | CRUD Table/List | Data in table/list; filter/sort/paginate; click row for detail; add/edit/delete buttons. Classic data management; fits admin, resource lists | Table UI has most training data; highest accuracy | Pagination+sort+filter combo, state management |
-    | B | Wizard / Stepper | Multi-step flow: Step 1 basics → Step 2 config → Step 3 confirm. Progress bar, step indicator, back/next. Fits registration, wizards | Each step isolated; AI generates Step components | Cross-step data sharing and validation complex |
-    | C | Dashboard / Kanban | Cards/columns; drag between columns. E.g. "Todo→In Progress→Done". Click card for detail. Fits task management, workflows | Visual, each card is unit of context | Drag logic relies on poorly documented libs; AI hallucination risk |
-    | D | Modal / Drawer | Click list item → overlay or drawer for detail/edit. Close returns to list. Fits quick edit without routing | Localized context; no route change | Z-index, focus trap, Escape, scroll lock bugs common |
-    | E | Infinite Scroll / Feed | Load more on scroll; endless stream. Fits social feeds, news | Basic "load more" is simple | Virtual scroll hard; scroll restore, fast scroll white flash |
-    | F | Editor / Canvas | Rich text or canvas for free input/draw/drag. Fits doc editors, flowchart tools | High ceiling for power users | Canvas imperative; Rich text Selection API very complex |
-    | Z | Custom | (Describe your interaction approach) | - | - |
-
-    #### [?CLI] User Interaction Mode
-    > How user interacts with this CLI and what feedback they see.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Silent / Batch | No interaction; stdout on success, stderr on fail. Fits pipe tools like grep, jq | Simplest; easy to test | No progress feedback during run |
-    | B | Progress / Spinner | Progress bar or spinner; summary at end. Fits long-running tasks | clack/ora support; few lines to wire | Non-TTY fallback, terminal width changes |
-    | C | Interactive Menu | select/multiselect/confirm. Fits many entry points, browsing | Menu structure clear; AI generates handlers | Deep menus poor UX; fallback for non-interactive terminals |
-    | D | REPL / Shell | Loop: input command → output → repeat. Fits explorers, debuggers | Each round independent | Session state, history, tab completion |
-    | E | Watch / Daemon | Run continuously; react to changes. Fits tsc --watch, nodemon | Event-driven model clear | Cross-platform watch, debounce, graceful exit |
-    | Z | Custom | (Describe your interaction approach) | - | - |
-
-    #### [?API] Client Integration Mode
-    > How callers integrate with this API.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Direct HTTP Call | Client fetches directly, e.g. `fetch('/api/users')` | No extra layer; simplest | Types manual; drift on change; repeated code |
-    | B | SDK / Client Lib | Typed SDK; `import { api } from 'sdk'` | Strong typing; compile-time change detection | Must maintain SDK, releases |
-    | C | Code Generation | Generate from OpenAPI/GraphQL Schema | Types auto; zero manual maintenance | Limited customization; Schema changes need regeneration |
-    | D | Webhook / Event | API pushes to client endpoint. Fits async events | Decoupled; no polling | Signature, retry idempotency, timeout often overlooked |
-    | Z | Custom | (Describe your integration approach) | - | - |
-
-    #### [?Lib] Consumer Usage Mode
-    > How consumers use this library.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Import & Call | Direct import and call: `import { parse } from 'lib'; parse(data)` | Simplest; high example/test accuracy | Public signature changes often as features grow |
-    | B | Register & Use | Register config then use: `createApp(config); app.use(plugin); app.start()` | Init vs use separated | Registration order and lifecycle need docs |
-    | C | Decorator / Annotation | Declare with decorators: `@Route('/users') class UserCtrl` | Declarative, less boilerplate | TS decorator spec evolving; AI may confuse versions |
-    | Z | Custom | (Describe how consumers use it) | - | - |
-
-    ---
-
-    ### Dimension 3: Data Flow (Conditional + Convention Inheritance)
-
-    **Ask when**: Project has [?UI+Data] or [?UI+API]; skip for pure [?CLI]/[?Lib].
-    **Convention Inheritance**: If `02_tech_stack.md` §9 Data Flow has a value → auto-inherit, do not ask. Only expand option table when this feature needs to deviate from project default (e.g. needs Realtime while project default is Standard Request).
-
-    #### [?UI] State Sync & Data Flow
-    > How data flows between frontend and backend.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Standard Request | User action → request → wait → update UI. Classic request-response | Atomic, stateless; AI generates fetch+loading/error reliably | Every action waits for round-trip |
-    | B | Optimistic UI | Update UI immediately; sync in background. Rollback on fail | Feels fast; no lag | Rollback logic often forgotten |
-    | C | Polling / SWR | Periodic refetch or on focus | React Query/SWR handle well | Polling interval and cache invalidation need tuning |
-    | D | Realtime (Socket/SSE) | Server pushes via WebSocket/SSE | Lowest latency | Reconnect, heartbeat, ordering hard |
-    | E | Local-First / Offline | Data in local DB; sync when online | Offline works | Conflict resolution (CRDT/OT) is advanced |
-    | F | Background Job | User triggers; work done async. Fits exports, batch jobs | Main thread decoupled | Task queue, status, completion notification |
-    | Z | Custom | (Describe your data flow) | - | - |
-
-    ---
-
-    ### Dimension 4: Error Handling (Convention Inheritance)
-
-    > `02_tech_stack.md` §9 establishes the project-level error handling strategy → auto-inherit, do not ask.
-    > Only supplement when this feature has **special exception scenarios not covered by the project convention** (e.g. feature needs Undo/Redo but project convention only has Fail Fast).
-
-    **Reference options** (AI adjusts wording by project type):
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Fail Fast / Notify | Stop on error; notify user (Toast/Alert/stderr). Default for most ops | One throw + global handler; AI rarely wrong | Abrupt; notification spam |
-    | B | Form Validation | Validate before submit; block invalid input. E.g. "Invalid email", "Min 8 chars" | Schema for validation + types; AI accurate | Complex rules (async uniqueness, cross-field) error-prone |
-    | C | Retry / Recovery | Auto-retry or retry button. E.g. request fails, retry 3x | Retry logic reusable | Must ensure idempotency; AI hard to verify |
-    | D | Fallback / Skeleton | Skeleton/placeholder on load fail or empty | Skeleton is standard; AI accurate | Parallel UI for loading/empty/error |
-    | E | Draft / Auto-save | Periodically save draft. E.g. long form every 30s | Save logic as Hook/utility | Debounce, conflict detection |
-    | F | Undo / Redo | Undo after action. E.g. delete → Undo within 5s | Builds user confidence | State snapshot and history stack complex |
-    | Z | Custom | (Describe your error handling) | - | - |
-
-    ---
-
-    ### Dimension 5: Access & Scope (Conditional + Convention Inheritance)
-
-    **Ask when**: Project has [?Web/API] for auth; or [?Lib] for encapsulation; pure [?CLI] usually skip.
-    **Convention Inheritance**: If `02_tech_stack.md` §9 Auth & Access has a value → auth **mechanism** is inherited (e.g. JWT/RBAC), but **permission level** remains a per-feature decision (e.g. Public vs Owner Only for a specific feature).
-
-    #### [?Web/API] Access Control
-    > Who can perform this operation and see what data. Auth mechanism inherits from project convention; only the permission level for this feature needs to be decided here.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Public | No auth. Fits public pages, public API | No auth middleware | Need rate limiting; vulnerable to abuse |
-    | B | Authenticated | Logged-in users only | JWT/Session middleware; mature | Token refresh, multi-device logout |
-    | C | Owner Only | Only resource creator | Simple `user.id === resource.ownerId` | Transfer and proxy scenarios need more |
-    | D | Role Based (RBAC) | By role: admin/editor/viewer | Rules enumerable; AI generates guards | Guards scattered; role nesting complex |
-    | E | Team / Shared | Team members. Fits collaboration | Boundary is team | Team membership query, cross-team sharing |
-    | F | Tier / Subscription | By tier: free 3 projects, Pro unlimited | Config-driven; decoupled | Mocking payment state for tests hard |
-    | Z | Custom | (Describe your auth approach) | - | - |
-
-    #### [?Lib] Encapsulation & Visibility
-    > How code is encapsulated; what is exposed.
-
-    **Reference options**:
-    | ID | Option | Description | AI+ | AI- |
-    |:---|:---|:---|:---|:---|
-    | A | Full Public | All exported; consumers touch internals | AI sees full API | Any refactor can be breaking |
-    | B | Facade / Entry Point | Single index.ts; selective exports | Public surface small; AI reads index | Must maintain export list |
-    | C | Internal / Private | Minimal public API; rest internal | Smallest public; lowest breaking risk | AI lacks context when changing internal |
-    | Z | Custom | (Describe encapsulation) | - | - |
-
-    ---
-
-    **Goal**: Lock `spec`, `ui` (if applicable), `data_snapshot.json` (if applicable).
 
     **⌨️ INPUT**: Reply **OK** to accept all; or free-text annotations for changes. No fixed format required.
 </step_2_interview>
