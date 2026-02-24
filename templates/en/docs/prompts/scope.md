@@ -137,71 +137,28 @@
     **Role**: Chief Architect
     **Input**: Full Brief + project context + supplementary answers (if any).
 
-    **Action**: Decompose requirement into Roadmap tasks.
+    **Action**: [[SKILL: Follow the `archi-decompose-roadmap` Skill protocol to generate incremental task data from the Scope Brief feature list]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
 
-    ### Decomposition Rules
+    **Display format** (convert Skill output into the following format, present to user and await confirmation):
 
-    1. **Granularity Standard**: Each task must be completable within a single `/archi.plan` + `/archi.code` cycle. Split if too large.
-    2. **ID Generation**: Follow existing Roadmap ID prefix and numbering watermark. If highest FEAT number is FEAT-003, new tasks start from FEAT-004.
-    3. **Phase Assignment**:
-       - Infrastructure tasks (new Schema, new shared services) → phase-1 (Infrastructure)
-       - Feature tasks → phase-2 (Core Features) or new phase
-       - If new Phase needed → increment phase ID
-    4. **Dependencies**:
-       - Inter-new-task dependencies → fill in `deps`
-       - New task depends on existing task → fill existing ID in `deps`
-       - If Brief declares dependency on existing features → include in deps
-    5. **Existing Design Decision Injection**: Designs from Brief "Existing Design Decisions" → inject into corresponding task's `goal` field, append `\n[User Preset] <decision summary>`.
-    6. **Affected Existing Features**:
-       - If existing feature needs modification → create `EDIT-xxx` task (tag: Edit), note scope and reason in goal
-       - If existing feature is Legacy Stub → note in goal that spec must first be enriched via `/archi.edit`
+    ```
+    #### Phase 1: Infrastructure
+    | ID | Title | Description Summary | Tag |
 
-    ### Task JSON Schema
+    #### Phase 2: Core Features
+    | ID | Title | Description Summary | Deps | Tag |
 
-    ```json
-    {
-      "id": "FEAT-004",
-      "title": "Task Title",
-      "status": "pending | blocked",
-      "goal": "<DoD — input/output/acceptance criteria>",
-      "deps": [],
-      "tag": "Feature | Infra | Edit",
-      "slug": "Task_Title"
-    }
+    #### Execution Batches (Parallel Groups)
+    (Derived from deps via topological sort)
+    Batch 1 (ready immediately): ...
+    Batch 2 (after Batch 1): ...
+
+    #### NFR Cross-Cutting Concerns (merged, not in Roadmap)
+    (From Skill's NFR merge list)
+    - [NFR name] → injected into [task ID] | affects: [other task IDs]
     ```
 
-    **Initial Status Rule**:
-    - `deps: []` or deps completed → `"status": "pending"`
-    - Has incomplete deps → `"status": "blocked"`
-
-    **Output**: Display decomposition plan to user:
-    ```
-    ### Task Decomposition Plan
-    > **Initiative**: [Name] | **Total [N] tasks**
-
-    #### Phase [X]: [Phase Name]
-    | ID | Title | Dependencies | Tag | Goal Summary |
-    |:---|:---|:---|:---|:---|
-    | FEAT-004 | ... | — | Feature | ... |
-    | FEAT-005 | ... | FEAT-004 | Feature | ... |
-
-    #### Impact on Existing Features
-    | Target Feature | Operation | New Task ID |
-    |:---|:---|:---|
-    | LEG-01: User Auth | Extend OAuth | EDIT-001 |
-
-    #### Dependency Graph (text)
-    FEAT-004 → FEAT-005 → FEAT-006
-                        ↘ FEAT-007
-
-    ---
-    > Reply **OK** to confirm; or note modifications:
-    > - "Merge FEAT-005 and FEAT-006"
-    > - "Add a xxx task"
-    > - "FEAT-004 should not depend on LEG-01"
-    ```
-
-    **Gate**: User must confirm before proceeding to step_4. Do not write to Roadmap without confirmation.
+    **Gate**: Proceed to step_4 only after user replies **OK**. Do not write to Roadmap without confirmation. User may refine the plan before confirming (merge/split/adjust deps).
 </step_3_decompose>
 
 <step_3_5_refinement>

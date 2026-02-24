@@ -101,7 +101,7 @@ export class TemplateManager {
       await fs.ensureDir(path.dirname(op.dest));
 
       if (op.type === FileOpType.Template) {
-        await this.processFile(op.src, op.dest, op.replacements);
+        await this.processFile(op.src, op.dest, op.replacements, op.resolver);
       } else {
         await fs.copy(op.src, op.dest);
       }
@@ -123,11 +123,13 @@ export class TemplateManager {
    * @param src 源文件路径
    * @param dest 目标文件路径
    * @param replacements 替换内容映射
+   * @param resolver 可选的后处理函数，在标准替换后执行（用于条件性内容解析）
    */
   public static async processFile(
     src: string,
     dest: string,
     replacements: Record<string, string>,
+    resolver?: (content: string) => string,
   ) {
     let content = await fs.readFile(src, "utf-8");
 
@@ -136,6 +138,10 @@ export class TemplateManager {
       const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const regex = new RegExp(escapedKey, "g");
       content = content.replace(regex, value);
+    }
+
+    if (resolver) {
+      content = resolver(content);
     }
 
     await fs.writeFile(dest, content, "utf-8");

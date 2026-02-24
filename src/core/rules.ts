@@ -26,6 +26,9 @@ export const GLOBAL_RULES = {
     RULES_TARGET: "rules",
     PROMPTS_SOURCE: "docs/prompts",
     BRIEFS_SOURCE: "briefs",
+    SKILLS_SOURCE: "skills",
+    // 非 Skill 编辑器的 Skill 文件落地目录（相对 docDir）
+    SKILLS_DOC_TARGET: "skills",
   },
 
   // 占位符定义
@@ -55,21 +58,34 @@ export const EDITOR_CONFIGS: Record<SupportedEditor, EditorRuleConfig> = {
     commands: {
       targetDir: ".cursor/commands",
     },
+    // archi- 前缀与用户 Skills 物理隔离，避免覆盖用户文件
+    skills: {
+      targetDir: ".cursor/skills",
+    },
   },
   windsurf: {
     label: "Windsurf",
     targetDir: ".windsurf/rules",
     targetExt: ".md",
+    skills: {
+      targetDir: ".windsurf/skills",
+    },
   },
   trae: {
     label: "Trae",
     targetDir: ".trae/rules",
     targetExt: ".md",
+    skills: {
+      targetDir: ".trae/skills",
+    },
   },
   vscode: {
     label: "VS Code",
     targetDir: ".github/instructions",
     targetExt: ".instructions.md",
+    skills: {
+      targetDir: ".github/skills",
+    },
   },
 };
 
@@ -122,3 +138,43 @@ export const BRIEF_BASE_NAME = "_base.md";
 export const BRIEF_MODULES_NAME = "_modules.md";
 /** 拼装后输出到项目根目录的文件名 */
 export const BRIEF_OUTPUT_NAME = "project-brief.md";
+
+/**
+ * 编辑器能力标记集，用于驱动模板中的条件化内容解析。
+ *
+ * 模板文件中可嵌入以下能力标记（init 时按实际 IDE 能力展开）：
+ *
+ * - `[[SKILL: desc]]`：有 Skill 支持（如 Cursor）→ 展开为 `desc`；无 Skill → 移除
+ * - `[[NO-SKILL: desc]]`：无 Skill 支持 → 展开为 `desc`；有 Skill → 移除
+ *
+ * 后续 MCP 引用可参照相同模式扩展：`[[MCP: desc]]` / `[[NO-MCP: desc]]`。
+ */
+export interface EditorCapabilities {
+  hasSkills: boolean;
+}
+
+/**
+ * 根据编辑器能力集，解析模板中所有能力标记（`[[SKILL:]]` / `[[NO-SKILL:]]`，未来扩展 `[[MCP:]]` / `[[NO-MCP:]]` 等）。
+ * @param content 模板文件内容（已完成常规变量替换）
+ * @param capabilities 目标编辑器能力集
+ */
+export function resolveCapabilityRefs(
+  content: string,
+  capabilities: EditorCapabilities,
+): string {
+  // [[SKILL: desc]]：有 Skill → 展开为 desc；无 Skill → 移除
+  content = content.replace(
+    /\[\[SKILL: ([^\]]+)\]\]/g,
+    (_match, desc: string) => (capabilities.hasSkills ? desc : ""),
+  );
+
+  // [[NO-SKILL: desc]]：无 Skill → 展开为 desc；有 Skill → 移除
+  content = content.replace(
+    /\[\[NO-SKILL: ([^\]]+)\]\]/g,
+    (_match, desc: string) => (capabilities.hasSkills ? "" : desc),
+  );
+
+  // 预留：[[MCP: desc]] / [[NO-MCP: desc]] → 未来按 capabilities.hasMcp 同理处理
+
+  return content;
+}

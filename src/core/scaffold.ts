@@ -16,6 +16,7 @@ import {
   BRIEF_OUTPUT_NAME,
   EDITOR_CONFIGS,
   GLOBAL_RULES,
+  resolveCapabilityRefs,
 } from "./rules.ts";
 import { TemplateManager } from "./template.ts";
 
@@ -60,6 +61,14 @@ export class Scaffolder {
         .replace(/\\/g, "/"),
     };
 
+    // 判断所选编辑器中是否有任何一个支持 Agent Skills（如 Cursor）
+    // 用于解析 prompts/commands 中的 [[SKILL: desc]] / [[NO-SKILL: desc]] 能力标记：
+    //   有 Skill → [[SKILL: desc]] 展开为 desc，[[NO-SKILL: desc]] 移除
+    //   无 Skill → [[NO-SKILL: desc]] 展开为 desc，[[SKILL: desc]] 移除
+    const hasSkills = editors.some((e) => !!EDITOR_CONFIGS[e]?.skills);
+    const capabilityResolver = (content: string) =>
+      resolveCapabilityRefs(content, { hasSkills });
+
     // 用于记录所有文件操作
     const operations: FileOperation[] = [];
 
@@ -70,7 +79,10 @@ export class Scaffolder {
         targetDir,
         replacements,
       );
-      docOps.forEach((op) => (op.group = "docs"));
+      docOps.forEach((op) => {
+        op.group = "docs";
+        if (op.type === FileOpType.Template) op.resolver = capabilityResolver;
+      });
       operations.push(...docOps);
     }
 
@@ -102,6 +114,49 @@ export class Scaffolder {
       }
     }
 
+    // 处理 Skills 文件
+    const skillsSource = path.join(sourceDir, GLOBAL_RULES.PATHS.SKILLS_SOURCE);
+    if (await fs.pathExists(skillsSource)) {
+      // 支持 Agent Skills 的编辑器（如 Cursor）：安装到编辑器专属目录
+      // archi- 前缀的 Skill 文件夹与用户自有 Skills 物理隔离，冲突检测仅覆盖 Architext 管理的范围
+      for (const editor of editors) {
+        const config = EDITOR_CONFIGS[editor];
+        if (!config?.skills) continue;
+
+        const skillsTargetDir = path.join(
+          process.cwd(),
+          config.skills.targetDir,
+        );
+        const skillOps = await TemplateManager.plan(
+          skillsSource,
+          skillsTargetDir,
+          replacements,
+        );
+        skillOps.forEach((op) => (op.group = "ide"));
+        operations.push(...skillOps);
+      }
+
+      // 不支持 Agent Skills 的编辑器：
+      // 将 Skill 文件复制到 docDir/skills/，供 AI 通过文件路径引用读取
+      // （prompt 中的 [[NO-SKILL: ...]] 会展开为指向这里的文件引用）
+      const hasNonSkillEditors = editors.some(
+        (e) => !EDITOR_CONFIGS[e]?.skills,
+      );
+      if (hasNonSkillEditors) {
+        const docSkillsTargetDir = path.join(
+          targetDir,
+          GLOBAL_RULES.PATHS.SKILLS_DOC_TARGET,
+        );
+        const docSkillOps = await TemplateManager.plan(
+          skillsSource,
+          docSkillsTargetDir,
+          replacements,
+        );
+        docSkillOps.forEach((op) => (op.group = "docs"));
+        operations.push(...docSkillOps);
+      }
+    }
+
     // 处理 Commands 文件（仅支持 Cursor 等配置了 commands 的编辑器）
     // 从 prompts 目录读取所有文件，为每个文件生成对应的 commands 文件
     const promptsSource = path.join(
@@ -123,6 +178,7 @@ export class Scaffolder {
 
         // 为每个 prompt 文件生成对应的 commands 文件
         // 文件名格式: archi.{原文件名}，例如 start.md -> archi.start.md
+        // commands 目录（如 .cursor/commands）归属于支持 Skill 的编辑器，resolver 始终为 skillResolver
         for (const promptFile of promptFiles) {
           const srcPath = path.join(promptsSource, promptFile);
           const baseName = path.basename(promptFile, ".md");
@@ -134,6 +190,7 @@ export class Scaffolder {
             dest: destPath,
             type: FileOpType.Template,
             replacements,
+            resolver: capabilityResolver,
             group: "ide",
           });
         }

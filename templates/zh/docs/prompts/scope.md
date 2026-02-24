@@ -137,71 +137,28 @@
     **Role**: 首席架构师
     **Input**: Brief 全文 + 项目上下文 + 补充回答（如有）。
 
-    **Action**: 将需求分解为 Roadmap 任务。
+    **Action**: [[SKILL: 按 `archi-decompose-roadmap` Skill 的协议，基于 Scope Brief 功能清单生成增量任务数据]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
 
-    ### 分解规则
+    **展示格式**（将 Skill 产出的任务数据转换为以下格式，向用户呈现后等待确认）：
 
-    1. **粒度标准**: 每个任务须能在一次 `/archi.plan` + `/archi.code` 循环内完成。过大则拆分。
-    2. **ID 生成**: 沿用已有 Roadmap 的 ID 前缀和编号水位。如 Roadmap 中最大 FEAT 编号为 FEAT-003，新任务从 FEAT-004 起。
-    3. **Phase 归属**:
-       - 基建性任务（新 Schema、新共享服务） → phase-1 (Infrastructure)
-       - 功能性任务 → phase-2 (Core Features) 或新 phase
-       - 如需新增 Phase → 继续递增 phase ID
-    4. **依赖关系**:
-       - 新任务间的依赖 → `deps` 中填写
-       - 新任务依赖已有任务 → `deps` 中填写已有 ID
-       - 如 Brief 中声明了依赖的已有功能 → 纳入 deps
-    5. **已有设计决策注入**: Brief "已有设计决策"中包含的设计 → 注入到对应任务的 `goal` 字段中，追加 `\n[用户预设] <决策内容摘要>`。
-    6. **受影响的已有功能**:
-       - 如需修改已有功能 → 创建 `EDIT-xxx` 任务（tag: Edit），goal 中注明修改范围和原因
-       - 如已有功能是 Legacy Stub → goal 中注明须先通过 `/archi.edit` 补全 spec
+    ```
+    #### Phase 1: Infrastructure
+    | ID | 标题 | 描述摘要 | 标签 |
 
-    ### Task JSON Schema
+    #### Phase 2: Core Features
+    | ID | 标题 | 描述摘要 | 依赖 | 标签 |
 
-    ```json
-    {
-      "id": "FEAT-004",
-      "title": "任务标题",
-      "status": "pending | blocked",
-      "goal": "<DoD — 输入/输出/验收标准>",
-      "deps": [],
-      "tag": "Feature | Infra | Edit",
-      "slug": "Task_Title"
-    }
+    #### Execution Batches（并行执行批次）
+    （从 deps 拓扑排序推导，列出每批可同时开工的任务）
+    Batch 1（立即可开工）: ...
+    Batch 2（等 Batch 1 全完）: ...
+
+    #### NFR 横切关注点（已归并，不入 Roadmap）
+    （来自 Skill 的 NFR 归并清单）
+    - [NFR 名称] → 注入 [任务 ID] | 影响：[其他任务 ID]
     ```
 
-    **Initial Status Rule**:
-    - `deps: []` 或 deps 已完成 → `"status": "pending"`
-    - 有未完成的 deps → `"status": "blocked"`
-
-    **Output**: 向用户输出分解方案：
-    ```
-    ### 任务分解方案
-    > **需求**: [名称] | **共 [N] 个任务**
-
-    #### Phase [X]: [Phase 名称]
-    | ID | 标题 | 依赖 | 标签 | 目标摘要 |
-    |:---|:---|:---|:---|:---|
-    | FEAT-004 | ... | — | Feature | ... |
-    | FEAT-005 | ... | FEAT-004 | Feature | ... |
-
-    #### 对已有功能的影响
-    | 目标功能 | 操作 | 新任务 ID |
-    |:---|:---|:---|
-    | LEG-01: 用户认证 | 扩展 OAuth | EDIT-001 |
-
-    #### 依赖关系图 (文字)
-    FEAT-004 → FEAT-005 → FEAT-006
-                        ↘ FEAT-007
-
-    ---
-    > 回复 **OK** 确认；或标注要修改的部分：
-    > - "FEAT-005 和 FEAT-006 合并"
-    > - "增加一个 xxx 任务"
-    > - "FEAT-004 不依赖 LEG-01"
-    ```
-
-    **Gate**: 用户确认后进入 step_4。未确认禁写入 Roadmap。
+    **Gate**: 用户回复 **OK** 后进入 step_4；未确认禁写入 Roadmap。用户可在确认前修正方案（合并/拆分/调整依赖）。
 </step_3_decompose>
 
 <step_3_5_refinement>

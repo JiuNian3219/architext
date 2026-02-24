@@ -147,4 +147,97 @@ describe("Scaffolder Integration", () => {
     // 应该不抛出错误，而是回退到默认语言
     await expect(Scaffolder.run(config)).resolves.not.toThrow();
   });
+
+  it("应该为 Cursor 创建 Agent Skills 文件", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await Scaffolder.run(config);
+
+    // archi- 前缀的 Skill 目录应存在
+    const skillDir = path.join(
+      tempDir,
+      ".cursor/skills/archi-decompose-roadmap",
+    );
+    expect(await fs.pathExists(skillDir)).toBe(true);
+
+    // SKILL.md 应存在且含有合法 frontmatter
+    const skillFile = path.join(skillDir, "SKILL.md");
+    expect(await fs.pathExists(skillFile)).toBe(true);
+
+    const content = await fs.readFile(skillFile, "utf-8");
+    expect(content).toContain("name: archi-decompose-roadmap");
+    expect(content).toContain("description:");
+  });
+
+  it("Skills 文件不应包含未替换的占位符", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: "my-docs",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await Scaffolder.run(config);
+
+    const skillFile = path.join(
+      tempDir,
+      ".cursor/skills/archi-decompose-roadmap/SKILL.md",
+    );
+
+    if (await fs.pathExists(skillFile)) {
+      const content = await fs.readFile(skillFile, "utf-8");
+      expect(content).not.toContain("[[__DOCS_DIR__]]");
+      expect(content).not.toContain("[[__RULES_DIR__]]");
+    }
+  });
+
+  it("非 Cursor 编辑器不应创建 Skills 目录", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["trae"],
+      features: [],
+    };
+
+    await Scaffolder.run(config);
+
+    // trae 不支持 Agent Skills 标准，不应生成 skills 目录
+    const traeSkillsDir = path.join(tempDir, ".trae/skills");
+    expect(await fs.pathExists(traeSkillsDir)).toBe(false);
+  });
+
+  it("重新初始化时 Skills 文件应纳入冲突检测范围", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    // 第一次运行：生成 Skills 文件
+    await Scaffolder.run(config);
+
+    const skillFile = path.join(
+      tempDir,
+      ".cursor/skills/archi-decompose-roadmap/SKILL.md",
+    );
+    expect(await fs.pathExists(skillFile)).toBe(true);
+
+    // 第二次运行：使用 mock resolveConflicts，捕获传入的 operations
+    const resolveConflicts = vi.fn(async (ops) => ops);
+    await Scaffolder.run(config, { resolveConflicts });
+
+    // Skills 操作须被传入冲突检测函数（证明 SKILL.md 在冲突检测覆盖范围内）
+    expect(resolveConflicts).toHaveBeenCalledOnce();
+    const ops = resolveConflicts.mock.calls[0][0] as { dest: string }[];
+    const skillOps = ops.filter((op) =>
+      op.dest.includes("archi-decompose-roadmap"),
+    );
+    expect(skillOps.length).toBeGreaterThan(0);
+  });
 });

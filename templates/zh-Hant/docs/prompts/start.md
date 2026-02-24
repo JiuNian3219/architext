@@ -186,41 +186,7 @@
     - 如使用者未提供任何自訂規則，保持範本預設內容
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    基於 Brief 核心功能列表推導任務鏈。
-
-    **Phase 1 (Infra): The "Big Bang"**
-    - 須一次性建立完整基建骨架。
-    - [INF-01] Project Scaffolding: 目錄結構、Linter、Env、Logger、Test Setup、`[[__DOCS_DIR__]]/scripts/`（AI 基於 `02_tech_stack.md` Section 5 自動生成，禁向使用者提問腳本實作細節）。
-    - [INF-02] Core Entities (如適用): Database Schema, User/Auth Model, Global Types。
-    - Phase 2 所有任務預設依賴 INF-01 (和 INF-02)。
-
-    **Phase 2 (Feature): Domain Partitioning**
-    - Brief 中每個核心功能 → 一個或多個 Feature 任務
-    - 按 Domain 分組，不同 Domain 間任務預設可並行
-
-    **已有設計決策注入**:
-    如 Brief 的「已有設計決策」段中包含某個功能/頁面/流程的具體設計，須將其注入到對應 Feature 任務的 `goal` 欄位中，作為 `/archi.plan` 階段的硬約束。格式:
-    - `goal` 中追加以 `\n[使用者預設] <決策內容摘要>`
-    - 如決策涉及多個功能，在每個相關任務中都標註
-
-    **Task JSON Schema**:
-    ```json
-    {
-      "id": "INF-01",
-      "title": "Project Scaffolding",
-      "status": "pending",
-      "goal": "<DoD - 輸入/輸出/驗收標準>",
-      "deps": [],
-      "tag": "Infra",
-      "slug": "Project_Scaffolding"
-    }
-    ```
-
-    **Initial Status Rule**:
-    - `deps: []` 或 deps 已完成 → `"status": "pending"`
-    - `deps: ["XXX"]` 未完成 → `"status": "blocked"`
-
-    > **Slug**: 用於 `features/<ID>_<Slug>/` 命名。須英文、Snake_Case。
+    [[SKILL: 按 `archi-decompose-roadmap` Skill 的協議，基於 Brief 功能列表生成任務鏈，寫入 roadmap.json]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 並遵循其協議執行）]]，生成後直接進入下一步，無需使用者確認。
 
     ### 3.5 其他全域文件 (按需)
     - `dictionary.json`: 從 Brief 提取領域術語

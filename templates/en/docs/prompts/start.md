@@ -186,41 +186,7 @@
     - If user provided nothing, keep template default
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    Derive task chain from Brief core feature list.
-
-    **Phase 1 (Infra): The "Big Bang"**
-    - Must create complete infra skeleton in one pass.
-    - [INF-01] Project Scaffolding: directory structure, Linter, Env, Logger, Test Setup, `[[__DOCS_DIR__]]/scripts/` (AI auto-generates from `02_tech_stack.md` Section 5; do not ask user about script details).
-    - [INF-02] Core Entities (if applicable): Database Schema, User/Auth Model, Global Types.
-    - Phase 2 tasks default depend on INF-01 (and INF-02).
-
-    **Phase 2 (Feature): Domain Partitioning**
-    - Each Brief core feature → one or more Feature tasks
-    - Group by Domain; different Domains parallel by default
-
-    **Pre-defined design decisions injection**:
-    If Brief "Pre-defined design decisions" section contains specific design for a feature/page/flow, inject into that Feature task's `goal` as hard constraint for `/archi.plan`. Format:
-    - Append to `goal`: `\n[User Preset] <decision summary>`
-    - If decision spans multiple features, annotate each related task
-
-    **Task JSON Schema**:
-    ```json
-    {
-      "id": "INF-01",
-      "title": "Project Scaffolding",
-      "status": "pending",
-      "goal": "<DoD - input/output/acceptance criteria>",
-      "deps": [],
-      "tag": "Infra",
-      "slug": "Project_Scaffolding"
-    }
-    ```
-
-    **Initial Status Rule**:
-    - `deps: []` or deps done → `"status": "pending"`
-    - `deps: ["XXX"]` not done → `"status": "blocked"`
-
-    > **Slug**: For `features/<ID>_<Slug>/` naming. Must be English, Snake_Case.
+    [[SKILL: Follow the `archi-decompose-roadmap` Skill protocol to generate the task chain from the Brief feature list and write to roadmap.json]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]], then proceed to the next step immediately without user confirmation.
 
     ### 3.5 Other global docs (as needed)
     - `dictionary.json`: Extract domain terms from Brief

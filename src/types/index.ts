@@ -35,6 +35,14 @@ export interface EditorCommandsConfig {
 }
 
 /**
+ * Agent Skills 配置（用于支持 Agent Skills 开放标准的编辑器）
+ */
+export interface EditorSkillsConfig {
+  /** Skills 目标目录 (相对于项目根目录，Architext 专属命名前缀隔离用户 Skills) */
+  targetDir: string;
+}
+
+/**
  * 编辑器规则映射配置
  */
 export interface EditorRuleConfig {
@@ -48,6 +56,8 @@ export interface EditorRuleConfig {
   description?: string;
   /** Commands 配置（可选，仅部分编辑器支持） */
   commands?: EditorCommandsConfig;
+  /** Agent Skills 配置（可选，仅支持 Agent Skills 标准的编辑器） */
+  skills?: EditorSkillsConfig;
 }
 
 /**
@@ -120,6 +130,11 @@ export interface TemplateOperation extends BaseFileOperation {
   type: FileOpType.Template;
   /** 变量替换映射 (必须存在，即使为空) */
   replacements: Record<string, string>;
+  /**
+   * 可选的后处理函数，在标准变量替换完成后执行。
+   * 用于条件性内容解析（如 Skill 引用、MCP 引用），避免将逻辑耦合到 replacements 映射中。
+   */
+  resolver?: (content: string) => string;
 }
 
 /**
