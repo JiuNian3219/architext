@@ -195,17 +195,18 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
 
 ### Phase 2 — 視覺著色 (Hi-fi Coloring)
 
-**Role**: 視覺設計師
+**Role**: 你是一個有強烈個人風格的視覺設計師。你不按套路出牌——你用感覺、質感和節奏來思考，而非元件和布局。你追求的不是「正確」，而是「讓人停下來看第二眼」。你的每一個決策都是刻意的：間距不是隨便給的，顏色不是預設選的，字體不是列表裡第一個。你同時擁有藝術家的直覺和工程師的精確。
 
-**目標**: 將確認的線框圖著色為高保真原型，完整體現 `design_tokens.json` 的視覺語言。
+**目標**: 將確認的線框圖著色為高保真原型，產出必須有辨識度——開啟就知道不是範本，而是為這個專案量身設計的。
 
 **前置檢查** (著色前必須驗證):
 
 | 欄位路徑 | 通過條件 | 阻塞處理 |
 |:---|:---|:---|
+| `aestheticDirection.preset` | 非空 | 警告（非阻塞）— AI 基於專案特徵推斷，在輸出中標注推斷結果 |
 | `primitivePalette.brand` | 至少含 1 個非空顏色值 | 阻塞 — 提示使用者先填寫品牌色 |
 | `semanticTokens.colors` | 至少含 `bg`/`surface`/`text` 語義映射 | 阻塞 — 提示使用者先定義基礎語義色 |
-| `semanticTokens.typography` | 至少含 1 個字型族聲明 | 警告（非阻塞）— AI 使用系統字型降級 |
+| `semanticTokens.typography` | 至少含 1 個字型族聲明 | 警告（非阻塞）— AI 基於審美方向選擇字體 |
 | `motion.preference` | 非空 | 警告（非阻塞）— 預設 `subtle` |
 | `illustration.iconLibrary` | 非空 | 警告（非阻塞）— 不引入圖示庫 |
 
@@ -214,29 +215,69 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
 **Action**:
 
 1. **讀取視覺規格**:
-   - `design_tokens.json` → 完整讀取：primitivePalette / semanticTokens / mode / motion / illustration / componentPresets
+   - `design_tokens.json` → 完整讀取：
+     - `aestheticDirection` → 審美方向預設 + 自訂描述
+     - `primitivePalette` → CSS 變數定義
+     - `semanticTokens.colors` → 語義色映射
+     - `semanticTokens.typography` → 字體/字號
+     - `mode` → 主題模式（light/dark）
+     - `motion` → 動效時長、緩動曲線、模式名稱
+     - `illustration` → 圖示風格、圖示庫
+     - `layout` → 圓角/陰影/間距
    - `vision.md` → 提取 Visual Reference 段落（品牌色、競品截圖描述、禁用風格）
 
-2. **著色規則**:
+2. **審美方向 → 具體設計參數映射**:
+
+   根據 `aestheticDirection.preset` 確定以下設計參數的基準值（Token 有顯式值時 Token 優先，Token 為空時用此基準）：
+
+   | 預設 | 背景基調 | 圓角 | 陰影 | 字體策略 | 布局特徵 | 參照產品 |
+   |:---|:---|:---|:---|:---|:---|:---|
+   | `saas-dark` | 深色 (#0a-#15 範圍) | sm:4px md:8px | 幾乎無陰影，用邊框分層 | 無襯線，緊湊 | 高對比、銳利邊緣、緊湊間距 | Linear, Vercel, Raycast |
+   | `saas-light` | 白底 (#fafafa-#fff) | sm:6px md:12px | 輕柔 (0 1px 3px rgba(0,0,0,0.08)) | 系統字體或 sans-serif | 呼吸感、細邊框、留白 | Notion, Stripe, GitHub |
+   | `dashboard` | 深灰/深藍底 | sm:8px md:12px | 卡片浮層 (0 2px 8px) | 等寬數字 + sans-serif | 卡片網格、資訊密集、緊湊表格 | Grafana, Datadog |
+   | `marketing` | 漸層/大色塊 | lg:16px+ | 戲劇性 (0 8px 32px) | 大號展示字體 + 精緻正文字體 | 大標題、全寬 section、視覺敘事 | Loom, Framer |
+   | `mobile-app` | 柔和底色 | lg:16px xl:24px | 柔和擴散 (0 4px 16px) | 系統字體 -apple-system | 大觸控目標、寬間距、卡片式 | Telegram, Bear |
+   | `editorial` | 暖白/米色 | 幾乎無圓角 0-4px | 無或極淡 | 襯線展示 + 無襯線正文 | 窄欄、大行高、排版驅動 | Medium, Substack |
+   | `brutalist` | 純白或純黑 | 0px | 無 | 等寬或系統字體 | 無裝飾、密集、功能優先 | Craigslist, HN |
+
+   > `custom`: 讀取 `aestheticDirection.customDescription`，從描述中提取關鍵字映射到最近的預設，然後疊加自訂調整。
+
+3. **反 AI 審美黑名單** (CRITICAL — 著色時禁觸犯):
+
+   | 類別 | 禁止 | 替代 |
+   |:---|:---|:---|
+   | 字體 | Inter, Roboto, Arial 作為標題字體 | 選擇有辨識度的字體：展示字體用 characterful font（如 Cal Sans, General Sans, Satoshi, Outfit），正文可用系統字體 |
+   | 配色 | 紫色漸層白底（AI 預設審美的標誌） | 從 `aestheticDirection` 推導；配色須有主次——一個主色 + 銳利強調色 > 均勻分布的溫吞色板 |
+   | 布局 | 所有畫面同一種置中卡片布局 | 不同畫面須有布局差異：列表頁 vs 詳情頁 vs 表單頁各有特徵 |
+   | 圓角 | 所有元素統一 rounded-lg | 圓角須有層級：容器大、按鈕中、Badge 小（或按審美方向統一為 0/sm） |
+   | 陰影 | 千篇一律的 shadow-md | 陰影須匹配審美方向：dark 主題幾乎不用陰影；light 主題分層使用 |
+   | 動效 | 到處撒 transition-all | 聚焦高影響力時刻：頁面載入編排（交錯淡入）> 散佈的微互動 |
+   | 整體 | 每次生成都趨同 | 每個專案的著色必須因審美方向而異——開啟兩個不同專案的 ui_concept.html，必須一眼看出區別 |
+
+4. **著色規則** (在審美方向基準 + 反黑名單約束下執行):
 
    | 著色維度 | 規則 |
    |:---|:---|
-   | 顏色 | 用 `semanticTokens.colors` 語義 Token 替換灰度；品牌色來自 `primitivePalette.brand` |
-   | 字體 | 引入 `semanticTokens.typography` 中聲明的字體（Google Fonts CDN 或系統字體） |
-   | 動效 | 按 `motion.patterns` 為頁面切換/Modal/Toast 加對應 CSS transition/animation |
+   | 顏色 | 用 `semanticTokens.colors` 語義 Token 替換灰度；品牌色來自 `primitivePalette.brand`；Token 空值按審美方向基準填充 |
+   | 字體 | `semanticTokens.typography` 有值時引入聲明字體；空值時按審美方向策略選擇（Google Fonts CDN），禁選黑名單字體 |
+   | 圓角/陰影 | 按 `layout.radius` / `layout.shadow`；空值時按審美方向基準填充 |
+   | 動效 | 按 `motion.patterns` 加 CSS transition/animation；優先編排頁面載入交錯淡入（staggered reveal via animation-delay） |
    | 圖示 | 按 `illustration.iconLibrary` 引入對應 CDN；style=none 則不插圖 |
-   | 元件 | 按 `componentPresets` 中的 class 字串替換線框圖佔位元件 |
    | 模式 | 若 `mode.support` 含 dark，添加 CSS `@media (prefers-color-scheme: dark)` + 切換按鈕 |
    | 禁用 | 嚴格遵循 vision.md Visual Reference 中的「禁用風格」描述 |
+   | 空間 | 創造有呼吸感或有密度的排版（取決於審美方向），不做機械均勻間距 |
+   | 背景 | 禁純色大面積平鋪——按審美方向添加微妙紋理/漸層網格/噪點/幾何圖案 |
 
-3. **著色後驗證清單**:
-   - [ ] 所有畫面顏色來自 semanticTokens，無硬編碼 Hex（品牌色變數除外）
+5. **著色後驗證清單**:
+   - [ ] 所有畫面顏色來自 semanticTokens 或審美方向基準，無隨意硬編碼 Hex
    - [ ] 所有動效時長來自 `motion.duration.*`，無魔法數字
-   - [ ] 頁面/狀態切換控制列保持線框圖灰度風格
+   - [ ] 頁面/狀態切換控制列保持線框圖灰度風格（不著色，保持偵錯工具屬性）
    - [ ] `data-el` 標注完整保留
-   - [ ] 每個畫面的所有狀態均已視覺化
+   - [ ] 每個畫面的所有狀態（default/loading/empty/error）均已視覺化
+   - [ ] **反 AI 審美檢查**: 未使用黑名單字體、無紫色漸層白底、布局有差異性、圓角有層級
+   - [ ] **辨識度檢查**: 開啟 HTML，能一眼判斷這是哪個審美方向，而非通用範本
 
-4. **輸出**:
+6. **輸出**:
    - 更新 `[[__DOCS_DIR__]]/global/ui_concept.html`（著色版覆蓋線框圖版）
    - **同步刷新 `ui_context.md` 的「畫面結構摘要」**：
      - 將階段標注從 `Phase 1 線框圖` 改為 `Phase 2 視覺著色`
@@ -247,12 +288,15 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
      ### ui_concept.html 已更新（Phase 2 視覺著色）
      ### ui_context.md 已同步刷新（畫面結構摘要更新至 Phase 2）
 
+     **審美方向**: [preset 值] — [參照產品]
      **應用的視覺規格**:
      - 主色: [Primary Token 值]
-     - 字體: [字體名]
+     - 字體: [展示字體 + 正文字體]
+     - 圓角: [sm/md/lg 值]
      - 動效: [preference 值]
      - 圖示: [iconLibrary] / style: [style]
      - 主題: [default + support 列表]
+     - 背景處理: [紋理/漸層/純色 描述]
 
      > 在瀏覽器開啟 `[[__DOCS_DIR__]]/global/ui_concept.html` 確認視覺效果。
      > 後續執行 `/archi.plan <ID>` 時，AI 將讀取 `ui_context.md` 確定各任務的 UI 範圍。

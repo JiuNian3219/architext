@@ -121,7 +121,8 @@
     |:---|:---|
     | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
     | Tech stack, deploy target, 3rd-party libs/services | rule file `02_tech_stack` |
-    | Style/tone (UI/CLI/API) — visual keywords / density / theme / motion | rule file `02_tech_stack` (UI Protocol) + `design_tokens.json` motion.preference / illustration |
+    | Style/tone (UI/CLI/API) — aesthetic direction / density / motion | rule file `02_tech_stack` (UI Protocol) + `design_tokens.json` aestheticDirection + motion.preference + illustration |
+    | [?UI] **Aesthetic direction** (saas-dark/saas-light/dashboard/marketing/mobile-app/editorial/brutalist/custom) | `design_tokens.json` `aestheticDirection.preset` + `aestheticDirection.customDescription` |
     | [?UI] **Visual Reference** (brand palette / font / icon library / competitor screenshots / forbidden styles) | `design_tokens.json` primitivePalette.brand + illustration + motion; screenshots/URLs → `vision.md` Visual Reference |
     | Core feature list | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **Pre-defined design decisions** | Inject into related tasks' `goal` in Roadmap; treat as hard constraint in `/archi.plan` |
@@ -166,8 +167,10 @@
     - `dictionary.json`: Extract domain terms from Brief
     - [?Data] `data_snapshot.json`: Initialize core entity skeleton (entity names + primary key fields) from Brief data descriptions; write empty template if no data descriptions provided
     - [?UI] `design_tokens.json`: Populate from Brief "Style & Tone" and "Visual Reference":
+      - `aestheticDirection.preset`: From Brief aesthetic direction field; if blank, infer from project features (Web SaaS → saas-light, Dashboard → dashboard, etc.)
+      - `aestheticDirection.customDescription`: Only fill when preset is "custom"
       - `primitivePalette.brand`: Extract Hex values from brand palette; leave empty if none
-      - `mode`: Infer default + support array from theme preference
+      - `mode`: Infer default + support array from aesthetic direction (saas-dark → default:"dark", saas-light → default:"light", etc.)
       - `motion.preference` / `motion.patterns`: Set from motion preference (subtle / rich / none); expand patterns for rich
       - `illustration.style` / `illustration.iconLibrary`: Set from illustration style and icon library fields
       - `semanticTokens.colors`: If brand color present, fill Primary using Brand-600/Brand-500 keys
@@ -197,6 +200,17 @@
     Silently fix issues; mark critical ones with `Risk Warning`.
 </step_4_audit>
 
+<step_4_5_ui_wireframe>
+    **Trigger**: Only when project features include [?UI].
+    **Action**: Auto-invoke `archi-ui-wireframe` Skill (Phase 1 wireframe).
+    - Start generation without user confirmation
+    - Read the just-written vision.md + roadmap.json + design_tokens.json + 02_tech_stack
+    - Write `ui_concept.html` + `ui_context.md`
+    - Output Phase 1 wireframe summary; await user confirmation before entering Phase 2 styling
+
+    > This step promotes UI wireframe generation from "recommended next step" to "auto-completed by start", reducing manual user actions.
+</step_4_5_ui_wireframe>
+
 <step_5_signoff>
     **Terminal Gate** (Do not skip; must complete before output summary):
     | Step | Command | Pass Condition |
@@ -216,7 +230,7 @@
 
     | Priority | Action | Notes |
     |:---|:---|:---|
-    | [?UI] First | Run `archi-ui-wireframe` Skill | Generate global UI wireframe; subsequent `/archi.plan` depends on this file to locate screen scope |
+    | [?UI] Recommended | Reply **OK** to enter Phase 2 styling | Phase 1 wireframe auto-generated; confirm layout then style |
     | Recommended | `/archi.plan INF-01` | Plan the first infrastructure task |
     | Optional | `/archi.scope <scope-brief.md>` | Append more requirements to Roadmap if needed |
 </step_5_signoff>

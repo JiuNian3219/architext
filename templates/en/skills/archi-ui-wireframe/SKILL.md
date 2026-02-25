@@ -200,17 +200,18 @@ description: UI concept design expert. Generates ui_concept.html in two phases �
 
 ### Phase 2 — Visual Styling (Hi-fi Coloring)
 
-**Role**: Visual Designer
+**Role**: You are a visual designer with a strong personal style. You don't follow conventions — you think in feelings, textures, and rhythm, not components and layouts. You pursue not "correct" but "makes someone stop and look twice." Every decision is intentional: spacing is never arbitrary, colors are never defaults, fonts are never the first in the list. You combine an artist's intuition with an engineer's precision.
 
-**Goal**: Apply the confirmed wireframe's full visual language from `design_tokens.json` to produce a hi-fi prototype.
+**Goal**: Style the confirmed wireframe into a hi-fi prototype that has identity — opening it should immediately signal this was designed for THIS project, not generated from a template.
 
 **Prerequisite check** (must validate before styling):
 
 | Field path | Pass condition | Blocking action |
 |:---|:---|:---|
+| `aestheticDirection.preset` | Non-empty | Warning (non-blocking) — AI infers from project context, notes inference in output |
 | `primitivePalette.brand` | At least 1 non-empty color value | Blocking — prompt user to fill brand color |
 | `semanticTokens.colors` | At least `bg`/`surface`/`text` semantic mappings | Blocking — prompt user to define base semantic colors |
-| `semanticTokens.typography` | At least 1 font family declaration | Warning (non-blocking) — AI falls back to system font |
+| `semanticTokens.typography` | At least 1 font family declaration | Warning (non-blocking) — AI picks from aesthetic direction |
 | `motion.preference` | Non-empty | Warning (non-blocking) — defaults to `subtle` |
 | `illustration.iconLibrary` | Non-empty | Warning (non-blocking) — no icon library imported |
 
@@ -219,29 +220,69 @@ description: UI concept design expert. Generates ui_concept.html in two phases �
 **Action**:
 
 1. **Load visual spec**:
-   - `design_tokens.json` → read in full: primitivePalette / semanticTokens / mode / motion / illustration / componentPresets
+   - `design_tokens.json` → read in full:
+     - `aestheticDirection` → preset + custom description
+     - `primitivePalette` → CSS variable definitions
+     - `semanticTokens.colors` → semantic color mappings
+     - `semanticTokens.typography` → font families / sizes
+     - `mode` → theme mode (light/dark)
+     - `motion` → timing, easing, pattern names
+     - `illustration` → icon style, library
+     - `layout` → radius / shadow / spacing
    - `vision.md` → extract Visual Reference section (brand colors, competitor screenshot descriptions, forbidden styles)
 
-2. **Styling rules**:
+2. **Aesthetic direction → concrete design parameter mapping**:
+
+   Use `aestheticDirection.preset` to determine baseline values for design parameters (explicit Token values take priority; baselines fill empty Tokens):
+
+   | Preset | Background tone | Radius | Shadow | Font strategy | Layout traits | Reference products |
+   |:---|:---|:---|:---|:---|:---|:---|
+   | `saas-dark` | Dark (#0a-#15 range) | sm:4px md:8px | Near-zero, use borders for layering | Sans-serif, compact | High contrast, sharp edges, tight spacing | Linear, Vercel, Raycast |
+   | `saas-light` | White (#fafafa-#fff) | sm:6px md:12px | Soft (0 1px 3px rgba(0,0,0,0.08)) | System font or sans-serif | Breathing room, thin borders, whitespace | Notion, Stripe, GitHub |
+   | `dashboard` | Dark gray / dark blue | sm:8px md:12px | Card elevation (0 2px 8px) | Tabular nums + sans-serif | Card grids, info-dense, compact tables | Grafana, Datadog |
+   | `marketing` | Gradient / bold color blocks | lg:16px+ | Dramatic (0 8px 32px) | Large display font + refined body font | Big headings, full-width sections, visual narrative | Loom, Framer |
+   | `mobile-app` | Soft background | lg:16px xl:24px | Soft diffused (0 4px 16px) | System font -apple-system | Large touch targets, wide spacing, card-based | Telegram, Bear |
+   | `editorial` | Warm white / cream | Near-zero 0-4px | None or very faint | Serif display + sans-serif body | Narrow column, tall line-height, typography-driven | Medium, Substack |
+   | `brutalist` | Pure white or pure black | 0px | None | Monospace or system font | No decoration, dense, function-first | Craigslist, HN |
+
+   > `custom`: read `aestheticDirection.customDescription`, extract keywords, map to nearest preset, then layer custom adjustments on top.
+
+3. **Anti-AI aesthetic blacklist** (CRITICAL — never violate during styling):
+
+   | Category | Forbidden | Use instead |
+   |:---|:---|:---|
+   | Typography | Inter, Roboto, Arial as heading font | Characterful fonts for headings (e.g. Cal Sans, General Sans, Satoshi, Outfit); body text may use system fonts |
+   | Colors | Purple gradient on white (signature AI default aesthetic) | Derive from `aestheticDirection`; palette must have hierarchy — one dominant color + sharp accent > evenly-distributed timid palette |
+   | Layout | Every screen uses the same centered card layout | Different screen types need layout variation: list vs detail vs form each have distinct character |
+   | Radius | Uniform rounded-lg on everything | Radius must have hierarchy: containers large, buttons medium, badges small (or uniformly 0/sm per aesthetic direction) |
+   | Shadow | Identical shadow-md everywhere | Shadow must match aesthetic direction: dark themes barely use shadow; light themes use layered shadow |
+   | Motion | Scattered transition-all everywhere | Focus on high-impact moments: orchestrated page load (staggered reveals via animation-delay) > scattered micro-interactions |
+   | Overall | Every generation converges to the same look | Each project's styling MUST differ by aesthetic direction — two different projects' ui_concept.html must be instantly distinguishable |
+
+4. **Styling rules** (execute within aesthetic direction baseline + blacklist constraints):
 
    | Styling dimension | Rule |
    |:---|:---|
-   | Colors | Replace grayscale with `semanticTokens.colors` semantic tokens; brand color from `primitivePalette.brand` |
-   | Typography | Import fonts declared in `semanticTokens.typography` (Google Fonts CDN or system font) |
-   | Motion | Apply CSS transition/animation per `motion.patterns` for page switch / Modal / Toast |
+   | Colors | Replace grayscale with `semanticTokens.colors`; brand from `primitivePalette.brand`; empty tokens filled from aesthetic direction baseline |
+   | Typography | Use declared fonts from `semanticTokens.typography`; if empty, pick from aesthetic direction strategy (Google Fonts CDN), blacklisted fonts forbidden |
+   | Radius/Shadow | Per `layout.radius` / `layout.shadow`; empty values filled from aesthetic direction baseline |
+   | Motion | Apply CSS transition/animation per `motion.patterns`; prioritize orchestrated page-load staggered reveal (animation-delay) |
    | Icons | Import CDN per `illustration.iconLibrary`; if style=none, no illustrations |
-   | Components | Replace wireframe placeholders with `componentPresets` class strings |
    | Mode | If `mode.support` includes dark, add CSS `@media (prefers-color-scheme: dark)` + toggle button |
    | Forbidden | Strictly follow "Forbidden styles" from vision.md Visual Reference |
+   | Space | Create breathing room or controlled density (per aesthetic direction), avoid mechanical uniform spacing |
+   | Background | No flat solid-color fills — add subtle texture/gradient mesh/noise/geometric pattern per aesthetic direction |
 
-3. **Post-styling checklist**:
-   - [ ] All screen colors sourced from semanticTokens — no hardcoded Hex (except brand color variables)
-   - [ ] All motion durations sourced from `motion.duration.*` — no magic numbers
+5. **Post-styling checklist**:
+   - [ ] All screen colors from semanticTokens or aesthetic direction baseline — no arbitrary hardcoded Hex
+   - [ ] All motion durations from `motion.duration.*` — no magic numbers
    - [ ] Page/state control bar remains wireframe-style grayscale (no coloring — debug tool identity)
    - [ ] `data-el` labels fully preserved
    - [ ] Every state (default/loading/empty/error) of every screen visually implemented
+   - [ ] **Anti-AI aesthetic check**: no blacklisted fonts, no purple-gradient-on-white, layout variety, radius hierarchy
+   - [ ] **Identity check**: opening the HTML, one can instantly tell which aesthetic direction this follows — not a generic template
 
-4. **Output**:
+6. **Output**:
    - Update `[[__DOCS_DIR__]]/global/ui_concept.html` (colored version overwrites wireframe)
    - **Sync `ui_context.md` Screen Structure Summary**:
      - Update phase label from `Phase 1 Wireframe` to `Phase 2 Visual Styling`
@@ -252,12 +293,15 @@ description: UI concept design expert. Generates ui_concept.html in two phases �
      ### ui_concept.html updated (Phase 2 Visual Styling)
      ### ui_context.md synced (Screen Structure Summary refreshed to Phase 2)
 
+     **Aesthetic direction**: [preset value] — [reference products]
      **Applied visual spec**:
      - Primary color: [Primary token value]
-     - Font: [font name]
-     - Motion: [preference value, e.g. subtle]
+     - Font: [display font + body font]
+     - Radius: [sm/md/lg values]
+     - Motion: [preference value]
      - Icons: [iconLibrary] / style: [style]
      - Theme: [default + support list]
+     - Background treatment: [texture/gradient/solid description]
 
      > Open `[[__DOCS_DIR__]]/global/ui_concept.html` in a browser to review visual output.
      > `/archi.plan <ID>` will read `ui_context.md` to determine each task's UI scope.

@@ -25,23 +25,32 @@
 <!-- @style:ui -->
 ## 風格與調性
 
-**視覺關鍵字**: [例：極簡、專業、溫暖、科技感]
+**審美方向** (選一個最接近的，不確定就留空讓 AI 推薦):
+<!-- 選一個填入，或寫 custom 並在下方描述 -->
+<!-- saas-dark    — 類似 Linear/Vercel/Raycast：深色背景、高對比、極簡、銳利邊緣 -->
+<!-- saas-light   — 類似 Notion/Stripe/GitHub：白底、細邊框、系統字體、呼吸感 -->
+<!-- dashboard    — 類似 Grafana/Datadog：資訊密集、卡片網格、資料優先 -->
+<!-- marketing    — 類似 Loom/Framer：大標題、漸層、視覺衝擊、敘事感 -->
+<!-- mobile-app   — 類似 Telegram/Bear：圓角大、間距寬、觸控友善 -->
+<!-- editorial    — 類似 Medium/Substack：排版優先、襯線字體、閱讀沉浸 -->
+<!-- brutalist    — 類似 Craigslist/HN：功能極簡、無裝飾、原始感 -->
+<!-- custom       — 在「自訂描述」中寫你想要的風格 -->
+
+**審美方向**: [例：saas-dark / saas-light / dashboard / marketing / mobile-app / editorial / brutalist / custom]
+**自訂描述**: [僅 custom 時填寫，例：「類似 Spotify 的深色 + 綠色強調 + 卡片式布局」]
+
 **資訊密度**: [大留白/沉浸式 / 資訊密集/儀表板風格]
-**色調傾向**: [深色主題 / 淺色主題 / 跟隨系統]
 **動效偏好**: [輕微微互動 / 豐富動畫 / 無動畫]
-**圖示風格**: [例：無插圖 / 線性圖示 / 彩色插畫 / 3D 渲染]
-**參考設計**: [截圖或連結，可多個]
 
 ### 視覺參考 (Visual Reference)
 
-> 為 AI 提供足夠的審美輸入，直接影響 `ui_concept.html` 的視覺品質。
+> 為 AI 提供審美輸入，直接影響 `ui_concept.html` 的視覺品質。
 > 以下任填一項即有效，填得越多 AI 越能還原你的期望風格。
 
 **競品/靈感截圖**: [可貼上圖片 / Figma 連結 / URL]
-**品牌色板**: [主色 Hex / 漸層描述 / 無（AI 基於關鍵字生成）]
-**字體偏好**: [例：Inter（現代）/ Playfair Display（優雅）/ 系統字體 / 無偏好]
+**品牌色板**: [主色 Hex / 漸層描述 / 無（AI 基於審美方向生成）]
+**字體偏好**: [例：JetBrains Mono + Space Grotesk / Playfair Display / 無偏好（AI 基於審美方向選擇）]
 **圖示庫**: [例：Lucide / Heroicons / Tabler / 無偏好]
-**關鍵動效**: [例：頁面切換 Fade、按鈕 Scale 回饋、骨架屏漸出 / 無特殊要求]
 **禁用風格**: [例：禁漸層背景 / 禁卡通插畫 / 無限制]
 <!-- @end -->
 

@@ -3,6 +3,12 @@
   "scope": "[?UI]",
   "status": "drafting",
 
+  "aestheticDirection": {
+    "preset": "",
+    "_presetOptions": "saas-dark | saas-light | dashboard | marketing | mobile-app | editorial | brutalist | custom",
+    "customDescription": ""
+  },
+
   "primitivePalette": {
     "neutral": {
       "50": "",

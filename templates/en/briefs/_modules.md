@@ -25,12 +25,22 @@
 <!-- @style:ui -->
 ## Style & Tone
 
-**Visual keywords**: [e.g.: minimal, professional, warm, tech-forward]
+**Aesthetic direction** (pick the closest match; leave blank for AI to recommend):
+<!-- Pick one, or write "custom" and describe below -->
+<!-- saas-dark    — like Linear/Vercel/Raycast: dark bg, high contrast, minimal, sharp edges -->
+<!-- saas-light   — like Notion/Stripe/GitHub: white bg, thin borders, system fonts, breathing room -->
+<!-- dashboard    — like Grafana/Datadog: info-dense, card grids, data-first -->
+<!-- marketing    — like Loom/Framer: large headings, gradients, visual impact, narrative -->
+<!-- mobile-app   — like Telegram/Bear: large radius, wide spacing, touch-friendly -->
+<!-- editorial    — like Medium/Substack: typography-first, serif fonts, reading immersion -->
+<!-- brutalist    — like Craigslist/HN: function-first, no decoration, raw -->
+<!-- custom       — describe your desired style in "Custom description" below -->
+
+**Aesthetic direction**: [e.g.: saas-dark / saas-light / dashboard / marketing / mobile-app / editorial / brutalist / custom]
+**Custom description**: [only for "custom", e.g.: "Spotify-like dark + green accent + card-based layout"]
+
 **Information density**: [generous whitespace/immersive / dense/dashboard-style]
-**Theme preference**: [dark theme / light theme / follow system]
 **Motion preference**: [subtle micro-interactions / rich animation / no animation]
-**Illustration style**: [e.g.: none / line icons / colorful illustration / 3D render]
-**Design references**: [screenshots or links, multiple allowed]
 
 ### Visual Reference
 
@@ -38,10 +48,9 @@
 > Fill in any of the fields below; the more you provide, the closer AI can match your vision.
 
 **Competitor/inspiration screenshots**: [paste image / Figma link / URL]
-**Brand palette**: [primary color Hex / gradient description / none (AI generates from keywords)]
-**Font preference**: [e.g.: Inter (modern) / Playfair Display (elegant) / system font / no preference]
+**Brand palette**: [primary color Hex / gradient description / none (AI generates from aesthetic direction)]
+**Font preference**: [e.g.: JetBrains Mono + Space Grotesk / Playfair Display / no preference (AI picks from aesthetic direction)]
 **Icon library**: [e.g.: Lucide / Heroicons / Tabler / no preference]
-**Key motion**: [e.g.: page-switch Fade, button Scale feedback, skeleton fade-in / no special requirement]
 **Forbidden styles**: [e.g.: no gradient backgrounds / no cartoon illustration / no restriction]
 <!-- @end -->
 

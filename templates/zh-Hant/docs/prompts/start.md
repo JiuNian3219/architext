@@ -121,7 +121,8 @@
     |:---|:---|
     | 專案身份、目標使用者、成功指標、參考靈感 | `[[__DOCS_DIR__]]/global/vision.md` |
     | 技術棧、部署目標、第三方庫/服務 | 規則檔案 `02_tech_stack` |
-    | 風格調性（UI/CLI/API）— 視覺關鍵字/資訊密度/色調/動效偏好 | 規則檔案 `02_tech_stack` (UI Protocol) + `design_tokens.json` motion.preference / illustration |
+    | 風格調性（UI/CLI/API）— 審美方向/資訊密度/動效偏好 | 規則檔案 `02_tech_stack` (UI Protocol) + `design_tokens.json` aestheticDirection + motion.preference + illustration |
+    | [?UI] **審美方向** (saas-dark/saas-light/dashboard/marketing/mobile-app/editorial/brutalist/custom) | `design_tokens.json` `aestheticDirection.preset` + `aestheticDirection.customDescription` |
     | [?UI] **視覺參考**（品牌色板/字體/圖示庫/競品截圖/禁用風格） | `design_tokens.json` primitivePalette.brand + illustration + motion；截圖/URL 存入 `vision.md` Visual Reference |
     | 核心任務列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **已有設計決策** | Roadmap 對應任務的 `goal` 欄位中注入，並在 `/archi.plan` 時作為硬約束 |
@@ -166,8 +167,10 @@
     - `dictionary.json`: 從 Brief 提取領域術語
     - [?Data] `data_snapshot.json`: 基於 Brief 中的資料描述，初始化核心實體骨架（實體名 + 主鍵欄位）；無資料描述時寫入空範本
     - [?UI] `design_tokens.json`: 基於 Brief「風格與調性」和「視覺參考」填充：
+      - `aestheticDirection.preset`: 從 Brief 審美方向欄位填入；Brief 未填時基於專案特徵推斷（Web SaaS 預設 saas-light，Dashboard 預設 dashboard 等）
+      - `aestheticDirection.customDescription`: 僅 custom 時填入使用者描述
       - `primitivePalette.brand`: 從品牌色板提取 Hex 值；無則留空
-      - `mode`: 從色調傾向推斷 default + support 陣列
+      - `mode`: 從審美方向推斷 default + support 陣列（saas-dark → default:"dark"，saas-light → default:"light" 等）
       - `motion.preference` / `motion.patterns`: 從動效偏好填寫 (subtle / rich / none)；rich 時擴充 patterns
       - `illustration.style` / `illustration.iconLibrary`: 從圖示風格和圖示庫填寫
       - `semanticTokens.colors`: 如有品牌色則以 Brand-600/Brand-500 等 key 填充 Primary
@@ -197,6 +200,17 @@
     如有問題則靜默修正；嚴重問題標記 `Risk Warning`。
 </step_4_audit>
 
+<step_4_5_ui_wireframe>
+    **Trigger**: 僅當專案特徵含 [?UI] 時執行。
+    **Action**: 自動呼叫 `archi-ui-wireframe` Skill（Phase 1 線框圖）。
+    - 無需使用者確認即開始生成
+    - 讀取剛寫入的 vision.md + roadmap.json + design_tokens.json + 02_tech_stack
+    - 寫入 `ui_concept.html` + `ui_context.md`
+    - 輸出 Phase 1 線框圖摘要，等待使用者確認後再進入 Phase 2 著色
+
+    > 此步驟將 UI 線框圖生成從「建議的下一步」變為「start 自動完成」，減少使用者手動操作。
+</step_4_5_ui_wireframe>
+
 <step_5_signoff>
     **Terminal Gate** (禁止跳過，須在輸出總結前全部完成):
     | 步驟 | 命令 | 通過條件 |
@@ -216,7 +230,7 @@
 
     | 優先級 | 行動 | 說明 |
     |:---|:---|:---|
-    | [?UI] 最優先 | 執行 `archi-ui-wireframe` Skill | 生成全域 UI 線框圖；後續 `/archi.plan` 將依賴此檔案定位畫面範圍 |
+    | [?UI] 推薦 | 回覆 **OK** 進入 Phase 2 著色 | Phase 1 線框圖已自動生成；確認布局後著色 |
     | 推薦 | `/archi.plan INF-01` | 規劃第一個基礎設施任務 |
     | 可選 | `/archi.scope <scope-brief.md>` | 如有更多需求待分解，追加到 Roadmap |
 </step_5_signoff>
