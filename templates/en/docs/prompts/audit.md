@@ -38,7 +38,8 @@
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — Feature logic
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — Task checklist
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — Task UI scope declaration (if exists)
-        - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — Global visual standard (locate corresponding screen; used for #10 visual compliance comparison)
+        - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI screen index (locate corresponding screen IDs)
+        - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — read-only visual reference (source of visual truth for #10 compliance comparison)
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md` — Previous audit report (if exists, for comparison)
         - `02_tech_stack.md` — Technical red lines
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
@@ -76,6 +77,7 @@
     | 12 | [?I18n] **I18n Compliance** | No hardcoded strings; must use Key/dictionary references |
     | 13 | **Orphan .gitkeep** | Dir has other files but still contains `.gitkeep` — must remove |
     | 14 | **Spec-Code Drift** | Do code interfaces/types/behaviors match `spec.md`; have manual changes been synced to docs |
+    | 15 | [?UI] **UI Reference Integrity** | Are `ref: ui_concept.html#S-XX` pointers in `ui.md` still valid; have referenced screens/components been renamed or removed after edit/revise |
 
     **Output**: Findings list grouped by dimension, each with severity, location, description.
 </step_2_task>

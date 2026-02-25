@@ -1,17 +1,18 @@
 ---
-description: 任務級 UI 範圍聲明 — 描述本任務負責的畫面/元件範圍，視覺細節以 ui_concept.html 為準。
-glue: 與 [[__DOCS_DIR__]]/global/ui_concept.html 強關聯，禁重定義整體布局或全域導航。
+description: 任務級 UI 範圍聲明 — 畫面 ID 來自 ui_context.md，視覺原型見 ui_concept.html（人看）；禁重定義整體布局或全域導航。
+glue: 畫面 ID 引用自 [[__DOCS_DIR__]]/global/ui_context.md；禁重定義整體布局或全域導航。
 ---
 
 # UI Scope: {FEATURE_NAME}
 
-> **Concept Reference**: `[[__DOCS_DIR__]]/global/ui_concept.html`
+> **Screen Index**: `[[__DOCS_DIR__]]/global/ui_context.md`（AI 讀取畫面 ID 和導覽關係）
+> **Visual Prototype**: `[[__DOCS_DIR__]]/global/ui_concept.html`（人類瀏覽器預覽）
 > **Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`
 > **Protocol**: ITP v3.0（僅描述本任務邊界內的元件樹）
 
 ## 1. Screen Scope (畫面範圍)
 
-<!-- [AI]: 從 ui_concept.html 中指出本任務涉及哪些畫面/狀態 -->
+<!-- [AI]: 從 ui_context.md 的畫面索引中選取本任務涉及的畫面 ID 和狀態 -->
 
 | 畫面 ID | 畫面名 | 本任務負責的狀態 |
 |:---|:---|:---|

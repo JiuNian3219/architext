@@ -14,7 +14,7 @@ Brief → [This Skill] → roadmap.json tasks
                      reads: vision.md + map.json + tech_stack.md
                      writes: spec.md (behavior spec / acceptance criteria)
                              ui.md (component structure, AI coding truth source) [?UI]
-                   visual ref: [[__DOCS_DIR__]]/global/ui_concept.html [?UI]
+                   visual ref: [[__DOCS_DIR__]]/global/ui_context.md [?UI]
                              plan.json (executable steps + test case checkboxes)
                      also updates: map.json / dictionary.json / data_snapshot.json
                               ↓

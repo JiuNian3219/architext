@@ -1,17 +1,18 @@
 ---
-description: Task-level UI scope declaration — describes the screens/components this task is responsible for. Visual details are governed by ui_concept.html.
-glue: Strongly coupled to [[__DOCS_DIR__]]/global/ui_concept.html. Do not redefine global layout or navigation.
+description: Task-level UI scope declaration — screen IDs come from ui_context.md; visual prototype is ui_concept.html (for humans). Do not redefine global layout or navigation.
+glue: Screen IDs referenced from [[__DOCS_DIR__]]/global/ui_context.md. Do not redefine global layout or navigation.
 ---
 
 # UI Scope: {FEATURE_NAME}
 
-> **Concept Reference**: `[[__DOCS_DIR__]]/global/ui_concept.html`
+> **Screen Index**: `[[__DOCS_DIR__]]/global/ui_context.md` (AI reads screen IDs and navigation graph)
+> **Visual Prototype**: `[[__DOCS_DIR__]]/global/ui_concept.html` (human browser preview)
 > **Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`
 > **Protocol**: ITP v3.0 (scope limited to components within this task's boundary)
 
 ## 1. Screen Scope
 
-<!-- [AI]: Identify which screens/states in ui_concept.html this task covers -->
+<!-- [AI]: Select the screen IDs and states from ui_context.md screen inventory that this task covers -->
 
 | Screen ID | Screen name | States this task owns |
 |:---|:---|:---|

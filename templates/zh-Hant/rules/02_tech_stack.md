@@ -61,10 +61,12 @@ UI 製品層級：
 | 製品 | 格式 | 讀者 | 職責 |
 |:---|:---|:---|:---|
 | `ui_concept.html` | 單檔案 HTML | 人類 (瀏覽器) | **全域視覺真相源** — 所有畫面的線框圖/著色稿 |
+| `ui_context.md` | 結構化 Markdown | AI (plan/code/audit/edit) | **AI 畫面索引** — 畫面 ID/路由/狀態/導覽關係/共享元件輕量清單 |
 | `ui.md` | ITP v3.0 DSL | AI (code/audit) | 任務級 UI 範圍聲明 — 指定本任務涵蓋的畫面/元件 |
-- `ui_concept.html` 由 `archi-ui-wireframe` Skill 生成，覆蓋專案所有使用者可見畫面
-- `ui.md` 僅聲明「本任務負責 ui_concept.html 中的哪些畫面/狀態」，禁重定義全域布局
-- code 階段以 `ui.md` + `ui_concept.html` 為準，用**專案自身技術棧**實現等價視覺效果
+- `ui_concept.html` 由 `archi-ui-wireframe` Skill 生成，覆蓋專案所有使用者可見畫面；僅供人類在瀏覽器預覽
+- `ui_context.md` 由同一 Skill 同步生成，是 AI 命令讀取 UI 結構資訊的唯一入口；禁手動修改
+- `ui.md` 僅聲明「本任務負責 ui_context.md 中的哪些畫面/狀態」，禁重定義全域布局
+- code 階段以 `ui.md`（任務設計）+ `ui_context.md`（結構/導航）+ `design_tokens.json`（視覺約束）為準；同時以 `ui_concept.html` 為**唯讀視覺參考**校準布局，用**專案自身技術棧**實現等價視覺效果
 
 ### 4.2 Naming (PrefixFunction)
 元件命名須遵循 `前綴+功能` 格式：

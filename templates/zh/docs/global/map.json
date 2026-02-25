@@ -74,7 +74,7 @@
     {
       "file": "ui.md",
       "category": "UI/UX",
-      "purpose": "任务级 UI 范围声明 — 指定本任务对应 ui_concept.html 中的屏幕/组件"
+      "purpose": "任务级 UI 范围声明 — 引用 ui_context.md 中的屏幕 ID，指定本任务涵盖的屏幕/组件范围"
     },
     {
       "file": "plan.json",

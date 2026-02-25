@@ -120,7 +120,7 @@
     **Phase 2 — Cascade Update Feature Docs**:
     For each affected Feature, follow `/archi.edit` standards:
     1.  Update `spec.md` (logic/rules that need adjustment due to global changes).
-    2.  [?UI] Update `ui.md` (scope/interaction adjustments due to global changes); if `ui_concept.html` screen structure is affected, sync the relevant screens (run `archi-ui-wireframe` Skill in incremental update mode).
+    2.  [?UI] Update `ui.md` (scope/interaction adjustments due to global changes); if screen structure is affected, run `archi-ui-wireframe` Skill (incremental update mode) to sync both `ui_concept.html` + `ui_context.md`.
     3.  Append new Phase to `plan.json` `phases`: `Phase X: Global Revision — [Change Topic] (<Date>)`, listing implementation tasks.
 
     **Output**: Change summary for each file (global + Feature).

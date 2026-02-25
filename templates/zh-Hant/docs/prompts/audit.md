@@ -38,7 +38,8 @@
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 功能邏輯
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任務清單
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 任務 UI 範圍聲明(如存在)
-        - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 全域視覺標準（定位對應畫面，用於 #10 視覺合規對比）
+        - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI 畫面索引（定位對應畫面 ID）
+        - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 唯讀視覺參考（#10 合規對比的視覺標準源）
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md` — 上次審計報告(如存在，用於對比)
         - `02_tech_stack.md` — 技術紅線
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
@@ -76,6 +77,7 @@
     | 12 | [?I18n] **I18n 合規** | 無硬編碼字串；須用 Key/字典引用 |
     | 13 | **Orphan .gitkeep** | 目錄已有其他檔案時仍存在 `.gitkeep` — 須刪除 |
     | 14 | **Spec-Code 漂移** | 程式碼中的介面/型別/行為是否與 `spec.md` 一致；手動變更是否已同步到文件 |
+    | 15 | [?UI] **UI 引用完整性** | `ui.md` 中的 `ref: ui_concept.html#S-XX` 指針是否仍然有效；被引用的畫面/元件是否因 edit/revise 後已改名或刪除 |
 
     **Output**: 按維度分組的發現列表，每項含級別、位置、描述。
 </step_2_task>

@@ -1,17 +1,18 @@
 ---
-description: 任务级 UI 范围声明 — 描述本任务负责的屏幕/组件范围，视觉细节以 ui_concept.html 为准。
-glue: 与 [[__DOCS_DIR__]]/global/ui_concept.html 强关联，禁重定义整体布局或全局导航。
+description: 任务级 UI 范围声明 — 描述本任务负责的屏幕/组件范围，屏幕 ID 来自 ui_context.md，视觉原型见 ui_concept.html（人看）。
+glue: 屏幕 ID 引用自 [[__DOCS_DIR__]]/global/ui_context.md；禁重定义整体布局或全局导航。
 ---
 
 # UI Scope: {FEATURE_NAME}
 
-> **Concept Reference**: `[[__DOCS_DIR__]]/global/ui_concept.html`
+> **Screen Index**: `[[__DOCS_DIR__]]/global/ui_context.md`（AI 读取屏幕 ID 和导航关系）
+> **Visual Prototype**: `[[__DOCS_DIR__]]/global/ui_concept.html`（人类浏览器预览）
 > **Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`
 > **Protocol**: ITP v3.0（仅描述本任务边界内的组件树）
 
 ## 1. Screen Scope (屏幕范围)
 
-<!-- [AI]: 从 ui_concept.html 中指出本任务涉及哪些屏幕/状态 -->
+<!-- [AI]: 从 ui_context.md 的屏幕索引中选取本任务涉及的屏幕 ID 和状态 -->
 
 | 屏幕 ID | 屏幕名 | 本任务负责的状态 |
 |:---|:---|:---|

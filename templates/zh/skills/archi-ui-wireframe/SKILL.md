@@ -132,16 +132,51 @@ description: UI 概念设计专家。两阶段生成 ui_concept.html：第一阶
    - 导航项、按钮、输入框须使用占位形态（不需要真实内容）
    - 每个屏幕须涵盖其 Roadmap 任务的所有核心操作入口
 
-5. **输出 Gate**:
+5. **同步生成 AI 索引** — 写入 `[[__DOCS_DIR__]]/global/ui_context.md`:
+
+   根据步骤 2 的屏幕规划，提取结构化导航索引（AI 读取 UI 信息的唯一入口）：
+
+   ```markdown
+   # UI Context
+   > 平台: [平台类型] | 阶段: Phase 1 线框图（Phase 2 着色后更新）
+   > 更新: YYYY-MM-DD | 由 archi-ui-wireframe Skill 生成，禁手动修改
+
+   ## 屏幕索引
+   | ID | 名称 | 路由 | 状态 |
+   |:---|:---|:---|:---|
+   | S-01 | [名称] | [路由] | default, loading, ... |
+
+   ## 导航关系
+   S-XX →（[触发条件]）→ S-YY
+
+   ## 全局共享组件
+   | 组件 | 出现屏幕 |
+   |:---|:---|
+   | [组件名] | S-XX, S-YY |
+
+   ## 屏幕结构摘要
+   > Phase 1 由线框图 data-el 提取；Phase 2 着色后刷新为最终布局结构。
+   > 写 ui.md Section 2 须与本节对齐，禁脱离已确认布局自创结构。
+
+   ### S-XX · [屏幕名]
+   **布局**: [如"居中单列 max-w-400px"或"左侧边栏 240px + 右内容区"]
+   **状态**: default（[核心操作入口]）| loading（骨架屏）| empty / error（如有）
+   **关键区域**: [data-el 提取的语义区块+可交互元素，如：顶部导航栏、主表单区、提交按钮、错误提示区]
+   ```
+
+   > `ui_context.md` 是所有 AI 命令读取 UI 结构信息的唯一入口；`ui_concept.html` 仅供人类浏览器预览。
+
+6. **输出 Gate**:
 
    输出线框图后，展示屏幕覆盖摘要：
    ```
    ### ui_concept.html 已生成（Phase 1 线框图）
+   ### ui_context.md 已同步生成（AI 屏幕索引）
 
    **屏幕覆盖** (共 N 个屏幕):
-   | 屏幕 | 对应任务 | 状态数 |
+   | 屏幕 | 名称 | 状态数 |
    |:---|:---|:---|
-   | S-01 [屏幕名] | [任务 ID] | N |
+   | S-01 | [屏幕名] | N |
    | ... | | |
 
    **导航结构**: [描述，如"左侧边栏 + 顶部面包屑"]
@@ -159,7 +194,7 @@ description: UI 概念设计专家。两阶段生成 ui_concept.html：第一阶
 
 **Role**: 咨询顾问
 **Trigger**: 用户回复非 OK，含布局调整、屏幕增减、导航改动。
-**Action**: 融入反馈，局部更新 `ui_concept.html`（仅改动用户指出的部分），重新展示摘要，等待确认。禁全量重写。
+**Action**: 融入反馈，局部更新 `ui_concept.html`（仅改动用户指出的部分），同步更新 `ui_context.md`（屏幕索引与 `ui_concept.html` 保持一致），重新展示摘要，等待确认。禁全量重写。
 
 ---
 
@@ -215,9 +250,14 @@ description: UI 概念设计专家。两阶段生成 ui_concept.html：第一阶
 
 4. **输出**:
    - 更新 `[[__DOCS_DIR__]]/global/ui_concept.html`（着色版覆盖线框图版）
+   - **同步刷新 `ui_context.md` 的「屏幕结构摘要」**：
+     - 将阶段标注从 `Phase 1 线框图` 改为 `Phase 2 视觉着色`
+     - 对每个屏幕，按最终 HTML 结构重新提取「布局」「关键区域」，确保摘要与着色后的 `ui_concept.html` 一致
+     - 屏幕索引 / 导航关系 / 全局共享组件 若无变化则保持不动
    - 输出总结：
      ```
      ### ui_concept.html 已更新（Phase 2 视觉着色）
+     ### ui_context.md 已同步刷新（屏幕结构摘要更新至 Phase 2）
 
      **应用的视觉规格**:
      - 主色: [Primary Token 值]
@@ -227,7 +267,7 @@ description: UI 概念设计专家。两阶段生成 ui_concept.html：第一阶
      - 主题: [default + support 列表]
 
      > 在浏览器打开 `[[__DOCS_DIR__]]/global/ui_concept.html` 确认视觉效果。
-     > 后续运行 `/archi.plan <ID>` 时，AI 将读取此文件确定各任务的 UI 范围。
+     > 后续运行 `/archi.plan <ID>` 时，AI 将读取 `ui_context.md` 确定各任务的 UI 范围。
      ```
 
 ---

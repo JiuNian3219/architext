@@ -127,14 +127,51 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
 
 5. **輸出 Gate**:
 
+5. **同步生成 AI 索引** — 寫入 `[[__DOCS_DIR__]]/global/ui_context.md`:
+
+   根據步驟 2 的畫面規劃，提取結構化導航索引（AI 讀取 UI 資訊的唯一入口）：
+
+   ```markdown
+   # UI Context
+   > 平台: [平台類型] | 階段: Phase 1 線框圖（Phase 2 著色後更新）
+   > 更新: YYYY-MM-DD | 由 archi-ui-wireframe Skill 生成，禁手動修改
+
+   ## 畫面索引
+   | ID | 名稱 | 路由 | 狀態 |
+   |:---|:---|:---|:---|
+   | S-01 | [名稱] | [路由] | default, loading, ... |
+
+   ## 導航關係
+   S-XX →（[觸發條件]）→ S-YY
+
+   ## 全域共享元件
+   | 元件 | 出現畫面 |
+   |:---|:---|
+   | [元件名] | S-XX, S-YY |
+
+   ## 畫面結構摘要
+   > Phase 1 由線框圖 data-el 提取；Phase 2 著色後刷新為最終布局結構。
+   > 撰寫 ui.md Section 2 須與本節對齊，禁脫離已確認布局自創結構。
+
+   ### S-XX · [畫面名]
+   **布局**: [如「置中單欄 max-w-400px」或「左側邊欄 240px + 右內容區」]
+   **狀態**: default（[核心操作入口]）| loading（骨架畫面）| empty / error（如有）
+   **關鍵區域**: [data-el 提取的語義區塊+可互動元素，如：頂部導覽列、主表單區、送出按鈕、錯誤提示區]
+   ```
+
+   > `ui_context.md` 是所有 AI 命令讀取 UI 結構資訊的唯一入口；`ui_concept.html` 僅供人類瀏覽器預覽。
+
+6. **輸出 Gate**:
+
    輸出線框圖後，展示畫面覆蓋摘要：
    ```
    ### ui_concept.html 已生成（Phase 1 線框圖）
+   ### ui_context.md 已同步生成（AI 畫面索引）
 
    **畫面覆蓋** (共 N 個畫面):
-   | 畫面 | 對應任務 | 狀態數 |
+   | 畫面 | 名稱 | 狀態數 |
    |:---|:---|:---|
-   | S-01 [畫面名] | [任務 ID] | N |
+   | S-01 | [畫面名] | N |
    | ... | | |
 
    **導航結構**: [描述]
@@ -152,7 +189,7 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
 
 **Role**: 諮詢顧問
 **Trigger**: 使用者回覆非 OK，含布局調整、畫面增減、導航改動。
-**Action**: 融入回饋，局部更新 `ui_concept.html`（僅改動使用者指出的部分），重新展示摘要，等待確認。禁全量重寫。
+**Action**: 融入回饋，局部更新 `ui_concept.html`（僅改動使用者指出的部分），同步更新 `ui_context.md`（畫面索引與 `ui_concept.html` 保持一致），重新展示摘要，等待確認。禁全量重寫。
 
 ---
 
@@ -201,9 +238,14 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
 
 4. **輸出**:
    - 更新 `[[__DOCS_DIR__]]/global/ui_concept.html`（著色版覆蓋線框圖版）
+   - **同步刷新 `ui_context.md` 的「畫面結構摘要」**：
+     - 將階段標注從 `Phase 1 線框圖` 改為 `Phase 2 視覺著色`
+     - 對每個畫面，按最終 HTML 結構重新提取「布局」「關鍵區域」，確保摘要與著色後的 `ui_concept.html` 一致
+     - 畫面索引 / 導航關係 / 全域共享元件：若無變動則保持不動
    - 輸出總結：
      ```
      ### ui_concept.html 已更新（Phase 2 視覺著色）
+     ### ui_context.md 已同步刷新（畫面結構摘要更新至 Phase 2）
 
      **應用的視覺規格**:
      - 主色: [Primary Token 值]
@@ -213,7 +255,7 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
      - 主題: [default + support 列表]
 
      > 在瀏覽器開啟 `[[__DOCS_DIR__]]/global/ui_concept.html` 確認視覺效果。
-     > 後續執行 `/archi.plan <ID>` 時，AI 將讀取此檔案確定各任務的 UI 範圍。
+     > 後續執行 `/archi.plan <ID>` 時，AI 將讀取 `ui_context.md` 確定各任務的 UI 範圍。
      ```
 
 ---
@@ -231,6 +273,9 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
    - 保留其 `.wf-screen#S-XX` 內的灰度線框新增部分
    - 按 Phase 2 著色規則（`semanticTokens` / `motion` / `illustration`）對新增部分補色
    - 其餘畫面內容不動
-3. 輸出變更摘要：`MODIFIED: ui_concept.html S-XX（局部重著色，新增 [N] 個狀態/區域）`
+3. [?新狀態] 若本次重著色包含新增狀態 → 同步更新 `ui_context.md` 對應畫面的狀態欄。
+4. 輸出變更摘要：
+   - `MODIFIED: ui_concept.html S-XX（局部重著色，新增 [N] 個狀態/區域）`
+   - `MODIFIED: ui_context.md S-XX（更新狀態列表）`（僅當有新增狀態時輸出）
 
 > **禁止**: 局部重著色時禁全量重跑 Phase 2，禁改動未指定畫面的任何內容。

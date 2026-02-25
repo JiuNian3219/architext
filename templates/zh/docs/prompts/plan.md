@@ -24,23 +24,20 @@
     **Role**: 系统分析师
     **Action**:
     1.  **Read Roadmap**: 读取 `[[__DOCS_DIR__]]/global/roadmap.json`。
-        - **Pre-flight**: 检查 `<ID>` 的 Dep 是否已完成。未完成则拒绝 Plan（除非用户强制）。
-    2.  **Read Vision**: 读取 `[[__DOCS_DIR__]]/global/vision.md`。
-        - 提取北极星指标和设计哲学，后续方案须与此对齐。
+        - **Pre-flight**: 仅读取 `<ID>` 对应的任务条目及其直接 deps 的 `id/title/status`；检查 deps 是否已完成，未完成则拒绝 Plan（除非用户强制）。无需加载其他任务数据。
+    2.  **Read Vision**: 读取 `[[__DOCS_DIR__]]/global/vision.md` — 仅提取北极星指标和设计哲学段落；其余章节跳过。
     3.  **Read Tech Stack**: `02_tech_stack.md` (技术红线 + **Section 9 项目约定**)。
         - 提取 Section 9 中的全局架构约定（Error Handling / Data Flow / Auth & Access），供 step_2 约定继承使用。
     4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`。
-    4.5 [?UI] **Read UI Concept**: `[[__DOCS_DIR__]]/global/ui_concept.html`（如存在）。
-        - 定位本功能对应的屏幕 ID（如 S-03）及其负责的状态。
-        - 锁定屏幕范围，供 step_4 生成 `ui.md §1` 时直接填入，禁自行发明新屏幕。
-        - 若 `ui_concept.html` 不存在 → 跳过，`ui.md` 按完整 ITP 格式填写。
+    4.5 [?UI] **Read UI Context**: `[[__DOCS_DIR__]]/global/ui_context.md`（如存在）。
+        - 从屏幕索引中定位本功能对应的屏幕 ID（如 S-03）及其负责的状态。
+        - 锁定屏幕范围，供 step_4 生成 `ui.md §1` 时直接填入，禁自行发明新屏幕 ID。
+        - 若 `ui_context.md` 不存在 → 跳过，`ui.md` 按完整 ITP 格式填写。
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
     6.  **Read Dependency Context** (如有依赖任务):
-        - 读取依赖任务的 `spec.md` (接口契约) 和 `plan.json` (已实现内容)。
-        - **Stub 兼容**: 如依赖任务的 Spec-Status 为 Stub：
-          a. 读取 stub 中"关联文件"列出的源码文件作为补充上下文。
-          b. 从代码中提取该模块的公共接口/导出类型。
-          c. 将提取结果作为本次规划的上游接口参考（不修改 stub 本身）。
+        - 仅读依赖任务 `spec.md` 的 Interface/Type 定义段（`## Interface` 或 `## Types` 章节）；不读 Scenarios 等其余内容。
+        - 仅当当前 spec/plan 出现 `ref: features/<dep_id>/spec.md#X` 引用时执行；无引用时跳过。
+        - **Stub 兼容**: 如依赖任务的 Spec-Status 为 Stub，从 stub"关联文件"提取源码，读入口文件提取公共接口/导出类型，作为上游接口参考。
         - 避免重复定义上游接口，确保对接点精确对齐。
 
     **Output**: 向用户输出 **Feature Context Brief**：
@@ -60,6 +57,17 @@
 <step_1_5_complexity>
     **Role**: 产品顾问
     **Action**: 评估功能复杂度，决定是否走完整 step_2 流程：
+
+    **① 粒度红线检查（优先于复杂度判定）**：
+
+    | 指标 | 上限 |
+    |:---|:---|
+    | 预估 spec.md Scenario 数 | ≤ 6 个 |
+    | 预估 plan.json Phase 数 | ≤ 4 个 |
+
+    > 预估方法：根据 step_1 加载的 roadmap task goal 和依赖上下文，快速列举核心行为路径数量。超出上限即触发，无需精确计算。
+
+    **② 复杂度判定（粒度通过后执行）**：
 
     | 信号 | 判定 | 流程 |
     |:---|:---|:---|
@@ -194,17 +202,17 @@
 
     **2. `ui.md`** [?UI]:
     - 模板 `templates/ui.template.md`。
-    - **有 `ui_concept.html`（主路径）**:
-      1. **UI 偏差检查**（写 `ui.md` 前必须执行）：对比 step_2 确认的功能设计与 `ui_concept.html` 中对应屏幕，识别偏差：
+    - **有 `ui_context.md`（主路径）**:
+      1. **UI 偏差检查**（写 `ui.md` 前必须执行）：对比 step_2 确认的功能设计与 `ui_context.md` 中的屏幕索引，识别偏差：
 
          | 偏差类型 | 判定标准 | 处理方式 |
          |:---|:---|:---|
-         | 无偏差 | 线框图与设计一致 | 直接写 `ui.md`，引用屏幕 ID |
-         | 轻微增量 | 新增状态/弹窗/局部区域，不改整体布局 | 静默更新 `ui_concept.html` 对应屏幕，在 `ui.md` 注明 `MODIFIED: ui_concept.html S-XX` |
-         | 结构性偏差 | 布局重构、新增独立屏幕、流程路径变化 | **暂停**，向用户输出偏差说明，等待 **OK** 后更新 `ui_concept.html`，再写 `ui.md` |
+         | 无偏差 | 屏幕索引与设计一致 | 直接写 `ui.md`，引用屏幕 ID |
+         | 轻微增量 | 新增状态/弹窗/局部区域，不改整体布局 | 调用 `archi-ui-wireframe` Skill（Plan 细化模式）更新 `ui_concept.html` + `ui_context.md`，在 `ui.md` 注明 `MODIFIED: S-XX` |
+         | 结构性偏差 | 布局重构、新增独立屏幕、流程路径变化 | **暂停**，向用户输出偏差说明，等待 **OK** 后调用 Skill 更新 `ui_concept.html` + `ui_context.md`，再写 `ui.md` |
 
       2. 完成偏差处理后，按 `ui.template.md` 填写屏幕范围声明和差异组件。
-    - **无 `ui_concept.html`（降级路径）**: 按完整 ITP v3.0 描述组件树，引用 `design_tokens.json` Token 定义。
+    - **无 `ui_context.md`（降级路径）**: 按完整 ITP v3.0 描述组件树，引用 `design_tokens.json` Token 定义。
 
     **3. `plan.json`** (必须):
     - 模板: `templates/plan.template.json`。

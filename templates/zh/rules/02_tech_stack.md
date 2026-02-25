@@ -61,10 +61,12 @@ UI 制品层级：
 | 制品 | 格式 | 读者 | 职责 |
 |:---|:---|:---|:---|
 | `ui_concept.html` | 单文件 HTML | 人类 (浏览器) | **全局视觉真相源** — 所有屏幕的线框图/着色稿 |
+| `ui_context.md` | 结构化 Markdown | AI (plan/code/audit/edit) | **AI 屏幕索引** — 屏幕 ID/路由/状态/导航关系/共享组件轻量清单 |
 | `ui.md` | ITP v3.0 DSL | AI (code/audit) | 任务级 UI 范围声明 — 指定本任务涵盖的屏幕/组件 |
-- `ui_concept.html` 由 `archi-ui-wireframe` Skill 生成，覆盖项目所有用户可见屏幕
-- `ui.md` 仅声明"本任务负责 ui_concept.html 中的哪些屏幕/状态"，禁重定义全局布局
-- code 阶段以 `ui.md` + `ui_concept.html` 为准，用**项目自身技术栈**实现等价视觉效果
+- `ui_concept.html` 由 `archi-ui-wireframe` Skill 生成，覆盖项目所有用户可见屏幕；仅供人类在浏览器预览
+- `ui_context.md` 由同一 Skill 同步生成，是 AI 命令读取 UI 结构信息的唯一入口；禁手动修改
+- `ui.md` 仅声明"本任务负责 ui_context.md 中的哪些屏幕/状态"，禁重定义全局布局
+- code 阶段以 `ui.md`（任务设计）+ `ui_context.md`（结构/导航）+ `design_tokens.json`（视觉约束）为准；同时以 `ui_concept.html` 为**只读视觉参考**校准布局，用**项目自身技术栈**实现等价视觉效果
 
 ### 4.2 Naming (PrefixFunction)
 组件命名须遵循 `前缀+功能` 格式：

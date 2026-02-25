@@ -221,7 +221,7 @@
     ### 3.7 其他全域文件（按需）
     - `dictionary.json`: 從程式碼提取領域術語
     - [?UI] `design_tokens.json`: 從 CSS 變數/主題提取
-    - [?UI] `ui_concept.html`: **不由本命令產生**。繼承完成後，提示使用者執行 `archi-ui-wireframe` Skill 產生全域 UI 線框圖（基於已識別的 Roadmap 功能模組）。
+    - [?UI] `ui_concept.html` + `ui_context.md`: **不由本命令產生**。繼承完成後，提示使用者執行 `archi-ui-wireframe` Skill 產生全域 UI 線框圖（Skill 同時產生兩個檔案）。
     - [?Data] `data_snapshot.json`: 從 schema/migration 提取
     - `error_codes.json`: 從程式碼中的錯誤定義提取
 

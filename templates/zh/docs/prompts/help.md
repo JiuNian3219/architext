@@ -16,7 +16,7 @@
 <step_1_load_context>
     **Role**: 项目观察员
     **Action**:
-    1.  读取 `[[__DOCS_DIR__]]/global/roadmap.json` — 获取任务列表、状态、依赖关系。
+    1.  读取 `[[__DOCS_DIR__]]/global/roadmap.json` — 仅提取每个 task 的 `id/title/status/deps/tag` 字段；`goal/notes` 字段跳过（导航和状态聚合不需要这些详情）。
     2.  扫描 `[[__DOCS_DIR__]]/features/` 目录 — 获取已有 Feature 及其文档完整度（有无 spec.md / ui.md / plan.json）。
     3.  [?question] 若用户带了问题，根据问题语义定位相关文件（spec / plan / vision / tech_stack / data_snapshot 等），按需读取。
 

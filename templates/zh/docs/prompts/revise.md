@@ -96,6 +96,11 @@
     **Role**: 执行工程师
     **Action**:
 
+    **Safety Checkpoint** (执行前须完成):
+    1. 检查 Git 工作区状态（建议执行 `git status`）。
+    2. 如有未提交变更 → 提示用户先 commit 或 stash，再继续执行。
+    3. 工作区干净后，告知用户：如需回滚，可执行 `git checkout -- .` 恢复到变更前状态。
+
     **Phase 1 — 修改全局资产**:
     按用户确认的清单修改全局文件。每个文件修改后输出变更摘要。
 
@@ -115,7 +120,7 @@
     **Phase 2 — 级联更新 Feature 文档**:
     对每个受影响的 Feature，按 `/archi.edit` 标准执行:
     1.  更新 `spec.md`（逻辑/规则因全局变更而需调整的部分）。
-    2.  [?UI] 更新 `ui.md`（范围/交互因全局变更而需调整的部分）；如 `ui_concept.html` 的屏幕结构受影响，同步更新对应屏幕（运行 `archi-ui-wireframe` Skill 局部更新模式）。
+    2.  [?UI] 更新 `ui.md`（范围/交互因全局变更而需调整的部分）；如屏幕结构受影响，运行 `archi-ui-wireframe` Skill（局部更新模式）同步更新 `ui_concept.html` + `ui_context.md`。
     3.  在 `plan.json` 的 `phases` 中追加新 Phase: `Phase X: Global Revision — [变更主题] (<Date>)`，列出落地任务。
 
     **Output**: 每个文件的变更摘要（全局 + Feature）。

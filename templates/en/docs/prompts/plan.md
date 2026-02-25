@@ -24,23 +24,20 @@
     **Role**: System Analyst
     **Action**:
     1.  **Read Roadmap**: Read `[[__DOCS_DIR__]]/global/roadmap.json`.
-        - **Pre-flight**: Check if `<ID>` Deps are completed. If not, reject Plan (unless user forces).
-    2.  **Read Vision**: Read `[[__DOCS_DIR__]]/global/vision.md`.
-        - Extract North Star Metric and Design Philosophy; subsequent proposals must align with these.
+        - **Pre-flight**: Read only the `<ID>` task entry and its direct deps' `id/title/status`; check whether deps are completed, reject Plan if not (unless user forces). No need to load other task data.
+    2.  **Read Vision**: Read `[[__DOCS_DIR__]]/global/vision.md` — extract North Star Metric and Design Philosophy sections only; skip remaining chapters.
     3.  **Read Tech Stack**: `02_tech_stack.md` (technical red lines + **Section 9 Project Conventions**).
         - Extract global architecture conventions from Section 9 (Error Handling / Data Flow / Auth & Access) for convention inheritance in step_2.
     4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`.
-    4.5 [?UI] **Read UI Concept**: `[[__DOCS_DIR__]]/global/ui_concept.html` (if it exists).
-        - Locate the screen ID(s) this task covers (e.g. S-03) and their responsible states.
-        - Lock the screen scope; use directly in step_4 `ui.md §1` generation — do not invent new screens.
-        - If `ui_concept.html` does not exist → skip; write `ui.md` in full ITP format.
+    4.5 [?UI] **Read UI Context**: `[[__DOCS_DIR__]]/global/ui_context.md` (if it exists).
+        - Look up the screen inventory to locate the screen IDs (e.g. S-03) for this feature and their state coverage.
+        - Lock the screen scope to fill in `ui.md §1` in step_4; do not invent new screen IDs.
+        - If `ui_context.md` does not exist → skip; write `ui.md` in full ITP format.
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`.
     6.  **Read Dependency Context** (if dependent tasks exist):
-        - Read dependency tasks' `spec.md` (interface contracts) and `plan.json` (implemented content).
-        - **Stub Compatibility**: If a dependency's Spec-Status is Stub:
-          a. Read source files listed in the stub's "Associated Files" section as supplementary context.
-          b. Extract the module's public interfaces/exported types from code.
-          c. Use extracted results as upstream interface reference for this plan (do not modify the stub itself).
+        - Read only the Interface/Type definitions section of the dep's `spec.md` (`## Interface` or `## Types` chapter); skip Scenarios and other content.
+        - Execute only when a `ref: features/<dep_id>/spec.md#X` reference appears in the current spec/plan; skip if no reference found.
+        - **Stub Compatibility**: If a dependency's Spec-Status is Stub, extract source files from the stub's "Associated Files", read entry files to extract public interfaces/exported types as upstream interface reference.
         - Avoid re-defining upstream interfaces; ensure integration points are precisely aligned.
 
     **Output**: Present a **Feature Context Brief** to the user:
@@ -60,6 +57,17 @@
 <step_1_5_complexity>
     **Role**: Product Consultant
     **Action**: Assess feature complexity to decide whether to run the full step_2 flow:
+
+    **① Granularity hard-limit check (before complexity verdict)**:
+
+    | Metric | Limit |
+    |:---|:---|
+    | Estimated spec.md Scenario count | ≤ 6 |
+    | Estimated plan.json Phase count | ≤ 4 |
+
+    > Estimation method: based on the roadmap task goal and dependency context loaded in step_1, quickly enumerate the core behavior paths. Trigger if over the limit — no need for precise calculation.
+
+    **② Complexity verdict (only after granularity passes)**:
 
     | Signal | Verdict | Flow |
     |:---|:---|:---|
@@ -193,17 +201,17 @@
 
     **2. `ui.md`** [?UI]:
     - Template: `templates/ui.template.md`.
-    - **With `ui_concept.html` (primary path)**:
-      1. **UI Divergence Check** (required before writing `ui.md`): Compare the confirmed feature design from step_2 against the corresponding screen in `ui_concept.html`:
+    - **With `ui_context.md` (primary path)**:
+      1. **UI Divergence Check** (required before writing `ui.md`): Compare the confirmed feature design from step_2 against the screen inventory in `ui_context.md`:
 
          | Divergence type | Criteria | Action |
          |:---|:---|:---|
-         | No divergence | Wireframe matches design | Write `ui.md` directly, reference screen ID |
-         | Minor addition | New state / modal / local area, overall layout unchanged | Silently update the screen in `ui_concept.html`; note `MODIFIED: ui_concept.html S-XX` in `ui.md` |
-         | Structural divergence | Layout restructure, new standalone screen, flow path change | **Pause** — present divergence summary to user, wait for **OK**, then update `ui_concept.html`, then write `ui.md` |
+         | No divergence | Screen index matches design | Write `ui.md` directly, reference screen ID |
+         | Minor addition | New state / modal / local area, overall layout unchanged | Call `archi-ui-wireframe` Skill (Plan refinement mode) to update `ui_concept.html` + `ui_context.md`; note `MODIFIED: S-XX` in `ui.md` |
+         | Structural divergence | Layout restructure, new standalone screen, flow path change | **Pause** — present divergence summary to user, wait for **OK**, then call Skill to update `ui_concept.html` + `ui_context.md`, then write `ui.md` |
 
       2. After resolving divergence, fill in screen scope and delta components per `ui.template.md`.
-    - **Without `ui_concept.html` (fallback path)**: Write full ITP v3.0 component tree, referencing `design_tokens.json` token definitions.
+    - **Without `ui_context.md` (fallback path)**: Write full ITP v3.0 component tree, referencing `design_tokens.json` token definitions.
 
     **3. `plan.json`** (Mandatory):
     - Template: `templates/plan.template.json`.

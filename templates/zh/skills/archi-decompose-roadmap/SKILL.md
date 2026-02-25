@@ -16,7 +16,7 @@ Brief → [本 Skill] → roadmap.json 任务
                        ui.md（任务 UI 范围声明）[?UI]
                        plan.json（可执行步骤 + 测试用例 checkbox）
                    也更新: map.json / dictionary.json / data_snapshot.json
-                   视觉参考: [[__DOCS_DIR__]]/global/ui_concept.html [?UI]
+                   视觉参考: [[__DOCS_DIR__]]/global/ui_context.md [?UI]
                             ↓
                    /archi.code → 读 spec.md + ui.md + plan.json → 写代码
 ```

@@ -39,10 +39,10 @@
 <step_1_load>
     **Role**: System Analyst
     **Action**:
-    1.  **Read Vision**: `[[__DOCS_DIR__]]/global/vision.md` — north star metrics, project boundaries.
-    2.  **Read Roadmap**: `[[__DOCS_DIR__]]/global/roadmap.json` — current phase structure, existing tasks (including Legacy), ID numbering watermark.
+    1.  **Read Vision**: `[[__DOCS_DIR__]]/global/vision.md` — read North Star Metric and Boundaries sections only; skip remaining chapters.
+    2.  **Read Roadmap**: `[[__DOCS_DIR__]]/global/roadmap.json` — extract only `id/title/status/deps/tag` fields per task (skip `goal/notes`; requirement decomposition does not need these); read current max ID watermark for new task numbering.
     3.  **Read Tech Stack**: `02_tech_stack.md` — technical constraints.
-    4.  **Read Map**: `[[__DOCS_DIR__]]/global/map.json` — architecture topology, directory mapping.
+    4.  **Read Map**: `[[__DOCS_DIR__]]/global/map.json` — read `directoryMapping` and `featureRelations` only; skip `logicalTopology` and `criticalUserJourneys`.
     5.  **Scan Features**: Scan `[[__DOCS_DIR__]]/features/` directory — understand existing feature summaries (title + key flows, no full read needed).
 
     **Output**: Internal context summary, proceed to `<step_2_analysis>`.
@@ -171,7 +171,7 @@
 
     | Priority | Action | Description |
     |:---|:---|:---|
-    | [?UI] Recommended | Run `archi-ui-wireframe` Skill (append mode) | Append screens for new features to `ui_concept.html` |
+    | [?UI] Recommended | Run `archi-ui-wireframe` Skill (append mode) | Append screens for new features to `ui_concept.html`, sync `ui_context.md` |
     | 1 | `/archi.plan <first pending task ID>` | Deep planning for the first actionable task |
     | 2 | Review roadmap | Confirm dependency relationships and priorities |
 </step_5_signoff>

@@ -120,7 +120,7 @@
     **Phase 2 — 級聯更新 Feature 檔案**:
     對每個受影響的 Feature，按 `/archi.edit` 標準執行:
     1.  更新 `spec.md`（邏輯/規則因全域變更而需調整的部分）。
-    2.  [?UI] 更新 `ui.md`（範圍/互動因全域變更而需調整的部分）；如 `ui_concept.html` 的畫面結構受影響，同步更新對應畫面（執行 `archi-ui-wireframe` Skill 局部更新模式）。
+    2.  [?UI] 更新 `ui.md`（範圍/互動因全域變更而需調整的部分）；如畫面結構受影響，執行 `archi-ui-wireframe` Skill（局部更新模式）同步更新 `ui_concept.html` + `ui_context.md`。
     3.  在 `plan.json` 的 `phases` 中追加新 Phase: `Phase X: Global Revision — [變更主題] (<Date>)`，列出落地任務。
 
     **Output**: 每個檔案的變更摘要（全域 + Feature）。

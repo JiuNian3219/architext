@@ -17,7 +17,7 @@
     **Role**: 產品經理
     **Action**:
     - 讀取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
-    - [?UI] 讀取 `[[__DOCS_DIR__]]/global/ui_concept.html`（定位本功能對應的畫面範圍）。
+    - [?UI] 讀取 `[[__DOCS_DIR__]]/global/ui_context.md`（定位本功能對應的畫面範圍及導覽關係）。
     - 檢測 spec.md 中的 `Spec-Status` 欄位：
       - `Full` → 正常流程，進入 step_2。
       - `Stub` → 進入 step_1_5_enrich。
@@ -37,7 +37,7 @@
        - 補充 Gherkin Scenarios（覆蓋正常流程 + 異常路徑）
        - 補充介面/型別定義（如該功能是其他功能的上游）
     5. 更新 `Spec-Status: Stub → Full`。
-    6. [?UI] 如模組有 UI → 同步生成或更新 `ui.md`（範圍聲明）；如 `ui_concept.html` 須新增畫面，提示使用者執行 `archi-ui-wireframe` Skill。
+    6. [?UI] 如模組有 UI → 同步生成或更新 `ui.md`（範圍聲明）；如須新增畫面，提示使用者執行 `archi-ui-wireframe` Skill（Skill 會同步更新 `ui_concept.html` + `ui_context.md`）。
     7. 生成 `plan.json`（全部 task 為 done，記錄已實作內容）。
     8. 向使用者輸出補全後的 spec 摘要。
 
@@ -49,18 +49,18 @@
     **Role**: 需求分析師 & 設計師
     **Action**:
     - 根據 `[context]` 修改 spec.md（邏輯/規則變更）和 ui.md（結構/互動變更）。
-    - [?UI 修改] 按以下規則同步更新 `ui_concept.html`：
+    - [?UI 修改] 透過 Skill 同步更新 `ui_concept.html` + `ui_context.md`（Skill 為兩個檔案的唯一寫者）：
 
       | 變更類型 | 判定標準 | 處理方式 |
       |:---|:---|:---|
-      | 無畫面影響 | 僅邏輯/資料變更，無視覺差異 | 僅改 spec.md，`ui_concept.html` 不動 |
-      | 輕微 UI 調整 | 新增/修改狀態、彈窗、局部區域，不改整體版面 | 直接更新 `ui_concept.html` 對應畫面，輸出 `MODIFIED: ui_concept.html S-XX` |
-      | 畫面結構變更 | 版面重構、新增獨立畫面、導覽路徑變化 | 執行 `archi-ui-wireframe` Skill（修改畫面模式），輸出 `MODIFIED: ui_concept.html S-XX`；若已完成 Phase 2 著色，同步對修改畫面重新著色 |
-      | 功能縮減 | 畫面/區域整體移除 | 執行 `archi-ui-wireframe` Skill（刪除畫面模式），輸出 `REMOVED: ui_concept.html S-XX` |
+      | 無畫面影響 | 僅邏輯/資料變更，無視覺差異 | 僅改 spec.md，`ui_concept.html` / `ui_context.md` 不動 |
+      | 輕微 UI 調整 | 新增/修改狀態、彈窗、局部區域，不改整體版面 | 呼叫 Skill（修改畫面模式）更新兩個檔案，輸出 `MODIFIED: S-XX` |
+      | 畫面結構變更 | 版面重構、新增獨立畫面、導覽路徑變化 | 呼叫 Skill（修改畫面模式）更新兩個檔案，輸出 `MODIFIED: S-XX`；若已完成 Phase 2 著色，同步重新著色 |
+      | 功能縮減 | 畫面/區域整體移除 | 呼叫 Skill（刪除畫面模式）更新兩個檔案，輸出 `REMOVED: S-XX` |
 
     - 需求模糊時向使用者提問 (A/B/C/D 選項) 確認細節。
 
-    **Output**: 更新後的 Spec、UI 文件及 `ui_concept.html` 變更摘要。
+    **Output**: 更新後的 Spec、UI 文件及 `ui_concept.html` / `ui_context.md` 變更摘要。
 </step_2_refine_docs>
 
 <step_3_update_plan>

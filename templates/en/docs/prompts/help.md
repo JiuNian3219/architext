@@ -16,7 +16,7 @@
 <step_1_load_context>
     **Role**: Project Observer
     **Action**:
-    1.  Read `[[__DOCS_DIR__]]/global/roadmap.json` — get task list, statuses, dependencies.
+    1.  Read `[[__DOCS_DIR__]]/global/roadmap.json` — extract only `id/title/status/deps/tag` fields per task; skip `goal/notes` (navigation and status aggregation do not need these details).
     2.  Scan `[[__DOCS_DIR__]]/features/` directory — get existing Features and their doc completeness (spec.md / ui.md / plan.json).
     3.  [?question] If user provided a question, locate relevant files by semantic match (spec / plan / vision / tech_stack / data_snapshot, etc.), read as needed.
 

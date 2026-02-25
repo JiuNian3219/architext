@@ -74,7 +74,7 @@
     {
       "file": "ui.md",
       "category": "UI/UX",
-      "purpose": "任務級 UI 範圍聲明 — 指定本任務對應 ui_concept.html 中的畫面/元件"
+      "purpose": "任務級 UI 範圍聲明 — 引用 ui_context.md 中的畫面 ID，指定本任務涵蓋的畫面/元件範圍"
     },
     {
       "file": "plan.json",

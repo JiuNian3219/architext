@@ -39,10 +39,10 @@
 <step_1_load>
     **Role**: 系統分析師
     **Action**:
-    1.  **Read Vision**: `[[__DOCS_DIR__]]/global/vision.md` — 北極星指標、專案邊界。
-    2.  **Read Roadmap**: `[[__DOCS_DIR__]]/global/roadmap.json` — 當前 phase 結構、已有 task（含 Legacy）、ID 編號水位。
+    1.  **Read Vision**: `[[__DOCS_DIR__]]/global/vision.md` — 僅讀北極星指標和 Boundaries 段落；其餘章節跳過。
+    2.  **Read Roadmap**: `[[__DOCS_DIR__]]/global/roadmap.json` — 僅提取每個 task 的 `id/title/status/deps/tag` 欄位（跳過 `goal/notes`，需求分解不需要這些詳情）；讀取當前最大 ID 水位用於新任務編號。
     3.  **Read Tech Stack**: `02_tech_stack.md` — 技術約束。
-    4.  **Read Map**: `[[__DOCS_DIR__]]/global/map.json` — 架構拓撲、目錄映射。
+    4.  **Read Map**: `[[__DOCS_DIR__]]/global/map.json` — 僅讀 `directoryMapping` 和 `featureRelations`；`logicalTopology` 和 `criticalUserJourneys` 跳過。
     5.  **Scan Features**: 掃描 `[[__DOCS_DIR__]]/features/` 目錄 — 了解已有 feature 概要（標題 + 關鍵流程，無需全文）。
 
     **Output**: 內部上下文摘要，進入 `<step_2_analysis>`。
@@ -171,7 +171,7 @@
 
     | 優先級 | 動作 | 說明 |
     |:---|:---|:---|
-    | [?UI] 推薦 | 執行 `archi-ui-wireframe` Skill（追加模式） | 為新增功能追加畫面到 `ui_concept.html` |
+    | [?UI] 推薦 | 執行 `archi-ui-wireframe` Skill（追加模式） | 為新增功能追加畫面到 `ui_concept.html`，同步更新 `ui_context.md` |
     | 1 | `/archi.plan <第一個 pending 任務 ID>` | 對首個可執行任務做深度規劃 |
     | 2 | 審查 roadmap | 確認依賴關係和優先級 |
 </step_5_signoff>

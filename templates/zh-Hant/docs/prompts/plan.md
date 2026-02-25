@@ -24,23 +24,20 @@
     **Role**: 系統分析師
     **Action**:
     1.  **Read Roadmap**: 讀取 `[[__DOCS_DIR__]]/global/roadmap.json`。
-        - **Pre-flight**: 檢查 `<ID>` 的 Dep 是否已完成。未完成則拒絕 Plan（除非使用者強制）。
-    2.  **Read Vision**: 讀取 `[[__DOCS_DIR__]]/global/vision.md`。
-        - 提取北極星指標和設計哲學，後續方案須與此對齊。
+        - **Pre-flight**: 僅讀取 `<ID>` 對應的任務條目及其直接 deps 的 `id/title/status`；檢查 deps 是否已完成，未完成則拒絕 Plan（除非使用者強制）。無需載入其他任務資料。
+    2.  **Read Vision**: 讀取 `[[__DOCS_DIR__]]/global/vision.md` — 僅提取北極星指標和設計哲學段落；其餘章節跳過。
     3.  **Read Tech Stack**: `02_tech_stack.md` (技術紅線 + **Section 9 專案約定**)。
         - 提取 Section 9 中的全域架構約定（Error Handling / Data Flow / Auth & Access），供 step_2 約定繼承使用。
     4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`。
-    4.5 [?UI] **Read UI Concept**: `[[__DOCS_DIR__]]/global/ui_concept.html`（如存在）。
-        - 定位本功能對應的畫面 ID（如 S-03）及其負責的狀態。
-        - 鎖定畫面範圍，供 step_4 生成 `ui.md §1` 時直接填入，禁自行發明新畫面。
-        - 若 `ui_concept.html` 不存在 → 跳過，`ui.md` 按完整 ITP 格式填寫。
+    4.5 [?UI] **Read UI Context**: `[[__DOCS_DIR__]]/global/ui_context.md`（如存在）。
+        - 從畫面索引中定位本功能對應的畫面 ID（如 S-03）及其負責的狀態。
+        - 鎖定畫面範圍，供 step_4 生成 `ui.md §1` 時直接填入，禁自行發明新畫面 ID。
+        - 若 `ui_context.md` 不存在 → 跳過，`ui.md` 按完整 ITP 格式填寫。
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
     6.  **Read Dependency Context** (如有依賴任務):
-        - 讀取依賴任務的 `spec.md` (介面契約) 和 `plan.json` (已實作內容)。
-        - **Stub 相容**: 如依賴任務的 Spec-Status 為 Stub：
-          a. 讀取 stub 中「關聯檔案」列出的原始碼檔案作為補充上下文。
-          b. 從程式碼中提取該模組的公共介面/匯出型別。
-          c. 將提取結果作為本次規劃的上游介面參考（不修改 stub 本身）。
+        - 僅讀依賴任務 `spec.md` 的 Interface/Type 定義段（`## Interface` 或 `## Types` 章節）；不讀 Scenarios 等其餘內容。
+        - 僅當當前 spec/plan 出現 `ref: features/<dep_id>/spec.md#X` 引用時執行；無引用時跳過。
+        - **Stub 相容**: 如依賴任務的 Spec-Status 為 Stub，從 stub「關聯檔案」提取原始碼，讀入口檔案提取公共介面/匯出型別，作為上游介面參考。
         - 避免重複定義上游介面，確保對接點精確對齊。
 
     **Output**: 向使用者輸出 **Feature Context Brief**：
@@ -60,6 +57,17 @@
 <step_1_5_complexity>
     **Role**: 產品顧問
     **Action**: 評估功能複雜度，決定是否走完整 step_2 流程：
+
+    **① 粒度紅線檢查（優先於複雜度判定）**：
+
+    | 指標 | 上限 |
+    |:---|:---|
+    | 預估 spec.md Scenario 數 | ≤ 6 個 |
+    | 預估 plan.json Phase 數 | ≤ 4 個 |
+
+    > 預估方法：根據 step_1 載入的 roadmap task goal 和依賴上下文，快速列舉核心行為路徑數量。超出上限即觸發，無需精確計算。
+
+    **② 複雜度判定（粒度通過後執行）**：
 
     | 信號 | 判定 | 流程 |
     |:---|:---|:---|
@@ -193,17 +201,17 @@
 
     **2. `ui.md`** [?UI]:
     - 範本 `templates/ui.template.md`。
-    - **有 `ui_concept.html`（主路徑）**:
-      1. **UI 偏差檢查**（寫 `ui.md` 前必須執行）：對比 step_2 確認的功能設計與 `ui_concept.html` 中對應畫面，識別偏差：
+    - **有 `ui_context.md`（主路徑）**:
+      1. **UI 偏差檢查**（寫 `ui.md` 前必須執行）：對比 step_2 確認的功能設計與 `ui_context.md` 中的畫面索引，識別偏差：
 
          | 偏差類型 | 判定標準 | 處理方式 |
          |:---|:---|:---|
-         | 無偏差 | 線框圖與設計一致 | 直接寫 `ui.md`，引用畫面 ID |
-         | 輕微增量 | 新增狀態/彈窗/局部區域，不改整體布局 | 靜默更新 `ui_concept.html` 對應畫面，在 `ui.md` 注明 `MODIFIED: ui_concept.html S-XX` |
-         | 結構性偏差 | 布局重構、新增獨立畫面、流程路徑變化 | **暫停**，向使用者輸出偏差說明，等待 **OK** 後更新 `ui_concept.html`，再寫 `ui.md` |
+         | 無偏差 | 畫面索引與設計一致 | 直接寫 `ui.md`，引用畫面 ID |
+         | 輕微增量 | 新增狀態/彈窗/局部區域，不改整體布局 | 呼叫 `archi-ui-wireframe` Skill（Plan 細化模式）更新 `ui_concept.html` + `ui_context.md`，在 `ui.md` 注明 `MODIFIED: S-XX` |
+         | 結構性偏差 | 布局重構、新增獨立畫面、流程路徑變化 | **暫停**，向使用者輸出偏差說明，等待 **OK** 後呼叫 Skill 更新 `ui_concept.html` + `ui_context.md`，再寫 `ui.md` |
 
       2. 完成偏差處理後，按 `ui.template.md` 填寫畫面範圍聲明和差異元件。
-    - **無 `ui_concept.html`（降級路徑）**: 按完整 ITP v3.0 描述元件樹，引用 `design_tokens.json` Token 定義。
+    - **無 `ui_context.md`（降級路徑）**: 按完整 ITP v3.0 描述元件樹，引用 `design_tokens.json` Token 定義。
 
     **3. `plan.json`** (必須):
     - 範本: `templates/plan.template.json`。
