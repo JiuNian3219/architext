@@ -96,6 +96,11 @@
     **Role**: Execution Engineer
     **Action**:
 
+    **Safety Checkpoint** (required before execution):
+    1. Check Git working directory status (run `git status`).
+    2. If uncommitted changes exist → prompt user to commit or stash first, then continue.
+    3. Once working directory is clean, inform user: to roll back, run `git checkout -- .` to restore pre-change state.
+
     **Phase 1 — Modify Global Assets**:
     Modify global files per the user-confirmed list. Output change summary for each file.
 

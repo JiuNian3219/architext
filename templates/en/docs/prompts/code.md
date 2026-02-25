@@ -140,8 +140,9 @@
 
     **Action** (After Gate passes):
     1.  Confirm all task `done` marks in `plan.json` are updated (should be done in real-time during step_3; this is a final check).
-    2.  Output completed task list with patch links (Code Reference).
-    3.  Provide next step suggestions and Git Commit Suggestion (Conventional Commits).
+    2.  **Drift Warning**: Compare code changes against `spec.md`'s key checkpoints (interface signatures, return types, key operations in Gherkin scenarios). If code exceeds spec coverage → mark `⚠️ Spec Drift`, suggest running `/archi.edit <ID>` to sync docs.
+    3.  Output completed task list with patch links (Code Reference).
+    4.  Provide next step suggestions and Git Commit Suggestion (Conventional Commits).
 
     **Checkpoint** (Confirm before Output): □ Terminal Gate all executed
 

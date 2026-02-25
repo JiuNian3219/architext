@@ -75,6 +75,7 @@
     | 11 | [?Data] **Data Integrity** | Field names/types consistent with `data_snapshot.json` |
     | 12 | [?I18n] **I18n Compliance** | No hardcoded strings; must use Key/dictionary references |
     | 13 | **Orphan .gitkeep** | Dir has other files but still contains `.gitkeep` — must remove |
+    | 14 | **Spec-Code Drift** | Do code interfaces/types/behaviors match `spec.md`; have manual changes been synced to docs |
 
     **Output**: Findings list grouped by dimension, each with severity, location, description.
 </step_2_task>

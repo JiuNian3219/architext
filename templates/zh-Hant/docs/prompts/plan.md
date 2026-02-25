@@ -57,6 +57,22 @@
     內部保留完整上下文素材，進入 step_2。
 </step_1_load>
 
+<step_1_5_complexity>
+    **Role**: 產品顧問
+    **Action**: 評估功能複雜度，決定是否走完整 step_2 流程：
+
+    | 信號 | 判定 | 流程 |
+    |:---|:---|:---|
+    | 無依賴 + 無新實體 + 無架構決策 + 預估 ≤3 tasks | **Simple** | 跳過 step_2 訪談，直接生成 spec + plan |
+    | 有依賴 或 有新實體 或 需架構決策 | **Standard** | 正常執行 step_2 Unified Proposal |
+
+    **Simple 模式**:
+    - 跳過 5 維度架構建議和 User Confirm Gate
+    - spec 精簡為 1-2 個 Gherkin 場景
+    - plan 精簡為單一 Phase
+    - signoff 時確認（取代 step_2 的 Gate）
+</step_1_5_complexity>
+
 <step_2_interview>
     **Role**: 架構師
 

@@ -57,6 +57,22 @@
     Retain full context materials internally, proceed to step_2.
 </step_1_load>
 
+<step_1_5_complexity>
+    **Role**: Product Consultant
+    **Action**: Assess feature complexity to decide whether to run the full step_2 flow:
+
+    | Signal | Verdict | Flow |
+    |:---|:---|:---|
+    | No deps + no new entities + no architecture decisions + estimated ≤3 tasks | **Simple** | Skip step_2 interview; generate spec + plan directly |
+    | Has deps OR new entities OR architecture decisions needed | **Standard** | Execute step_2 Unified Proposal normally |
+
+    **Simple Mode**:
+    - Skip 5-dimension architecture recommendations and User Confirm Gate
+    - spec condensed to 1-2 Gherkin scenarios
+    - plan condensed to a single Phase
+    - Confirm at signoff (replacing step_2 Gate)
+</step_1_5_complexity>
+
 <step_2_interview>
     **Role**: Architect
 

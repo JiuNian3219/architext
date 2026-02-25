@@ -140,8 +140,9 @@
 
     **Action** (Gate 通过后):
     1.  确认 `plan.json` 各 task `done` 标记已全部更新（应在 step_3 实时完成，此处做最终校验）。
-    2.  输出完成任务清单与补丁链接(Code Reference)。
-    3.  提供下一步建议与 Git Commit Suggestion（Conventional Commits）。
+    2.  **Drift Warning**: 对比本次代码变更与 `spec.md` 的关键点位（接口签名、返回类型、Gherkin 场景关键操作）。如发现代码超出 spec 覆盖范围 → 标注 `⚠️ Spec 漂移`，建议运行 `/archi.edit <ID>` 同步文档。
+    3.  输出完成任务清单与补丁链接(Code Reference)。
+    4.  提供下一步建议与 Git Commit Suggestion（Conventional Commits）。
 
     **Checkpoint** (Output 前须确认): □ Terminal Gate 全部执行
 
