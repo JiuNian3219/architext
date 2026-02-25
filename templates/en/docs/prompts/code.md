@@ -129,24 +129,20 @@
 </step_5_audit>
 
 <step_6_signoff>
-    **CLI Mandatory Execution**: The following commands must be executed in terminal; prohibited from text suggestion only.
+    **Terminal Gate** (Do not skip; must complete before output summary):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi plan <ID>` | All done or exempt only; not passed → return to step_3 |
+    | 2 | `npx archi task <ID> --status done` | Task status updated |
+    | 3 | `npx archi task --check` | No ERROR-level issues |
+    | 4 | `npx archi render` | `.md` views generated |
 
-    **Plan Completion Gate (Mandatory)**:
-    1.  Run `npx archi plan <ID>` to check plan.json task completion.
-    2.  Pass criteria: All tasks `done: true` or uncompleted items only belong to  Human Intervention /  Force Majeure.
-    3.  Not passed: Prohibited from signing off, return to step_3 to continue.
-    4.  Exempt items must annotate reason and category.
+    **Action** (After Gate passes):
+    1.  Update plan.json, mark completed tasks as done.
+    2.  Output completed task list with patch links (Code Reference).
+    3.  Provide next step suggestions and Git Commit Suggestion (Conventional Commits).
 
-    **Signoff Action** (After Gate passes, execute in order):
-    1. **CLI Mandatory Execution** (must run in terminal, do not skip):
-       - `npx archi task <ID> --status done` (or `active`). Prohibited from editing roadmap directly.
-       - `npx archi task --check`; fix if failed.
-    2. Output completed task list with patch links (Code Reference).
-    3. Update plan.json, mark completed tasks as done.
-    4. Run `npx archi render` to regenerate visual `.md` files.
-    5. Provide next step suggestions and Git Commit Suggestion (Conventional Commits).
-
-    **Checkpoint** (Confirm before Output): □ `npx archi plan` executed □ `npx archi task --status` executed □ `npx archi task --check` executed.
+    **Checkpoint** (Confirm before Output): □ Terminal Gate all executed
 
     **Output**: Completion summary with completed tasks, exempt items (if any), Git Commit suggestion, Next Steps table.
 </step_6_signoff>

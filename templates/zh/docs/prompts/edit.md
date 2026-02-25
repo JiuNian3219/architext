@@ -69,10 +69,16 @@
     - 在 `plan.json` 的 `phases` 数组中追加新 Phase 对象。
     - 列出具体 Tasks (API update, UI tweak, Test update)；每项须可验证。
 
-    **Output**: 追加了新任务的 plan.json，运行 `npx archi render` 更新 `.md` 视图。
+    **Terminal Gate** (禁止跳过，须在 step_4 输出前全部完成):
+    | 步骤 | 命令 | 通过条件 |
+    |:---|:---|:---|
+    | 1 | `npx archi render` | `.md` 视图生成完成 |
+
+    **Output**: 追加了新任务的 plan.json。
 </step_3_update_plan>
 
 <step_4_summary>
+    **Action** (Gate 须在 step_3 完成):
     **Output**: Feature 更新摘要，含 Spec/UI/Plan 变更概要和 Next Steps 表格。推荐运行 `/archi.code <ID>`。
 </step_4_summary>
 

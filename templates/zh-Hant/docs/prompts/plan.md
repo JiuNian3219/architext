@@ -212,10 +212,15 @@
 </step_5_audit>
 
 <step_6_signoff>
-    **Action**:
-    1.  執行 `npx archi task --check` 驗證 Roadmap 一致性。
-    2.  執行 `npx archi task <ID> --status active` 標記任務為進行中。
-    3.  輸出總結。
+    **Terminal Gate** (禁止跳過，須在輸出總結前全部完成):
+    | 步驟 | 命令 | 通過條件 |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | 無 ERROR 級問題 |
+    | 2 | `npx archi task <ID> --status active` | 任務已標記為進行中 |
+    | 3 | `npx archi render` | `.md` 視圖生成完成 |
+
+    **Action** (Gate 通過後):
+    1.  輸出總結。
 
     **Output**: Feature 定義摘要，含架構建議確認表（各維度最終選擇及理由）和 Next Steps 表格。
 </step_6_signoff>

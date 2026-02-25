@@ -242,7 +242,13 @@
 </step_4_audit>
 
 <step_5_signoff>
-    **Action**:
+    **Terminal Gate** (Do not skip; must complete before output summary):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | No ERROR-level issues |
+    | 2 | `npx archi render` | `.md` views generated |
+
+    **Action** (After Gate passes):
     1.  Run `npx archi task` to display task overview.
     2.  Output summary.
 

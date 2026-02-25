@@ -69,10 +69,16 @@
     - Append new phase to `plan.json` phases array: `Phase X: Change Request (<Date>)`.
     - List specific Tasks (API update, UI tweak, Test update); each must be verifiable.
 
-    **Output**: plan.json with new tasks appended. Run `npx archi render` to regenerate visual `.md` files.
+    **Terminal Gate** (Do not skip; must complete before step_4 output):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi render` | `.md` views generated |
+
+    **Output**: plan.json with new tasks appended.
 </step_3_update_plan>
 
 <step_4_summary>
+    **Action** (Gate must complete in step_3):
     **Output**: Feature update summary with Spec/UI/Plan change overview and Next Steps table. Recommend running `/archi.code <ID>`.
 </step_4_summary>
 

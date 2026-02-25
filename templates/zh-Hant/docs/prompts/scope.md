@@ -147,14 +147,18 @@
     1.  將新任務追加到 `[[__DOCS_DIR__]]/global/roadmap.json` 對應 Phase 的 `tasks` 陣列中。
     2.  如需新增 Phase → 追加到 `phases` 陣列。
     3.  更新 `lastUpdated` 欄位。
-    4.  執行 `npx archi task --check` 驗證一致性。
-    5.  執行 `npx archi render` 生成可讀視圖。
+
+    **Terminal Gate** (禁止跳過，須在輸出總結前全部完成):
+    | 步驟 | 命令 | 通過條件 |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | 無 ERROR 級問題 |
+    | 2 | `npx archi render` | `.md` 視圖生成完成 |
 
     **Output**: 寫入確認。
 </step_4_roadmap_update>
 
 <step_5_signoff>
-    **Action**:
+    **Action** (Gate 須在 step_4 完成):
     1.  執行 `npx archi task` 輸出任務進度概覽。
     2.  輸出總結。
 

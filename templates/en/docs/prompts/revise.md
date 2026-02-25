@@ -118,9 +118,6 @@
     2.  [?UI] Update `ui.md` (scope/interaction adjustments due to global changes); if `ui_concept.html` screen structure is affected, sync the relevant screens (run `archi-ui-wireframe` Skill in incremental update mode).
     3.  Append new Phase to `plan.json` `phases`: `Phase X: Global Revision — [Change Topic] (<Date>)`, listing implementation tasks.
 
-    **Phase 3 — Render Views**:
-    Run `npx archi render` to update all Markdown views.
-
     **Output**: Change summary for each file (global + Feature).
 </step_4_execute>
 
@@ -131,9 +128,14 @@
     2.  Feature docs aligned with updated global assets.
     3.  No orphaned references (stale terms/paths in dictionary/map cleaned up).
 
-    **Action**:
-    1.  Run `npx archi task --check` to verify Roadmap consistency.
-    2.  Output change summary.
+    **Terminal Gate** (Do not skip; must complete before output summary):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | No ERROR-level issues |
+    | 2 | `npx archi render` | `.md` views generated |
+
+    **Action** (After Gate passes):
+    1.  Output change summary.
 
     **Output**:
     ```

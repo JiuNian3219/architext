@@ -147,14 +147,18 @@
     1.  Append new tasks to corresponding Phase's `tasks` array in `[[__DOCS_DIR__]]/global/roadmap.json`.
     2.  If new Phase needed → append to `phases` array.
     3.  Update `lastUpdated` field.
-    4.  Run `npx archi task --check` to verify consistency.
-    5.  Run `npx archi render` to generate readable view.
+
+    **Terminal Gate** (Do not skip; must complete before output summary):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | No ERROR-level issues |
+    | 2 | `npx archi render` | `.md` views generated |
 
     **Output**: Write confirmation.
 </step_4_roadmap_update>
 
 <step_5_signoff>
-    **Action**:
+    **Action** (Gate must complete in step_4):
     1.  Run `npx archi task` to display task progress overview.
     2.  Output summary.
 

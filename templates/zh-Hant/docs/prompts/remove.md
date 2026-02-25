@@ -134,10 +134,12 @@
 
 <step_4_verify>
     **Role**: 驗證工程師
-    **CLI 必執行**:
-    1.  `npx archi task --check` — 驗證 Roadmap 一致性（無懸空依賴）。
-    2.  `npx archi render` — 重新產生 Markdown 視圖。
-    3.  運行專案建置命令 — 確認刪除程式碼後無編譯錯誤。
+    **Terminal Gate** (禁止跳過，須在 step_5 輸出前全部完成):
+    | 步驟 | 命令 | 通過條件 |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | 無 ERROR 級問題，無懸空依賴 |
+    | 2 | `npx archi render` | `.md` 視圖生成完成 |
+    | 3 | 運行專案建置命令 | 零編譯錯誤 |
 
     | 檢查項 | 通過標準 |
     |:---|:---|

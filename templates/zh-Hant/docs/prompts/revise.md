@@ -118,9 +118,6 @@
     2.  [?UI] 更新 `ui.md`（範圍/互動因全域變更而需調整的部分）；如 `ui_concept.html` 的畫面結構受影響，同步更新對應畫面（執行 `archi-ui-wireframe` Skill 局部更新模式）。
     3.  在 `plan.json` 的 `phases` 中追加新 Phase: `Phase X: Global Revision — [變更主題] (<Date>)`，列出落地任務。
 
-    **Phase 3 — 渲染視圖**:
-    執行 `npx archi render` 更新所有 Markdown 視圖。
-
     **Output**: 每個檔案的變更摘要（全域 + Feature）。
 </step_4_execute>
 
@@ -131,9 +128,14 @@
     2.  Feature 檔案與更新後的全域資產對齊。
     3.  無孤立引用（dictionary/map 中舊術語/路徑是否已清理）。
 
-    **Action**:
-    1.  執行 `npx archi task --check` 驗證 Roadmap 一致性。
-    2.  輸出變更總結。
+    **Terminal Gate** (禁止跳過，須在輸出總結前全部完成):
+    | 步驟 | 命令 | 通過條件 |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | 無 ERROR 級問題 |
+    | 2 | `npx archi render` | `.md` 視圖生成完成 |
+
+    **Action** (Gate 通過後):
+    1.  輸出變更總結。
 
     **Output**:
     ```

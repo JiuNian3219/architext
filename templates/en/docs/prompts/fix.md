@@ -34,7 +34,12 @@
     - Update `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`, append to `phases` array a phase object with `name`: `Bugfix: <Bug Title>`.
     - Tasks: 1) Create reproduction test (Red) 2) Apply fix (Green) 3) Regression test.
 
-    **Output**: plan.json with fix tasks appended. Run `npx archi render` to regenerate visual `.md` files.
+    **Terminal Gate** (Do not skip; must complete before step_5 output):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi render` | `.md` views generated |
+
+    **Output**: plan.json with fix tasks appended.
 </step_2_plan_fix>
 
 <step_3_execute_fix>
@@ -47,14 +52,13 @@
 
 <step_4_verify>
     **Role**: QA Engineer
-    **Action**: Execute same validation flow as `/archi.code`:
-
-    | Check Item | Requirement |
-    |:---|:---|
-    | **Build** | Build succeeds |
-    | **Type Check** | Zero type errors |
-    | **Lint/Format** | Pass Lint and Format |
-    | **Test** | Reproduction test + regression test pass |
+    **Terminal Gate** (Do not skip; must complete before step_5 output):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | Run build command | Build succeeds |
+    | 2 | Run type check | Zero type errors |
+    | 3 | Run Lint/Format | Pass |
+    | 4 | Run tests | Reproduction + regression tests pass |
 
     Any failure must be fixed until passed.
 </step_4_verify>

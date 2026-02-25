@@ -212,11 +212,15 @@
 </step_5_audit>
 
 <step_6_signoff>
-    **Action**:
-    1.  Run `npx archi task --check` to verify Roadmap consistency.
-    2.  Run `npx archi task <ID> --status active` to mark task as in-progress.
-    3.  Run `npx archi render` to regenerate visual `.md` files.
-    4.  Output summary.
+    **Terminal Gate** (Do not skip; must complete before output summary):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | No ERROR-level issues |
+    | 2 | `npx archi task <ID> --status active` | Task marked as in-progress |
+    | 3 | `npx archi render` | `.md` views generated |
+
+    **Action** (After Gate passes):
+    1.  Output summary.
 
     **Output**: Feature definition summary with Architecture Confirmation table (each dimension's final choice and rationale) and Next Steps table.
 </step_6_signoff>

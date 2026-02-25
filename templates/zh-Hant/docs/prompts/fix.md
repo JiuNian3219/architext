@@ -34,7 +34,12 @@
     - 更新 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`，在 `phases` 陣列中追加 phase 物件，`name` 為 `Bugfix: <Bug Title>`。
     - Tasks: 1) 建立複現測試(Red) 2) 修復(Green) 3) 迴歸測試。
 
-    **Output**: 追加了修復任務的 plan.json，執行 `npx archi render` 更新視圖。
+    **Terminal Gate** (禁止跳過，須在 step_5 輸出前全部完成):
+    | 步驟 | 命令 | 通過條件 |
+    |:---|:---|:---|
+    | 1 | `npx archi render` | `.md` 視圖生成完成 |
+
+    **Output**: 追加了修復任務的 plan.json。
 </step_2_plan_fix>
 
 <step_3_execute_fix>
@@ -47,14 +52,13 @@
 
 <step_4_verify>
     **Role**: QA 工程師
-    **Action**: 執行與 `/archi.code` 相同的驗證流程:
-
-    | 檢查項 | 要求 |
-    |:---|:---|
-    | **Build** | 建置成功 |
-    | **Type Check** | 零型別錯誤 |
-    | **Lint/Format** | 通過 Lint 和 Format |
-    | **Test** | 複現測試 + 迴歸測試通過 |
+    **Terminal Gate** (禁止跳過，須在 step_5 輸出前全部完成):
+    | 步驟 | 命令 | 通過條件 |
+    |:---|:---|:---|
+    | 1 | 運行建置命令 | 建置成功 |
+    | 2 | 運行型別檢查 | 零型別錯誤 |
+    | 3 | 運行 Lint/Format | 通過 |
+    | 4 | 運行測試 | 複現測試 + 迴歸測試通過 |
 
     任何失敗須修復至通過。
 </step_4_verify>

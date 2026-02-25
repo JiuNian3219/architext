@@ -115,7 +115,11 @@
         - Add new entries (with layer, description)
         - Handle renames (update path, preserve other metadata)
     2.  Update `lastUpdated` field.
-    3.  Run `npx archi render` to regenerate Markdown views.
+
+    **Terminal Gate** (Do not skip; must complete before output summary):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi render` | `.md` views generated |
 
     **Output**: Update summary:
     - **Removed**: N stale entries

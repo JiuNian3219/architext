@@ -242,7 +242,13 @@
 </step_4_audit>
 
 <step_5_signoff>
-    **Action**:
+    **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
+    | 步骤 | 命令 | 通过条件 |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
+    | 2 | `npx archi render` | `.md` 视图生成完成 |
+
+    **Action** (Gate 通过后):
     1.  运行 `npx archi task` 输出任务概览。
     2.  输出总结。
 

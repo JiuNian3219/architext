@@ -134,10 +134,12 @@
 
 <step_4_verify>
     **Role**: Verification Engineer
-    **CLI mandatory**:
-    1.  `npx archi task --check` — Verify Roadmap consistency (no dangling deps).
-    2.  `npx archi render` — Regenerate Markdown views.
-    3.  Run project build command — Confirm no compilation errors after code removal.
+    **Terminal Gate** (Do not skip; must complete before step_5 output):
+    | Step | Command | Pass Condition |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | No ERROR-level issues, no dangling deps |
+    | 2 | `npx archi render` | `.md` views generated |
+    | 3 | Run project build command | Zero compilation errors |
 
     | Check | Pass Criteria |
     |:---|:---|

@@ -190,7 +190,13 @@
 </step_4_audit>
 
 <step_5_signoff>
-    **Action**:
+    **Terminal Gate** (禁止跳過，須在輸出總結前全部完成):
+    | 步驟 | 命令 | 通過條件 |
+    |:---|:---|:---|
+    | 1 | `npx archi task --check` | 無 ERROR 級問題 |
+    | 2 | `npx archi render` | `.md` 視圖生成完成 |
+
+    **Action** (Gate 通過後):
     1.  執行 `npx archi task` 輸出任務進度概覽。
     2.  輸出總結。
 
