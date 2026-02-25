@@ -61,14 +61,37 @@ Extract user scenarios from the Brief feature descriptions and aggregate them in
 2. Scenarios sharing the same core flow → merge into one Feature task
 3. Granularity calibration (core principle: **one task = one `/archi.plan` session = one `features/<slug>/` subdirectory**):
 
-| Signal | Action |
-|:---|:---|
-| Description contains "and" (two independent concerns) | Split |
-| DoD exceeds 4 acceptance criteria | Split |
-| Task spans 3+ independent UI areas or implementation domains | Split |
-| A single `/archi.plan` session cannot fully describe behavior in one spec.md | Split |
-| Two tasks share >50% of their file set | Merge |
-| One task is meaningless without the other | Merge |
+    **Behavior perspective (PM)**:
+
+    | Signal | Action |
+    |:---|:---|
+    | Description contains "and" (two independent concerns) | Split |
+    | DoD exceeds 4 acceptance criteria | Split |
+    | Task spans 3+ independent UI areas or implementation domains | Split |
+    | A single `/archi.plan` session cannot fully describe behavior in one spec.md | Split |
+    | Two tasks share >50% of their file set | Merge |
+    | One task is meaningless without the other | Merge |
+
+    **Engineering perspective (independent of behavior — either trigger = split)**:
+
+    | Signal | Action | Example |
+    |:---|:---|:---|
+    | Task contains ≥2 **implementation domains**, each independently unit-testable | Split | Pure logic layer + UI rendering layer → separate tasks |
+    | Implementation requires mastering ≥3 independent technical concerns simultaneously | Split | Char rendering + state machine + animation API → three distinct things |
+    | A concern has its own significant boundary complexity (e.g. IME, Canvas, third-party chart API) | Extract that concern | Input capture + IME → own task |
+
+    > **Why add the engineering perspective**: The behavior perspective describes "what the user sees"; the engineering perspective describes "what the AI must simultaneously master during `/archi.code`". A task that is behaviorally cohesive (same screen) but spans multiple unrelated implementation domains will cause the AI to lose focus and produce poor cross-domain code.
+
+    **Granularity hard limits (quantitative)**:
+
+    > One Roadmap Task = the minimum functional unit that can produce **one cohesive spec.md + one executable plan.json**.
+
+    | Metric | Limit | Action when exceeded |
+    |:---|:---|:---|
+    | spec.md Scenario count | ≤ 6 | Return to `/archi.scope` to split — task is too large |
+    | plan.json Phase count | ≤ 4 | Same |
+
+    > These limits serve as a predictive check during decomposition. If during `/archi.plan` the estimated counts are projected to exceed these limits, pause and prompt the user to return to `/archi.scope` for re-splitting. Never force-fit into a single task.
 
 **DoD format**: `When done, user can <verifiable user behavior>; boundary: <what is explicitly excluded>`
 
@@ -93,6 +116,16 @@ For all Feature tasks, ask: do multiple Features depend on X, and must X exist b
 | Third-party integration layer | Multiple Features reuse the same external service |
 
 **Core Task Planning Contract**: Tasks with `tag: Core` must end their `description` with a declaration of their primary exported interface (function signature or key interface name). Downstream Feature `/archi.plan` sessions can wire directly to this interface without reading upstream implementation, ensuring cross-task planning consistency and predictability.
+
+**Infra task granularity principle (opposite of Feature — lean toward merging)**:
+
+Infra tasks don't carry business logic. AI executing them operates in a narrow context and is not at risk of "domain overload". Over-splitting Infra only adds dependency chain complexity with no benefit.
+
+| Signal | Action |
+|:---|:---|
+| Same engineering category, same execution window, related tech stack | Merge (e.g. scaffolding + CI + router skeleton → one INF task) |
+| Completely different tech stack AND clearly different execution timing | Split (e.g. Dexie.js storage layer vs. Shadcn theme config) |
+| An Infra output is called directly by ≥2 Features (interface-type) | Keep as its own task (must declare exported interface contract) |
 
 ---
 
