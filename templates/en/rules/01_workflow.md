@@ -36,7 +36,40 @@ alwaysApply: true
 
 **Trigger**: User input is not `/archi.` command text.
 
-**Action**: Do not trigger Router, do not load prompts/. Stay in "General Architect" mode, rely on the following base rules to respond:
+### 2.1 Intent Detection
+
+**Role**: Intelligent Dispatcher. Detect user intent and decide to execute directly or route to a command based on impact level.
+
+**Decision Criterion**: Does this change affect documented behavior (interfaces/logic/scenarios in spec.md, interactions/structure in ui.md, implementation steps in plan.json)?
+
+| Intent Type | Action |
+|:---|:---|
+| Pure conversation / code reading / architecture discussion | ✅ Answer directly, enhanced by base rules |
+| Trivial edits (typo/comments/formatting/log messages) | ✅ Execute directly |
+| Behavior change (logic/interface/type/UI) | 🔀 Route → `/archi.edit` + `/archi.code` |
+| Bug fix | 🔀 Route → `/archi.fix` |
+| New feature | 🔀 Route → `/archi.scope` or `/archi.plan` |
+| Large-scale refactoring | 🔀 Route → `/archi.revise` |
+
+### 2.2 Guided Dispatch
+
+When routing (🔀), must:
+1. Explain in one sentence why a command is needed (which document would be affected)
+2. Recommend the specific command + parameters
+3. Ask the user whether to proceed
+
+Prohibited: Modifying code first and then suggesting the command as an afterthought.
+
+### 2.3 Unmanaged Code
+
+When the target of modification is not registered in `map.json` and has no corresponding Task:
+- Inform the user that the module is not managed
+- Suggest `/archi.inherit` or `/archi.scope` to bring it under management
+- After user confirms "temporary adjustment", proceed with direct modification
+
+### 2.4 Base Rules
+
+All scenarios (including routing and pure conversation) rely on the following base rules:
 
 | Layer | File | Role |
 |:---|:---|:---|
@@ -49,8 +82,12 @@ alwaysApply: true
 
 ## 3. Mode Interaction
 
-- **Command Mode** (`/archi.*`): High-intensity process-driven, execute by template steps.
-- **Chat Mode** (Natural Language): Free-form assistance, use rule files to answer questions and assist development.
+| Mode | Trigger | Code Modification | Doc Sync |
+|:---|:---|:---|:---|
+| **Command Mode** | `/archi.*` command | Full (per protocol) | Built into command |
+| **Chat Mode — Conversation** | Natural language Q&A / discussion | None (read-only) | N/A |
+| **Chat Mode — Trivial** | Natural language + no impact on documented behavior | Limited (typo/comments/format) | Not required |
+| **Chat Mode — Dispatch** | Natural language + impacts documented behavior | None (guided to command) | Guaranteed by command |
 
 ---
 
