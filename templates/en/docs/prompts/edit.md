@@ -68,13 +68,15 @@
     **Action**:
     - Append new phase to `plan.json` phases array: `Phase X: Change Request (<Date>)`.
     - List specific Tasks (API update, UI tweak, Test update); each must be verifiable.
+    - **Status Transition**: If current task status=`done`, reset to `active` after appending the Phase (otherwise `/archi.code` will be rejected by the Status Gate).
 
     **Terminal Gate** (Do not skip; must complete before step_4 output):
     | Step | Command | Pass Condition |
     |:---|:---|:---|
     | 1 | `npx archi render` | `.md` views generated |
+    | 2 | [if current status=done] `npx archi task <ID> --status active` | Task status reset to active |
 
-    **Output**: plan.json with new tasks appended.
+    **Output**: plan.json with new tasks appended; if status transition was performed, output `MODIFIED: roadmap.json <ID>.status done→active`.
 </step_3_update_plan>
 
 <step_4_summary>

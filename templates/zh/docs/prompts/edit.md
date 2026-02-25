@@ -68,13 +68,15 @@
     **Action**:
     - 在 `plan.json` 的 `phases` 数组中追加新 Phase 对象。
     - 列出具体 Tasks (API update, UI tweak, Test update)；每项须可验证。
+    - **状态转换**: 若当前任务 status=`done`，追加 Phase 后须将状态重置为 `active`（否则后续 `/archi.code` 将被 Status Gate 拒绝）。
 
     **Terminal Gate** (禁止跳过，须在 step_4 输出前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
     | 1 | `npx archi render` | `.md` 视图生成完成 |
+    | 2 | [当前 status=done] `npx archi task <ID> --status active` | 任务状态已重置为 active |
 
-    **Output**: 追加了新任务的 plan.json。
+    **Output**: 追加了新任务的 plan.json；若执行了状态转换，输出 `MODIFIED: roadmap.json <ID>.status done→active`。
 </step_3_update_plan>
 
 <step_4_summary>

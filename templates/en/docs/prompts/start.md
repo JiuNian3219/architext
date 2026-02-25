@@ -164,6 +164,7 @@
 
     ### 3.5 Other global docs (as needed)
     - `dictionary.json`: Extract domain terms from Brief
+    - [?Data] `data_snapshot.json`: Initialize core entity skeleton (entity names + primary key fields) from Brief data descriptions; write empty template if no data descriptions provided
     - [?UI] `design_tokens.json`: Populate from Brief "Style & Tone" and "Visual Reference":
       - `primitivePalette.brand`: Extract Hex values from brand palette; leave empty if none
       - `mode`: Infer default + support array from theme preference
@@ -171,6 +172,13 @@
       - `illustration.style` / `illustration.iconLibrary`: Set from illustration style and icon library fields
       - `semanticTokens.colors`: If brand color present, fill Primary using Brand-600/Brand-500 keys
     - `error_codes.json`: Predefine core error codes from feature list
+
+    ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
+    - `directoryMapping`: Pre-register core directory skeleton based on architecture pattern declared in tech_stack
+      (e.g. `src/commands/`, `src/core/`, `src/utils/`); each directory with a one-line purpose description
+    - `logicalTopology`: Empty array for now; populate during `/archi.plan`
+    - `criticalUserJourneys`: Empty array
+    - `featureRelations`: Empty array
 
     **Output**: Write all files, then run `npx archi render` to generate visual `.md`.
 </step_3_constitution>
@@ -204,7 +212,13 @@
     - **Brief adoption**: Key decisions adopted from Brief
     - **AI completions**: Tech/decisions AI recommended and rationale
     - **Roadmap overview**: Task count and phase distribution
-    - **Next Steps table**: Recommend running `/archi.plan INF-01`
+    - **Next Steps table**:
+
+    | Priority | Action | Notes |
+    |:---|:---|:---|
+    | [?UI] First | Run `archi-ui-wireframe` Skill | Generate global UI wireframe; subsequent `/archi.plan` depends on this file to locate screen scope |
+    | Recommended | `/archi.plan INF-01` | Plan the first infrastructure task |
+    | Optional | `/archi.scope <scope-brief.md>` | Append more requirements to Roadmap if needed |
 </step_5_signoff>
 
 <fallback_interview>

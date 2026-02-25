@@ -164,6 +164,7 @@
 
     ### 3.5 其他全局文档 (按需)
     - `dictionary.json`: 从 Brief 提取领域术语
+    - [?Data] `data_snapshot.json`: 基于 Brief 中的数据描述，初始化核心实体骨架（实体名 + 主键字段）；无数据描述时写入空模板
     - [?UI] `design_tokens.json`: 基于 Brief「风格与调性」和「视觉参考」填充：
       - `primitivePalette.brand`: 从品牌色板提取 Hex 值；无则留空
       - `mode`: 从色调倾向推断 default + support 数组
@@ -171,6 +172,13 @@
       - `illustration.style` / `illustration.iconLibrary`: 从图示风格和图标库填写
       - `semanticTokens.colors`: 如有品牌色则以 Brand-600/Brand-500 等 key 填充 Primary
     - `error_codes.json`: 基于功能列表预定义核心错误码
+
+    ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
+    - `directoryMapping`: 基于 tech_stack 中声明的架构模式，预注册核心目录骨架
+      （如 `src/commands/`, `src/core/`, `src/utils/` 等）；各目录附一句话用途说明
+    - `logicalTopology`: 暂为空数组，待 `/archi.plan` 时按需补充
+    - `criticalUserJourneys`: 暂为空数组
+    - `featureRelations`: 暂为空数组
 
     **Output**: 写入所有文件，然后运行 `npx archi render` 生成可视化 `.md`。
 </step_3_constitution>
@@ -204,7 +212,13 @@
     - **Brief 来源确认**: 列出从 Brief 中采纳的关键决策
     - **AI 补全项**: 列出 AI 自动推荐的技术/决策及理由
     - **Roadmap 概览**: 任务数量和阶段分布
-    - **Next Steps 表格**: 推荐运行 `/archi.plan INF-01`
+    - **Next Steps 表格**:
+
+    | 优先级 | 行动 | 说明 |
+    |:---|:---|:---|
+    | [?UI] 最优先 | 运行 `archi-ui-wireframe` Skill | 生成全局 UI 线框图；后续 `/archi.plan` 将依赖此文件定位屏幕范围 |
+    | 推荐 | `/archi.plan INF-01` | 规划第一个基础设施任务 |
+    | 可选 | `/archi.scope <scope-brief.md>` | 如有更多需求待分解，追加到 Roadmap |
 </step_5_signoff>
 
 <fallback_interview>
