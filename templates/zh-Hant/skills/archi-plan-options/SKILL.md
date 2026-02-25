@@ -14,7 +14,7 @@ description: Architext 架構決策選項庫。定義五個核心維度（Core S
     ↓
 直接推薦行（多數維度）或 Q-table（需使用者裁決時）
     ↓
-寫入 Feature Proposal 架構建議表
+寫入 Task Proposal 架構建議表
 ```
 
 > **Skill 的職責邊界**：
@@ -231,4 +231,4 @@ description: Architext 架構決策選項庫。定義五個核心維度（Core S
 
 ---
 
-> **中間產物**：此 Skill 為子程序，產出推薦行或 Q-table 後控制權交還 `/archi.plan` step_2，由調用方組裝進 Feature Proposal 的架構建議表。
+> **中間產物**：此 Skill 為子程序，產出推薦行或 Q-table 後控制權交還 `/archi.plan` step_2，由調用方組裝進 Task Proposal 的架構建議表。

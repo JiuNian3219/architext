@@ -7,7 +7,7 @@
     <style>Strict, Professional, CLI-Like</style>
     <language>繁體中文</language>
     <principles>
-      1.  **Brief-Driven**: 以使用者提供的 Brief 檔案為核心輸入來源，禁憑空腦暴功能。
+      1.  **Brief-Driven**: 以使用者提供的 Brief 檔案為核心輸入來源，禁憑空腦暴任務。
       2.  **AI-Native Perspective**: 所有推薦/補全從 AI Agent 視角撰寫。關注：Context Locality、Type Safety、Hallucination Risk、Self-Correction。
       3.  **User Agency First**: Brief 中使用者已填寫的選擇須直接採納，禁質疑或替換。
       4.  **Minimal Questions**: 僅針對資訊缺口提問，Brief 充分時可略過提問直接生成。
@@ -36,8 +36,8 @@
 
     3. 解析 Brief 各 Section，提取：
        - 專案特徵標籤 (UI/Data/CLI/Lib/API — 由 Brief 中存在的技術偏好欄位和段落推斷)
-       - 核心功能列表
-       - 已有設計決策（使用者對特定功能/頁面/流程的預定設計）
+       - 核心任務列表
+       - 已有設計決策（使用者對特定任務/頁面/流程的預定設計）
        - 技術偏好（區分「已確定」與「留空/推薦」）
        - 已有資源與上下文
        - 邊界與約束
@@ -63,7 +63,7 @@
     |:---|:---|:---|
     | 專案身份 | 名稱 + 一句話描述 + 問題陳述均已填寫 | 必須 |
     | 目標使用者 | 至少描述了核心使用者角色 | 必須 |
-    | 核心功能 | 至少列出 2 個具體功能且每項有描述 | 必須 |
+    | 核心任務 | 至少列出 2 個具體任務且每項有描述 | 必須 |
     | 技術棧-核心 | 語言/執行環境 + 核心框架已填寫（非留空） | 必須 |
     | 技術棧-選填 | 資料庫/ORM/CSS 方案/部署等留空項 | 可補 |
     | 專案起點 | 全新 or 已有程式碼（影響架構決策） | 必須 |
@@ -123,7 +123,7 @@
     | 技術棧、部署目標、第三方庫/服務 | 規則檔案 `02_tech_stack` |
     | 風格調性（UI/CLI/API）— 視覺關鍵字/資訊密度/色調/動效偏好 | 規則檔案 `02_tech_stack` (UI Protocol) + `design_tokens.json` motion.preference / illustration |
     | [?UI] **視覺參考**（品牌色板/字體/圖示庫/競品截圖/禁用風格） | `design_tokens.json` primitivePalette.brand + illustration + motion；截圖/URL 存入 `vision.md` Visual Reference |
-    | 核心功能列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
+    | 核心任務列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **已有設計決策** | Roadmap 對應任務的 `goal` 欄位中注入，並在 `/archi.plan` 時作為硬約束 |
     | 邊界與反目標 | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
     | 已有資源（設計稿/品牌/已有 API） | `[[__DOCS_DIR__]]/global/vision.md` + 規則檔案 `02_tech_stack` 按內容歸屬 |
@@ -148,10 +148,10 @@
     - **AX Optimization**: 推薦時優先 AI 友善型技術 (Static Typing, Popular Frameworks, Convention-over-Configuration)
     - 須填充完整的 Section 1-9（Global Mandates、Technology Selection、Coding Standards、UI Protocol[?UI]、Testing、Deployment、Architecture、Anti-Patterns、**Project Conventions**）
     - `Section 5 Testing` 中的 Environment Scripts 定義須完整
-    - **Section 9 Project Conventions**: 基於 Brief 和專案特徵確立全域架構約定，`/archi.plan` 將自動繼承這些約定而非逐功能重複提問：
+    - **Section 9 Project Conventions**: 基於 Brief 和專案特徵確立全域架構約定，`/archi.plan` 將自動繼承這些約定而非逐任務重複提問：
       - **Error Handling**: 根據專案型別推斷 — [?UI] Fail Fast + Form Validation; [?CLI] Fail Fast (stderr); [?API] Schema Validation + Fail Fast; 多選時空格分隔
       - [?UI] **Data Flow**: 根據即時性需求 — 無即時需求 → Standard Request (+ SWR/React Query if applicable); Brief 提及即時/協作 → Realtime
-      - [?Web/API] **Auth & Access**: 根據 Brief 使用者角色 — 單角色 → Authenticated; 多角色 → RBAC; 無權限描述 → 留空待 Plan 階段逐功能確認
+      - [?Web/API] **Auth & Access**: 根據 Brief 使用者角色 — 單角色 → Authenticated; 多角色 → RBAC; 無權限描述 → 留空待 Plan 階段逐任務確認
       - 每項須填寫 Strategy/Default + Rationale（理由須結合此專案的具體場景）
 
     ### 3.3 Custom Rules (規則檔案 `90_custom_rules`)
@@ -160,7 +160,7 @@
     - 如使用者未提供任何自訂規則，保持範本預設內容
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    [[SKILL: 按 `archi-decompose-roadmap` Skill 的協議，基於 Brief 功能列表生成任務鏈，寫入 roadmap.json]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 並遵循其協議執行）]]，生成後直接進入下一步，無需使用者確認。
+    [[SKILL: 按 `archi-decompose-roadmap` Skill 的協議，基於 Brief 任務列表生成任務鏈，寫入 roadmap.json]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 並遵循其協議執行）]]，生成後直接進入下一步，無需使用者確認。
 
     ### 3.5 其他全域檔案 (按需)
     - `dictionary.json`: 從 Brief 提取領域術語
@@ -171,7 +171,7 @@
       - `motion.preference` / `motion.patterns`: 從動效偏好填寫 (subtle / rich / none)；rich 時擴充 patterns
       - `illustration.style` / `illustration.iconLibrary`: 從圖示風格和圖示庫填寫
       - `semanticTokens.colors`: 如有品牌色則以 Brand-600/Brand-500 等 key 填充 Primary
-    - `error_codes.json`: 基於功能列表預定義核心錯誤碼
+    - `error_codes.json`: 基於任務列表預定義核心錯誤碼
 
     ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
     - `directoryMapping`: 基於 tech_stack 中聲明的架構模式，預注冊核心目錄骨架
@@ -191,7 +191,7 @@
     3.  **Custom Rules**: Brief 補充說明/技術紅線中的規則是否已寫入規則檔案 `90_custom_rules`？
     4.  **Roadmap 合規**: 執行 `npx archi task --check` 驗證一致性。
     5.  [?UI] **Design Tokens**: `design_tokens.json` 含基礎顏色/字體/間距定義？
-    6.  **Brief 對齊**: 所有 Brief 中聲明的核心功能均已映射到 Roadmap 任務？
+    6.  **Brief 對齊**: 所有 Brief 中聲明的核心任務均已映射到 Roadmap 任務？
     7.  **資訊零遺漏**: Brief 中所有使用者填寫的內容均已路由到對應檔案？
 
     如有問題則靜默修正；嚴重問題標記 `Risk Warning`。
@@ -233,7 +233,7 @@
     2. 如使用者選擇繼續對話，按以下順序引導：
        a. 專案是什麼？（名稱、一句話描述、解決什麼問題）
        b. 給誰用？（目標使用者）
-       c. 核心功能有哪些？（至少 2-3 個）
+       c. 核心任務有哪些？（至少 2-3 個）
        d. 用什麼技術？（語言/框架，已確定的部分）
        e. 有什麼約束？（不做的事、時間、相容性要求）
     3. 收集完畢後，將資訊寫入 `project-brief.md`（專案根目錄），然後跳轉 `<step_1_gap_analysis>`。

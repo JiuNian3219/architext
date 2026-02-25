@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: Based on the `features/<id>_<Slug>/plan.json` task list, complete feature development; follow `02_tech_stack.md` ([?UI] also follow `design_tokens.json`); pass build, type check, lint, formatting, test and audit.
+  **Goal**: Based on the `tasks/<id>_<Slug>/plan.json` task list, complete task implementation; follow `02_tech_stack.md` ([?UI] also follow `design_tokens.json`); pass build, type check, lint, formatting, test and audit.
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -19,7 +19,7 @@
 <step_1_resolve>
     **Role**: System Analyst
     **Action**:
-    1.  **Resolve ID**: Parse `<id>` → Feature Name, Slug, phase/status from `[[__DOCS_DIR__]]/global/roadmap.json`.
+    1.  **Resolve ID**: Parse `<id>` → Task Name, Slug, phase/status from `[[__DOCS_DIR__]]/global/roadmap.json`.
     2.  **Status Gate** — Only `active` can enter code workflow:
 
         | Status | Handling |
@@ -30,11 +30,11 @@
         | `done` ✅ | Reject — already completed, use `/archi.edit <ID>` for modifications |
 
     3.  **Load Context** (Use Roadmap `📁 Slug` to locate):
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — Logic & Scenarios
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — task UI scope declaration (if exists)
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — Logic & Scenarios
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — task UI scope declaration (if exists)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI screen index (screen IDs / routes / states / navigation graph / shared components)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — read-only visual reference (calibrate layout against this during implementation; do not redesign — design is already locked in ui.md)
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — Task breakdown (contains `notes` shorthand; must reference during execution)
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — Task breakdown (contains `notes` shorthand; must reference during execution)
         - `02_tech_stack.md` — Technical Red Lines
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
@@ -91,25 +91,25 @@
     | **Test** | Existing Tests | Run existing test suite, all pass; must not break existing tests |
     | | New Coverage | Add tests for newly added/modified critical logic; pure styling exempt |
 
-    **Feature Verification (Mandatory)**
+    **Task Verification (Mandatory)**
 
-    > Prohibited from marking complete via code review or automated tests alone; must actually run and verify the target feature.
+    > Prohibited from marking complete via code review or automated tests alone; must actually run and verify the target task.
     > If dev server is not running, execute `[[__DOCS_DIR__]]/scripts/dev-up` first.
     > **Read `notes.Verify` first**: Read the `Verify: [...]` portion at the end of the current task's `notes` field and use that operation as the concrete e2e step. Fall back to the table below only if the `notes` field has no `Verify` entry.
 
     | Project Type | Verification Action | Pass Criteria |
     |:---|:---|:---|
-    | [?Web] | Browser-navigate target feature path | Renders correctly, no interaction errors, clean console |
+    | [?Web] | Browser-navigate target task path | Renders correctly, no interaction errors, clean console |
     | [?API] | Call new/modified endpoints | Status code and body match spec |
     | [?CLI] | Execute target command (normal args + edge cases) | stdout as expected, correct exit code |
     | [?Lib] | Run example code or playground to verify exported API | No runtime errors, correct return values |
-    | [?Mobile] | Emulator/device operate target feature | UI renders, interactions respond |
-    | [?Desktop] | Launch app operate target feature | Window renders, feature functional |
+    | [?Mobile] | Emulator/device operate target task | UI renders, interactions respond |
+    | [?Desktop] | Launch app operate target task | Window renders, task functional |
 
     **Evidence**: Output must include verification results (command output summary / screenshot / error log).
     **Fallback**: If verification keeps failing and environment issues suspected → `[[__DOCS_DIR__]]/scripts/dev-reset` → `[[__DOCS_DIR__]]/scripts/dev-up` → retry.
 
-    **Output**: ✅/❌ status and reason for each check; Feature Verification evidence.
+    **Output**: ✅/❌ status and reason for each check; Task Verification evidence.
 </step_4_validate>
 
 <step_5_audit>
@@ -124,8 +124,8 @@
     7.  **Performance**: Avoid unnecessary large dependencies/full imports/useless computation/memory leaks.
     8.  **Security**: No sensitive info leakage; inputs validated.
     9.  **Static Check Zero**: All static check issues resolved.
-    10. **step_4 Gate**: Confirm all step_4 checks (Static + Test + Feature Verification) have passed.
-    11. **Linkage Check**: Read the `featureRelations` array from `[[__DOCS_DIR__]]/global/map.json`; semantically compare the current feature against each `sources` field. If matched, output: `⚠️ Linkage: [aggregator] — [checkNote]`, reminding to confirm whether the aggregator needs to be updated after this implementation. Skip if `featureRelations` is empty.
+    10. **step_4 Gate**: Confirm all step_4 checks (Static + Test + Task Verification) have passed.
+    11. **Linkage Check**: Read the `featureRelations` array from `[[__DOCS_DIR__]]/global/map.json`; semantically compare the current task against each `sources` field. If matched, output: `⚠️ Linkage: [aggregator] — [checkNote]`, reminding to confirm whether the aggregator needs to be updated after this implementation. Skip if `featureRelations` is empty.
 
     Detail issues can be Auto-Fixed with explanation; major risks marked `⚠️ Risk` with alternatives proposed.
 </step_5_audit>

@@ -286,7 +286,7 @@ describe("resolvePlanPath", () => {
     await cleanupTempDir(tempDir);
   });
 
-  it("应通过 Feature ID 定位 plan 文件", async () => {
+  it("应通过 Task ID 定位 plan 文件", async () => {
     await createTestStructure(tempDir, {
       "architext.json": JSON.stringify({
         language: "zh",
@@ -295,7 +295,7 @@ describe("resolvePlanPath", () => {
         updatedAt: new Date().toISOString(),
       }),
       ".architext": {
-        features: {
+        tasks: {
           "SUB-01_Subscription_CRUD": {
             "plan.json": JSON.stringify({ featureId: "SUB-01" }),
           },
@@ -308,7 +308,7 @@ describe("resolvePlanPath", () => {
       path.join(
         tempDir,
         ".architext",
-        "features",
+        "tasks",
         "SUB-01_Subscription_CRUD",
         "plan.json",
       ),
@@ -316,7 +316,7 @@ describe("resolvePlanPath", () => {
     expect(result.featureName).toBe("Subscription CRUD");
   });
 
-  it("不存在的 Feature ID 应抛出 PlanNotFoundError", async () => {
+  it("不存在的 Task ID 应抛出 PlanNotFoundError", async () => {
     await createTestStructure(tempDir, {
       "architext.json": JSON.stringify({
         language: "zh",
@@ -325,7 +325,7 @@ describe("resolvePlanPath", () => {
         updatedAt: new Date().toISOString(),
       }),
       ".architext": {
-        features: {
+        tasks: {
           "SUB-01_Subscription_CRUD": {
             "plan.json": JSON.stringify({ featureId: "SUB-01" }),
           },
@@ -338,7 +338,7 @@ describe("resolvePlanPath", () => {
     );
   });
 
-  it("features 目录不存在时应抛出 PlanNotFoundError", async () => {
+  it("tasks 目录不存在时应抛出 PlanNotFoundError", async () => {
     await createTestStructure(tempDir, {
       ".architext": { ".keep": "" },
     });
@@ -351,7 +351,7 @@ describe("resolvePlanPath", () => {
   it("plan 文件不存在时应抛出 PlanNotFoundError", async () => {
     await createTestStructure(tempDir, {
       ".architext": {
-        features: {
+        tasks: {
           "SUB-01_Subscription_CRUD": {
             "spec.md": "# Spec only, no plan",
           },
@@ -364,10 +364,10 @@ describe("resolvePlanPath", () => {
     );
   });
 
-  it("应正确提取含下划线的 Feature 名称", async () => {
+  it("应正确提取含下划线的 Task 名称", async () => {
     await createTestStructure(tempDir, {
       ".architext": {
-        features: {
+        tasks: {
           "CAT-01_Category_Tags_System": {
             "plan.json": JSON.stringify({ featureId: "CAT-01" }),
           },
@@ -401,9 +401,7 @@ describe("handlePlanCheck", () => {
       ],
     };
 
-    expect(() =>
-      handlePlanCheck("T-001", "Test Feature", result),
-    ).not.toThrow();
+    expect(() => handlePlanCheck("T-001", "Test Task", result)).not.toThrow();
   });
 
   it("应正常输出有未完成任务的报告而不抛错", () => {
@@ -422,9 +420,7 @@ describe("handlePlanCheck", () => {
       ],
     };
 
-    expect(() =>
-      handlePlanCheck("T-001", "Test Feature", result),
-    ).not.toThrow();
+    expect(() => handlePlanCheck("T-001", "Test Task", result)).not.toThrow();
   });
 
   it("应正常处理含人工验收 section 的报告", () => {
@@ -447,15 +443,11 @@ describe("handlePlanCheck", () => {
       ],
     };
 
-    expect(() =>
-      handlePlanCheck("T-001", "Test Feature", result),
-    ).not.toThrow();
+    expect(() => handlePlanCheck("T-001", "Test Task", result)).not.toThrow();
   });
 
   it("空 plan 应输出警告而不抛错", () => {
     const result: PlanCheckResult = { sections: [] };
-    expect(() =>
-      handlePlanCheck("T-001", "Test Feature", result),
-    ).not.toThrow();
+    expect(() => handlePlanCheck("T-001", "Test Task", result)).not.toThrow();
   });
 });

@@ -9,7 +9,7 @@
       {
         "file": "01_workflow.md",
         "role": "SOP",
-        "when": "Decides current task flow (Feature vs Fix) & Acceptance Criteria"
+        "when": "Decides current task flow (Task vs Fix) & Acceptance Criteria"
       },
       {
         "file": "02_tech_stack.md",

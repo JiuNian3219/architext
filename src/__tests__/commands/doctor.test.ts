@@ -152,7 +152,7 @@ describe("runDocStructureChecks", () => {
         global: {},
         prompts: {},
         templates: {},
-        features: {},
+        tasks: {},
       },
     });
     const results = await runDocStructureChecks(BASE_CONFIG, tempDir);
@@ -172,13 +172,13 @@ describe("runDocStructureChecks", () => {
     expect(globalResult?.status).toBe("fail");
   });
 
-  it("可选目录（prompts/templates/features）缺失时：为 warn 而非 fail", async () => {
+  it("可选目录（prompts/templates/tasks）缺失时：为 warn 而非 fail", async () => {
     await createTestStructure(tempDir, {
       ".architext": { global: {} },
     });
     const results = await runDocStructureChecks(BASE_CONFIG, tempDir);
     const optional = results.filter((r) =>
-      ["prompts/", "templates/", "features/"].includes(r.label),
+      ["prompts/", "templates/", "tasks/"].includes(r.label),
     );
     expect(optional.every((r) => r.status === "warn")).toBe(true);
   });

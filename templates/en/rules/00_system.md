@@ -53,7 +53,7 @@ Responsibilities span all tech stacks and project types, focusing on architectur
   </layering_rules>
 
   <anti_patterns>
-    - Cross-Import: Feature A imports Feature B (violates module isolation).
+    - Cross-Import: Task A imports Task B (violates module isolation).
     - Deep Parameter Passing: More than 3 layers deep (use Dependency Injection/Context/State Management).
     - God Object/File: Single file exceeds reasonable line count (must split).
     - Circular Dependencies: Circular dependencies (must refactor to break).

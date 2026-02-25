@@ -2,10 +2,10 @@
 description: Behavioral Specification (Gherkin) for {FEATURE_NAME}.
 ---
 
-# Feature Spec: {FEATURE_NAME}
+# Task Spec: {FEATURE_NAME}
 
 > **Status:** [Draft]
-> **Context:** [AI: Insert a 1-sentence summary of the feature's value]
+> **Context:** [AI: Insert a 1-sentence summary of the task's value]
 
 ## 1. User Stories
 

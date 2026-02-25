@@ -167,7 +167,7 @@
               "id": "LEG-01",
               "title": "<模組名>",
               "status": "done",
-              "goal": "<一句話摘要>。詳見 features/LEG-01_<Slug>/spec.md",
+              "goal": "<一句話摘要>。詳見 tasks/LEG-01_<Slug>/spec.md",
               "deps": [],
               "tag": "Legacy",
               "slug": "<Slug>"
@@ -186,9 +186,9 @@
     - phase-1/2 保留空骨架
     - LEG 間如有依賴關係須在 deps 中體現
 
-    ### 3.5 Feature Stub Specs
+    ### 3.5 Task Stub Specs
 
-    為每個 LEG 任務建立 `[[__DOCS_DIR__]]/features/LEG-xx_<Slug>/spec.md`：
+    為每個 LEG 任務建立 `[[__DOCS_DIR__]]/tasks/LEG-xx_<Slug>/spec.md`：
 
     ```markdown
     # LEG-xx: [Title]
@@ -235,7 +235,7 @@
     2.  **Tech Stack 一致**: 規則檔案 `02_tech_stack` 與 package.json/config 一致？
     3.  **Map 覆蓋**: map.json 覆蓋所有核心目錄？
     4.  **Roadmap 完整**: phase-0 覆蓋所有已識別功能模組？
-    5.  **Stub 齊全**: 每個 LEG-xx 都有對應 features/ 目錄和 spec.md？
+    5.  **Stub 齊全**: 每個 LEG-xx 都有對應 tasks/ 目錄和 spec.md？
     6.  **Dictionary 無衝突**: 術語無歧義或重複？
 
     如有問題則靜默修正；嚴重問題標記 `Risk Warning`。
@@ -263,7 +263,7 @@
     |:---|:---|:---|
     | 1 | 審查 vision.md | 確認 AI 補全的願景描述是否準確 |
     | 2 | `/archi.edit LEG-xx` | 對核心模組補全完整 spec（自動觸發 Enrich 流程） |
-    | 3 | `/archi.scope [file_path]` | 規劃新功能/大模組 |
+    | 3 | `/archi.scope [file_path]` | 規劃新任務/大模組 |
     | 4 | `/archi.plan <任務ID>` | 對單個任務做深度規劃 |
 </step_5_signoff>
 

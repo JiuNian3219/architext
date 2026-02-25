@@ -1,6 +1,6 @@
 ---
 name: archi-decompose-roadmap
-description: Architext task decomposition expert. Five-step method: first calibrate project type to anchor the infrastructure checklist, then apply dual-perspective extraction for Feature and Infra tasks. NFR cross-cutting concerns are merged into goal fields (never standalone tasks). Produces Tier 1 Schema-compliant roadmap.json tasks as input contracts for `/archi.plan`. Use whenever Roadmap tasks need to be generated or appended.
+description: Architext task decomposition expert. Five-step method: first calibrate project type to anchor the infrastructure checklist, then apply dual-perspective extraction for business Tasks and Infra tasks. NFR cross-cutting concerns are merged into goal fields (never standalone tasks). Produces Tier 1 Schema-compliant roadmap.json tasks as input contracts for `/archi.plan`. Use whenever Roadmap tasks need to be generated or appended.
 ---
 
 # Roadmap Task Decomposition
@@ -31,7 +31,7 @@ Brief → [This Skill] → roadmap.json tasks
 
 | Mode | Triggered By | Input | Constraint |
 |:---|:---|:---|:---|
-| From Scratch | `/archi.start` | Brief feature list | No EDIT tasks allowed |
+| From Scratch | `/archi.start` | Brief task list | No EDIT tasks allowed |
 | Incremental | `/archi.scope` | Brief + existing Roadmap context | Never modify existing tasks, continue ID watermark |
 
 ---
@@ -53,13 +53,13 @@ Identify the project type from the Brief's tech stack / description. Establish a
 
 ---
 
-### Step 1 · PM Perspective → Feature Tasks
+### Step 1 · PM Perspective → Business Tasks
 
-Extract user scenarios from the Brief feature descriptions and aggregate them into Feature tasks.
+Extract user scenarios from the Brief task descriptions and aggregate them into business Tasks.
 
-1. Convert each feature into scenario format: `User can [action] → [perceivable outcome]`
-2. Scenarios sharing the same core flow → merge into one Feature task
-3. Granularity calibration (core principle: **one task = one `/archi.plan` session = one `features/<slug>/` subdirectory**):
+1. Convert each item into scenario format: `User can [action] → [perceivable outcome]`
+2. Scenarios sharing the same core flow → merge into one business Task
+3. Granularity calibration (core principle: **one task = one `/archi.plan` session = one `tasks/<slug>/` subdirectory**):
 
     **Behavior perspective (PM)**:
 
@@ -99,25 +99,25 @@ Extract user scenarios from the Brief feature descriptions and aggregate them in
 
 The following belong to the parent task — never create standalone tasks for: **lightweight** result/completion pages, empty-state pages, confirmation dialogs.
 
-> **Exemption**: If a result page contains independent data visualization components (charting libraries), complex animation logic, or independent business calculations, the parent-task rule does **not** apply — it must become its own Feature task.
+> **Exemption**: If a result page contains independent data visualization components (charting libraries), complex animation logic, or independent business calculations, the parent-task rule does **not** apply — it must become its own business Task.
 
 ---
 
 ### Step 2 · Architect Perspective → Infra Tasks
 
-Derive shared foundations from Feature tasks. Never pre-assume infrastructure.
+Derive shared foundations from business Tasks. Never pre-assume infrastructure.
 
-For all Feature tasks, ask: do multiple Features depend on X, and must X exist before any Feature can run? → X is an Infra task.
+For all business Tasks, ask: do multiple Tasks depend on X, and must X exist before any Task can run? → X is an Infra task.
 
 | Infra Type | Criteria |
 |:---|:---|
-| Project scaffolding / global Schema / type definitions | All Features depend on it; must cover the Step 0 project type checklist |
-| Shared core engine (typing engine, rules engine, etc.) | Meets **any one** of: ① 2+ Features call it directly; ② Pure logic layer, independently unit-testable, fully decoupled from UI. `tag: Core` |
-| Third-party integration layer | Multiple Features reuse the same external service |
+| Project scaffolding / global Schema / type definitions | All business Tasks depend on it; must cover the Step 0 project type checklist |
+| Shared core engine (typing engine, rules engine, etc.) | Meets **any one** of: ① 2+ business Tasks call it directly; ② Pure logic layer, independently unit-testable, fully decoupled from UI. `tag: Core` |
+| Third-party integration layer | Multiple business Tasks reuse the same external service |
 
-**Core Task Planning Contract**: Tasks with `tag: Core` must end their `description` with a declaration of their primary exported interface (function signature or key interface name). Downstream Feature `/archi.plan` sessions can wire directly to this interface without reading upstream implementation, ensuring cross-task planning consistency and predictability.
+**Core Task Planning Contract**: Tasks with `tag: Core` must end their `description` with a declaration of their primary exported interface (function signature or key interface name). Downstream Task `/archi.plan` sessions can wire directly to this interface without reading upstream implementation, ensuring cross-task planning consistency and predictability.
 
-**Infra task granularity principle (opposite of Feature — lean toward merging)**:
+**Infra task granularity principle (opposite of business Task — lean toward merging)**:
 
 Infra tasks don't carry business logic. AI executing them operates in a narrow context and is not at risk of "domain overload". Over-splitting Infra only adds dependency chain complexity with no benefit.
 
@@ -125,7 +125,7 @@ Infra tasks don't carry business logic. AI executing them operates in a narrow c
 |:---|:---|
 | Same engineering category, same execution window, related tech stack | Merge (e.g. scaffolding + CI + router skeleton → one INF task) |
 | Completely different tech stack AND clearly different execution timing | Split (e.g. Dexie.js storage layer vs. Shadcn theme config) |
-| An Infra output is called directly by ≥2 Features (interface-type) | Keep as its own task (must declare exported interface contract) |
+| An Infra output is called directly by ≥2 business Tasks (interface-type) | Keep as its own task (must declare exported interface contract) |
 
 ---
 
@@ -137,8 +137,8 @@ The following types **must never become standalone tasks**: inject into the `goa
 |:---|:---|:---|
 | Internationalization | i18n, multi-language, translation copy | — |
 | Visual theme (config) | Brand color tokens, Tailwind theme colors, CSS variable definitions | NFR — inject into scaffold task |
-| Visual theme (feature) | Dark/light toggle button, OS preference detection, theme persistence | **Not NFR** — must be a standalone Feature task (user-visible behavior) |
-| Animation style conventions | Page transition approach, duration standards | NFR — inject into the first Feature goal that includes animation |
+| Visual theme (feature) | Dark/light toggle button, OS preference detection, theme persistence | **Not NFR** — must be a standalone business Task (user-visible behavior) |
+| Animation style conventions | Page transition approach, duration standards | NFR — inject into the first Task goal that includes animation |
 | Performance | Lazy loading, virtual list, cache strategy | — |
 | Accessibility | A11y, keyboard navigation, screen reader | — |
 
@@ -146,7 +146,7 @@ The following types **must never become standalone tasks**: inject into the `goa
 
 ### Step 4 · Dependency & Parallelism Optimization
 
-- **Real dependency chains**: Never attach all Features to `INF-01` only. Dependencies must reflect real business relationships.
+- **Real dependency chains**: Never attach all business Tasks to `INF-01` only. Dependencies must reflect real business relationships.
 - **Minimal dependency principle**: Tasks that can run in parallel must not carry unnecessary deps — maximize Batch parallelism.
 
 ---
@@ -161,14 +161,14 @@ The following types **must never become standalone tasks**: inject into the `goa
    |:---|:---|
    | Project scaffolding, Schema, global types | Phase 1 (Infrastructure) |
    | Shared core engine (identified in Step 2) | Phase 1 (Infrastructure) |
-   | Business Feature | Phase 2 (Core Features) |
+   | Business Task | Phase 2 (Core Features) |
    | EDIT-xxx (modifying existing feature) | Same Phase as the modified task |
 
 3. **Design decision injection**: Existing decisions from the Brief → append to corresponding task `goal`: `[User Preset] <content>`. Never repeat the same global decision across multiple tasks. `/archi.plan` treats these as non-negotiable hard constraints, writing them directly into spec.md without re-asking.
 
 4. **EDIT tasks**: When an existing feature must be modified → create `EDIT-xxx` (`tag: Edit`), goal describes the modification scope. Only used in Incremental mode.
 
-5. **Slug naming**: `slug` is the `features/<slug>/` folder name. Must clearly express the task content, in `Pascal_Snake_Case` format (e.g. `Typing_Engine_Core`). Each task maps to exactly one unique feature subdirectory — no duplicates.
+5. **Slug naming**: `slug` is the `tasks/<slug>/` folder name. Must clearly express the task content, in `Pascal_Snake_Case` format (e.g. `Typing_Engine_Core`). Each task maps to exactly one unique task subdirectory — no duplicates.
 
 ---
 

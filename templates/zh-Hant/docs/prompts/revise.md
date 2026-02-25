@@ -1,6 +1,6 @@
 <protocol_revise>
   **Trigger**: `/archi.revise [context]`
-  **Goal**: 執行專案級全域變更（技術堆疊、架構、願景等），分析影響範圍，經使用者確認後修改全域資產並級聯更新受影響的 Feature 檔案。
+  **Goal**: 執行專案級全域變更（技術堆疊、架構、願景等），分析影響範圍，經使用者確認後修改全域資產並級聯更新受影響的 Task 檔案。
 
 <constraints_cursor>
     **Mode Lock**: 本協議須在 **Agent Mode (Normal Mode)** 下執行。禁切換到 Plan Mode 或其他唯讀模式。
@@ -12,7 +12,7 @@
     <principles>
       1.  **User Gate**: 全域變更須經使用者逐項確認後才執行。禁擅自修改。
       2.  **Impact First**: 先輸出完整影響分析，後執行修改。
-      3.  **Doc Cascade**: 全域資產變更後，須按 edit 標準同步更新受影響的 Feature 檔案。
+      3.  **Doc Cascade**: 全域資產變更後，須按 edit 標準同步更新受影響的 Task 檔案。
       4.  **Traceability**: 每項變更須可追溯 — 說明變更理由和影響範圍。
     </principles>
 </meta>
@@ -29,7 +29,7 @@
         - `02_tech_stack.md`
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
-    2.  **Scan Feature Index**: 掃描 `[[__DOCS_DIR__]]/features/` 目錄，建立 Feature 索引（ID、名稱、狀態）。
+    2.  **Scan Task Index**: 掃描 `[[__DOCS_DIR__]]/tasks/` 目錄，建立 Task 索引（ID、名稱、狀態）。
     3.  **Intent Analysis**: 根據使用者 `[context]`，初步定位受影響的全域資產類別。
 
     **Output**: 變更意圖摘要 — 列出初步判斷涉及的全域檔案，進入 step_2。
@@ -44,7 +44,7 @@
     |:---|:---|
     | 變更範圍 | 精確定位哪些全域檔案、哪些規則受影響 |
     | 變更動機 | 為什麼要做此變更，期望達到什麼結果 |
-    | 排除清單 | 是否有不應被影響的 Feature |
+    | 排除清單 | 是否有不應被影響的 Task |
 
     - 上下文足夠清晰時 → 合併到 step_3 直接輸出影響分析。
     - 存在歧義或多種可行方向時 → 向使用者提問確認（A/B/C/D 選項）。
@@ -70,8 +70,8 @@
     | design_tokens.json | [...] | ... |
     | error_codes.json | [...] | ... |
 
-    ### 2. 受影響 Feature 清單
-    | Feature ID | 名稱 | 影響點 | 程度 |
+    ### 2. 受影響 Task 清單
+    | Task ID | 名稱 | 影響點 | 程度 |
     |:---|:---|:---|:---|
     | INF-001 | [名稱] | [spec/ui/plan 的哪些部分受影響] | 高/中/低 |
 
@@ -117,20 +117,20 @@
 
     > 如上述欄位未變動（如僅改 `mode.default`），無需重跑 Phase 2。
 
-    **Phase 2 — 級聯更新 Feature 檔案**:
-    對每個受影響的 Feature，按 `/archi.edit` 標準執行:
+    **Phase 2 — 級聯更新 Task 檔案**:
+    對每個受影響的 Task，按 `/archi.edit` 標準執行:
     1.  更新 `spec.md`（邏輯/規則因全域變更而需調整的部分）。
     2.  [?UI] 更新 `ui.md`（範圍/互動因全域變更而需調整的部分）；如畫面結構受影響，執行 `archi-ui-wireframe` Skill（局部更新模式）同步更新 `ui_concept.html` + `ui_context.md`。
     3.  在 `plan.json` 的 `phases` 中追加新 Phase: `Phase X: Global Revision — [變更主題] (<Date>)`，列出落地任務。
 
-    **Output**: 每個檔案的變更摘要（全域 + Feature）。
+    **Output**: 每個檔案的變更摘要（全域 + Task）。
 </step_4_execute>
 
 <step_5_summary>
     **Role**: 審計官
     **Checklist**:
     1.  全域資產間一致性（vision ↔ tech_stack ↔ roadmap ↔ map）。
-    2.  Feature 檔案與更新後的全域資產對齊。
+    2.  Task 檔案與更新後的全域資產對齊。
     3.  無孤立引用（dictionary/map 中舊術語/路徑是否已清理）。
 
     **Terminal Gate** (禁止跳過，須在輸出總結前全部完成):
@@ -147,7 +147,7 @@
     ## Global Revision Summary: [變更主題]
 
     **全域資產變更**: [已修改檔案列表]
-    **Feature 更新**: [已更新 Feature 列表 + 各自影響摘要]
+    **Task 更新**: [已更新 Task 列表 + 各自影響摘要]
     **審計結果**: [通過/有風險項]
 
     ### Next Steps

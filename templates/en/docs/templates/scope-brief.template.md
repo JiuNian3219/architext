@@ -13,9 +13,9 @@
 
 ---
 
-## Feature List
+## Task List
 
-> What specific features does this initiative include? One sentence per item describing expected behavior.
+> What specific tasks does this initiative include? One sentence per item describing expected behavior.
 > Detailed Specs are defined in the `/archi.plan` phase — here you only need to specify "what to do".
 
 1. 
@@ -26,7 +26,7 @@
 
 ## Existing Design Decisions
 
-> If you already have specific ideas about certain features/pages/flows, describe them here. AI will treat these as constraints when decomposing tasks.
+> If you already have specific ideas about certain tasks/pages/flows, describe them here. AI will treat these as constraints when decomposing tasks.
 > Leave blank if none.
 
 ---
@@ -39,15 +39,15 @@
 **Constraints**:
 - **Dependencies**: [e.g., Must wait for LEG-01 user auth to complete / None]
 - **Technical**: [e.g., Must be compatible with existing REST API / None]
-- **Other constraints**: [e.g., Must work with LEG-02 feature / None]
+- **Other constraints**: [e.g., Must work with LEG-02 task / None]
 
 ---
 
-## Affected Existing Features
+## Affected Existing Tasks
 
-> Which existing features will this initiative impact or require changes to?
+> Which existing tasks will this initiative impact or require changes to?
 
-| Existing Feature | Impact |
+| Existing Task | Impact |
 |:---|:---|
 | [e.g., LEG-01 User Auth] | [Needs OAuth support added] |
 

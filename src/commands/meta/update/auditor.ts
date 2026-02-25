@@ -1,4 +1,4 @@
-/** @fileoverview Schema 审计器：校验 roadmap.json 和 feature plan.json 的结构兼容性，并执行轻量版本迁移。 */
+/** @fileoverview Schema 审计器：校验 roadmap.json 和 task plan.json 的结构兼容性，并执行轻量版本迁移。 */
 
 import fs from "fs-extra";
 import path from "path";
@@ -115,8 +115,8 @@ export async function auditRoadmap(
 }
 
 /**
- * 对所有 features/{id}/plan.json 执行 Zod Schema 校验（只读，不自动修改）。
- * plan.json 为每个 feature 的业务数据，格式问题需用户手动修复。
+ * 对所有 tasks/{id}/plan.json 执行 Zod Schema 校验（只读，不自动修改）。
+ * plan.json 为每个 task 的业务数据，格式问题需用户手动修复。
  *
  * @param config - 配置
  * @param cwd - 当前工作目录
@@ -126,20 +126,20 @@ export async function auditPlans(
   config: ArchitextConfig,
   cwd: string,
 ): Promise<PlanAuditResult[]> {
-  const featuresDir = path.join(cwd, config.docDir, "features");
+  const tasksDir = path.join(cwd, config.docDir, "tasks");
   const results: PlanAuditResult[] = [];
 
-  if (!(await fs.pathExists(featuresDir))) return results;
+  if (!(await fs.pathExists(tasksDir))) return results;
 
-  let featureDirs: string[];
+  let taskDirs: string[];
   try {
-    featureDirs = await fs.readdir(featuresDir);
+    taskDirs = await fs.readdir(tasksDir);
   } catch {
     return results;
   }
 
-  for (const featureDir of featureDirs) {
-    const planPath = path.join(featuresDir, featureDir, "plan.json");
+  for (const taskDir of taskDirs) {
+    const planPath = path.join(tasksDir, taskDir, "plan.json");
     const relPath = path.relative(cwd, planPath);
 
     if (!(await fs.pathExists(planPath))) continue;

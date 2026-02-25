@@ -16,8 +16,8 @@ import type { PlanCheckResult } from "./types.ts";
  *   合计: 19/19 (100%)
  *   所有自动化任务已完成！
  *
- * @param featureId Feature ID (e.g. "SUB-01")
- * @param featureName Feature 名称 (e.g. "Subscription CRUD")
+ * @param featureId Task ID (e.g. "SUB-01")
+ * @param featureName Task 名称 (e.g. "Subscription CRUD")
  * @param result Plan 解析结果
  */
 export function handlePlanCheck(

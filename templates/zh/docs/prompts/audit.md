@@ -10,7 +10,7 @@
       2.  **Evidence-Based**: 每个发现须附文件路径、行号、代码片段。
       3.  **Actionable Output**: 每个问题须附推荐修复命令（`/archi.fix`, `/archi.edit` 等）。
       4.  **Vision Anchored**: 始终以 `vision.md` 为方向基准，检测偏离。
-      5.  **Report Persistence**: 审查结果须写入文件 — 任务级 → `features/<id>_*/audit.md`（覆盖），项目级 → `audits/YYYY-MM-DD.md`（按日期存档，同日覆盖）。
+      5.  **Report Persistence**: 审查结果须写入文件 — 任务级 → `tasks/<id>_*/audit.md`（覆盖），项目级 → `audits/YYYY-MM-DD.md`（按日期存档，同日覆盖）。
     </principles>
 </meta>
 
@@ -24,7 +24,7 @@
     | `/archi.audit` | 项目级体检 | step_2_project → step_3_report |
 
     **任务级 — Resolve ID**:
-    1.  从 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Feature Name、Slug、状态。
+    1.  从 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Task Name、Slug、状态。
     2.  **Status Gate** — 仅 `active` 或 `done` 可审查:
 
         | 状态 | 处理 |
@@ -35,12 +35,12 @@
 
     3.  **Load Context**:
         - `[[__DOCS_DIR__]]/global/vision.md` — 项目方向基准
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 功能逻辑
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任务清单
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 任务 UI 范围声明(如存在)
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 功能逻辑
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — 任务清单
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — 任务 UI 范围声明(如存在)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI 屏幕索引（定位对应屏幕 ID）
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 只读视觉参考（#10 合规对比的视觉标准源）
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md` — 上次审计报告(如存在，用于对比)
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/audit.md` — 上次审计报告(如存在，用于对比)
         - `02_tech_stack.md` — 技术红线
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
@@ -49,7 +49,7 @@
     **项目级 — Load Overview**:
     1.  读取 `[[__DOCS_DIR__]]/global/vision.md`、`roadmap.json`、`map.json`。
     2.  读取 `02_tech_stack.md`。
-    3.  扫描 `[[__DOCS_DIR__]]/features/` 目录结构。
+    3.  扫描 `[[__DOCS_DIR__]]/tasks/` 目录结构。
     4.  读取项目代码入口文件与关键模块。
 
     **Output**: 审查范围与上下文清单。
@@ -91,12 +91,12 @@
     | 1 | **Vision 漂移** | `roadmap.json` 任务方向与 `vision.md` 是否一致 |
     | 2 | **架构一致性** | `map.json` vs 实际目录结构，有无漂移或未注册模块 |
     | 3 | **Roadmap 健康度** | 一致性 + 进度统计 + 长期 blocked 任务 + 依赖环检测 |
-    | 4 | **文档完整度** | 各 Feature 是否有 spec.md + plan.json；有无孤儿目录 |
+    | 4 | **文档完整度** | 各 Task 是否有 spec.md + plan.json；有无孤儿目录 |
     | 5 | **Tech Stack 全局合规** | 抽查关键入口与模块，检测全局性违规 |
-    | 6 | **跨 Feature 一致性** | 重复逻辑、命名冲突、接口不一致 |
+    | 6 | **跨 Task 一致性** | 重复逻辑、命名冲突、接口不一致 |
     | 7 | **Orphan .gitkeep** | 目录已有其他文件时仍存在 `.gitkeep` — 须删除 |
 
-    扫描后标注优先级，推荐需深度审查的 Feature：
+    扫描后标注优先级，推荐需深度审查的 Task：
     - `done` 但 plan 未全部完成的
     - 代码量大但无测试的
     - 长期 `active` 未推进的
@@ -141,7 +141,7 @@
     5.  Next Steps 表格
 
     **Write Report File**:
-    - 任务级 → `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md`（覆盖式）
+    - 任务级 → `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/audit.md`（覆盖式）
     - 项目级 → `[[__DOCS_DIR__]]/audits/YYYY-MM-DD.md`（按日期存档，同日覆盖）
 
     **Output**: 完整审查报告（同时输出到对话和写入文件）。

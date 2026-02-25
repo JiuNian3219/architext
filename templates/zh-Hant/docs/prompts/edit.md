@@ -16,7 +16,7 @@
 <step_1_load>
     **Role**: 產品經理
     **Action**:
-    - 讀取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
+    - 讀取 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
     - [?UI] 讀取 `[[__DOCS_DIR__]]/global/ui_context.md`（定位本功能對應的畫面範圍及導覽關係）。
     - 檢測 spec.md 中的 `Spec-Status` 欄位：
       - `Full` → 正常流程，進入 step_2。
@@ -81,7 +81,7 @@
 
 <step_4_summary>
     **Action** (Gate 須在 step_3 完成):
-    **Output**: Feature 更新摘要，含 Spec/UI/Plan 變更概要和 Next Steps 表格。推薦執行 `/archi.code <ID>`。
+    **Output**: Task 更新摘要，含 Spec/UI/Plan 變更概要和 Next Steps 表格。推薦執行 `/archi.code <ID>`。
 </step_4_summary>
 
 </protocol_edit>

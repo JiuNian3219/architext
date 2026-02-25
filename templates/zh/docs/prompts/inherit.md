@@ -167,7 +167,7 @@
               "id": "LEG-01",
               "title": "<模块名>",
               "status": "done",
-              "goal": "<一句话摘要>。详见 features/LEG-01_<Slug>/spec.md",
+              "goal": "<一句话摘要>。详见 tasks/LEG-01_<Slug>/spec.md",
               "deps": [],
               "tag": "Legacy",
               "slug": "<Slug>"
@@ -186,9 +186,9 @@
     - phase-1/2 保留空骨架
     - LEG 间如有依赖关系须在 deps 中体现
 
-    ### 3.5 Feature Stub Specs
+    ### 3.5 Task Stub Specs
 
-    为每个 LEG 任务创建 `[[__DOCS_DIR__]]/features/LEG-xx_<Slug>/spec.md`：
+    为每个 LEG 任务创建 `[[__DOCS_DIR__]]/tasks/LEG-xx_<Slug>/spec.md`：
 
     ```markdown
     # LEG-xx: [Title]
@@ -235,7 +235,7 @@
     2.  **Tech Stack 一致**: 规则文件 `02_tech_stack` 与 package.json/config 一致？
     3.  **Map 覆盖**: map.json 覆盖所有核心目录？
     4.  **Roadmap 完整**: phase-0 覆盖所有已识别功能模块？
-    5.  **Stub 齐全**: 每个 LEG-xx 都有对应 features/ 目录和 spec.md？
+    5.  **Stub 齐全**: 每个 LEG-xx 都有对应 tasks/ 目录和 spec.md？
     6.  **Dictionary 无冲突**: 术语无歧义或重复？
 
     如有问题则静默修正；严重问题标记 `Risk Warning`。

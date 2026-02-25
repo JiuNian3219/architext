@@ -43,7 +43,7 @@
     2.  **Read Roadmap**: `[[__DOCS_DIR__]]/global/roadmap.json` — 僅提取每個 task 的 `id/title/status/deps/tag` 欄位（跳過 `goal/notes`，需求分解不需要這些詳情）；讀取當前最大 ID 水位用於新任務編號。
     3.  **Read Tech Stack**: `02_tech_stack.md` — 技術約束。
     4.  **Read Map**: `[[__DOCS_DIR__]]/global/map.json` — 僅讀 `directoryMapping` 和 `featureRelations`；`logicalTopology` 和 `criticalUserJourneys` 跳過。
-    5.  **Scan Features**: 掃描 `[[__DOCS_DIR__]]/features/` 目錄 — 了解已有 feature 概要（標題 + 關鍵流程，無需全文）。
+    5.  **Scan Tasks**: 掃描 `[[__DOCS_DIR__]]/tasks/` 目錄 — 了解已有 task 概要（標題 + 關鍵流程，無需全文）。
 
     **Output**: 內部上下文摘要，進入 `<step_2_analysis>`。
 </step_1_load>
@@ -56,9 +56,9 @@
 
     1. **Vision 對齊檢查**: Brief 需求是否與 vision.md 的北極星指標一致？如有偏離 → 在輸出中標註 `[Vision 偏離警告]`。
     2. **功能清單完整性**: Brief 功能清單是否足以支撐需求目標？
-    3. **影響評估**: Brief 中「受影響的已有功能」→ 對照 roadmap/features 驗證是否存在、狀態如何。
+    3. **影響評估**: Brief 中「受影響的已有功能」→ 對照 roadmap/tasks 驗證是否存在、狀態如何。
     4. **缺口識別**: 檢查 Brief 是否有關鍵資訊缺失。
-    5. **聯動檢查**: 讀取 `map.json.featureRelations`，將新功能的描述與各條 `sources` 欄位做語義對比，判斷新功能是否屬於某聚合方的覆蓋範圍。命中時在摘要中輸出聯動提示。
+    5. **聯動檢查**: 讀取 `map.json.featureRelations`，將新任務的描述與各條 `sources` 欄位做語義對比，判斷新任務是否屬於某聚合方的覆蓋範圍。命中時在摘要中輸出聯動提示。
 
     **缺口分級**:
     - **必須**: 缺失則無法合理分解（如功能清單為空）

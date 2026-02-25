@@ -1,6 +1,6 @@
 ---
 name: archi-ui-wireframe
-description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階段輸出灰度線框圖（確認資訊架構與畫面覆蓋）；第二階段按 design_tokens.json 視覺著色（顏色/字體/動效/圖示）。產物是整個專案 UI 的單一視覺真相源，所有 feature 級 ui.md 均引用此檔案定位畫面範圍。
+description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階段輸出灰度線框圖（確認資訊架構與畫面覆蓋）；第二階段按 design_tokens.json 視覺著色（顏色/字體/動效/圖示）。產物是整個專案 UI 的單一視覺真相源，所有 Task 級 ui.md 均引用此檔案定位畫面範圍。
 ---
 
 # UI 概念設計
@@ -23,7 +23,7 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
 
 > **Skill 的職責邊界**：
 > - 負責：整個應用所有使用者可見畫面的視覺概念（資訊架構、布局、狀態、過渡）
-> - 不負責：Feature 級介面契約（spec.md 管）、任務步驟（plan.json 管）、業務程式碼
+> - 不負責：Task 級介面契約（spec.md 管）、任務步驟（plan.json 管）、業務程式碼
 
 ---
 
@@ -33,12 +33,12 @@ description: UI 概念設計專家。兩階段生成 ui_concept.html：第一階
 |:---|:---|:---|
 | 初次生成 | `/archi.start` 完成後 | 全量生成，覆蓋所有畫面 |
 | 重新生成 | 使用者手動呼叫 | 全量重寫（全域 UI 重設計時） |
-| 追加畫面 | `/archi.scope` 追加新功能後 | 僅新增頁面，不改已有頁面 |
+| 追加畫面 | `/archi.scope` 追加新任務後 | 僅新增頁面，不改已有頁面 |
 | Plan 細化 | `/archi.plan` 發現 UI 偏差後 | 僅更新對應畫面（新增狀態/子畫面/布局修正）|
-| 修改畫面 | `/archi.edit` 功能變更後 | 僅修改受影響的畫面，其餘不動 |
-| 刪除畫面 | `/archi.remove` 功能下線後 | 移除對應畫面及控制列入口 |
+| 修改畫面 | `/archi.edit` 任務變更後 | 僅修改受影響的畫面，其餘不動 |
+| 刪除畫面 | `/archi.remove` 任務下線後 | 移除對應畫面及控制列入口 |
 
-> **Phase 2（視覺著色）時機**: Phase 2 無需緊跟 Phase 1。建議在核心功能（≥ 50% Roadmap 任務）完成 Plan 後再執行，確保著色基於穩定的畫面結構。已著色的畫面被 Plan 細化更新後，僅需對該畫面重新著色，無需全量重跑 Phase 2。
+> **Phase 2（視覺著色）時機**: Phase 2 無需緊跟 Phase 1。建議在核心任務（≥ 50% Roadmap 任務）完成 Plan 後再執行，確保著色基於穩定的畫面結構。已著色的畫面被 Plan 細化更新後，僅需對該畫面重新著色，無需全量重跑 Phase 2。
 
 ---
 

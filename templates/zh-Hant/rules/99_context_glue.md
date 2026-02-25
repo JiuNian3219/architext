@@ -32,7 +32,7 @@ alwaysApply: true
 
 | 程式碼型別 | 必讀上下文 | 真理來源 |
 |:---|:---|:---|
-| **Business Logic** (Features/Entities) | Spec Document | `[[__DOCS_DIR__]]/global/map.json` → Module Entry |
+| **Business Logic** (Tasks/Entities) | Spec Document | `[[__DOCS_DIR__]]/global/map.json` → Module Entry |
 | **UI Components** (Pages/Widgets) [?UI] | UI Document + `[[__DOCS_DIR__]]/global/design_tokens.json` | `[[__DOCS_DIR__]]/global/map.json` + Global Rules |
 | **Data Schema** (ORM/SQL/Models) [?Data] | Data Snapshot | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
 | **Config / Infra** (Package.json...) | Tech Stack | `02_tech_stack.md` |

@@ -17,7 +17,7 @@
     **Role**: 專案觀察員
     **Action**:
     1.  讀取 `[[__DOCS_DIR__]]/global/roadmap.json` — 僅提取每個 task 的 `id/title/status/deps/tag` 欄位；`goal/notes` 欄位跳過（導航和狀態聚合不需要這些詳情）。
-    2.  掃描 `[[__DOCS_DIR__]]/features/` 目錄 — 取得已有 Feature 及其檔案完整度（有無 spec.md / ui.md / plan.json）。
+    2.  掃描 `[[__DOCS_DIR__]]/tasks/` 目錄 — 取得已有 Task 及其檔案完整度（有無 spec.md / ui.md / plan.json）。
     3.  [?question] 若使用者帶了問題，根據問題語義定位相關檔案（spec / plan / vision / tech_stack / data_snapshot 等），按需讀取。
 
     **Output**: 內部上下文（不直接輸出給使用者）。
@@ -42,11 +42,11 @@
         | 訊號 | 階段 | 建議 |
         |:---|:---|:---|
         | roadmap.json 不存在 | 未初始化 | 新專案 → `/archi.start`；已有程式碼 → `/archi.inherit` |
-        | 有 roadmap 但無 Feature 目錄 | 已啟動，未規劃 | 執行 `/archi.scope` 規劃新功能 |
+        | 有 roadmap 但無 Task 目錄 | 已啟動，未規劃 | 執行 `/archi.scope` 規劃新任務 |
         | 有 Legacy stub (Spec-Status: Stub) | 已繼承，未補全 | 執行 `/archi.edit LEG-xx` 補全 spec |
         | 有 active 任務且 plan.json 完整 | 可編碼 | 執行 `/archi.code <ID>` |
         | 有 active 任務但缺 spec/plan | 規劃未完成 | 執行 `/archi.plan <ID>` 補全 |
-        | 所有任務 done | 已完成 | 執行 `/archi.scope` 規劃新功能或發佈 |
+        | 所有任務 done | 已完成 | 執行 `/archi.scope` 規劃新任務或發佈 |
         | 有 blocked 任務 | 存在阻塞 | 提示阻塞原因與前置依賴 |
 
     2.  **輸出格式**:

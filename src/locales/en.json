@@ -38,7 +38,7 @@
   },
   "plan": {
     "desc": "Check implementation plan (plan.json) completion status",
-    "id_required": "Please specify Feature ID (e.g.: archi plan SUB-01)"
+    "id_required": "Please specify Task ID (e.g.: archi plan SUB-01)"
   },
   "render": {
     "desc": "Render JSON data files into Markdown views"
@@ -136,7 +136,7 @@
         "header_comment": "<!-- ⚠️ AUTO-GENERATED from plan.json — DO NOT EDIT DIRECTLY -->",
         "header_ai": "<!-- AI: Read plan.json, not this file -->",
         "title": "Implementation Plan: {featureName}",
-        "feature_id": "Feature ID",
+        "feature_id": "Task ID",
         "status": "Status",
         "section_decisions": "Technical Decisions",
         "section_steps": "Implementation Steps",
@@ -228,7 +228,8 @@
           "missing": "Directory not found",
           "hint_init": "Run npx archi init to reinitialize",
           "hint_update": "Run npx archi update to restore",
-          "hint_features": "Create manually: mkdir {docDir}/features"
+          "hint_features": "Create manually: mkdir {docDir}/tasks",
+          "hint_tasks": "Create manually: mkdir {docDir}/tasks"
         },
         "global": {
           "required_missing": "Required file missing",
@@ -269,14 +270,14 @@
           "example": "e.g. /archi.scope scope-brief.md"
         },
         "plan": {
-          "desc": "Deep feature planning. Architecture interview for existing Roadmap tasks, generate full docs.",
+          "desc": "Deep task planning. Architecture interview for existing Roadmap tasks, generate full docs.",
           "detail": "Output: Spec (logic) + UI (visual, if applicable) + Plan (steps)",
           "example1": "e.g. /archi.plan INF-001 needs OAuth login support",
           "example2": "e.g. /archi.plan FEAT-01"
         },
         "code": {
           "desc": "Translate docs to code. Read Plan, implement step by step with checks & audit.",
-          "detail": "Prerequisite: Feature must have complete Spec + Plan",
+          "detail": "Prerequisite: Task must have complete Spec + Plan",
           "example": "e.g. /archi.code INF-001"
         },
         "audit": {
@@ -296,8 +297,8 @@
           "example": "e.g. /archi.edit INF-001 add remember-me feature"
         },
         "revise": {
-          "desc": "Global change (tech stack, architecture). Analyzes impact, cascades updates to affected Features after confirmation.",
-          "detail": "Scope: Vision / Tech Stack / Roadmap / Related Feature docs",
+          "desc": "Global change (tech stack, architecture). Analyzes impact, cascades updates to affected Tasks after confirmation.",
+          "detail": "Scope: Vision / Tech Stack / Roadmap / Related Task docs",
           "example": "e.g. /archi.revise migrate from REST to GraphQL"
         },
         "map": {
@@ -305,8 +306,8 @@
           "detail": "Use when directory structure changes to keep map.json in sync"
         },
         "remove": {
-          "desc": "Decommission a feature. Full cleanup: impact analysis → delete docs+code → purge global refs.",
-          "detail": "Scope: Feature docs / business code / roadmap / map / context_glue",
+          "desc": "Decommission a task. Full cleanup: impact analysis → delete docs+code → purge global refs.",
+          "detail": "Scope: Task docs / business code / roadmap / map / context_glue",
           "example": "e.g. /archi.remove FEAT-003"
         },
         "help": {
@@ -337,7 +338,7 @@
           "example": "e.g. npx archi task INF-001 --status done"
         },
         "plan": {
-          "desc": "Check Feature Plan completion (auto-detects manual verification sections).",
+          "desc": "Check Task Plan completion (auto-detects manual verification sections).",
           "example": "e.g. npx archi plan INF-001"
         },
         "render": {
@@ -354,14 +355,14 @@
       "quick": {
         "new_project": "New project from scratch",
         "legacy": "Take over legacy project",
-        "new_feature": "Plan a new feature",
+        "new_feature": "Plan a new task",
         "write_code": "Implement code",
         "fix_bug": "Fix a bug",
         "check_health": "Check project health"
       },
       "workflow": {
         "init_flow": "Initial setup",
-        "new_feature": "New feature:",
+        "new_feature": "New task:",
         "change_spec": "Spec change:",
         "standalone": "Standalone ops:"
       }

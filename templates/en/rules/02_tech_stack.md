@@ -181,8 +181,8 @@ Component naming must follow `Prefix+Function` format:
 ---
 
 ## 9. Project Conventions
-> Global architecture conventions established by `/archi.start`. `/archi.plan` auto-inherits these; no per-feature re-asking unless the feature has specific needs.
-> If a feature needs to deviate from a convention, the deviation rationale must be stated in the proposal.
+> Global architecture conventions established by `/archi.start`. `/archi.plan` auto-inherits these; no per-task re-asking unless the task has specific needs.
+> If a task needs to deviate from a convention, the deviation rationale must be stated in the proposal.
 
 ### Error Handling
 * **Strategy:** [e.g. Fail Fast + Form Validation / Fail Fast (stderr) / Schema Validation + Fail Fast]

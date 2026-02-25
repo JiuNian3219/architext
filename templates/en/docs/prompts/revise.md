@@ -1,6 +1,6 @@
 <protocol_revise>
   **Trigger**: `/archi.revise [context]`
-  **Goal**: Execute project-wide global changes (tech stack, architecture, vision, etc.), analyze impact scope, modify global assets after user confirmation, and cascade updates to affected Feature documents.
+  **Goal**: Execute project-wide global changes (tech stack, architecture, vision, etc.), analyze impact scope, modify global assets after user confirmation, and cascade updates to affected Task documents.
 
 <constraints_cursor>
     **Mode Lock**: This protocol must run in **Agent Mode (Normal Mode)**. Prohibited from switching to Plan Mode or other read-only modes.
@@ -12,7 +12,7 @@
     <principles>
       1.  **User Gate**: Global changes require item-by-item user confirmation before execution. Prohibited from modifying without approval.
       2.  **Impact First**: Output complete impact analysis before making any changes.
-      3.  **Doc Cascade**: After global asset changes, must update affected Feature docs following edit protocol standards.
+      3.  **Doc Cascade**: After global asset changes, must update affected Task docs following edit protocol standards.
       4.  **Traceability**: Every change must be traceable — state rationale and impact scope.
     </principles>
 </meta>
@@ -29,7 +29,7 @@
         - `02_tech_stack.md`
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
-    2.  **Scan Feature Index**: Scan `[[__DOCS_DIR__]]/features/` directory, build Feature index (ID, name, status).
+    2.  **Scan Task Index**: Scan `[[__DOCS_DIR__]]/tasks/` directory, build Task index (ID, name, status).
     3.  **Intent Analysis**: Based on user `[context]`, identify which global asset categories are affected.
 
     **Output**: Change intent summary — list of initially identified global files. Proceed to step_2.
@@ -44,7 +44,7 @@
     |:---|:---|
     | Change Scope | Precisely identify which global files and rules are affected |
     | Change Motivation | Why this change is needed, what outcome is expected |
-    | Exclusion List | Any Features that should not be affected |
+    | Exclusion List | Any Tasks that should not be affected |
 
     - Context is clear enough → merge into step_3 and output impact analysis directly.
     - Ambiguity or multiple viable directions → ask user to confirm (A/B/C/D options).
@@ -70,8 +70,8 @@
     | design_tokens.json | [...] | ... |
     | error_codes.json | [...] | ... |
 
-    ### 2. Affected Features List
-    | Feature ID | Name | Impact Points | Severity |
+    ### 2. Affected Tasks List
+    | Task ID | Name | Impact Points | Severity |
     |:---|:---|:---|:---|
     | INF-001 | [name] | [which parts of spec/ui/plan are affected] | High/Med/Low |
 
@@ -117,20 +117,20 @@
 
     > If none of the above fields changed (e.g., only `mode.default` changed), Phase 2 re-run is not needed.
 
-    **Phase 2 — Cascade Update Feature Docs**:
-    For each affected Feature, follow `/archi.edit` standards:
+    **Phase 2 — Cascade Update Task Docs**:
+    For each affected Task, follow `/archi.edit` standards:
     1.  Update `spec.md` (logic/rules that need adjustment due to global changes).
     2.  [?UI] Update `ui.md` (scope/interaction adjustments due to global changes); if screen structure is affected, run `archi-ui-wireframe` Skill (incremental update mode) to sync both `ui_concept.html` + `ui_context.md`.
     3.  Append new Phase to `plan.json` `phases`: `Phase X: Global Revision — [Change Topic] (<Date>)`, listing implementation tasks.
 
-    **Output**: Change summary for each file (global + Feature).
+    **Output**: Change summary for each file (global + Task).
 </step_4_execute>
 
 <step_5_summary>
     **Role**: Auditor
     **Checklist**:
     1.  Cross-consistency between global assets (vision ↔ tech_stack ↔ roadmap ↔ map).
-    2.  Feature docs aligned with updated global assets.
+    2.  Task docs aligned with updated global assets.
     3.  No orphaned references (stale terms/paths in dictionary/map cleaned up).
 
     **Terminal Gate** (Do not skip; must complete before output summary):
@@ -147,7 +147,7 @@
     ## Global Revision Summary: [Change Topic]
 
     **Global Assets Modified**: [list of modified files]
-    **Features Updated**: [list of updated Features + impact summary each]
+    **Tasks Updated**: [list of updated Tasks + impact summary each]
     **Audit Result**: [pass/risk items]
 
     ### Next Steps

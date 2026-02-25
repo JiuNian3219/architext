@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: 基于 `features/<id>_<Slug>/plan.json` 任务清单，完成功能开发；遵循 `02_tech_stack.md`（[?UI] 同时遵循 `design_tokens.json`）；通过构建、类型、Lint、格式化、测试与审计。
+  **Goal**: 基于 `tasks/<id>_<Slug>/plan.json` 任务清单，完成功能开发；遵循 `02_tech_stack.md`（[?UI] 同时遵循 `design_tokens.json`）；通过构建、类型、Lint、格式化、测试与审计。
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -19,7 +19,7 @@
 <step_1_resolve>
     **Role**: 系统分析师
     **Action**:
-    1.  **Resolve ID**: 从 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Feature Name、Slug、阶段/状态。
+    1.  **Resolve ID**: 从 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Task Name、Slug、阶段/状态。
     2.  **Status Gate** — 仅 `active` 可进入 code 流程:
 
         | 状态 | 处理 |
@@ -30,11 +30,11 @@
         | `done` ✅ | 拒绝 — 已完成，如需修改用 `/archi.edit <ID>` |
 
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 逻辑与场景
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 本任务 UI 范围声明(如存在)
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 逻辑与场景
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — 本任务 UI 范围声明(如存在)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI 屏幕索引（屏幕 ID/路由/状态/导航关系/共享组件）
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 只读视觉参考（实现时以此校准布局结构，禁基于此重新设计，设计已在 ui.md 确定）
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任务拆解（含 `notes` 速记，执行时须参照）
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — 任务拆解（含 `notes` 速记，执行时须参照）
         - `02_tech_stack.md` — 技术红线
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
@@ -91,7 +91,7 @@
     | **Test** | Existing Tests | 运行已有测试套件全部通过；禁因新代码破坏旧测试 |
     | | New Coverage | 为新增/修改的关键逻辑补充测试；纯样式调整可豁免 |
 
-    **Feature Verification (硬性要求)**
+    **Task Verification (硬性要求)**
 
     > 禁仅通过代码审查或自动化测试就标记完成；须实际运行目标功能并验证。
     > 如 dev server 未启动，先执行 `[[__DOCS_DIR__]]/scripts/dev-up`。
@@ -109,7 +109,7 @@
     **Evidence**: Output 须附验证结果（命令输出摘要 / 截图 / 错误日志）。
     **Fallback**: 验证持续失败且怀疑环境问题 → `[[__DOCS_DIR__]]/scripts/dev-reset` → `[[__DOCS_DIR__]]/scripts/dev-up` → 重试。
 
-    **Output**: 每项检查 ✅/❌ 状态与原因；Feature Verification 证据。
+    **Output**: 每项检查 ✅/❌ 状态与原因；Task Verification 证据。
 </step_4_validate>
 
 <step_5_audit>
@@ -124,7 +124,7 @@
     7.  **Performance**: 避免不必要大依赖/全量导入/无用计算/内存泄漏。
     8.  **Security**: 无敏感信息泄露；输入有校验。
     9.  **Static Check Zero**: 所有静态检查问题已解决。
-    10. **step_4 Gate**: 确认 step_4 所有检查（Static + Test + Feature Verification）已通过。
+    10. **step_4 Gate**: 确认 step_4 所有检查（Static + Test + Task Verification）已通过。
     11. **联动检查**: 读取 `[[__DOCS_DIR__]]/global/map.json` 中的 `featureRelations` 数组，将本次实现的功能与各条 `sources` 字段做语义对比。命中时输出提示：`⚠️ 联动: [aggregator] — [checkNote]`，提醒在当前实现完成后确认聚合方是否需要同步。`featureRelations` 为空则跳过。
 
     细节问题可 Auto-Fix 并说明；重大风险标注 `⚠️ Risk` 并提出替代方案。

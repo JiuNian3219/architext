@@ -5,7 +5,7 @@
       "definition": "[One-line definition]",
       "codeName": "[PascalCase / camelCase]",
       "forbiddenSynonyms": [],
-      "reference": "[Source: spec / vision / feature ID]"
+      "reference": "[Source: spec / vision / task ID]"
     }
   ],
   "verbs": [

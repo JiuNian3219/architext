@@ -1,6 +1,6 @@
 <protocol_revise>
   **Trigger**: `/archi.revise [context]`
-  **Goal**: 执行项目级全局变更（技术栈、架构、愿景等），分析影响范围，经用户确认后修改全局资产并级联更新受影响的 Feature 文档。
+  **Goal**: 执行项目级全局变更（技术栈、架构、愿景等），分析影响范围，经用户确认后修改全局资产并级联更新受影响的 Task 文档。
 
 <constraints_cursor>
     **Mode Lock**: 本协议须在 **Agent Mode (Normal Mode)** 下执行。禁切换到 Plan Mode 或其他只读模式。
@@ -12,7 +12,7 @@
     <principles>
       1.  **User Gate**: 全局变更须经用户逐项确认后才执行。禁擅自修改。
       2.  **Impact First**: 先输出完整影响分析，后执行修改。
-      3.  **Doc Cascade**: 全局资产变更后，须按 edit 标准同步更新受影响的 Feature 文档。
+      3.  **Doc Cascade**: 全局资产变更后，须按 edit 标准同步更新受影响的 Task 文档。
       4.  **Traceability**: 每项变更须可追溯 — 说明变更理由和影响范围。
     </principles>
 </meta>
@@ -29,7 +29,7 @@
         - `02_tech_stack.md`
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
-    2.  **Scan Feature Index**: 扫描 `[[__DOCS_DIR__]]/features/` 目录，建立 Feature 索引（ID、名称、状态）。
+    2.  **Scan Task Index**: 扫描 `[[__DOCS_DIR__]]/tasks/` 目录，建立 Task 索引（ID、名称、状态）。
     3.  **Intent Analysis**: 根据用户 `[context]`，初步定位受影响的全局资产类别。
 
     **Output**: 变更意图摘要 — 列出初步判断涉及的全局文件，进入 step_2。
@@ -44,7 +44,7 @@
     |:---|:---|
     | 变更范围 | 精确定位哪些全局文件、哪些规则受影响 |
     | 变更动机 | 为什么要做此变更，期望达到什么结果 |
-    | 排除清单 | 是否有不应被影响的 Feature |
+    | 排除清单 | 是否有不应被影响的 Task |
 
     - 上下文足够清晰时 → 合并到 step_3 直接输出影响分析。
     - 存在歧义或多种可行方向时 → 向用户提问确认（A/B/C/D 选项）。
@@ -70,8 +70,8 @@
     | design_tokens.json | [...] | ... |
     | error_codes.json | [...] | ... |
 
-    ### 2. 受影响 Feature 清单
-    | Feature ID | 名称 | 影响点 | 程度 |
+    ### 2. 受影响 Task 清单
+    | Task ID | 名称 | 影响点 | 程度 |
     |:---|:---|:---|:---|
     | INF-001 | [名称] | [spec/ui/plan 的哪些部分受影响] | 高/中/低 |
 
@@ -117,20 +117,20 @@
 
     > 如上述字段未变动（如仅改 `mode.default`），无需重跑 Phase 2。
 
-    **Phase 2 — 级联更新 Feature 文档**:
-    对每个受影响的 Feature，按 `/archi.edit` 标准执行:
+    **Phase 2 — 级联更新 Task 文档**:
+    对每个受影响的 Task，按 `/archi.edit` 标准执行:
     1.  更新 `spec.md`（逻辑/规则因全局变更而需调整的部分）。
     2.  [?UI] 更新 `ui.md`（范围/交互因全局变更而需调整的部分）；如屏幕结构受影响，运行 `archi-ui-wireframe` Skill（局部更新模式）同步更新 `ui_concept.html` + `ui_context.md`。
     3.  在 `plan.json` 的 `phases` 中追加新 Phase: `Phase X: Global Revision — [变更主题] (<Date>)`，列出落地任务。
 
-    **Output**: 每个文件的变更摘要（全局 + Feature）。
+    **Output**: 每个文件的变更摘要（全局 + Task）。
 </step_4_execute>
 
 <step_5_summary>
     **Role**: 审计官
     **Checklist**:
     1.  全局资产间一致性（vision ↔ tech_stack ↔ roadmap ↔ map）。
-    2.  Feature 文档与更新后的全局资产对齐。
+    2.  Task 文档与更新后的全局资产对齐。
     3.  无孤立引用（dictionary/map 中旧术语/路径是否已清理）。
 
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
@@ -147,7 +147,7 @@
     ## Global Revision Summary: [变更主题]
 
     **全局资产变更**: [已修改文件列表]
-    **Feature 更新**: [已更新 Feature 列表 + 各自影响摘要]
+    **Task 更新**: [已更新 Task 列表 + 各自影响摘要]
     **审计结果**: [通过/有风险项]
 
     ### Next Steps

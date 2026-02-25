@@ -10,9 +10,9 @@ import type { PlanData } from "./types.ts";
 
 /**
  * Plan 命令的主入口函数。
- * 默认行为：检查指定 Feature 的 Plan 完成度。
+ * 默认行为：检查指定 Task 的 Plan 完成度。
  *
- * @param id Feature ID (e.g. "SUB-01")
+ * @param id Task ID (e.g. "SUB-01")
  */
 export async function planCommand(id: string): Promise<void> {
   if (!id) {

@@ -7,7 +7,7 @@
     <style>Analytical, Systematic, Evidence-Based</style>
     <language>English</language>
     <principles>
-      1.  **Code-Driven**: Code is the sole source of truth; do not speculate on features without evidence.
+      1.  **Code-Driven**: Code is the sole source of truth; do not speculate on tasks without evidence.
       2.  **AI-Native Perspective**: All analysis from AI Agent perspective. Focus: Context Locality, Type Safety, Module Boundaries.
       3.  **User Agency First**: AI analysis must be confirmed by the user. When code interpretation is ambiguous, ask the user; do not decide unilaterally.
       4.  **Minimal Token**: Prioritize config files and entry points; avoid scanning every line of code.
@@ -127,7 +127,7 @@
 
     | Information from Code | Target File |
     |:---|:---|
-    | README project description, target users, feature list | `[[__DOCS_DIR__]]/global/vision.md` |
+    | README project description, target users, task list | `[[__DOCS_DIR__]]/global/vision.md` |
     | Dependency list, config files, code patterns | rule file `02_tech_stack` |
     | Directory structure, module dependencies, user journeys | `[[__DOCS_DIR__]]/global/map.json` |
     | Domain terminology, abbreviations, naming conventions | `[[__DOCS_DIR__]]/global/dictionary.json` |
@@ -167,7 +167,7 @@
               "id": "LEG-01",
               "title": "<Module Name>",
               "status": "done",
-              "goal": "<One-line summary>. See features/LEG-01_<Slug>/spec.md",
+              "goal": "<One-line summary>. See tasks/LEG-01_<Slug>/spec.md",
               "deps": [],
               "tag": "Legacy",
               "slug": "<Slug>"
@@ -186,9 +186,9 @@
     - phase-1/2 remain as empty skeletons
     - Dependencies between LEG tasks must be reflected in deps
 
-    ### 3.5 Feature Stub Specs
+    ### 3.5 Task Stub Specs
 
-    Create `[[__DOCS_DIR__]]/features/LEG-xx_<Slug>/spec.md` for each LEG task:
+    Create `[[__DOCS_DIR__]]/tasks/LEG-xx_<Slug>/spec.md` for each LEG task:
 
     ```markdown
     # LEG-xx: [Title]
@@ -216,7 +216,7 @@
     - `criticalUserJourneys`: Core flows → `{ "name", "steps": ["module → module → ..."] }`
     - `featureRelations`: Scan code to identify "aggregator modules" and record them.
       **Recognition patterns**: A module that iterates/enumerates/dynamically loads modules of the same type (e.g., `for (const cmd of allCommands)`, `Object.values(registry)`, reading a directory then dynamic import), or is described as "aggregating/listing/registering all X".
-      Record format: `{ "aggregator": "<ID or file path>", "sources": "<source range description>", "evidence": "<code basis>", "checkNote": "When features of this type are added or removed, check whether <aggregator> needs to be updated" }`
+      Record format: `{ "aggregator": "<ID or file path>", "sources": "<source range description>", "evidence": "<code basis>", "checkNote": "When tasks of this type are added or removed, check whether <aggregator> needs to be updated" }`
 
     ### 3.7 Other Global Documents (as needed)
     - `dictionary.json`: Extract domain terminology from code
@@ -235,7 +235,7 @@
     2.  **Tech Stack Consistency**: Does rule file `02_tech_stack` match package.json/config?
     3.  **Map Coverage**: Does map.json cover all core directories?
     4.  **Roadmap Completeness**: Does phase-0 cover all identified functional modules?
-    5.  **Stub Completeness**: Does every LEG-xx have a corresponding features/ directory and spec.md?
+    5.  **Stub Completeness**: Does every LEG-xx have a corresponding tasks/ directory and spec.md?
     6.  **Dictionary Consistency**: No ambiguous or duplicate terms?
 
     Silently fix issues; mark severe problems as `Risk Warning`.
@@ -254,7 +254,7 @@
 
     **Output**: Reverse-engineering summary containing:
     - **Project Overview**: Type, scale, number of core modules
-    - **Legacy Features**: LEG-xx list (ID / Name / Source location)
+    - **Legacy Tasks**: LEG-xx list (ID / Name / Source location)
     - **Generated Documents**: File list
     - **AI Inferred Items**: Mark confidence level (High/Medium/Low)
     - **Next Steps**:
@@ -263,7 +263,7 @@
     |:---|:---|:---|
     | 1 | Review vision.md | Confirm AI-inferred vision description is accurate |
     | 2 | `/archi.edit LEG-xx` | Enrich core module stubs into full specs (auto-triggers Enrich flow) |
-    | 3 | `/archi.scope [file_path]` | Plan new features/major modules |
+    | 3 | `/archi.scope [file_path]` | Plan new tasks/major modules |
     | 4 | `/archi.plan <task ID>` | Deep-plan individual tasks |
 </step_5_signoff>
 

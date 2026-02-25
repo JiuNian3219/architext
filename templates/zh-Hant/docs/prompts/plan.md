@@ -36,13 +36,13 @@
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
     6.  **Read Dependency Context** (如有依賴任務):
         - 僅讀依賴任務 `spec.md` 的 Interface/Type 定義段（`## Interface` 或 `## Types` 章節）；不讀 Scenarios 等其餘內容。
-        - 僅當當前 spec/plan 出現 `ref: features/<dep_id>/spec.md#X` 引用時執行；無引用時跳過。
+        - 僅當當前 spec/plan 出現 `ref: tasks/<dep_id>/spec.md#X` 引用時執行；無引用時跳過。
         - **Stub 相容**: 如依賴任務的 Spec-Status 為 Stub，從 stub「關聯檔案」提取原始碼，讀入口檔案提取公共介面/匯出型別，作為上游介面參考。
         - 避免重複定義上游介面，確保對接點精確對齊。
 
-    **Output**: 向使用者輸出 **Feature Context Brief**：
+    **Output**: 向使用者輸出 **Task Context Brief**：
     ```
-    ### Feature Context: [功能名稱] ([ID])
+    ### Task Context: [功能名稱] ([ID])
 
     **目標**: [roadmap task 的 goal，如含 [使用者預設] 須高亮標註]
     **上游依賴**: [已完成的依賴任務及其關鍵介面/型別，無則寫「無」]
@@ -92,7 +92,7 @@
 
     **Action**:
 
-    #### Part 1: Feature Design (功能設計)
+    #### Part 1: Task Design (功能設計)
 
     AI 根據功能性質**自行決定輸出哪些模組**，從以下素材庫中選取適用項：
 
@@ -106,7 +106,7 @@
     **引用規則**:
     - global 中已定義的實體/型別 → `ref: data_snapshot.json#X`，僅描述本功能**新增或修改**的部分
     - 設計哲學/原則 → `ref: vision.md#原則名`，無需複述
-    - 上游介面 → `ref: features/<dep_ID>/spec.md#介面名`
+    - 上游介面 → `ref: tasks/<dep_ID>/spec.md#介面名`
     - 已有設計 Token/元件 → `ref: design_tokens.json#preset` / `ref: dictionary.json#component`
 
     **通用要求**: 用此功能的具體實體名、操作名描述，禁泛化
@@ -121,7 +121,7 @@
     #### Output Format
 
     ```
-    ## Feature Proposal: [功能名稱] ([ID])
+    ## Task Proposal: [功能名稱] ([ID])
 
     ### 功能設計
     [按複雜度級別輸出，見上方 Part 1]
@@ -165,25 +165,25 @@
 
 <step_3_global_sync>
     **Role**: 系統管理員
-    **Constraint**: 在生成 Feature 文件**之前**，須先更新以下全域檔案。
+    **Constraint**: 在生成 Task 文件**之前**，須先更新以下全域檔案。
 
     **Boundary**: 僅註冊**專案業務域**內容。Architext 框架概念（scripts、scaffold、roadmap、plan 等）和框架基礎設施錯誤禁註冊到全域檔案。
 
     **Action Checklist**:
-    1.  **`map.json`**: 在 `directoryMapping` 註冊 `[[__DOCS_DIR__]]/features/<ID>_<Slug>`；在 `logicalTopology` 定義模組職責與依賴。
+    1.  **`map.json`**: 在 `directoryMapping` 註冊 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>`；在 `logicalTopology` 定義模組職責與依賴。
     2.  **`dictionary.json`**: 提取提案中的**專案業務**新術語填入 `entities`/`verbs`；註冊新共用工具到 `utilities`；註冊新公共元件到 `components`。
     3.  [?Data] **`data_snapshot.json`**: 根據架構建議中核心結構的選擇新增/修改 Schema。禁寫「待定」，須寫出欄位名和型別。
     4.  **`error_codes.json`**: 根據架構建議中錯誤處理的選擇註冊新**業務**錯誤碼。框架腳本錯誤由 exit code + stderr 處理，禁註冊。
-    5.  **`map.json` featureRelations**: 判斷本功能是否屬於「聚合型功能」——即其核心職責是**列舉、彙總或動態反映**其他一類功能（如「列出所有命令」「彙總所有頁面入口」「註冊所有路由」）。若是，在 `featureRelations` 中追加一條記錄：
+    5.  **`map.json` featureRelations**: 判斷本 Task 是否屬於「聚合型 Task」——即其核心職責是**列舉、彙總或動態反映**其他一類 Task（如「列出所有命令」「彙總所有頁面入口」「註冊所有路由」）。若是，在 `featureRelations` 中追加一條記錄：
         ```json
         {
-          "aggregator": "<本功能 ID 或檔案路徑>",
-          "sources": "<一句話描述聚合來源範圍，如「所有 CLI 命令類功能」>",
-          "evidence": "<依據，如「spec.md §X 描述本功能會動態列出所有 Y 類功能」>",
-          "checkNote": "此類功能新增或刪除時，檢查 <aggregator> 是否需要同步"
+          "aggregator": "<本 Task ID 或檔案路徑>",
+          "sources": "<一句話描述聚合來源範圍，如「所有 CLI 命令類 Task」>",
+          "evidence": "<依據，如「spec.md §X 描述本 Task 會動態列出所有 Y 類 Task」>",
+          "checkNote": "此類 Task 新增或刪除時，檢查 <aggregator> 是否需要同步"
         }
         ```
-        若非聚合型功能，跳過此步。
+        若非聚合型 Task，跳過此步。
 
     **Output**: 上述檔案的變更 Diff (簡要)。
 </step_3_global_sync>
@@ -191,7 +191,7 @@
 <step_4_generate>
     **Role**: 文件工程師
     **Input**: 確認的 Unified Proposal（功能設計 + 架構建議）+ 已更新的全域上下文。
-    **Action**: 在 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下生成標準文件。
+    **Action**: 在 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/` 下生成標準文件。
 
     **1. `spec.md`** (必須):
     - 範本: `templates/spec.template.md`。
@@ -246,7 +246,7 @@
     **Action** (Gate 通過後):
     1.  輸出總結。
 
-    **Output**: Feature 定義摘要，含架構建議確認表（各維度最終選擇及理由）和 Next Steps 表格。
+    **Output**: Task 定義摘要，含架構建議確認表（各維度最終選擇及理由）和 Next Steps 表格。
 </step_6_signoff>
 
 </protocol_plan>

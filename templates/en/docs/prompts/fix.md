@@ -1,6 +1,6 @@
 <protocol_fix>
   **Trigger**: `/archi.fix [id] <context>`
-  **Goal**: Diagnose Bug and execute fix directly. If `[id]` not provided, auto-locate relevant feature module.
+  **Goal**: Diagnose Bug and execute fix directly. If `[id]` not provided, auto-locate relevant task module.
 
 <meta>
     <style>Diagnostic, Surgical, Spec-Compliant</style>
@@ -10,7 +10,7 @@
       2.  **Reproduction**: Must conceive reproduction steps or test cases first.
       3.  **Root Cause**: Must analyze root cause, not patch the surface.
       4.  **Test-Driven**: Fix plan must include new test cases.
-      5.  **Auto-Discovery**: If ID not specified, locate Feature via Context semantic search.
+      5.  **Auto-Discovery**: If ID not specified, locate Task via Context semantic search.
     </principles>
 </meta>
 
@@ -18,7 +18,7 @@
     **Role**: Fault Analyst
     **Action**:
     1.  **Resolve Target**:
-        - Has `<id>`: Lock target `features/<ID>_<Slug>/`.
+        - Has `<id>`: Lock target `tasks/<ID>_<Slug>/`.
         - No `<id>`: Analyze `[context]` to search most relevant module.
           Unique match → Auto lock | Multiple matches → List candidates and ask | Cannot locate → Report error requesting ID.
     2.  Read all docs under target directory (`spec.md`, `ui.md`, `plan.json`) and related code.
@@ -32,7 +32,7 @@
 <step_2_plan_fix>
     **Role**: Tech Lead
     **Action**:
-    - Update `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`, append to `phases` array a phase object with `name`: `Bugfix: <Bug Title>`.
+    - Update `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/plan.json`, append to `phases` array a phase object with `name`: `Bugfix: <Bug Title>`.
     - Tasks: 1) Create reproduction test (Red) 2) Apply fix (Green) 3) Regression test.
 
     **Terminal Gate** (Do not skip; must complete before step_5 output):

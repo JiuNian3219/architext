@@ -50,13 +50,13 @@ alwaysApply: true
 - **結構**: `phases[] → tasks[]`，每個 task 須有 `id`, `title`, `status`, `deps`。
 - **Status 值**: `pending` | `active` | `done` | `blocked`。
 - **依賴完整性**: `deps` 中引用的 ID 須存在於 tasks 中。
-- **Slug 規則**: `slug` 用於 features 資料夾命名，格式為 `Snake_Case`。
+- **Slug 規則**: `slug` 用於 tasks 資料夾命名，格式為 `Snake_Case`。
 
 ### `map.json`
 
 - **Directory Mapping**: 須反映真實實體檔案樹。
-- **Logical Topology**: 須註冊每個 Feature Module 的職責。
-- **Feature Relations**: 記錄聚合型功能與其來源的聯動關係。每條結構為 `{ aggregator, sources, evidence, checkNote }`；由 AI 在 `/archi.plan`（規劃聚合型功能時）或 `/archi.inherit`（逆向掃描時）寫入，無需使用者手動維護。
+- **Logical Topology**: 須註冊每個 Task Module 的職責。
+- **Feature Relations**（欄位 `featureRelations`）: 記錄聚合型 Task 與其來源的聯動關係。每條結構為 `{ aggregator, sources, evidence, checkNote }`；由 AI 在 `/archi.plan`（規劃聚合型 Task 時）或 `/archi.inherit`（逆向掃描時）寫入，無需使用者手動維護。
 - **自我校正**: 若程式碼引用違反拓撲定義的層級關係，須報錯並停止產生。
 - **可擴展**: 若現有欄位不足以描述專案架構，可在 item 中自行新增欄位（如 `tags`、`owner`），或新增頂層 key。
 
@@ -96,7 +96,7 @@ alwaysApply: true
 
 ## 4. Plan JSON (`plan.json`)
 
-- **位置**: `features/<ID>_<Slug>/plan.json`
+- **位置**: `tasks/<ID>_<Slug>/plan.json`
 - **Checkbox 更新**: AI 在 `/archi.code` 中完成步驟後直接將 `done` 設為 `true`。
 - **追加規則**: `/archi.edit` 追加新 Phase 時保留已完成歷史。
 - **驗證**: 完成後執行 `npx archi plan <ID>` 驗證完成度。

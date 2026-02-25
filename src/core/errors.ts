@@ -66,7 +66,7 @@ export class InvalidTaskStatusError extends AppError {
 export class PlanNotFoundError extends AppError {
   constructor(featureId: string) {
     super(
-      `Plan file not found for feature [${featureId}]. Expected at: {docDir}/features/${featureId}_*/plan.json`,
+      `Plan file not found for task [${featureId}]. Expected at: {docDir}/tasks/${featureId}_*/plan.json`,
       "PLAN_NOT_FOUND",
       true,
     );

@@ -40,7 +40,7 @@
     對新增目錄中的檔案做快速掃描（讀取匯出/宣告），識別**單檔案多職責**的情況：
     - 一個檔案匯出多個不相關的 class/function/module
     - 一個入口檔案聚合註冊了多個子模組（如路由註冊、Store 註冊）
-    - 一個檔案同時服務多個 Feature
+    - 一個檔案同時服務多個 Task
 
     發現此類檔案 → 粒度細化到檔案級，在 map 中單獨登記並描述其包含的職責。
 
@@ -54,7 +54,7 @@
     ### 歸類策略
 
     1.  **模式匹配**: 參考 map.json 中同層級已有條目的歸類。如 `src/services/auth/` 屬於 "Service Layer"，則 `src/services/payment/` 大概率也屬於 "Service Layer"。
-    2.  **Tech Stack 約定**: `02_tech_stack.md` 中定義的目錄結構規則（如 "commands/ 下為 Feature Layer"）。
+    2.  **Tech Stack 約定**: `02_tech_stack.md` 中定義的目錄結構規則（如 "commands/ 下為 Task Layer"）。
     3.  **內容推斷**: 讀取檔案內容（import 關係、匯出型別），判斷其架構角色。
     4.  **無法確定**: 標記為 `[?]`，交由使用者在確認階段指定。
 

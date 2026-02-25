@@ -50,13 +50,13 @@ alwaysApply: true
 - **Structure**: `phases[] → tasks[]`, each task must have `id`, `title`, `status`, `deps`.
 - **Status values**: `pending` | `active` | `done` | `blocked`.
 - **Dependency integrity**: IDs in `deps` must exist in tasks.
-- **Slug rule**: `slug` is used for features folder naming, format `Snake_Case`.
+- **Slug rule**: `slug` is used for tasks folder naming, format `Snake_Case`.
 
 ### `map.json`
 
 - **Directory Mapping**: Must reflect the real physical file tree.
-- **Logical Topology**: Must register each Feature Module's responsibility.
-- **Feature Relations**: Records linkage relationships between aggregator features and their sources. Each entry: `{ aggregator, sources, evidence, checkNote }`. Written by AI during `/archi.plan` (when planning an aggregator feature) or `/archi.inherit` (during reverse scanning); no manual maintenance needed.
+- **Logical Topology**: Must register each Task Module's responsibility.
+- **Feature Relations** (field `featureRelations`): Records linkage relationships between aggregator tasks and their sources. Each entry: `{ aggregator, sources, evidence, checkNote }`. Written by AI during `/archi.plan` (when planning an aggregator task) or `/archi.inherit` (during reverse scanning); no manual maintenance needed.
 - **Self-Correction**: If code references violate the hierarchy defined in topology, must report error and stop generation.
 - **Extensible**: If existing fields cannot adequately describe the project architecture, you may add fields to items (e.g. `tags`, `owner`) or add new top-level keys.
 
@@ -96,7 +96,7 @@ alwaysApply: true
 
 ## 4. Plan JSON (`plan.json`)
 
-- **Location**: `features/<ID>_<Slug>/plan.json`
+- **Location**: `tasks/<ID>_<Slug>/plan.json`
 - **Checkbox Updates**: AI sets `done` to `true` directly after completing steps during `/archi.code`.
 - **Append Rule**: `/archi.edit` appends new Phases while preserving completed history.
 - **Verification**: Run `npx archi plan <ID>` to verify completion after finishing.

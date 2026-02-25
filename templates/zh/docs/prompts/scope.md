@@ -7,7 +7,7 @@
     <style>Strategic, Analytical, Structured</style>
     <language>简体中文</language>
     <principles>
-      1.  **Brief-Driven**: 以用户提供的 Scope Brief 为核心输入源，禁凭空脑暴功能。
+      1.  **Brief-Driven**: 以用户提供的 Scope Brief 为核心输入源，禁凭空脑暴任务。
       2.  **Incremental**: 在已有 Roadmap 上追加，禁重写已有任务。
       3.  **User Agency First**: Brief 中用户已填写的选择须直接采纳，禁质疑或替换。
       4.  **Minimal Questions**: 仅针对信息缺口提问，Brief 充分时可跳过提问直接分解。
@@ -25,10 +25,10 @@
 
     2. 解析 Brief 各 Section，提取：
        - 需求名称和描述
-       - 功能清单
+       - 任务清单
        - 已有设计决策
        - 边界与约束（不做的事、时间、依赖、技术限制）
-       - 受影响的已有功能
+       - 受影响的已有任务
        - 参考资料
 
     > Brief 是一次性输入文件，处理完成后用户可自行删除。
@@ -43,7 +43,7 @@
     2.  **Read Roadmap**: `[[__DOCS_DIR__]]/global/roadmap.json` — 仅提取每个 task 的 `id/title/status/deps/tag` 字段（跳过 `goal/notes`，需求分解不需要这些详情）；读取当前最大 ID 水位用于新任务编号。
     3.  **Read Tech Stack**: `02_tech_stack.md` — 技术约束。
     4.  **Read Map**: `[[__DOCS_DIR__]]/global/map.json` — 仅读 `directoryMapping` 和 `featureRelations`；`logicalTopology` 和 `criticalUserJourneys` 跳过。
-    5.  **Scan Features**: 扫描 `[[__DOCS_DIR__]]/features/` 目录 — 了解已有 feature 概要（标题 + 关键流程，无需全文）。
+    5.  **Scan Tasks**: 扫描 `[[__DOCS_DIR__]]/tasks/` 目录 — 了解已有 Task 概要（标题 + 关键流程，无需全文）。
 
     **Output**: 内部上下文摘要，进入 `<step_2_analysis>`。
 </step_1_load>
@@ -55,15 +55,15 @@
     **Action**:
 
     1. **Vision 对齐检查**: Brief 需求是否与 vision.md 的北极星指标一致？如有偏离 → 在输出中标注 `[Vision 偏离警告]`。
-    2. **功能清单完整性**: Brief 功能清单是否足以支撑需求目标？
-    3. **影响评估**: Brief 中"受影响的已有功能" → 对照 roadmap/features 验证是否存在、状态如何。
+    2. **任务清单完整性**: Brief 任务清单是否足以支撑需求目标？
+    3. **影响评估**: Brief 中"受影响的已有任务" → 对照 roadmap/tasks 验证是否存在、状态如何。
     4. **缺口识别**: 检查 Brief 是否有关键信息缺失。
-    5. **联动检查**: 读取 `map.json.featureRelations`，将新功能的描述与各条 `sources` 字段做语义对比，判断新功能是否属于某聚合方的覆盖范围。命中时在摘要中输出联动提示。
+    5. **联动检查**: 读取 `map.json.featureRelations`，将新任务的描述与各条 `sources` 字段做语义对比，判断新任务是否属于某聚合方的覆盖范围。命中时在摘要中输出联动提示。
 
     **缺口分级**:
-    - **必须**: 缺失则无法合理分解（如功能清单为空）
+    - **必须**: 缺失则无法合理分解（如任务清单为空）
     - **可补**: AI 可推导但建议确认（如依赖关系不明确）
-    - **建议**: AI 可自行决定（如功能分组方式）
+    - **建议**: AI 可自行决定（如任务分组方式）
 
     **Decision**:
     - 无"必须"级缺口 + 无"可补"级缺口 → 跳过 Step 2.5，直接进入 Step 3
@@ -79,8 +79,8 @@
     **已确认信息**:
     - [列表]
 
-    **受影响的已有功能**:
-    | 功能 | 状态 | 预估影响 |
+    **受影响的已有任务**:
+    | 任务 | 状态 | 预估影响 |
     |:---|:---|:---|
     | [ID: 名称] | [done/active/stub] | [需修改/需扩展/无影响] |
 
@@ -109,7 +109,7 @@
     **Role**: 首席架构师
     **Input**: Brief 全文 + 项目上下文 + 补充回答（如有）。
 
-    **Action**: [[SKILL: 按 `archi-decompose-roadmap` Skill 的协议，基于 Scope Brief 功能清单生成增量任务数据]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
+    **Action**: [[SKILL: 按 `archi-decompose-roadmap` Skill 的协议，基于 Scope Brief 任务清单生成增量任务数据]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
 
     **展示格式**（将 Skill 产出的任务数据转换为以下格式，向用户呈现后等待确认）：
 
@@ -166,12 +166,12 @@
     **Output**: 需求分解摘要，含：
     - **Brief 来源确认**: 需求名称和核心目标
     - **新增任务**: 数量和 Phase 分布
-    - **对已有功能的影响**: 影响列表（如有）
+    - **对已有任务的影响**: 影响列表（如有）
     - **Next Steps**:
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
-    | [?UI] 推荐 | 运行 `archi-ui-wireframe` Skill（追加模式） | 为新增功能追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
+    | [?UI] 推荐 | 运行 `archi-ui-wireframe` Skill（追加模式） | 为新增任务追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
     | 1 | `/archi.plan <第一个 pending 任务 ID>` | 对首个可执行任务做深度规划 |
     | 2 | 审查 roadmap | 确认依赖关系和优先级 |
 </step_5_signoff>
@@ -187,9 +187,9 @@
        - 或继续对话，通过访谈方式提供信息
     2. 如用户选择继续对话，按以下顺序引导：
        a. 这次要做什么？（需求名称、一句话描述、动机）
-       b. 包含哪些功能？（具体功能列表）
+       b. 包含哪些任务？（具体任务列表）
        c. 有什么约束？（不做的事、依赖、技术限制）
-       d. 会影响哪些已有功能？
+       d. 会影响哪些已有任务？
     3. 收集完毕后，将信息写入 `scope-brief.md`（项目根目录），然后跳转 `<step_1_load>`。
 
     > 此模式为向后兼容，核心流程仍以 Brief 为准。

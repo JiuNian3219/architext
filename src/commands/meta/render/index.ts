@@ -30,7 +30,7 @@ async function resolveRenderLang(): Promise<LocaleLang> {
 
 /**
  * Render 命令的主入口函数。
- * 扫描全局 JSON 文件和 Feature plan.json，校验 Schema 后生成对应的 .md 视图。
+ * 扫描全局 JSON 文件和 task plan.json，校验 Schema 后生成对应的 .md 视图。
  */
 export async function renderCommand(): Promise<void> {
   const docDir = await resolveDocDir();
@@ -61,12 +61,12 @@ export async function renderCommand(): Promise<void> {
     rendered++;
   }
 
-  // 渲染 features/*/plan.json → plan.md（先校验再渲染）
-  const featuresDir = path.join(docDir, "features");
-  if (await fs.pathExists(featuresDir)) {
-    const entries = await fs.readdir(featuresDir);
+  // 渲染 tasks/*/plan.json → plan.md（先校验再渲染）
+  const tasksDir = path.join(docDir, "tasks");
+  if (await fs.pathExists(tasksDir)) {
+    const entries = await fs.readdir(tasksDir);
     for (const entry of entries) {
-      const planJson = path.join(featuresDir, entry, "plan.json");
+      const planJson = path.join(tasksDir, entry, "plan.json");
       if (await fs.pathExists(planJson)) {
         const raw = await fs.readJSON(planJson);
         const data = validateJson<PlanData>(
@@ -75,7 +75,7 @@ export async function renderCommand(): Promise<void> {
           `${entry}/plan.json`,
         );
         const md = renderPlan(data, lang);
-        const mdPath = path.join(featuresDir, entry, "plan.md");
+        const mdPath = path.join(tasksDir, entry, "plan.md");
         await fs.writeFile(mdPath, md, "utf-8");
         logger.step(`${entry}/plan.json → plan.md`);
         rendered++;

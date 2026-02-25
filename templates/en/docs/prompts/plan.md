@@ -1,6 +1,6 @@
 <protocol_plan>
   **Trigger**: `/archi.plan <ID> [context]`
-  **Goal**: Define Feature Spec/UI/Plan through deep architecture interview.
+  **Goal**: Define Task Spec/UI/Plan through deep architecture interview.
   **Input**:
   - `<ID>` (required): An existing task ID from the Roadmap. Tasks must be created first via `/archi.scope` or `/archi.inherit`.
   - `[context]` (optional): Known context for the task (e.g., requirement descriptions, references, constraints). When provided, serves as pre-loaded input for step_2 interview, reducing questions.
@@ -13,7 +13,7 @@
     <style>Architectural, Exhaustive, Strict, Technology-Agnostic</style>
     <language>English</language>
     <principles>
-      1.  **Global First**: The birth of local features must be accompanied by updates to global indices (Map/Data/Dict).
+      1.  **Global First**: The birth of local tasks must be accompanied by updates to global indices (Map/Data/Dict).
       2.  **AI-Native Perspective**: All option Pros/Cons written from AI Agent perspective. Focus: Context Locality, Type Safety, Boilerplate, Ambiguity.
       3.  **Flexible Interaction**: Options are heuristic suggestions; support multi-select, hybrid, or custom.
       4.  **Audit-Gated**: Only audited docs can be delivered.
@@ -30,19 +30,19 @@
         - Extract global architecture conventions from Section 9 (Error Handling / Data Flow / Auth & Access) for convention inheritance in step_2.
     4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`.
     4.5 [?UI] **Read UI Context**: `[[__DOCS_DIR__]]/global/ui_context.md` (if it exists).
-        - Look up the screen inventory to locate the screen IDs (e.g. S-03) for this feature and their state coverage.
+        - Look up the screen inventory to locate the screen IDs (e.g. S-03) for this task and their state coverage.
         - Lock the screen scope to fill in `ui.md §1` in step_4; do not invent new screen IDs.
         - If `ui_context.md` does not exist → skip; write `ui.md` in full ITP format.
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`.
     6.  **Read Dependency Context** (if dependent tasks exist):
         - Read only the Interface/Type definitions section of the dep's `spec.md` (`## Interface` or `## Types` chapter); skip Scenarios and other content.
-        - Execute only when a `ref: features/<dep_id>/spec.md#X` reference appears in the current spec/plan; skip if no reference found.
+        - Execute only when a `ref: tasks/<dep_id>/spec.md#X` reference appears in the current spec/plan; skip if no reference found.
         - **Stub Compatibility**: If a dependency's Spec-Status is Stub, extract source files from the stub's "Associated Files", read entry files to extract public interfaces/exported types as upstream interface reference.
         - Avoid re-defining upstream interfaces; ensure integration points are precisely aligned.
 
-    **Output**: Present a **Feature Context Brief** to the user:
+    **Output**: Present a **Task Context Brief** to the user:
     ```
-    ### Feature Context: [Feature Name] ([ID])
+    ### Task Context: [Task Name] ([ID])
 
     **Goal**: [roadmap task's goal; highlight any [User Presets] if present]
     **Upstream Dependencies**: [completed dependency tasks and their key interfaces/types, or "None"]
@@ -56,7 +56,7 @@
 
 <step_1_5_complexity>
     **Role**: Product Consultant
-    **Action**: Assess feature complexity to decide whether to run the full step_2 flow:
+    **Action**: Assess task complexity to decide whether to run the full step_2 flow:
 
     **① Granularity hard-limit check (before complexity verdict)**:
 
@@ -88,13 +88,13 @@
 
     ### Unified Proposal
 
-    **Core principle**: Merge feature design and architecture decisions into **one single output**; user confirms or overrides in one round.
+    **Core principle**: Merge task design and architecture decisions into **one single output**; user confirms or overrides in one round.
 
     **Action**:
 
-    #### Part 1: Feature Design
+    #### Part 1: Task Design
 
-    AI **selects which modules to output** based on the feature's nature, from the following material library:
+    AI **selects which modules to output** based on the task's nature, from the following material library:
 
     | Material | When applicable |
     |:---|:---|
@@ -104,12 +104,12 @@
     | Pre-defined decisions | When goal contains `[User Preset]` → highlight and enforce strictly |
 
     **Reference rules**:
-    - Entities/types already in global → `ref: data_snapshot.json#X`, only describe what this feature **adds or modifies**
+    - Entities/types already in global → `ref: data_snapshot.json#X`, only describe what this task **adds or modifies**
     - Design philosophy/principles → `ref: vision.md#PrincipleName`, no need to restate
-    - Upstream interfaces → `ref: features/<dep_ID>/spec.md#InterfaceName`
+    - Upstream interfaces → `ref: tasks/<dep_ID>/spec.md#InterfaceName`
     - Existing design tokens/components → `ref: design_tokens.json#preset` / `ref: dictionary.json#component`
 
-    **Universal requirement**: Use this feature's specific entity names and operation names; no generic descriptions
+    **Universal requirement**: Use this task's specific entity names and operation names; no generic descriptions
 
 
     #### Part 2: Architecture Recommendations
@@ -121,16 +121,16 @@
     #### Output Format
 
     ```
-    ## Feature Proposal: [Feature Name] ([ID])
+    ## Task Proposal: [Task Name] ([ID])
 
-    ### Feature Design
+    ### Task Design
     [Output per complexity level, see Part 1 above]
 
     ### Architecture Recommendations
     | Dimension | Recommended | Source | Rationale |
     |:---|:---|:---|:---|
-    | Core Structure | [Recommended option] | Feature | [1-2 sentences specific to this feature] |
-    | Interaction Pattern | [Recommended option] | Feature | [Rationale] |
+    | Core Structure | [Recommended option] | Task | [1-2 sentences specific to this task] |
+    | Interaction Pattern | [Recommended option] | Task | [Rationale] |
     | Error Handling | [Convention value] | Project Convention | ref: 02_tech_stack.md §9 |
     | ... | ... | ... | ... |
 
@@ -158,29 +158,29 @@
     **Role**: Consultant
     **Trigger**: User reply is not OK — contains corrections, questions, overrides, or logic conflicts.
     **Action**: Do NOT generate docs. Incorporate user feedback, refresh Unified Proposal and re-output. Wait for confirmation.
-    - If feature design question → Compare alternatives, re-propose design
-    - If architecture dimension question → Explain differences in this feature's context, update recommendation
+    - If task design question → Compare alternatives, re-propose design
+    - If architecture dimension question → Explain differences in this task's context, update recommendation
     - If dimension override → Replace recommendation directly and adjust related design
 </step_2_5_refinement>
 
 <step_3_global_sync>
     **Role**: System Admin
-    **Constraint**: MUST update the following global files **BEFORE** generating Feature docs.
+    **Constraint**: MUST update the following global files **BEFORE** generating Task docs.
 
     **Boundary**: Only register **project business domain** content. Architext framework concepts (scripts, scaffold, roadmap, plan, etc.) and framework infrastructure errors are prohibited from registration in global files.
 
     **Action Checklist**:
-    1.  **`map.json`**: Register `[[__DOCS_DIR__]]/features/<ID>_<Slug>` in `directoryMapping`; define module responsibility and dependencies in `logicalTopology`.
+    1.  **`map.json`**: Register `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>` in `directoryMapping`; define module responsibility and dependencies in `logicalTopology`.
     2.  **`dictionary.json`**: Extract **project business** new terms from the proposal to fill `entities`/`verbs`; register new shared tools to `utilities`; register new public components to `components`.
     3.  [?Data] **`data_snapshot.json`**: Add/modify Schema based on Core Structure recommendation. Prohibited from writing "TBD"; must write field names and types.
     4.  **`error_codes.json`**: Register new **business** error codes based on Error Handling recommendation. Framework script errors are handled by exit code + stderr; prohibited from registration.
-    5.  **`map.json` featureRelations**: Determine if this feature is an "aggregator" — i.e., its core responsibility is to **list, summarize, or dynamically reflect** a class of other features (e.g., "list all commands", "aggregate all page entries", "register all routes"). If yes, append one record to `featureRelations`:
+    5.  **`map.json` featureRelations**: Determine if this task is an "aggregator" — i.e., its core responsibility is to **list, summarize, or dynamically reflect** a class of other tasks (e.g., "list all commands", "aggregate all page entries", "register all routes"). If yes, append one record to `featureRelations`:
         ```json
         {
-          "aggregator": "<this feature ID or file path>",
-          "sources": "<one-sentence description of what is aggregated, e.g. 'all CLI command features'>",
-          "evidence": "<basis, e.g. 'spec.md §X states this feature dynamically lists all Y-type features'>",
-          "checkNote": "When features of this type are added or removed, check whether <aggregator> needs to be updated"
+          "aggregator": "<this task ID or file path>",
+          "sources": "<one-sentence description of what is aggregated, e.g. 'all CLI command tasks'>",
+          "evidence": "<basis, e.g. 'spec.md §X states this task dynamically lists all Y-type tasks'>",
+          "checkNote": "When tasks of this type are added or removed, check whether <aggregator> needs to be updated"
         }
         ```
         If not an aggregator, skip this step.
@@ -190,19 +190,19 @@
 
 <step_4_generate>
     **Role**: Doc Engineer
-    **Input**: Confirmed Unified Proposal (feature design + architecture recommendations) + updated global context.
-    **Action**: Generate standard docs under `[[__DOCS_DIR__]]/features/<ID>_<Slug>/`.
+    **Input**: Confirmed Unified Proposal (task design + architecture recommendations) + updated global context.
+    **Action**: Generate standard docs under `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/`.
 
     **1. `spec.md`** (Mandatory):
     - Template: `templates/spec.template.md`.
-    - Convert confirmed feature design and architecture recommendations to Gherkin Scenarios.
-    - Each Scenario must map to a concrete flow step or exception path from the feature design; do not invent scenarios.
+    - Convert confirmed task design and architecture recommendations to Gherkin Scenarios.
+    - Each Scenario must map to a concrete flow step or exception path from the task design; do not invent scenarios.
     - If upstream task, must include explicit Interface/Type definitions.
 
     **2. `ui.md`** [?UI]:
     - Template: `templates/ui.template.md`.
     - **With `ui_context.md` (primary path)**:
-      1. **UI Divergence Check** (required before writing `ui.md`): Compare the confirmed feature design from step_2 against the screen inventory in `ui_context.md`:
+      1. **UI Divergence Check** (required before writing `ui.md`): Compare the confirmed task design from step_2 against the screen inventory in `ui_context.md`:
 
          | Divergence type | Criteria | Action |
          |:---|:---|:---|
@@ -226,7 +226,7 @@
 <step_5_audit>
     **Role**: Chief Auditor
     **Checklist**:
-    1.  **Design Fidelity**: Do Scenarios fully cover confirmed feature design (flow steps and exception paths)?
+    1.  **Design Fidelity**: Do Scenarios fully cover confirmed task design (flow steps and exception paths)?
     2.  **Tech Consistency**: Any undeclared tech used?
     3.  **Data Integrity**: Do Scenario entities match confirmed core entities?
     4.  **Error Handling**: Is Error Handling recommendation covered?
@@ -246,7 +246,7 @@
     **Action** (After Gate passes):
     1.  Output summary.
 
-    **Output**: Feature definition summary with Architecture Confirmation table (each dimension's final choice and rationale) and Next Steps table.
+    **Output**: Task definition summary with Architecture Confirmation table (each dimension's final choice and rationale) and Next Steps table.
 </step_6_signoff>
 
 </protocol_plan>

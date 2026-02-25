@@ -25,13 +25,13 @@
       "tasks": [
         {
           "id": "FEAT-01",
-          "title": "Example Feature",
+          "title": "Example Task",
           "status": "blocked",
           "description": "",
           "goal": "",
           "deps": ["INF-01"],
           "tag": "Core",
-          "slug": "Example_Feature"
+          "slug": "Example_Task"
         }
       ]
     }

@@ -18,9 +18,9 @@
 
 ---
 
-## Core Features
+## Core Tasks
 
-> MVP must-have features (recommend 3–7), each in one sentence describing expected behavior.
+> MVP must-have tasks (recommend 3–7), each in one sentence describing expected behavior.
 > Detailed specs are defined in `/archi.plan`; here just clarify "what to build."
 
 1. 
@@ -31,11 +31,11 @@
 
 ## Existing Design Decisions
 
-> If you have clear ideas for specific features/pages/flows, describe them here. AI will treat these as final in the plan phase and will not override them.
+> If you have clear ideas for specific tasks/pages/flows, describe them here. AI will treat these as final in the plan phase and will not override them.
 > Leave blank if not applicable.
 >
 > Format:
-> - **[Feature/page name]**: Describe behavior, flow, constraints
+> - **[Task/page name]**: Describe behavior, flow, constraints
 > - May include screenshot/sketch links
 
 ---

@@ -36,13 +36,13 @@
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
     6.  **Read Dependency Context** (如有依赖任务):
         - 仅读依赖任务 `spec.md` 的 Interface/Type 定义段（`## Interface` 或 `## Types` 章节）；不读 Scenarios 等其余内容。
-        - 仅当当前 spec/plan 出现 `ref: features/<dep_id>/spec.md#X` 引用时执行；无引用时跳过。
+        - 仅当当前 spec/plan 出现 `ref: tasks/<dep_id>/spec.md#X` 引用时执行；无引用时跳过。
         - **Stub 兼容**: 如依赖任务的 Spec-Status 为 Stub，从 stub"关联文件"提取源码，读入口文件提取公共接口/导出类型，作为上游接口参考。
         - 避免重复定义上游接口，确保对接点精确对齐。
 
-    **Output**: 向用户输出 **Feature Context Brief**：
+    **Output**: 向用户输出 **Task Context Brief**：
     ```
-    ### Feature Context: [功能名称] ([ID])
+    ### Task Context: [功能名称] ([ID])
 
     **目标**: [roadmap task 的 goal，如含 [用户预设] 须高亮标注]
     **上游依赖**: [已完成的依赖任务及其关键接口/类型，无则写"无"]
@@ -92,7 +92,7 @@
 
     **Action**:
 
-    #### Part 1: Feature Design (功能设计)
+    #### Part 1: Task Design (功能设计)
 
     AI 根据功能性质**自行决定输出哪些模块**，从以下素材库中选取适用项：
 
@@ -106,7 +106,7 @@
     **引用规则**:
     - global 中已定义的实体/类型 → `ref: data_snapshot.json#X`，仅描述本功能**新增或修改**的部分
     - 设计哲学/原则 → `ref: vision.md#原则名`，无需复述
-    - 上游接口 → `ref: features/<dep_ID>/spec.md#接口名`
+    - 上游接口 → `ref: tasks/<dep_ID>/spec.md#接口名`
     - 已有设计 Token/组件 → `ref: design_tokens.json#preset` / `ref: dictionary.json#component`
 
     **通用要求**: 用此功能的具体实体名、操作名描述，禁泛化
@@ -120,7 +120,7 @@
     #### Output Format
 
     ```
-    ## Feature Proposal: [功能名称] ([ID])
+    ## Task Proposal: [功能名称] ([ID])
 
     ### 功能设计
     [按复杂度级别输出，见上方 Part 1]
@@ -166,25 +166,25 @@
 
 <step_3_global_sync>
     **Role**: 系统管理员
-    **Constraint**: 在生成 Feature 文档**之前**，须先更新以下全局文件。
+    **Constraint**: 在生成 Task 文档**之前**，须先更新以下全局文件。
 
     **Boundary**: 仅注册**项目业务域**内容。Architext 框架概念（scripts、scaffold、roadmap、plan 等）和框架基础设施错误禁注册到全局文件。
 
     **Action Checklist**:
-    1.  **`map.json`**: 在 `directoryMapping` 注册 `[[__DOCS_DIR__]]/features/<ID>_<Slug>`；在 `logicalTopology` 定义模块职责与依赖。
+    1.  **`map.json`**: 在 `directoryMapping` 注册 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>`；在 `logicalTopology` 定义模块职责与依赖。
     2.  **`dictionary.json`**: 提取提案中的**项目业务**新术语填入 `entities`/`verbs`；注册新共享工具到 `utilities`；注册新公共组件到 `components`。
     3.  [?Data] **`data_snapshot.json`**: 根据架构建议中核心结构的选择新增/修改 Schema。禁写"待定"，须写出字段名和类型。
     4.  **`error_codes.json`**: 根据架构建议中错误处理的选择注册新**业务**错误码。框架脚本错误由 exit code + stderr 处理，禁注册。
-    5.  **`map.json` featureRelations**: 判断本功能是否属于「聚合型功能」——即其核心职责是**列举、汇总或动态反映**其他一类功能（如「列出所有命令」「汇总所有页面入口」「注册所有路由」）。若是，在 `featureRelations` 中追加一条记录：
+    5.  **`map.json` featureRelations**: 判断本 Task 是否属于「聚合型 Task」——即其核心职责是**列举、汇总或动态反映**其他一类 Task（如「列出所有命令」「汇总所有页面入口」「注册所有路由」）。若是，在 `featureRelations` 中追加一条记录：
         ```json
         {
-          "aggregator": "<本功能 ID 或文件路径>",
-          "sources": "<一句话描述聚合来源范围，如'所有 CLI 命令类功能'>",
-          "evidence": "<依据，如'spec.md §X 描述本功能会动态列出所有 Y 类功能'>",
-          "checkNote": "此类功能新增或删除时，检查 <aggregator> 是否需要同步"
+          "aggregator": "<本 Task ID 或文件路径>",
+          "sources": "<一句话描述聚合来源范围，如'所有 CLI 命令类 Task'>",
+          "evidence": "<依据，如'spec.md §X 描述本 Task 会动态列出所有 Y 类 Task'>",
+          "checkNote": "此类 Task 新增或删除时，检查 <aggregator> 是否需要同步"
         }
         ```
-        若非聚合型功能，跳过此步。
+        若非聚合型 Task，跳过此步。
 
     **Output**: 上述文件的变更 Diff (简要)。
 </step_3_global_sync>
@@ -192,7 +192,7 @@
 <step_4_generate>
     **Role**: 文档工程师
     **Input**: 确认的 Unified Proposal（功能设计 + 架构建议）+ 已更新的全局上下文。
-    **Action**: 在 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下生成标准文档。
+    **Action**: 在 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/` 下生成标准文档。
 
     **1. `spec.md`** (必须):
     - 模板: `templates/spec.template.md`。
@@ -247,7 +247,7 @@
     **Action** (Gate 通过后):
     1.  输出总结。
 
-    **Output**: Feature 定义摘要，含架构建议确认表（各维度最终选择及理由）和 Next Steps 表格。
+    **Output**: Task 定义摘要，含架构建议确认表（各维度最终选择及理由）和 Next Steps 表格。
 </step_6_signoff>
 
 </protocol_plan>

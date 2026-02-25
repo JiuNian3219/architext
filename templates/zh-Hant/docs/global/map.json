@@ -9,7 +9,7 @@
       {
         "file": "01_workflow.md",
         "role": "SOP",
-        "when": "決定當前任務流程 (Feature vs Fix) 與驗收標準"
+        "when": "決定當前任務流程 (Task vs Fix) 與驗收標準"
       },
       {
         "file": "02_tech_stack.md",

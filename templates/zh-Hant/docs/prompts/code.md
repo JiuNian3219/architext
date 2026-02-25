@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: 基於 `features/<id>_<Slug>/plan.json` 任務清單，完成功能開發；遵循 `02_tech_stack.md`（[?UI] 同時遵循 `design_tokens.json`）；通過建置、型別、Lint、格式化、測試與審計。
+  **Goal**: 基於 `tasks/<id>_<Slug>/plan.json` 任務清單，完成功能開發；遵循 `02_tech_stack.md`（[?UI] 同時遵循 `design_tokens.json`）；通過建置、型別、Lint、格式化、測試與審計。
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -19,7 +19,7 @@
 <step_1_resolve>
     **Role**: 系統分析師
     **Action**:
-    1.  **Resolve ID**: 從 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Feature Name、Slug、階段/狀態。
+    1.  **Resolve ID**: 從 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Task Name、Slug、階段/狀態。
     2.  **Status Gate** — 僅 `active` 可進入 code 流程:
 
         | 狀態 | 處理 |
@@ -30,11 +30,11 @@
         | `done` ✅ | 拒絕 — 已完成，如需修改用 `/archi.edit <ID>` |
 
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 邏輯與場景
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 本任務 UI 範圍聲明(如存在)
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 邏輯與場景
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — 本任務 UI 範圍聲明(如存在)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI 畫面索引（畫面 ID/路由/狀態/導覽關係/共享元件）
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 唯讀視覺參考（實作時以此校準布局結構，禁基於此重新設計，設計已在 ui.md 確定）
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任務拆解（含 `notes` 速記，執行時須參照）
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — 任務拆解（含 `notes` 速記，執行時須參照）
         - `02_tech_stack.md` — 技術紅線
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
@@ -91,7 +91,7 @@
     | **Test** | Existing Tests | 執行已有測試套件全部通過；禁因新程式碼破壞舊測試 |
     | | New Coverage | 為新增/修改的關鍵邏輯補充測試；純樣式調整可豁免 |
 
-    **Feature Verification (硬性要求)**
+    **Task Verification (硬性要求)**
 
     > 禁僅通過程式碼審查或自動化測試就標記完成；須實際執行目標功能並驗證。
     > 如 dev server 未啟動，先執行 `[[__DOCS_DIR__]]/scripts/dev-up`。
@@ -109,7 +109,7 @@
     **Evidence**: Output 須附驗證結果（命令輸出摘要 / 截圖 / 錯誤日誌）。
     **Fallback**: 驗證持續失敗且懷疑環境問題 → `[[__DOCS_DIR__]]/scripts/dev-reset` → `[[__DOCS_DIR__]]/scripts/dev-up` → 重試。
 
-    **Output**: 每項檢查 ✅/❌ 狀態與原因；Feature Verification 證據。
+    **Output**: 每項檢查 ✅/❌ 狀態與原因；Task Verification 證據。
 </step_4_validate>
 
 <step_5_audit>
@@ -124,7 +124,7 @@
     7.  **Performance**: 避免不必要大依賴/全量匯入/無用計算/記憶體洩漏。
     8.  **Security**: 無敏感資訊洩露；輸入有校驗。
     9.  **Static Check Zero**: 所有靜態檢查問題已解決。
-    10. **step_4 Gate**: 確認 step_4 所有檢查（Static + Test + Feature Verification）已通過。
+    10. **step_4 Gate**: 確認 step_4 所有檢查（Static + Test + Task Verification）已通過。
     11. **聯動檢查**: 讀取 `[[__DOCS_DIR__]]/global/map.json` 中的 `featureRelations` 陣列，將本次實現的功能與各條 `sources` 欄位做語義對比。命中時輸出提示：`⚠️ 聯動: [aggregator] — [checkNote]`，提醒在當前實現完成後確認聚合方是否需要同步。`featureRelations` 為空則跳過。
 
     細節問題可 Auto-Fix 並說明；重大風險標註 `⚠️ Risk` 並提出替代方案。

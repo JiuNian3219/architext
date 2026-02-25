@@ -25,7 +25,7 @@ alwaysApply: true
 | `/archi.audit` | `[[__DOCS_DIR__]]/prompts/audit.md` | Load Chief Auditor → Deep Code Audit |
 | `/archi.fix` | `[[__DOCS_DIR__]]/prompts/fix.md` | Load Debugger → Diagnosis |
 | `/archi.map` | `[[__DOCS_DIR__]]/prompts/map.md` | Load Surveyor → Map Refresh |
-| `/archi.remove` | `[[__DOCS_DIR__]]/prompts/remove.md` | Load Surgeon → Feature Decommission |
+| `/archi.remove` | `[[__DOCS_DIR__]]/prompts/remove.md` | Load Surgeon → Task Decommission |
 | `/archi.help` | `[[__DOCS_DIR__]]/prompts/help.md` | Load Manual → Display Guide |
 
 > **Mechanism**: 1) Read target `.md` full text 2) Override `00_system` partial settings 3) Execute `<step_1>`.
@@ -89,7 +89,7 @@ alwaysApply: true
 
 | Subcommand | Purpose | Example |
 |:---|:---|:---|
-| `npx archi plan <ID>` | Check Feature's Plan completion | `npx archi plan SUB-01` |
+| `npx archi plan <ID>` | Check Task's Plan completion | `npx archi plan SUB-01` |
 
 Automatically identifies Manual Verification sections and excludes them from automated statistics.
 
@@ -98,7 +98,7 @@ Automatically identifies Manual Verification sections and excludes them from aut
 | Scenario | Action |
 |:---|:---|
 | Before `/archi.code` signoff | `npx archi plan <ID>` to confirm all checkboxes are checked |
-| Check Feature implementation progress | `npx archi plan <ID>` |
+| Check Task implementation progress | `npx archi plan <ID>` |
 
 > During `/archi.code` signoff phase, must first run `npx archi plan <ID>` to verify completion.
 

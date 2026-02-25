@@ -176,8 +176,8 @@ UI 制品层级：
 ---
 
 ## 9. Project Conventions (项目约定)
-> 全局架构约定，由 `/archi.start` 确立。`/archi.plan` 自动继承，功能无特殊需求时不再逐一提问。
-> 功能若需偏离约定，须在提案中明确说明偏离理由。
+> 全局架构约定，由 `/archi.start` 确立。`/archi.plan` 自动继承，任务无特殊需求时不再逐一提问。
+> 任务若需偏离约定，须在提案中明确说明偏离理由。
 
 ### Error Handling (错误处理策略)
 * **Strategy:** [例如：Fail Fast + Form Validation / Fail Fast (stderr) / Schema Validation + Fail Fast]

@@ -10,7 +10,7 @@
       2.  **Reproduction**: 须先构想复现步骤或测试用例。
       3.  **Root Cause**: 须分析根因，而非修补表面。
       4.  **Test-Driven**: 修复计划须含新增测试用例。
-      5.  **Auto-Discovery**: 若未指定 ID，通过 Context 语义搜索定位 Feature。
+      5.  **Auto-Discovery**: 若未指定 ID，通过 Context 语义搜索定位 Task。
     </principles>
 </meta>
 
@@ -18,7 +18,7 @@
     **Role**: 故障分析师
     **Action**:
     1.  **Resolve Target**:
-        - 有 `<id>`: 锁定 `features/<ID>_<Slug>/`。
+        - 有 `<id>`: 锁定 `tasks/<ID>_<Slug>/`。
         - 无 `<id>`: 分析 `[context]` 搜索最相关模块。
           唯一匹配 → 自动锁定 | 多个匹配 → 列出候选询问 | 无法定位 → 报错请求指定 ID。
     2.  读取目标目录下所有文档 (`spec.md`, `ui.md`, `plan.json`) 与相关代码。
@@ -32,7 +32,7 @@
 <step_2_plan_fix>
     **Role**: Tech Lead
     **Action**:
-    - 更新 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/plan.json`，在 `phases` 数组中追加 phase 对象，`name` 为 `Bugfix: <Bug Title>`。
+    - 更新 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/plan.json`，在 `phases` 数组中追加 phase 对象，`name` 为 `Bugfix: <Bug Title>`。
     - Tasks: 1) 创建复现测试(Red) 2) 修复(Green) 3) 回归测试。
 
     **Terminal Gate** (禁止跳过，须在 step_5 输出前全部完成):

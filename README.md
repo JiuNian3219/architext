@@ -91,7 +91,7 @@ my-project/
 │   │   ├── plan.template.json  # 实施计划 JSON 模板
 │   │   └── scope-brief.template.md  # 需求分解 Brief 模板（/archi.scope 用）
 │   │
-│   └── features/               # 功能文档（按功能模块组织）
+│   └── tasks/                  # 任务文档（按 Roadmap Task 组织）
 │       └── INF-001_feature-name/
 │           ├── spec.md         # 功能规格（Gherkin）
 │           ├── ui.md           # UI 组件结构（ITP, 如适用）

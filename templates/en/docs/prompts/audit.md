@@ -10,7 +10,7 @@
       2.  **Evidence-Based**: Every finding must include file path, line number, and code snippet.
       3.  **Actionable Output**: Every issue must include a recommended fix command (`/archi.fix`, `/archi.edit`, etc.).
       4.  **Vision Anchored**: Always use `vision.md` as directional baseline to detect deviations.
-      5.  **Report Persistence**: Audit results must be written to file — task-level → `features/<id>_*/audit.md` (overwrite), project-level → `audits/YYYY-MM-DD.md` (date-archived, same-day overwrite).
+      5.  **Report Persistence**: Audit results must be written to file — task-level → `tasks/<id>_*/audit.md` (overwrite), project-level → `audits/YYYY-MM-DD.md` (date-archived, same-day overwrite).
     </principles>
 </meta>
 
@@ -24,7 +24,7 @@
     | `/archi.audit` | Project-level health check | step_2_project → step_3_report |
 
     **Task-level — Resolve ID**:
-    1.  Parse `<id>` from `[[__DOCS_DIR__]]/global/roadmap.json` → Feature Name, Slug, status.
+    1.  Parse `<id>` from `[[__DOCS_DIR__]]/global/roadmap.json` → Task Name, Slug, status.
     2.  **Status Gate** — Only `active` or `done` can be audited:
 
         | Status | Handling |
@@ -35,12 +35,12 @@
 
     3.  **Load Context**:
         - `[[__DOCS_DIR__]]/global/vision.md` — Project directional baseline
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — Feature logic
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — Task checklist
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — Task UI scope declaration (if exists)
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — Task logic
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — Task checklist
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — Task UI scope declaration (if exists)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI screen index (locate corresponding screen IDs)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — read-only visual reference (source of visual truth for #10 compliance comparison)
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md` — Previous audit report (if exists, for comparison)
+        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/audit.md` — Previous audit report (if exists, for comparison)
         - `02_tech_stack.md` — Technical red lines
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
@@ -49,7 +49,7 @@
     **Project-level — Load Overview**:
     1.  Read `[[__DOCS_DIR__]]/global/vision.md`, `roadmap.json`, `map.json`.
     2.  Read `02_tech_stack.md`.
-    3.  Scan `[[__DOCS_DIR__]]/features/` directory structure.
+    3.  Scan `[[__DOCS_DIR__]]/tasks/` directory structure.
     4.  Read project code entry points and key modules.
 
     **Output**: Audit scope and context inventory.
@@ -91,12 +91,12 @@
     | 1 | **Vision Drift** | Are `roadmap.json` task directions consistent with `vision.md` |
     | 2 | **Architecture Consistency** | `map.json` vs actual directory structure — drift or unregistered modules |
     | 3 | **Roadmap Health** | Consistency + progress stats + long-term blocked tasks + dependency cycle detection |
-    | 4 | **Documentation Completeness** | Each Feature has spec.md + plan.json; detect orphan directories |
+    | 4 | **Documentation Completeness** | Each Task has spec.md + plan.json; detect orphan directories |
     | 5 | **Tech Stack Global Compliance** | Spot-check key entry points and modules for global violations |
-    | 6 | **Cross-Feature Consistency** | Duplicate logic, naming conflicts, interface inconsistencies |
+    | 6 | **Cross-Task Consistency** | Duplicate logic, naming conflicts, interface inconsistencies |
     | 7 | **Orphan .gitkeep** | Dir has other files but still contains `.gitkeep` — must remove |
 
-    After scanning, prioritize and recommend Features needing deep audit:
+    After scanning, prioritize and recommend Tasks needing deep audit:
     - `done` but plan not fully completed
     - Large codebase but no tests
     - Long-term `active` with no progress
@@ -128,9 +128,9 @@
     | Issue Type | Recommended Command |
     |:---|:---|
     | Bug (logic error, edge case miss) | `/archi.fix <ID> <description>` |
-    | Spec gap (feature not fully implemented) | `/archi.edit <ID> <supplement>` |
+    | Spec gap (task not fully implemented) | `/archi.edit <ID> <supplement>` |
     | Architecture-level issue (global violation) | `/archi.revise <description>` |
-    | Incomplete feature (plan falsely marked done) | `/archi.code <ID>` |
+    | Incomplete task (plan falsely marked done) | `/archi.code <ID>` |
     | Minor issue (naming, comments, simplification) | Address in next `/archi.code` |
 
     **Report Structure**:
@@ -141,7 +141,7 @@
     5.  Next Steps table
 
     **Write Report File**:
-    - Task-level → `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md` (overwrite)
+    - Task-level → `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/audit.md` (overwrite)
     - Project-level → `[[__DOCS_DIR__]]/audits/YYYY-MM-DD.md` (date-archived, same-day overwrite)
 
     **Output**: Complete audit report (output to both conversation and file).

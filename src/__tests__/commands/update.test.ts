@@ -249,14 +249,14 @@ describe("auditPlans", () => {
     await cleanupTempDir(tempDir);
   });
 
-  it("features 目录不存在时应返回空数组", async () => {
+  it("tasks 目录不存在时应返回空数组", async () => {
     expect(await auditPlans(BASE_CONFIG, tempDir)).toEqual([]);
   });
 
-  it("feature 目录下无 plan.json 时应跳过该目录", async () => {
+  it("task 目录下无 plan.json 时应跳过该目录", async () => {
     await createTestStructure(tempDir, {
       ".architext": {
-        features: { "INF-001_feature": { "spec.md": "# Spec" } },
+        tasks: { "INF-001_feature": { "spec.md": "# Spec" } },
       },
     });
     expect(await auditPlans(BASE_CONFIG, tempDir)).toEqual([]);
@@ -265,7 +265,7 @@ describe("auditPlans", () => {
   it("合法 plan.json 应返回 compatible: true", async () => {
     await createTestStructure(tempDir, {
       ".architext": {
-        features: {
+        tasks: {
           "INF-001_feature": { "plan.json": JSON.stringify(VALID_PLAN) },
         },
       },
@@ -279,7 +279,7 @@ describe("auditPlans", () => {
   it("JSON 损坏的 plan.json 应返回 compatible: false", async () => {
     await createTestStructure(tempDir, {
       ".architext": {
-        features: { "INF-001_feature": { "plan.json": "{ bad json" } },
+        tasks: { "INF-001_feature": { "plan.json": "{ bad json" } },
       },
     });
 
@@ -292,7 +292,7 @@ describe("auditPlans", () => {
   it("缺少必须字段的 plan.json 应返回 compatible: false 并含字段错误", async () => {
     await createTestStructure(tempDir, {
       ".architext": {
-        features: {
+        tasks: {
           "INF-001_feature": {
             "plan.json": JSON.stringify({ featureId: "INF-001" }),
           },
@@ -306,10 +306,10 @@ describe("auditPlans", () => {
     expect(results[0].errors!.length).toBeGreaterThan(0);
   });
 
-  it("多个 feature 时应逐一审计", async () => {
+  it("多个 task 时应逐一审计", async () => {
     await createTestStructure(tempDir, {
       ".architext": {
-        features: {
+        tasks: {
           "INF-001_ok": { "plan.json": JSON.stringify(VALID_PLAN) },
           "INF-002_broken": {
             "plan.json": JSON.stringify({ featureId: "x" }),

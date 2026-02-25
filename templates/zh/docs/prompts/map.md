@@ -40,7 +40,7 @@
     对新增目录中的文件做快速扫描（读取导出/声明），识别**单文件多职责**的情况：
     - 一个文件导出多个不相关的 class/function/module
     - 一个入口文件聚合注册了多个子模块（如路由注册、Store 注册）
-    - 一个文件同时服务多个 Feature
+    - 一个文件同时服务多个 Task
 
     发现此类文件 → 粒度细化到文件级，在 map 中单独登记并描述其包含的职责。
 
@@ -54,7 +54,7 @@
     ### 归类策略
 
     1.  **模式匹配**: 参考 map.json 中同层级已有条目的归类。如 `src/services/auth/` 属于 "Service Layer"，则 `src/services/payment/` 大概率也属于 "Service Layer"。
-    2.  **Tech Stack 约定**: `02_tech_stack.md` 中定义的目录结构规则（如 "commands/ 下为 Feature Layer"）。
+    2.  **Tech Stack 约定**: `02_tech_stack.md` 中定义的目录结构规则（如 "commands/ 下为 Task Layer"）。
     3.  **内容推断**: 读取文件内容（import 关系、导出类型），判断其架构角色。
     4.  **无法确定**: 标记为 `[?]`，交由用户在确认阶段指定。
 

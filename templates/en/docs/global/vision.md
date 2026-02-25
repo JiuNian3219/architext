@@ -6,7 +6,7 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 
 > **Version:** 1.0.0
 > **Status:** Active
-> **Role:** The "Constitution" of the project. All Features and Specs must align with this.
+> **Role:** The "Constitution" of the project. All Tasks and Specs must align with this.
 
 ## 1. Core Vision
 
@@ -62,8 +62,8 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 
 ### In Scope
 
-* [Core Feature A]
-* [Core Feature B]
+* [Core Task A]
+* [Core Task B]
 
 ### Out of Scope
 
@@ -79,4 +79,4 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 **Action**:
 1.  **Alignment**: Ensure Section 3 (Principles) conflicts with technology choices in `02_tech_stack.md`.
 2.  **Completeness**: Must fill all `[ ]` placeholders, strictly no "Example" text remaining.
-3.  **Consistency**: All Feature Requests (`.spec.md`) must reference the Vision in this file to ensure alignment.
+3.  **Consistency**: All Task Specs (`.spec.md`) must reference the Vision in this file to ensure alignment.

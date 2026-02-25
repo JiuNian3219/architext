@@ -40,7 +40,7 @@
     Quick-scan files in new directories (read exports/declarations) to identify **single-file multi-responsibility** cases:
     - A file exporting multiple unrelated classes/functions/modules
     - An entry file aggregating multiple sub-module registrations (e.g. route registration, store registration)
-    - A file serving multiple Features
+    - A file serving multiple Tasks
 
     When detected → drill granularity to file-level, register the file separately in map with its contained responsibilities.
 
@@ -54,7 +54,7 @@
     ### Classification Strategy
 
     1.  **Pattern Matching**: Reference existing entries at the same level. If `src/services/auth/` is "Service Layer", then `src/services/payment/` likely is too.
-    2.  **Tech Stack Conventions**: Directory structure rules defined in `02_tech_stack.md` (e.g. "commands/ is Feature Layer").
+    2.  **Tech Stack Conventions**: Directory structure rules defined in `02_tech_stack.md` (e.g. "commands/ is Task Layer").
     3.  **Content Inference**: Read file contents (imports, export types) to determine architectural role.
     4.  **Uncertain**: Mark as `[?]`, let user specify during confirmation.
 

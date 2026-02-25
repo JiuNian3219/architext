@@ -148,10 +148,10 @@ export async function runDocStructureChecks(
       hint: t("check.dir.hint_update"),
     },
     {
-      rel: path.join(config.docDir, "features"),
-      label: "features/",
+      rel: path.join(config.docDir, "tasks"),
+      label: "tasks/",
       required: false,
-      hint: t("check.dir.hint_features", { docDir: config.docDir }),
+      hint: t("check.dir.hint_tasks", { docDir: config.docDir }),
     },
   ];
 

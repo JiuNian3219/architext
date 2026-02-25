@@ -6,7 +6,7 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 
 > **Version:** 1.0.0
 > **Status:** Active
-> **Role:** The "Constitution" of the project. All Features and Specs must align with this.
+> **Role:** The "Constitution" of the project. All Tasks and Specs must align with this.
 
 ## 1. Core Vision (核心愿景)
 
@@ -79,4 +79,4 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 **Action**:
 1.  **Alignment**: 确保 Section 3 (Principles) 与 `02_tech_stack.md` 中的技术选型不冲突。
 2.  **Completeness**: 必须填满所有 `[ ]` 占位符，严禁保留 "Example" 字样。
-3.  **Consistency**: 所有的 Feature Request (`.spec.md`) 都必须引用此文件的 Vision 以确保不跑题。
+3.  **Consistency**: 所有的 Task Spec (`.spec.md`) 都必须引用此文件的 Vision 以确保不跑题。

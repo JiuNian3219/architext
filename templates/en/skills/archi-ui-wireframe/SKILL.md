@@ -1,6 +1,6 @@
 ---
 name: archi-ui-wireframe
-description: UI concept design expert. Generates ui_concept.html in two phases — Phase 1 outputs a grayscale wireframe (validates information architecture and screen coverage); Phase 2 applies visual styling from design_tokens.json (colors / typography / motion / illustration). The output is the single visual source of truth for the entire project UI; all feature-level ui.md files reference this file for their screen scope.
+description: UI concept design expert. Generates ui_concept.html in two phases — Phase 1 outputs a grayscale wireframe (validates information architecture and screen coverage); Phase 2 applies visual styling from design_tokens.json (colors / typography / motion / illustration). The output is the single visual source of truth for the entire project UI; all Task-level ui.md files reference this file for their screen scope.
 ---
 
 # UI Concept Design
@@ -23,7 +23,7 @@ description: UI concept design expert. Generates ui_concept.html in two phases �
 
 > **Skill boundary**:
 > - Responsible for: visual concept of all user-visible screens (information architecture, layout, states, transitions)
-> - Not responsible for: feature-level interface contracts (spec.md), task steps (plan.json), business code
+> - Not responsible for: Task-level interface contracts (spec.md), task steps (plan.json), business code
 
 ---
 
@@ -33,12 +33,12 @@ description: UI concept design expert. Generates ui_concept.html in two phases �
 |:---|:---|:---|
 | Initial generation | After `/archi.start` completes | Full generation — all screens |
 | Regeneration | Manual user invocation | Full rewrite (global UI redesign) |
-| Append screens | After `/archi.scope` adds new features | Add new pages only; existing pages untouched |
+| Append screens | After `/archi.scope` adds new tasks | Add new pages only; existing pages untouched |
 | Plan refinement | `/archi.plan` discovers UI divergence | Update only the affected screen (new states / sub-screens / layout corrections) |
-| Modify screens | After `/archi.edit` changes a feature | Update only affected screens; leave others intact |
-| Remove screens | After `/archi.remove` retires a feature | Remove corresponding screens and control bar entries |
+| Modify screens | After `/archi.edit` changes a task | Update only affected screens; leave others intact |
+| Remove screens | After `/archi.remove` retires a task | Remove corresponding screens and control bar entries |
 
-> **Phase 2 (visual styling) timing**: Phase 2 does not need to immediately follow Phase 1. Recommended to run after core features (≥ 50% of Roadmap tasks) have completed planning, ensuring the styled prototype is based on a stable screen structure. If a screen is updated by Plan Refinement after Phase 2, only that screen needs re-styling — a full Phase 2 rerun is not required.
+> **Phase 2 (visual styling) timing**: Phase 2 does not need to immediately follow Phase 1. Recommended to run after core tasks (≥ 50% of Roadmap tasks) have completed planning, ensuring the styled prototype is based on a stable screen structure. If a screen is updated by Plan Refinement after Phase 2, only that screen needs re-styling — a full Phase 2 rerun is not required.
 
 ---
 

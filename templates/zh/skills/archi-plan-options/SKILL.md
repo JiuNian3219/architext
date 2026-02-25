@@ -14,7 +14,7 @@ description: Architext 架构决策选项库。定义五个核心维度（Core S
     ↓
 直接推荐行（多数维度）或 Q-table（需用户裁决时）
     ↓
-写入 Feature Proposal 架构建议表
+写入 Task Proposal 架构建议表
 ```
 
 > **Skill 的职责边界**：
@@ -231,4 +231,4 @@ description: Architext 架构决策选项库。定义五个核心维度（Core S
 
 ---
 
-> **中间产物**：此 Skill 为子程序，产出推荐行或 Q-table 后控制权交还 `/archi.plan` step_2，由调用方组装进 Feature Proposal 的架构建议表。
+> **中间产物**：此 Skill 为子程序，产出推荐行或 Q-table 后控制权交还 `/archi.plan` step_2，由调用方组装进 Task Proposal 的架构建议表。

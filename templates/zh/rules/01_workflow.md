@@ -25,7 +25,7 @@ alwaysApply: true
 | `/archi.audit` | `[[__DOCS_DIR__]]/prompts/audit.md` | Load Chief Auditor → Deep Code Audit |
 | `/archi.fix` | `[[__DOCS_DIR__]]/prompts/fix.md` | Load Debugger → Diagnosis |
 | `/archi.map` | `[[__DOCS_DIR__]]/prompts/map.md` | Load Surveyor → Map Refresh |
-| `/archi.remove` | `[[__DOCS_DIR__]]/prompts/remove.md` | Load Surgeon → Feature Decommission |
+| `/archi.remove` | `[[__DOCS_DIR__]]/prompts/remove.md` | Load Surgeon → Task Decommission |
 | `/archi.help` | `[[__DOCS_DIR__]]/prompts/help.md` | Load Manual → Display Guide |
 
 > **Mechanism**: 1) Read 目标 `.md` 全文 2) Override `00_system` 部分设定 3) Execute `<step_1>`。
@@ -89,7 +89,7 @@ alwaysApply: true
 
 | 子命令 | 用途 | 示例 |
 |:---|:---|:---|
-| `npx archi plan <ID>` | 检查 Feature 的 Plan 完成度 | `npx archi plan SUB-01` |
+| `npx archi plan <ID>` | 检查 Task 的 Plan 完成度 | `npx archi plan SUB-01` |
 
 自动识别 Manual Verification 区域并排除在自动化统计外。
 
@@ -98,7 +98,7 @@ alwaysApply: true
 | 场景 | 动作 |
 |:---|:---|
 | `/archi.code` 签收前 | `npx archi plan <ID>` 确认全部 checkbox 已勾选 |
-| 了解 Feature 实施进展 | `npx archi plan <ID>` |
+| 了解 Task 实施进展 | `npx archi plan <ID>` |
 
 > 在 `/archi.code` 签收阶段，须先运行 `npx archi plan <ID>` 验证完成度。
 

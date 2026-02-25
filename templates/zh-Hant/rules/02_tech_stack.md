@@ -176,8 +176,8 @@ UI 製品層級：
 ---
 
 ## 9. Project Conventions (專案約定)
-> 全域架構約定，由 `/archi.start` 確立。`/archi.plan` 自動繼承，功能無特殊需求時不再逐一提問。
-> 功能若需偏離約定，須在提案中明確說明偏離理由。
+> 全域架構約定，由 `/archi.start` 確立。`/archi.plan` 自動繼承，任務無特殊需求時不再逐一提問。
+> 任務若需偏離約定，須在提案中明確說明偏離理由。
 
 ### Error Handling (錯誤處理策略)
 * **Strategy:** [例如：Fail Fast + Form Validation / Fail Fast (stderr) / Schema Validation + Fail Fast]

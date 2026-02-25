@@ -5,7 +5,7 @@
       "definition": "[一句话定义]",
       "codeName": "[PascalCase / camelCase]",
       "forbiddenSynonyms": [],
-      "reference": "[来源: spec / vision / feature ID]"
+      "reference": "[来源: spec / vision / task ID]"
     }
   ],
   "verbs": [

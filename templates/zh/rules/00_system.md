@@ -53,7 +53,7 @@ alwaysApply: true
   </layering_rules>
 
   <anti_patterns>
-    - Cross-Import: Feature A 导入 Feature B（违反模块隔离）。
+    - Cross-Import: Task A 导入 Task B（违反模块隔离）。
     - Deep Parameter Passing: 超过 3 层参数传递（应用依赖注入/上下文/状态管理）。
     - God Object/File: 单文件超合理行数（须拆分）。
     - Circular Dependencies: 循环依赖（须重构打破）。

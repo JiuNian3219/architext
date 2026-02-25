@@ -38,7 +38,7 @@
   },
   "plan": {
     "desc": "檢查功能實現計畫 (plan.json) 的完成度",
-    "id_required": "請指定 Feature ID (例如: archi plan SUB-01)"
+    "id_required": "請指定 Task ID (例如: archi plan SUB-01)"
   },
   "render": {
     "desc": "將 JSON 資料檔案渲染為 Markdown 視圖"
@@ -136,7 +136,7 @@
         "header_comment": "<!-- ⚠️ 由 plan.json 自動生成 — 請勿直接編輯 -->",
         "header_ai": "<!-- AI: 請讀取 plan.json 而非此檔案 -->",
         "title": "實施計畫：{featureName}",
-        "feature_id": "功能 ID",
+        "feature_id": "Task ID",
         "status": "狀態",
         "section_decisions": "技術決策",
         "section_steps": "實施步驟",
@@ -228,7 +228,8 @@
           "missing": "目錄不存在",
           "hint_init": "執行 npx archi init 重新初始化",
           "hint_update": "執行 npx archi update 恢復",
-          "hint_features": "手動建立即可：mkdir {docDir}/features"
+          "hint_features": "手動建立即可：mkdir {docDir}/tasks",
+          "hint_tasks": "手動建立即可：mkdir {docDir}/tasks"
         },
         "global": {
           "required_missing": "必要文件缺失",
@@ -276,7 +277,7 @@
         },
         "code": {
           "desc": "將檔案翻譯為程式碼。讀取 Plan，逐步實現，含靜態檢查與審計。",
-          "detail": "前置: 對應 Feature 須有完整的 Spec + Plan",
+          "detail": "前置: 對應 Task 須有完整的 Spec + Plan",
           "example": "例: /archi.code INF-001"
         },
         "audit": {
@@ -296,8 +297,8 @@
           "example": "例: /archi.edit INF-001 增加記住密碼功能"
         },
         "revise": {
-          "desc": "全域變更（技術堆疊、架構等）。分析影響範圍，經確認後級聯更新相關 Feature。",
-          "detail": "影響範圍: Vision / Tech Stack / Roadmap / 相關 Feature 檔案",
+          "desc": "全域變更（技術堆疊、架構等）。分析影響範圍，經確認後級聯更新相關 Task。",
+          "detail": "影響範圍: Vision / Tech Stack / Roadmap / 相關 Task 檔案",
           "example": "例: /archi.revise 從 REST 遷移到 GraphQL"
         },
         "map": {
@@ -306,7 +307,7 @@
         },
         "remove": {
           "desc": "特性下線。全鏈路清除：影響分析 → 刪除檔案+程式碼 → 清理全域引用。",
-          "detail": "清理範圍: Feature 檔案 / 業務程式碼 / roadmap / map / context_glue",
+          "detail": "清理範圍: Task 檔案 / 業務程式碼 / roadmap / map / context_glue",
           "example": "例: /archi.remove FEAT-003"
         },
         "help": {
@@ -337,7 +338,7 @@
           "example": "例: npx archi task INF-001 --status done"
         },
         "plan": {
-          "desc": "檢查指定 Feature 的 Plan 完成度（自動識別人工驗收區域）。",
+          "desc": "檢查指定 Task 的 Plan 完成度（自動識別人工驗收區域）。",
           "example": "例: npx archi plan INF-001"
         },
         "render": {
@@ -354,14 +355,14 @@
       "quick": {
         "new_project": "新專案從零開始",
         "legacy": "接管舊專案",
-        "new_feature": "規劃新功能",
+        "new_feature": "規劃新任務",
         "write_code": "實現程式碼",
         "fix_bug": "修復 Bug",
         "check_health": "檢查專案健康"
       },
       "workflow": {
         "init_flow": "專案啟動:",
-        "new_feature": "新增功能:",
+        "new_feature": "新增任務:",
         "change_spec": "需求變更:",
         "standalone": "獨立操作:"
       }

@@ -17,7 +17,7 @@
     **Role**: Project Observer
     **Action**:
     1.  Read `[[__DOCS_DIR__]]/global/roadmap.json` — extract only `id/title/status/deps/tag` fields per task; skip `goal/notes` (navigation and status aggregation do not need these details).
-    2.  Scan `[[__DOCS_DIR__]]/features/` directory — get existing Features and their doc completeness (spec.md / ui.md / plan.json).
+    2.  Scan `[[__DOCS_DIR__]]/tasks/` directory — get existing Tasks and their doc completeness (spec.md / ui.md / plan.json).
     3.  [?question] If user provided a question, locate relevant files by semantic match (spec / plan / vision / tech_stack / data_snapshot, etc.), read as needed.
 
     **Output**: Internal context (not shown to user).
@@ -42,11 +42,11 @@
         | Signal | Phase | Recommendation |
         |:---|:---|:---|
         | roadmap.json missing | Not initialized | New project → `/archi.start`; existing code → `/archi.inherit` |
-        | Has roadmap but no Feature dirs | Started, not planned | Run `/archi.scope` to plan new features |
+        | Has roadmap but no Task dirs | Started, not planned | Run `/archi.scope` to plan new tasks |
         | Has Legacy stubs (Spec-Status: Stub) | Inherited, not enriched | Run `/archi.edit LEG-xx` to enrich spec |
         | Has active tasks with complete plan.json | Ready to code | Run `/archi.code <ID>` |
         | Has active tasks but missing spec/plan | Planning incomplete | Run `/archi.plan <ID>` to complete |
-        | All tasks done | Complete | Run `/archi.scope` to plan new features or release |
+        | All tasks done | Complete | Run `/archi.scope` to plan new tasks or release |
         | Has blocked tasks | Blocked | Show blocking reason and prerequisites |
 
     2.  **Output format**:
