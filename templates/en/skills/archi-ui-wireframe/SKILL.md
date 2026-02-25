@@ -126,10 +126,22 @@ description: UI concept design expert. Generates ui_concept.html in two phases �
    - Active style: `.pill.on-page` / `.pill.on-state` → `background:#444; color:#fff`
    - Control bar must stay wireframe-style (grayscale, uppercase label, dashed border-top); no color
 
-   **Wireframe content rules**:
+   **Wireframe content rules** (Content Wireframe — grayscale with real-feeling content):
    - Full grayscale; brand colors deferred to Phase 2
-   - Use gray rectangles + text labels for image/chart placeholder areas
-   - Nav items, buttons, inputs use placeholder forms (no real content needed)
+   - **No pure gray rectangle placeholders** — use realistic placeholder content so users can genuinely evaluate whether the layout works:
+
+   | Element type | Rule |
+   |:---|:---|
+   | Headings / nav labels | Use real business names from roadmap task titles, e.g. "Dashboard", "Project List", "Settings" |
+   | Buttons | Write specific action text, e.g. "Create Project", "Sign In", "Save Changes" — never write "[Button]" |
+   | Inputs | Write placeholder text, e.g. "Search project name…", "Enter email address" |
+   | Lists / tables | Generate at least 3–4 rows of example data (realistic fake data in the project's domain: names, dates, statuses) |
+   | Chart / image areas | Use labeled rectangles, but label with the actual content type, e.g. "Line chart: visits last 7 days" not "[Chart]" |
+   | Empty state | Write specific empty state copy, e.g. "No projects yet — click 'Create Project' to get started" |
+   | Error state | Write specific error copy, e.g. "Connection failed. Please check your network and try again" |
+
+   - Typography must have hierarchy: page title large (20–24px) → section heading medium (16px) → body small (14px) → caption smaller (12px)
+   - Spacing must breathe: component gap > element gap > line height (no crowding)
    - Each screen must include all core interaction entry points from its Roadmap task
 
 5. **Generate AI Index** — write `[[__DOCS_DIR__]]/global/ui_context.md`:
