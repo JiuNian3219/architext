@@ -208,7 +208,7 @@
     - [Role]: `[Path]`
     ```
 
-    > Stubs are a starting point, not the final state. Enrich later via `/archi.adopt` or `/archi.edit`.
+    > Stubs are a starting point, not the final state. Enrich later via `/archi.edit` (auto-triggers the `step_1_5_enrich` flow).
 
     ### 3.6 map.json Population
     - `directoryMapping`: Each core directory → `{ "path", "layer", "responsibility", "publicAPI" }`
@@ -262,7 +262,7 @@
     | Priority | Action | Description |
     |:---|:---|:---|
     | 1 | Review vision.md | Confirm AI-inferred vision description is accurate |
-    | 2 | `/archi.adopt LEG-xx` | Enrich core module stubs into full specs |
+    | 2 | `/archi.edit LEG-xx` | Enrich core module stubs into full specs (auto-triggers Enrich flow) |
     | 3 | `/archi.scope [file_path]` | Plan new features/major modules |
     | 4 | `/archi.plan <task ID>` | Deep-plan individual tasks |
 </step_5_signoff>

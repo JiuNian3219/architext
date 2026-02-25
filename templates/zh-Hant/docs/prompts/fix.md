@@ -22,8 +22,9 @@
         - 無 `<id>`: 分析 `[context]` 搜尋最相關模組。
           唯一匹配 → 自動鎖定 | 多個匹配 → 列出候選詢問 | 無法定位 → 報錯請求指定 ID。
     2.  讀取目標目錄下所有檔案 (`spec.md`, `ui.md`, `plan.json`) 與相關程式碼。
-    3.  分析 `[context]`，結合程式碼邏輯定位潛在故障點。
-    4.  **Hypothesis**: 提出 1-3 個根因假設。
+    3.  讀取 `02_tech_stack.md`（確保修復方式不違反技術紅線）和 `[[__DOCS_DIR__]]/global/vision.md`（確保修復方向不偏離專案願景）。
+    4.  分析 `[context]`，結合程式碼邏輯定位潛在故障點。
+    5.  **Hypothesis**: 提出 1-3 個根因假設。
 
     **Output**: 故障診斷報告 (Root Cause Analysis)。
 </step_1_diagnose>
@@ -63,8 +64,23 @@
     任何失敗須修復至通過。
 </step_4_verify>
 
+<step_4_5_plan_update>
+    **Role**: Tech Lead
+    **Action**:
+    1. 更新 `plan.json`：將 Bugfix Phase 中已完成的 tasks 的 `done` 設為 `true`。
+    2. [當前 status=`done` 且 Bugfix Phase 全部通過] → 保持 `done` 不變。
+    3. [Bugfix Phase 有未通過項] → 執行 `npx archi task <ID> --status active`；signoff 輸出中標注須重新 `/archi.code` 完成剩餘修復。
+
+    **Output**: `MODIFIED: plan.json Bugfix Phase done 標記`（如狀態變更，附 `MODIFIED: roadmap.json <ID>.status`）。
+</step_4_5_plan_update>
+
 <step_5_summary>
-    **Output**: Bug 修復摘要，含 Root Cause 分析、修復內容、新增測試、Next Steps 表格。
+    **Output**: Bug 修復摘要，含 Root Cause 分析、修復內容、新增測試，以及 Next Steps 表格：
+
+    | 優先級 | 動作 | 說明 |
+    |:---|:---|:---|
+    | 推薦 | `/archi.audit <ID>` | 重新審查，確認修復完整且無新引入問題 |
+    | 可選 | `/archi.code <ID>` | 如有 Bugfix Phase 未完成項，繼續實作 |
 </step_5_summary>
 
 </protocol_fix>

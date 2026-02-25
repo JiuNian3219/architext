@@ -208,7 +208,7 @@
     - [角色]: `[路径]`
     ```
 
-    > Stub 是起点，非终态。后续通过 `/archi.adopt` 或 `/archi.edit` 触发补全。
+    > Stub 是起点，非终态。后续通过 `/archi.edit` 触发补全（自动进入 `step_1_5_enrich` 流程）。
 
     ### 3.6 map.json 填充
     - `directoryMapping`: 每个核心目录 → `{ "path", "layer", "responsibility", "publicAPI" }`
@@ -262,7 +262,7 @@
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
     | 1 | 审查 vision.md | 确认 AI 补全的愿景描述是否准确 |
-    | 2 | `/archi.adopt LEG-xx` | 对核心模块补全完整 spec |
+    | 2 | `/archi.edit LEG-xx` | 对核心模块补全完整 spec（自动触发 Enrich 流程） |
     | 3 | `/archi.scope [file_path]` | 规划新功能/大模块 |
     | 4 | `/archi.plan <任务ID>` | 对单个任务做深度规划 |
 </step_5_signoff>

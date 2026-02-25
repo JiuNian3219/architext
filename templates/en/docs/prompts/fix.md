@@ -22,8 +22,9 @@
         - No `<id>`: Analyze `[context]` to search most relevant module.
           Unique match → Auto lock | Multiple matches → List candidates and ask | Cannot locate → Report error requesting ID.
     2.  Read all docs under target directory (`spec.md`, `ui.md`, `plan.json`) and related code.
-    3.  Analyze `[context]`, combine with code logic to locate potential failure points.
-    4.  **Hypothesis**: Propose 1-3 root cause hypotheses.
+    3.  Read `02_tech_stack.md` (ensure fix does not violate tech red lines) and `[[__DOCS_DIR__]]/global/vision.md` (ensure fix direction stays aligned with project vision).
+    4.  Analyze `[context]`, combine with code logic to locate potential failure points.
+    5.  **Hypothesis**: Propose 1-3 root cause hypotheses.
 
     **Output**: Root Cause Analysis report.
 </step_1_diagnose>
@@ -63,8 +64,23 @@
     Any failure must be fixed until passed.
 </step_4_verify>
 
+<step_4_5_plan_update>
+    **Role**: Tech Lead
+    **Action**:
+    1. Update `plan.json`: set `done: true` for completed tasks in the Bugfix Phase.
+    2. [current status=`done` and all Bugfix Phase tasks passed] → Keep status as `done`.
+    3. [Bugfix Phase has unresolved tasks] → Run `npx archi task <ID> --status active`; note in signoff that `/archi.code` is needed to complete remaining fixes.
+
+    **Output**: `MODIFIED: plan.json Bugfix Phase done marks` (if status changed, append `MODIFIED: roadmap.json <ID>.status`).
+</step_4_5_plan_update>
+
 <step_5_summary>
-    **Output**: Bug fix summary with Root Cause analysis, fix content, new tests, Next Steps table.
+    **Output**: Bug fix summary with Root Cause analysis, fix content, new tests, and Next Steps table:
+
+    | Priority | Action | Notes |
+    |:---|:---|:---|
+    | Recommended | `/archi.audit <ID>` | Re-audit to confirm fix is complete and no new issues introduced |
+    | Optional | `/archi.code <ID>` | If Bugfix Phase has remaining incomplete tasks |
 </step_5_summary>
 
 </protocol_fix>

@@ -147,6 +147,7 @@
     1.  Append new tasks to corresponding Phase's `tasks` array in `[[__DOCS_DIR__]]/global/roadmap.json`.
     2.  If new Phase needed → append to `phases` array.
     3.  Update `lastUpdated` field.
+    4.  [?New modules] Update `directoryMapping` in `[[__DOCS_DIR__]]/global/map.json`: pre-register inferred module paths for new tasks (based on tech_stack architecture pattern and task descriptions; directory-level only — details to be filled during `/archi.plan`).
 
     **Terminal Gate** (Do not skip; must complete before output summary):
     | Step | Command | Pass Condition |
@@ -170,6 +171,7 @@
 
     | Priority | Action | Description |
     |:---|:---|:---|
+    | [?UI] Recommended | Run `archi-ui-wireframe` Skill (append mode) | Append screens for new features to `ui_concept.html` |
     | 1 | `/archi.plan <first pending task ID>` | Deep planning for the first actionable task |
     | 2 | Review roadmap | Confirm dependency relationships and priorities |
 </step_5_signoff>

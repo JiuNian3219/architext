@@ -147,6 +147,7 @@
     1.  將新任務追加到 `[[__DOCS_DIR__]]/global/roadmap.json` 對應 Phase 的 `tasks` 陣列中。
     2.  如需新增 Phase → 追加到 `phases` 陣列。
     3.  更新 `lastUpdated` 欄位。
+    4.  [?新模組] 更新 `[[__DOCS_DIR__]]/global/map.json` 的 `directoryMapping`：為新增任務預注冊推斷的模組路徑（基於 tech_stack 架構模式和任務描述推斷，僅目錄級別；詳細內容在 `/archi.plan` 時完善）。
 
     **Terminal Gate** (禁止跳過，須在輸出總結前全部完成):
     | 步驟 | 命令 | 通過條件 |
@@ -170,6 +171,7 @@
 
     | 優先級 | 動作 | 說明 |
     |:---|:---|:---|
+    | [?UI] 推薦 | 執行 `archi-ui-wireframe` Skill（追加模式） | 為新增功能追加畫面到 `ui_concept.html` |
     | 1 | `/archi.plan <第一個 pending 任務 ID>` | 對首個可執行任務做深度規劃 |
     | 2 | 審查 roadmap | 確認依賴關係和優先級 |
 </step_5_signoff>

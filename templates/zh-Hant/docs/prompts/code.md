@@ -70,6 +70,7 @@
     - **Scaffold Safety**: 鷹架在非空目錄可能覆蓋檔案 — 須在新目錄生成並保護 `[[__DOCS_DIR__]]/`；刪除/覆蓋操作須先列清單並確認。
     - **.gitkeep Cleanup**: 空目錄可用 `.gitkeep` 占位以便 Git 追蹤；向目錄新增其他檔案時須刪除該目錄下的 `.gitkeep`。
     - **Patch Output**: 以補丁形式輸出變更，附 Code Reference。
+    - **Progress Tracking**: 每完成一個 task 後，立即更新 `plan.json` 對應 task 的 `done: true`；禁在 signoff 時批次更新（會話中斷後進度將丟失）。
 
     **Action**: 按 Phase A/B/C 逐項實施；每項產出完整、工程化的程式碼（含必要測試）；新增檔案/目錄須與 tech_stack 一致。
 </step_3_implement>
@@ -138,7 +139,7 @@
     | 4 | `npx archi render` | `.md` 視圖生成完成 |
 
     **Action** (Gate 通過後):
-    1.  更新 `plan.json`，將已完成步驟的 `done` 設為 `true`。
+    1.  確認 `plan.json` 各 task `done` 標記已全部更新（應在 step_3 實時完成，此處做最終校驗）。
     2.  輸出完成任務清單與補丁連結(Code Reference)。
     3.  提供下一步建議與 Git Commit Suggestion（Conventional Commits）。
 

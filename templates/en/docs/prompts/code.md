@@ -70,6 +70,7 @@
     - **Scaffold Safety**: Scaffolds in non-empty directories may overwrite files — must generate in new directory and protect `[[__DOCS_DIR__]]/`; delete/overwrite operations must list manifest and confirm first.
     - **.gitkeep Cleanup**: Empty dirs may use `.gitkeep` for Git tracking; when adding other files to a dir, must remove that dir's `.gitkeep`.
     - **Patch Output**: Output changes as patches, with Code References.
+    - **Progress Tracking**: After completing each task, immediately update the corresponding task's `done: true` in `plan.json`; prohibited from batch-updating at signoff (progress will be lost if session is interrupted).
 
     **Action**: Implement Phase A/B/C step by step; produce complete, production-quality code (with necessary tests); new files/directories must align with tech_stack.
 </step_3_implement>
@@ -138,7 +139,7 @@
     | 4 | `npx archi render` | `.md` views generated |
 
     **Action** (After Gate passes):
-    1.  Update plan.json, mark completed tasks as done.
+    1.  Confirm all task `done` marks in `plan.json` are updated (should be done in real-time during step_3; this is a final check).
     2.  Output completed task list with patch links (Code Reference).
     3.  Provide next step suggestions and Git Commit Suggestion (Conventional Commits).
 
