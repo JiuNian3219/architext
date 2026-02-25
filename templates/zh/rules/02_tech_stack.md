@@ -56,16 +56,15 @@ alwaysApply: false
 
 ### 4.1 Dual-Artifact Strategy (双制品策略)
 
-每个 UI 功能产出两个制品，职责分离：
+UI 制品层级：
 
 | 制品 | 格式 | 读者 | 职责 |
 |:---|:---|:---|:---|
-| `ui.md` | ITP v3.0 DSL | AI (code/audit) | 组件树、交互、视觉意图、状态 — 结构真相源 |
-| `ui.preview.html` | HTML + Tailwind CDN | 人类 (浏览器) | 视觉预览 — 可直接打开查看效果 |
-
-- `ui.md` 是给 AI 读的机器规格书，不需人类舒适阅读
-- `ui.preview.html` 使用 HTML + Tailwind 作为**通用预览介质**（AI 训练充分、零依赖、出错率低），与项目实际技术栈无关
-- 两者须保持一致；code 阶段以 `ui.md` 为准，用**项目自身技术栈**实现等价视觉效果
+| `ui_concept.html` | 单文件 HTML | 人类 (浏览器) | **全局视觉真相源** — 所有屏幕的线框图/着色稿 |
+| `ui.md` | ITP v3.0 DSL | AI (code/audit) | 任务级 UI 范围声明 — 指定本任务涵盖的屏幕/组件 |
+- `ui_concept.html` 由 `archi-ui-wireframe` Skill 生成，覆盖项目所有用户可见屏幕
+- `ui.md` 仅声明"本任务负责 ui_concept.html 中的哪些屏幕/状态"，禁重定义全局布局
+- code 阶段以 `ui.md` + `ui_concept.html` 为准，用**项目自身技术栈**实现等价视觉效果
 
 ### 4.2 Naming (PrefixFunction)
 组件命名须遵循 `前缀+功能` 格式：
@@ -82,12 +81,14 @@ alwaysApply: false
       BtnClose [Ghost] (Icon: X) -> #CloseModal
 ```
 
-### 4.4 Component Presets (组件预设)
-`design_tokens.json` 中的 `componentPresets` 用 Tailwind class 描述常用组件的**视觉模式**（布局、间距、圆角、阴影等）。
-- Tailwind class 是"参考实现"，不是必须照抄的代码
-- `ui.md` 中通过 `(Preset: card)` 引用预设名称
-- `ui.preview.html` 中直接使用 Tailwind class 渲染预览
-- **code 阶段**：用项目技术栈实现等价视觉效果（如组件库的 `<Card>`、SwiftUI 的 `.cardStyle()`、Flutter 的 `Card()` 等）；核心是视觉一致，不是 class 一致
+### 4.4 Design Tokens (设计令牌)
+`design_tokens.json` 定义项目专属视觉语言，由 `/archi.start` 从 Brief 生成：
+- `primitivePalette`: 原始色阶（中性灰 + 品牌色）
+- `semanticTokens`: 语义色（Background/Primary/Text…）+ 字体规格
+- `layout`: 圆角/阴影/间距尺寸
+- `motion`: 动效时长/缓动/模式偏好
+- `illustration`: 图示风格/图标库
+- **code 阶段**: 所有颜色/尺寸/动效值须来自此文件对应字段，禁硬编码魔法值
 
 ### 4.5 Delta Syntax (差分更新)
 * **Usage**: 用于修改现有 UI 快照。

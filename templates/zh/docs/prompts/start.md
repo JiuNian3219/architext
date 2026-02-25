@@ -121,7 +121,8 @@
     |:---|:---|
     | 项目身份、目标用户、成功指标、参考灵感 | `[[__DOCS_DIR__]]/global/vision.md` |
     | 技术栈、部署目标、第三方库/服务 | 规则文件 `02_tech_stack` |
-    | 风格调性（UI/CLI/API） | 规则文件 `02_tech_stack` (UI Protocol / Output Convention) |
+    | 风格调性（UI/CLI/API）— 视觉关键词/信息密度/色调/动效偏好 | 规则文件 `02_tech_stack` (UI Protocol) + `design_tokens.json` motion.preference / illustration |
+    | [?UI] **视觉参考**（品牌色板/字体/图标库/竞品截图/禁用风格） | `design_tokens.json` primitivePalette.brand + illustration + motion; 截图/URL 存入 `vision.md` Visual Reference |
     | 核心功能列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **已有设计决策** | Roadmap 对应任务的 `goal` 字段中注入，并在 `/archi.plan` 时作为硬约束 |
     | 边界与反目标 | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
@@ -163,7 +164,12 @@
 
     ### 3.5 其他全局文档 (按需)
     - `dictionary.json`: 从 Brief 提取领域术语
-    - [?UI] `design_tokens.json`: 基于 UI 风格生成基础 Token
+    - [?UI] `design_tokens.json`: 基于 Brief「风格与调性」和「视觉参考」填充：
+      - `primitivePalette.brand`: 从品牌色板提取 Hex 值；无则留空
+      - `mode`: 从色调倾向推断 default + support 数组
+      - `motion.preference` / `motion.patterns`: 从动效偏好填写 (subtle / rich / none)；rich 时扩充 patterns
+      - `illustration.style` / `illustration.iconLibrary`: 从图示风格和图标库填写
+      - `semanticTokens.colors`: 如有品牌色则以 Brand-600/Brand-500 等 key 填充 Primary
     - `error_codes.json`: 基于功能列表预定义核心错误码
 
     **Output**: 写入所有文件，然后运行 `npx archi render` 生成可视化 `.md`。

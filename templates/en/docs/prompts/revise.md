@@ -99,10 +99,23 @@
     **Phase 1 — Modify Global Assets**:
     Modify global files per the user-confirmed list. Output change summary for each file.
 
+    **[?UI] Phase 1.5 — Design System Change Check**:
+    If `design_tokens.json` has any of the following changes, notify the user after Phase 2:
+
+    | Change scope | Impact | Action |
+    |:---|:---|:---|
+    | `primitivePalette.brand` / `semanticTokens.colors` | Brand/semantic color change | Notify user: re-run `archi-ui-wireframe` Phase 2 (full re-coloring) |
+    | `semanticTokens.typography` | Font change | Notify user: re-run Phase 2 |
+    | `motion.preference` / `motion.patterns` | Motion change | Notify user: re-run Phase 2 |
+    | `illustration.iconLibrary` | Icon library change | Notify user: re-run Phase 2 |
+    | `layout` (radius/spacing/shadow) | Component size/radius change | Notify user: re-run Phase 2 |
+
+    > If none of the above fields changed (e.g., only `mode.default` changed), Phase 2 re-run is not needed.
+
     **Phase 2 — Cascade Update Feature Docs**:
     For each affected Feature, follow `/archi.edit` standards:
     1.  Update `spec.md` (logic/rules that need adjustment due to global changes).
-    2.  [?UI] Update `ui.md` and `ui.preview.html` (structure/interaction adjustments due to global changes).
+    2.  [?UI] Update `ui.md` (scope/interaction adjustments due to global changes); if `ui_concept.html` screen structure is affected, sync the relevant screens (run `archi-ui-wireframe` Skill in incremental update mode).
     3.  Append new Phase to `plan.json` `phases`: `Phase X: Global Revision — [Change Topic] (<Date>)`, listing implementation tasks.
 
     **Phase 3 — Render Views**:

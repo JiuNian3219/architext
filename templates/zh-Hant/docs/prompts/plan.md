@@ -30,6 +30,10 @@
     3.  **Read Tech Stack**: `02_tech_stack.md` (技術紅線 + **Section 9 專案約定**)。
         - 提取 Section 9 中的全域架構約定（Error Handling / Data Flow / Auth & Access），供 step_2 約定繼承使用。
     4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`。
+    4.5 [?UI] **Read UI Concept**: `[[__DOCS_DIR__]]/global/ui_concept.html`（如存在）。
+        - 定位本功能對應的畫面 ID（如 S-03）及其負責的狀態。
+        - 鎖定畫面範圍，供 step_4 生成 `ui.md §1` 時直接填入，禁自行發明新畫面。
+        - 若 `ui_concept.html` 不存在 → 跳過，`ui.md` 按完整 ITP 格式填寫。
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
     6.  **Read Dependency Context** (如有依賴任務):
         - 讀取依賴任務的 `spec.md` (介面契約) 和 `plan.json` (已實作內容)。
@@ -171,9 +175,19 @@
     - 每個 Scenario 須對應功能設計中的具體流程步驟或異常路徑，禁憑空編造場景。
     - 若為上游任務，須包含明確的 Interface/Type 定義。
 
-    **2. `ui.md` + `ui.preview.html`** [?UI]:
-    - **`ui.md`**: 範本 `templates/ui.template.md`。基於架構建議中互動模式的選擇轉化為 ITP v3.0 描述；引用 `design_tokens.json` 中的 componentPresets。
-    - **`ui.preview.html`**: 範本 `templates/ui.preview.template.html`。基於 `ui.md` 元件樹生成可瀏覽器開啟的視覺預覽；須包含所有狀態(Default/Loading/Empty/Error)；使用 Tailwind CDN + design_tokens 中的實際顏色值。須在生成後提示使用者瀏覽器開啟確認視覺效果。
+    **2. `ui.md`** [?UI]:
+    - 範本 `templates/ui.template.md`。
+    - **有 `ui_concept.html`（主路徑）**:
+      1. **UI 偏差檢查**（寫 `ui.md` 前必須執行）：對比 step_2 確認的功能設計與 `ui_concept.html` 中對應畫面，識別偏差：
+
+         | 偏差類型 | 判定標準 | 處理方式 |
+         |:---|:---|:---|
+         | 無偏差 | 線框圖與設計一致 | 直接寫 `ui.md`，引用畫面 ID |
+         | 輕微增量 | 新增狀態/彈窗/局部區域，不改整體布局 | 靜默更新 `ui_concept.html` 對應畫面，在 `ui.md` 注明 `MODIFIED: ui_concept.html S-XX` |
+         | 結構性偏差 | 布局重構、新增獨立畫面、流程路徑變化 | **暫停**，向使用者輸出偏差說明，等待 **OK** 後更新 `ui_concept.html`，再寫 `ui.md` |
+
+      2. 完成偏差處理後，按 `ui.template.md` 填寫畫面範圍聲明和差異元件。
+    - **無 `ui_concept.html`（降級路徑）**: 按完整 ITP v3.0 描述元件樹，引用 `design_tokens.json` Token 定義。
 
     **3. `plan.json`** (必須):
     - 範本: `templates/plan.template.json`。

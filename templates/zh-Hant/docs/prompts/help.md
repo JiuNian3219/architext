@@ -17,7 +17,7 @@
     **Role**: 專案觀察員
     **Action**:
     1.  讀取 `[[__DOCS_DIR__]]/global/roadmap.json` — 取得任務列表、狀態、依賴關係。
-    2.  掃描 `[[__DOCS_DIR__]]/features/` 目錄 — 取得已有 Feature 及其檔案完整度（有無 spec.md / ui.md / ui.preview.html / plan.json）。
+    2.  掃描 `[[__DOCS_DIR__]]/features/` 目錄 — 取得已有 Feature 及其檔案完整度（有無 spec.md / ui.md / plan.json）。
     3.  [?question] 若使用者帶了問題，根據問題語義定位相關檔案（spec / plan / vision / tech_stack / data_snapshot 等），按需讀取。
 
     **Output**: 內部上下文（不直接輸出給使用者）。

@@ -13,10 +13,10 @@ Brief → [本 Skill] → roadmap.json 任务
                    /archi.plan <task-id>
                    读: vision.md + map.json + tech_stack.md
                    写: spec.md（行为规格/验收标准）
-                       ui.md（组件结构，AI 编码真相源）[?UI]
-                       ui.preview.html（人类视觉预览）[?UI]
+                       ui.md（任务 UI 范围声明）[?UI]
                        plan.json（可执行步骤 + 测试用例 checkbox）
                    也更新: map.json / dictionary.json / data_snapshot.json
+                   视觉参考: [[__DOCS_DIR__]]/global/ui_concept.html [?UI]
                             ↓
                    /archi.code → 读 spec.md + ui.md + plan.json → 写代码
 ```

@@ -16,7 +16,8 @@
 <step_1_load>
     **Role**: 产品经理
     **Action**:
-    - 读取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、ui.preview.html、plan.json。
+    - 读取 `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
+    - [?UI] 读取 `[[__DOCS_DIR__]]/global/ui_concept.html`（定位本功能对应的屏幕范围）。
     - 检测 spec.md 中的 `Spec-Status` 字段：
       - `Full` → 正常流程，进入 step_2。
       - `Stub` → 进入 step_1_5_enrich。
@@ -36,7 +37,7 @@
        - 补充 Gherkin Scenarios（覆盖正常流程 + 异常路径）
        - 补充接口/类型定义（如该功能是其他功能的上游）
     5. 更新 `Spec-Status: Stub → Full`。
-    6. [?UI] 如模块有 UI → 同步生成 `ui.md` + `ui.preview.html`。
+    6. [?UI] 如模块有 UI → 同步生成或更新 `ui.md`（范围声明）；如 `ui_concept.html` 须新增屏幕，提示用户运行 `archi-ui-wireframe` Skill。
     7. 生成 `plan.json`（全部 task 为 done，记录已实现内容）。
     8. 向用户输出补全后的 spec 摘要。
 
@@ -48,10 +49,18 @@
     **Role**: 需求分析师 & 设计师
     **Action**:
     - 根据 `[context]` 修改 spec.md（逻辑/规则变更）和 ui.md（结构/交互变更）。
-    - [?UI 修改] 同步更新 `ui.preview.html`，引入设计师视角，确保符合 design_tokens 和 componentPresets。
+    - [?UI 修改] 按以下规则同步更新 `ui_concept.html`：
+
+      | 变更类型 | 判定标准 | 处理方式 |
+      |:---|:---|:---|
+      | 无屏幕影响 | 仅逻辑/数据变更，无视觉差异 | 仅改 spec.md，`ui_concept.html` 不动 |
+      | 轻微 UI 调整 | 新增/修改状态、弹窗、局部区域，不改整体布局 | 直接更新 `ui_concept.html` 对应屏幕，输出 `MODIFIED: ui_concept.html S-XX` |
+      | 屏幕结构变更 | 布局重构、新增独立屏幕、导航路径变化 | 运行 `archi-ui-wireframe` Skill（修改屏幕模式），输出 `MODIFIED: ui_concept.html S-XX`；若已完成 Phase 2 着色，同步对修改屏幕重新着色 |
+      | 功能缩减 | 屏幕/区域整体移除 | 运行 `archi-ui-wireframe` Skill（删除屏幕模式），输出 `REMOVED: ui_concept.html S-XX` |
+
     - 需求模糊时向用户提问 (A/B/C/D 选项) 确认细节。
 
-    **Output**: 更新后的 Spec 和 UI 文档。
+    **Output**: 更新后的 Spec、UI 文档及 `ui_concept.html` 变更摘要。
 </step_2_refine_docs>
 
 <step_3_update_plan>

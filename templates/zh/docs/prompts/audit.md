@@ -37,8 +37,8 @@
         - `[[__DOCS_DIR__]]/global/vision.md` — 项目方向基准
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 功能逻辑
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任务清单
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 组件结构(ITP, 如存在)
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.preview.html` — 视觉参考(如存在)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 任务 UI 范围声明(如存在)
+        - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 全局视觉标准（定位对应屏幕，用于 #10 视觉合规对比）
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md` — 上次审计报告(如存在，用于对比)
         - `02_tech_stack.md` — 技术红线
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
@@ -71,7 +71,7 @@
     | 7 | **Tech Stack 合规** | 对照 `02_tech_stack.md`：违禁模式、过时 API、硬编码 |
     | 8 | **安全性** | 敏感信息泄露、输入未校验、注入风险、权限检查 |
     | 9 | **性能** | 不必要全量导入/大循环/无用计算/内存泄漏/N+1 查询 |
-    | 10 | [?UI] **Design 合规** | 样式是否用 Token/Preset 定义的视觉模式；无硬编码魔法值；实现与 `ui.preview.html` 视觉一致 |
+    | 10 | [?UI] **Design 合规** | 样式是否用 Token 定义的视觉模式；无硬编码魔法值；实现与 `ui_concept.html` 对应屏幕视觉一致 |
     | 11 | [?Data] **数据一致性** | 字段名/类型与 `data_snapshot.json` 是否一致 |
     | 12 | [?I18n] **I18n 合规** | 无硬编码字符串；须用 Key/字典引用 |
     | 13 | **Orphan .gitkeep** | 目录已有其他文件时仍存在 `.gitkeep` — 须删除 |

@@ -30,6 +30,10 @@
     3.  **Read Tech Stack**: `02_tech_stack.md` (technical red lines + **Section 9 Project Conventions**).
         - Extract global architecture conventions from Section 9 (Error Handling / Data Flow / Auth & Access) for convention inheritance in step_2.
     4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`.
+    4.5 [?UI] **Read UI Concept**: `[[__DOCS_DIR__]]/global/ui_concept.html` (if it exists).
+        - Locate the screen ID(s) this task covers (e.g. S-03) and their responsible states.
+        - Lock the screen scope; use directly in step_4 `ui.md §1` generation — do not invent new screens.
+        - If `ui_concept.html` does not exist → skip; write `ui.md` in full ITP format.
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`.
     6.  **Read Dependency Context** (if dependent tasks exist):
         - Read dependency tasks' `spec.md` (interface contracts) and `plan.json` (implemented content).
@@ -171,9 +175,19 @@
     - Each Scenario must map to a concrete flow step or exception path from the feature design; do not invent scenarios.
     - If upstream task, must include explicit Interface/Type definitions.
 
-    **2. `ui.md` + `ui.preview.html`** [?UI]:
-    - **`ui.md`**: Template `templates/ui.template.md`. Convert Interaction Pattern recommendation to ITP v3.0 description; reference componentPresets from `design_tokens.json`.
-    - **`ui.preview.html`**: Template `templates/ui.preview.template.html`. Generate browser-openable visual preview based on `ui.md` component tree; must include all states (Default/Loading/Empty/Error); use Tailwind CDN + actual color values from design_tokens. Prompt user to open in browser to confirm visual appearance after generation.
+    **2. `ui.md`** [?UI]:
+    - Template: `templates/ui.template.md`.
+    - **With `ui_concept.html` (primary path)**:
+      1. **UI Divergence Check** (required before writing `ui.md`): Compare the confirmed feature design from step_2 against the corresponding screen in `ui_concept.html`:
+
+         | Divergence type | Criteria | Action |
+         |:---|:---|:---|
+         | No divergence | Wireframe matches design | Write `ui.md` directly, reference screen ID |
+         | Minor addition | New state / modal / local area, overall layout unchanged | Silently update the screen in `ui_concept.html`; note `MODIFIED: ui_concept.html S-XX` in `ui.md` |
+         | Structural divergence | Layout restructure, new standalone screen, flow path change | **Pause** — present divergence summary to user, wait for **OK**, then update `ui_concept.html`, then write `ui.md` |
+
+      2. After resolving divergence, fill in screen scope and delta components per `ui.template.md`.
+    - **Without `ui_concept.html` (fallback path)**: Write full ITP v3.0 component tree, referencing `design_tokens.json` token definitions.
 
     **3. `plan.json`** (Mandatory):
     - Template: `templates/plan.template.json`.

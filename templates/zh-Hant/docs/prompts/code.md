@@ -31,8 +31,8 @@
 
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 邏輯與場景
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 元件結構(ITP, 如存在)
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.preview.html` — 視覺參考(如存在，用於確認風格)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 本任務 UI 範圍聲明(如存在)
+        - `[[__DOCS_DIR__]]/global/ui_concept.html` — 全域視覺參考，**[?UI] 優先讀取**（含畫面結構、設計語言、動效）
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任務拆解（含 `notes` 速記，執行時須參照）
         - `02_tech_stack.md` — 技術紅線
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`

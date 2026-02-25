@@ -74,12 +74,7 @@
     {
       "file": "ui.md",
       "category": "UI/UX",
-      "purpose": "组件结构(ITP)、交互、状态 — AI 读取的结构真相源"
-    },
-    {
-      "file": "ui.preview.html",
-      "category": "UI/UX",
-      "purpose": "视觉预览 — 浏览器打开查看效果，人类审查用"
+      "purpose": "任务级 UI 范围声明 — 指定本任务对应 ui_concept.html 中的屏幕/组件"
     },
     {
       "file": "plan.json",

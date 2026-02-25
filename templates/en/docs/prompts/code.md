@@ -31,8 +31,8 @@
 
     3.  **Load Context** (Use Roadmap `📁 Slug` to locate):
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — Logic & Scenarios
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — Component structure (ITP, if exists)
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.preview.html` — Visual reference (if exists, for style confirmation)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — task UI scope declaration (if exists)
+        - `[[__DOCS_DIR__]]/global/ui_concept.html` — global visual reference, **[?UI] read first** (screens, design language, motion)
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — Task breakdown (contains `notes` shorthand; must reference during execution)
         - `02_tech_stack.md` — Technical Red Lines
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`

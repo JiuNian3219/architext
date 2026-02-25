@@ -14,7 +14,7 @@ Brief → [本 Skill] → roadmap.json 任務
                    讀: vision.md + map.json + tech_stack.md
                    寫: spec.md（行為規格/驗收標準）
                        ui.md（元件結構，AI 編碼真相源）[?UI]
-                       ui.preview.html（人類視覺預覽）[?UI]
+                   視覺參考: [[__DOCS_DIR__]]/global/ui_concept.html [?UI]
                        plan.json（可執行步驟 + 測試用例 checkbox）
                    也更新: map.json / dictionary.json / data_snapshot.json
                             ↓

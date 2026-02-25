@@ -121,7 +121,8 @@
     |:---|:---|
     | 專案身份、目標使用者、成功指標、參考靈感 | `[[__DOCS_DIR__]]/global/vision.md` |
     | 技術棧、部署目標、第三方庫/服務 | 規則檔案 `02_tech_stack` |
-    | 風格調性（UI/CLI/API） | 規則檔案 `02_tech_stack` (UI Protocol / Output Convention) |
+    | 風格調性（UI/CLI/API）— 視覺關鍵字/資訊密度/色調/動效偏好 | 規則檔案 `02_tech_stack` (UI Protocol) + `design_tokens.json` motion.preference / illustration |
+    | [?UI] **視覺參考**（品牌色板/字體/圖示庫/競品截圖/禁用風格） | `design_tokens.json` primitivePalette.brand + illustration + motion；截圖/URL 存入 `vision.md` Visual Reference |
     | 核心功能列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **已有設計決策** | Roadmap 對應任務的 `goal` 欄位中注入，並在 `/archi.plan` 時作為硬約束 |
     | 邊界與反目標 | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
@@ -161,9 +162,14 @@
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
     [[SKILL: 按 `archi-decompose-roadmap` Skill 的協議，基於 Brief 功能列表生成任務鏈，寫入 roadmap.json]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 並遵循其協議執行）]]，生成後直接進入下一步，無需使用者確認。
 
-    ### 3.5 其他全域文件 (按需)
+    ### 3.5 其他全域檔案 (按需)
     - `dictionary.json`: 從 Brief 提取領域術語
-    - [?UI] `design_tokens.json`: 基於 UI 風格生成基礎 Token
+    - [?UI] `design_tokens.json`: 基於 Brief「風格與調性」和「視覺參考」填充：
+      - `primitivePalette.brand`: 從品牌色板提取 Hex 值；無則留空
+      - `mode`: 從色調傾向推斷 default + support 陣列
+      - `motion.preference` / `motion.patterns`: 從動效偏好填寫 (subtle / rich / none)；rich 時擴充 patterns
+      - `illustration.style` / `illustration.iconLibrary`: 從圖示風格和圖示庫填寫
+      - `semanticTokens.colors`: 如有品牌色則以 Brand-600/Brand-500 等 key 填充 Primary
     - `error_codes.json`: 基於功能列表預定義核心錯誤碼
 
     **Output**: 寫入所有檔案，然後執行 `npx archi render` 生成視覺化 `.md`。

@@ -6,7 +6,7 @@
     <style>Diagnostic, Surgical, Spec-Compliant</style>
     <language>中文</language>
     <principles>
-      1.  **Spec Immutable**: 禁改 `spec.md` / `ui.md` / `ui.preview.html`（除非 Bug 本身是文档错误）。
+      1.  **Spec Immutable**: 禁改 `spec.md` / `ui.md`（除非 Bug 本身是文档错误）。
       2.  **Reproduction**: 须先构想复现步骤或测试用例。
       3.  **Root Cause**: 须分析根因，而非修补表面。
       4.  **Test-Driven**: 修复计划须含新增测试用例。
@@ -21,7 +21,7 @@
         - 有 `<id>`: 锁定 `features/<ID>_<Slug>/`。
         - 无 `<id>`: 分析 `[context]` 搜索最相关模块。
           唯一匹配 → 自动锁定 | 多个匹配 → 列出候选询问 | 无法定位 → 报错请求指定 ID。
-    2.  读取目标目录下所有文档 (`spec.md`, `ui.md`, `ui.preview.html`, `plan.json`) 与相关代码。
+    2.  读取目标目录下所有文档 (`spec.md`, `ui.md`, `plan.json`) 与相关代码。
     3.  分析 `[context]`，结合代码逻辑定位潜在故障点。
     4.  **Hypothesis**: 提出 1-3 个根因假设。
 

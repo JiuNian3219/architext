@@ -29,7 +29,20 @@
 **Information density**: [generous whitespace/immersive / dense/dashboard-style]
 **Theme preference**: [dark theme / light theme / follow system]
 **Motion preference**: [subtle micro-interactions / rich animation / no animation]
-**Design references**: [screenshots or links]
+**Illustration style**: [e.g.: none / line icons / colorful illustration / 3D render]
+**Design references**: [screenshots or links, multiple allowed]
+
+### Visual Reference
+
+> Provides aesthetic input for AI — directly impacts `ui_concept.html` quality.
+> Fill in any of the fields below; the more you provide, the closer AI can match your vision.
+
+**Competitor/inspiration screenshots**: [paste image / Figma link / URL]
+**Brand palette**: [primary color Hex / gradient description / none (AI generates from keywords)]
+**Font preference**: [e.g.: Inter (modern) / Playfair Display (elegant) / system font / no preference]
+**Icon library**: [e.g.: Lucide / Heroicons / Tabler / no preference]
+**Key motion**: [e.g.: page-switch Fade, button Scale feedback, skeleton fade-in / no special requirement]
+**Forbidden styles**: [e.g.: no gradient backgrounds / no cartoon illustration / no restriction]
 <!-- @end -->
 
 <!-- @style:cli -->

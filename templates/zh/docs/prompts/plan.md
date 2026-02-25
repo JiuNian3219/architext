@@ -30,6 +30,10 @@
     3.  **Read Tech Stack**: `02_tech_stack.md` (技术红线 + **Section 9 项目约定**)。
         - 提取 Section 9 中的全局架构约定（Error Handling / Data Flow / Auth & Access），供 step_2 约定继承使用。
     4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`。
+    4.5 [?UI] **Read UI Concept**: `[[__DOCS_DIR__]]/global/ui_concept.html`（如存在）。
+        - 定位本功能对应的屏幕 ID（如 S-03）及其负责的状态。
+        - 锁定屏幕范围，供 step_4 生成 `ui.md §1` 时直接填入，禁自行发明新屏幕。
+        - 若 `ui_concept.html` 不存在 → 跳过，`ui.md` 按完整 ITP 格式填写。
     5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
     6.  **Read Dependency Context** (如有依赖任务):
         - 读取依赖任务的 `spec.md` (接口契约) 和 `plan.json` (已实现内容)。
@@ -172,9 +176,19 @@
     - 每个 Scenario 须对应功能设计中的具体流程步骤或异常路径，禁凭空编造场景。
     - 若为上游任务，须包含明确的 Interface/Type 定义。
 
-    **2. `ui.md` + `ui.preview.html`** [?UI]:
-    - **`ui.md`**: 模板 `templates/ui.template.md`。基于架构建议中交互模式的选择转化为 ITP v3.0 描述；引用 `design_tokens.json` 中的 componentPresets。
-    - **`ui.preview.html`**: 模板 `templates/ui.preview.template.html`。基于 `ui.md` 组件树生成可浏览器打开的视觉预览；须包含所有状态(Default/Loading/Empty/Error)；使用 Tailwind CDN + design_tokens 中的实际颜色值。须在生成后提示用户浏览器打开确认视觉效果。
+    **2. `ui.md`** [?UI]:
+    - 模板 `templates/ui.template.md`。
+    - **有 `ui_concept.html`（主路径）**:
+      1. **UI 偏差检查**（写 `ui.md` 前必须执行）：对比 step_2 确认的功能设计与 `ui_concept.html` 中对应屏幕，识别偏差：
+
+         | 偏差类型 | 判定标准 | 处理方式 |
+         |:---|:---|:---|
+         | 无偏差 | 线框图与设计一致 | 直接写 `ui.md`，引用屏幕 ID |
+         | 轻微增量 | 新增状态/弹窗/局部区域，不改整体布局 | 静默更新 `ui_concept.html` 对应屏幕，在 `ui.md` 注明 `MODIFIED: ui_concept.html S-XX` |
+         | 结构性偏差 | 布局重构、新增独立屏幕、流程路径变化 | **暂停**，向用户输出偏差说明，等待 **OK** 后更新 `ui_concept.html`，再写 `ui.md` |
+
+      2. 完成偏差处理后，按 `ui.template.md` 填写屏幕范围声明和差异组件。
+    - **无 `ui_concept.html`（降级路径）**: 按完整 ITP v3.0 描述组件树，引用 `design_tokens.json` Token 定义。
 
     **3. `plan.json`** (必须):
     - 模板: `templates/plan.template.json`。

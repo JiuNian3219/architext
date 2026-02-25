@@ -74,12 +74,7 @@
     {
       "file": "ui.md",
       "category": "UI/UX",
-      "purpose": "元件結構(ITP)、互動、狀態 — AI 讀取的結構真相源"
-    },
-    {
-      "file": "ui.preview.html",
-      "category": "UI/UX",
-      "purpose": "視覺預覽 — 瀏覽器開啟檢視效果，人類審查用"
+      "purpose": "任務級 UI 範圍聲明 — 指定本任務對應 ui_concept.html 中的畫面/元件"
     },
     {
       "file": "plan.json",

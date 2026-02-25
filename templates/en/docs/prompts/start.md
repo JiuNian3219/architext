@@ -121,7 +121,8 @@
     |:---|:---|
     | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
     | Tech stack, deploy target, 3rd-party libs/services | rule file `02_tech_stack` |
-    | Style/tone (UI/CLI/API) | rule file `02_tech_stack` (UI Protocol / Output Convention) |
+    | Style/tone (UI/CLI/API) — visual keywords / density / theme / motion | rule file `02_tech_stack` (UI Protocol) + `design_tokens.json` motion.preference / illustration |
+    | [?UI] **Visual Reference** (brand palette / font / icon library / competitor screenshots / forbidden styles) | `design_tokens.json` primitivePalette.brand + illustration + motion; screenshots/URLs → `vision.md` Visual Reference |
     | Core feature list | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **Pre-defined design decisions** | Inject into related tasks' `goal` in Roadmap; treat as hard constraint in `/archi.plan` |
     | Boundaries and anti-goals | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
@@ -163,7 +164,12 @@
 
     ### 3.5 Other global docs (as needed)
     - `dictionary.json`: Extract domain terms from Brief
-    - [?UI] `design_tokens.json`: Base tokens from UI style
+    - [?UI] `design_tokens.json`: Populate from Brief "Style & Tone" and "Visual Reference":
+      - `primitivePalette.brand`: Extract Hex values from brand palette; leave empty if none
+      - `mode`: Infer default + support array from theme preference
+      - `motion.preference` / `motion.patterns`: Set from motion preference (subtle / rich / none); expand patterns for rich
+      - `illustration.style` / `illustration.iconLibrary`: Set from illustration style and icon library fields
+      - `semanticTokens.colors`: If brand color present, fill Primary using Brand-600/Brand-500 keys
     - `error_codes.json`: Predefine core error codes from feature list
 
     **Output**: Write all files, then run `npx archi render` to generate visual `.md`.

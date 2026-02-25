@@ -16,7 +16,8 @@
 <step_1_load>
     **Role**: Product Manager
     **Action**:
-    - Read `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` spec.md, ui.md, ui.preview.html, plan.json.
+    - Read `[[__DOCS_DIR__]]/features/<ID>_<Slug>/` spec.md, ui.md, plan.json.
+    - [?UI] Read `[[__DOCS_DIR__]]/global/ui_concept.html` (locate this feature's screen scope).
     - Check `Spec-Status` field in spec.md:
       - `Full` → Normal flow, proceed to step_2.
       - `Stub` → Proceed to step_1_5_enrich.
@@ -36,7 +37,7 @@
        - Add Gherkin Scenarios (covering normal flows + exception paths)
        - Add interface/type definitions (if this feature is upstream of others)
     5. Update `Spec-Status: Stub → Full`.
-    6. [?UI] If module has UI → also generate `ui.md` + `ui.preview.html`.
+    6. [?UI] If module has UI → generate or update `ui.md` (scope declaration); if `ui_concept.html` needs new screens, notify user to run the `archi-ui-wireframe` Skill.
     7. Generate `plan.json` (all tasks as done, recording implemented content).
     8. Present enriched spec summary to user.
 
@@ -48,10 +49,18 @@
     **Role**: Requirements Analyst & Designer
     **Action**:
     - Modify spec.md (logic/rule changes) and ui.md (structure/interaction changes) based on `[context]`.
-    - [?UI Modification] Also update `ui.preview.html`; introduce designer perspective, ensure compliance with design_tokens and componentPresets.
+    - [?UI Modification] Sync `ui_concept.html` according to the following rules:
+
+      | Change Type | Criteria | Action |
+      |:---|:---|:---|
+      | No screen impact | Logic/data only, no visual diff | Update spec.md only; `ui_concept.html` unchanged |
+      | Minor UI tweak | New/modified state, popup, or local area; overall layout unchanged | Directly update corresponding screen in `ui_concept.html`; output `MODIFIED: ui_concept.html S-XX` |
+      | Screen structure change | Layout refactor, new standalone screen, navigation path change | Run `archi-ui-wireframe` Skill (Modify screens mode); output `MODIFIED: ui_concept.html S-XX`; if Phase 2 coloring is done, re-color only the modified screen |
+      | Feature reduction | Screen/region removed entirely | Run `archi-ui-wireframe` Skill (Remove screens mode); output `REMOVED: ui_concept.html S-XX` |
+
     - Ask user questions (A/B/C/D options) to confirm details when requirements are vague.
 
-    **Output**: Updated Spec and UI documents.
+    **Output**: Updated Spec, UI documents, and `ui_concept.html` change summary.
 </step_2_refine_docs>
 
 <step_3_update_plan>

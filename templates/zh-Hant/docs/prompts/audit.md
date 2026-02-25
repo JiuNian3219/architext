@@ -37,8 +37,8 @@
         - `[[__DOCS_DIR__]]/global/vision.md` — 專案方向基準
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/spec.md` — 功能邏輯
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/plan.json` — 任務清單
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 元件結構(ITP, 如存在)
-        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.preview.html` — 視覺參考(如存在)
+        - `[[__DOCS_DIR__]]/features/<id>_<Slug>/ui.md` — 任務 UI 範圍聲明(如存在)
+        - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 全域視覺標準（定位對應畫面，用於 #10 視覺合規對比）
         - `[[__DOCS_DIR__]]/features/<id>_<Slug>/audit.md` — 上次審計報告(如存在，用於對比)
         - `02_tech_stack.md` — 技術紅線
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
@@ -71,7 +71,7 @@
     | 7 | **Tech Stack 合規** | 對照 `02_tech_stack.md`：違禁模式、過時 API、硬編碼 |
     | 8 | **安全性** | 敏感資訊洩露、輸入未校驗、注入風險、權限檢查 |
     | 9 | **效能** | 不必要全量匯入/大迴圈/無用計算/記憶體洩漏/N+1 查詢 |
-    | 10 | [?UI] **Design 合規** | 樣式是否用 Token/Preset 定義的視覺模式；無硬編碼魔法值；實現與 `ui.preview.html` 視覺一致 |
+    | 10 | [?UI] **Design 合規** | 樣式是否用 Token 定義的視覺模式；無硬編碼魔法值；實現與 `ui_concept.html` 對應畫面視覺一致 |
     | 11 | [?Data] **資料一致性** | 欄位名/型別與 `data_snapshot.json` 是否一致 |
     | 12 | [?I18n] **I18n 合規** | 無硬編碼字串；須用 Key/字典引用 |
     | 13 | **Orphan .gitkeep** | 目錄已有其他檔案時仍存在 `.gitkeep` — 須刪除 |

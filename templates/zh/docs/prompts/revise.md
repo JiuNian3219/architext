@@ -99,10 +99,23 @@
     **Phase 1 — 修改全局资产**:
     按用户确认的清单修改全局文件。每个文件修改后输出变更摘要。
 
+    **[?UI] Phase 1.5 — 设计系统变更检查**:
+    若 `design_tokens.json` 有以下变更，须在 Phase 2 完成后执行对应操作：
+
+    | 变更范围 | 影响 | 处理方式 |
+    |:---|:---|:---|
+    | `primitivePalette.brand` / `semanticTokens.colors` | 品牌色/语义色变化 | 通知用户：需重跑 `archi-ui-wireframe` Phase 2（全量重着色） |
+    | `semanticTokens.typography` | 字体变化 | 通知用户：需重跑 Phase 2 |
+    | `motion.preference` / `motion.patterns` | 动效变化 | 通知用户：需重跑 Phase 2 |
+    | `illustration.iconLibrary` | 图标库变化 | 通知用户：需重跑 Phase 2 |
+    | `layout` (radius/spacing/shadow) | 组件尺寸/圆角变化 | 通知用户：需重跑 Phase 2 |
+
+    > 如上述字段未变动（如仅改 `mode.default`），无需重跑 Phase 2。
+
     **Phase 2 — 级联更新 Feature 文档**:
     对每个受影响的 Feature，按 `/archi.edit` 标准执行:
     1.  更新 `spec.md`（逻辑/规则因全局变更而需调整的部分）。
-    2.  [?UI] 更新 `ui.md` 和 `ui.preview.html`（结构/交互因全局变更而需调整的部分）。
+    2.  [?UI] 更新 `ui.md`（范围/交互因全局变更而需调整的部分）；如 `ui_concept.html` 的屏幕结构受影响，同步更新对应屏幕（运行 `archi-ui-wireframe` Skill 局部更新模式）。
     3.  在 `plan.json` 的 `phases` 中追加新 Phase: `Phase X: Global Revision — [变更主题] (<Date>)`，列出落地任务。
 
     **Phase 3 — 渲染视图**:

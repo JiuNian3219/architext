@@ -1,60 +1,50 @@
 ---
-description: UI Structure (ITP v3.0) for {FEATURE_NAME}.
-glue: ui.preview.html — 視覺對照檔案，瀏覽器開啟檢視效果
+description: 任務級 UI 範圍聲明 — 描述本任務負責的畫面/元件範圍，視覺細節以 ui_concept.html 為準。
+glue: 與 [[__DOCS_DIR__]]/global/ui_concept.html 強關聯，禁重定義整體布局或全域導航。
 ---
 
-# UI: {FEATURE_NAME}
+# UI Scope: {FEATURE_NAME}
 
-> **Protocol:** ITP v3.0 | **Tokens:** `[[__DOCS_DIR__]]/global/design_tokens.json` | **Preview:** `ui.preview.html`
+> **Concept Reference**: `[[__DOCS_DIR__]]/global/ui_concept.html`
+> **Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`
+> **Protocol**: ITP v3.0（僅描述本任務邊界內的元件樹）
 
-## 1. Visual Intent
+## 1. Screen Scope (畫面範圍)
 
-<!-- [AI]: 描述視覺意圖，code 階段根據此處決定視覺表現 -->
+<!-- [AI]: 從 ui_concept.html 中指出本任務涉及哪些畫面/狀態 -->
 
-| Aspect | Description |
-|:---|:---|
-| Mood | [e.g. Clean & Professional / Playful & Vibrant / Dark & Technical] |
-| Visual Weight | [e.g. 頁面焦點在 CTA 按鈕；標題區佔視覺重量 30%] |
-| Density | [e.g. Spacious — 大量留白，卡片間距 gap-6；或 Compact — 資訊密集，gap-2] |
-| Key Presets | [e.g. card, button-primary, input — 引用 design_tokens.json componentPresets] |
+| 畫面 ID | 畫面名 | 本任務負責的狀態 |
+|:---|:---|:---|
+| S-XX | [名稱] | default, loading, empty, error（全部 or 指定子集） |
 
-## 2. Component Tree
+> 若本任務無獨立畫面（僅修改已有畫面的局部區域），在此說明修改區域。
 
-<!-- [AI]: ITP 語法；須引用 componentPresets -->
+## 2. Component Scope (元件範圍)
+
+<!-- [AI]: 僅描述本任務新增或修改的元件；全域元件(TopBar/Sidebar/Footer)引用，禁重定義 -->
 
 ```text
-Page{Name} [Col, Fill, Bg:Base]
-  BoxHeader [Row, Between, P:4]
-    TxtTitle [H2] (Text: {FEATURE_NAME})
-    BoxActions [Row, Gap:2]
-      #ActionButtons
-
-  BoxContent [Col, Gap:4, P:4]
-    #Children
-
-  BoxFooter [Row, Between, P:4, Border-t]
-    #FooterContent
+[ScreenName > 修改區域名]
+  NewComponent [Col, Gap:4]      ← 本任務新增
+    ExistingComponent            ← ref: ui_concept.html S-XX (不修改)
+    #NewSubComponents
 ```
 
-## 3. Interactions
+> **引用規則**: 已在 `ui_concept.html` 中定義的元件 → `ref: ui_concept.html#S-XX-元件名`；禁複製貼上其結構。
+
+## 3. Interactions (本任務新增的互動)
+
+<!-- [AI]: 僅列出本任務引入的新互動；ui_concept.html 已有的互動不重複 -->
 
 | Trigger | Target | Action |
 |:---|:---|:---|
-| #EntryPoint click | Page | Mount + fetch data |
-| #Submit click | API | POST -> success: Toast / error: Toast |
+| #NewButton click | API | POST → success: Toast / error: inline |
 
-## 4. States
+## 4. States (本任務負責的狀態渲染)
 
-| State | Render |
+<!-- [AI]: 若 ui_concept.html 的狀態已充分描述，此處可省略或僅補充差異 -->
+
+| State | Delta from ui_concept.html |
 |:---|:---|
-| `loading` | Skeleton x3 (Preset: skeleton) |
-| `empty` | Illustration + Txt:Muted (Preset: emptyState) |
-| `error` | Toast:Destructive + BtnRetry |
-| `success` | Toast:Primary |
-
-## 5. Responsive
-
-| Breakpoint | Adaptation |
-|:---|:---|
-| < sm (640px) | Single-col, sidebar hidden |
-| >= lg (1024px) | Sidebar visible, multi-col |
+| `loading` | 同 ui_concept.html S-XX loading（無差異）|
+| `empty` | 本任務空態文案不同："{具體文案}" |

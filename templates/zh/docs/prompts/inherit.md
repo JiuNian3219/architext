@@ -221,6 +221,7 @@
     ### 3.7 其他全局文档（按需）
     - `dictionary.json`: 从代码提取领域术语
     - [?UI] `design_tokens.json`: 从 CSS 变量/主题提取
+    - [?UI] `ui_concept.html`: **不由本命令生成**。继承完成后，提示用户运行 `archi-ui-wireframe` Skill 生成全局 UI 线框图（基于已识别的 Roadmap 功能模块）。
     - [?Data] `data_snapshot.json`: 从 schema/migration 提取
     - `error_codes.json`: 从代码中的错误定义提取
 

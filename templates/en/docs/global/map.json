@@ -74,12 +74,7 @@
     {
       "file": "ui.md",
       "category": "UI/UX",
-      "purpose": "Component structure (ITP), interactions, states — structural source of truth for AI"
-    },
-    {
-      "file": "ui.preview.html",
-      "category": "UI/UX",
-      "purpose": "Visual preview — open in browser to see the effect, for human review"
+      "purpose": "Task-level UI scope declaration — maps this task to its screens/components in ui_concept.html"
     },
     {
       "file": "plan.json",

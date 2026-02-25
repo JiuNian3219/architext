@@ -1,0 +1,250 @@
+---
+name: archi-ui-wireframe
+description: UI 概念设计专家。两阶段生成 ui_concept.html：第一阶段输出灰度线框图（确认信息架构与屏幕覆盖）；第二阶段按 design_tokens.json 视觉着色（颜色/字体/动效/图示）。产物是整个项目 UI 的单一视觉真相源，所有 feature 级 ui.md 均引用此文件定位屏幕范围。
+---
+
+# UI 概念设计
+
+## 系统流程定位
+
+```
+/archi.start → roadmap.json + design_tokens.json
+                      ↓
+           [本 Skill] archi-ui-wireframe
+           读: vision.md + roadmap.json + design_tokens.json + 02_tech_stack.md
+           写: [[__DOCS_DIR__]]/global/ui_concept.html
+                      ↓
+           /archi.plan <ID>
+           读: ui_concept.html (定位本任务涉及的屏幕/组件范围)
+           写: ui.md (仅声明组件范围，不重复描述整体布局)
+                      ↓
+           /archi.code → 读 spec.md + ui.md + ui_concept.html → 写代码
+```
+
+> **Skill 的职责边界**：
+> - 负责：整个应用所有用户可见屏幕的视觉概念（信息架构、布局、状态、过渡）
+> - 不负责：Feature 级接口契约（spec.md 管）、任务步骤（plan.json 管）、业务代码
+
+---
+
+## 调用模式
+
+| 模式 | 触发来源 | 操作范围 |
+|:---|:---|:---|
+| 初次生成 | `/archi.start` 完成后 | 全量生成，覆盖所有屏幕 |
+| 重新生成 | 用户手动调用 | 全量重写（全局 UI 重设计时） |
+| 追加屏幕 | `/archi.scope` 追加新功能后 | 仅新增页面，不改已有页面 |
+| Plan 细化 | `/archi.plan` 发现 UI 偏差后 | 仅更新对应屏幕（新增状态/子屏幕/布局修正）|
+| 修改屏幕 | `/archi.edit` 功能变更后 | 仅修改受影响的屏幕，其余不动 |
+| 删除屏幕 | `/archi.remove` 功能下线后 | 移除对应屏幕及控制栏入口 |
+
+> **Phase 2（视觉着色）时机**: Phase 2 无需紧跟 Phase 1。建议在核心功能（≥ 50% Roadmap 任务）完成 Plan 后再运行，以确保着色基于稳定的屏幕结构。已着色的屏幕被 Plan 细化更新后，仅需对该屏幕重新着色，无需全量重跑 Phase 2。
+
+---
+
+## 两阶段协议
+
+### Phase 1 — 线框图 (Low-fi Wireframe)
+
+**Role**: 信息架构师
+
+**目标**: 确认「屏幕覆盖是否完整」和「导航结构是否合理」，不关注视觉细节。
+
+**Action**:
+
+1. **读取上下文**:
+   - `[[__DOCS_DIR__]]/global/vision.md` → 提取：目标平台、用户角色、北极星指标
+   - `[[__DOCS_DIR__]]/global/roadmap.json` → 提取：所有 [?UI] 任务，映射为屏幕/状态列表
+   - `[[__DOCS_DIR__]]/global/design_tokens.json` → 提取：`mode.default`、`illustration.iconLibrary`
+   - 规则文件 `02_tech_stack` → 提取：目标平台（Web/Mobile/Desktop）、导航框架
+
+2. **规划屏幕清单** (内部步骤，不输出给用户):
+
+   | 屏幕 ID | 屏幕名 | 对应 Roadmap 任务 | 状态列表 |
+   |:---|:---|:---|:---|
+   | S-01 | [屏幕名] | [任务 ID] | default, loading, empty, error |
+   | ... | | | |
+
+   > **屏幕 ID 稳定性规则** (CRITICAL): 屏幕 ID 一经分配永久不变。删除屏幕后其 ID 作废，后续新增屏幕须使用新 ID（如 S-08 → S-09），禁止重用或重新编号已有 ID。所有 `ui.md` 均以 ID 引用屏幕，ID 变动将导致引用断裂。
+
+3. **选定 HTML 骨架规格** (根据目标平台自动适配):
+
+   | 平台 | 视口尺寸 | 顶栏形态 | 导航形态 |
+   |:---|:---|:---|:---|
+   | Web / Desktop SaaS | 1280×800px | 固定顶栏 | 左侧边栏 |
+   | Web / Marketing | 1440×900px | 透明→固定顶栏 | 顶部水平导航 |
+   | Mobile Web / 小程序 | 390×844px | 状态栏+导航栏 | 底部 TabBar |
+   | Tablet / Dashboard | 1024×768px | 固定顶栏 | 可折叠侧边栏 |
+
+   > 平台来自 `02_tech_stack` 或 vision.md 目标用户设备描述；无法推断时默认 Web / Desktop SaaS。
+
+4. **生成线框图 HTML** — 写入 `[[__DOCS_DIR__]]/global/ui_concept.html`:
+
+   **HTML 结构规范**:
+   ```
+   <html>
+     <head>
+       <!-- 内联 CSS：线框图风格 (灰度，无品牌色) -->
+       <!-- 线框图 palette: bg=#f5f5f5, surface=#fff, border=#d0d0d0,
+            text=#333, muted=#888, accent=#555 -->
+     </head>
+     <body style="margin:0; display:flex; flex-direction:column; height:100vh; overflow:hidden;">
+       <!-- 顶栏: 项目名 + 当前屏幕路径 (固定，不随内容滚动) -->
+       <header class="wf-topbar">...</header>
+
+       <!-- 内容区: 可滚动，渲染当前激活屏幕 -->
+       <main class="wf-content" style="flex:1; overflow:auto;">
+         <!-- 每个屏幕一个 <section class="wf-screen" id="S-XX" data-states="default,loading,empty,error"> -->
+         <!-- 每个状态一个 <div class="wf-state" data-state="default"> -->
+       </main>
+
+       <!-- 控制栏: 左=状态切换，中=文件标识，右=页面切换 (固定底部，线框图风格) -->
+       <footer class="wf-ctrl-bar">
+         <div class="ctrl-group">
+           <span class="ctrl-lbl">STATE</span>
+           <!-- 当前屏幕的状态 pills，由 JS 动态渲染 -->
+         </div>
+         <div class="wf-file-label">Low-fi Wireframe · [项目名]</div>
+         <div class="ctrl-group">
+           <span class="ctrl-lbl">PAGE</span>
+           <!-- 所有屏幕的页面 pills，由 JS 渲染 -->
+         </div>
+       </footer>
+     </body>
+   </html>
+   ```
+
+   **元素标注规范** (`data-el` 属性):
+   - 每个可交互元素或语义区块须加 `data-el="[用户语言描述]"` 属性
+   - 标注语言 = Brief 的主语言（中文项目用中文标注，英文项目用英文）
+   - 标注在鼠标悬停时通过 CSS `::before` 显示，默认隐藏
+   - 父元素悬停时，子元素的标注通过 `:has([data-el]:hover)::before { opacity:0 }` 自动隐藏
+
+   **交互规范** (纯 CSS + 少量 JS，无外部依赖):
+   - 页面切换: 点击 PAGE pills → 切换 `.wf-screen` 的 `display`；JS 同步更新 STATE pills
+   - 状态切换: 点击 STATE pills → 在当前屏幕内切换 `.wf-state` 的 `display`
+   - 激活样式: `.pill.on-page` / `.pill.on-state` → `background:#444; color:#fff`
+   - 控制栏必须为线框图风格（灰度、uppercase label、dashed border-top），禁用彩色
+
+   **线框图内容规范**:
+   - 全部灰度，禁用品牌色（着色在 Phase 2 完成）
+   - 用灰色矩形 + 文字标注表达图片/图表区域
+   - 导航项、按钮、输入框须使用占位形态（不需要真实内容）
+   - 每个屏幕须涵盖其 Roadmap 任务的所有核心操作入口
+
+5. **输出 Gate**:
+
+   输出线框图后，展示屏幕覆盖摘要：
+   ```
+   ### ui_concept.html 已生成（Phase 1 线框图）
+
+   **屏幕覆盖** (共 N 个屏幕):
+   | 屏幕 | 对应任务 | 状态数 |
+   |:---|:---|:---|
+   | S-01 [屏幕名] | [任务 ID] | N |
+   | ... | | |
+
+   **导航结构**: [描述，如"左侧边栏 + 顶部面包屑"]
+   **平台适配**: [Web Desktop 1280px / Mobile 390px / ...]
+
+   > 在浏览器打开 `[[__DOCS_DIR__]]/global/ui_concept.html` 确认信息架构。
+   > 回复 **OK** 进入 Phase 2 视觉着色；或描述需要调整的屏幕/布局。
+   ```
+
+   **Gate**: 用户回复 **OK** 后进入 Phase 2；未确认禁进行着色。
+
+---
+
+### Phase 1.5 — 线框图精炼 (可选)
+
+**Role**: 咨询顾问
+**Trigger**: 用户回复非 OK，含布局调整、屏幕增减、导航改动。
+**Action**: 融入反馈，局部更新 `ui_concept.html`（仅改动用户指出的部分），重新展示摘要，等待确认。禁全量重写。
+
+---
+
+### Phase 2 — 视觉着色 (Hi-fi Coloring)
+
+**Role**: 视觉设计师
+
+**目标**: 将确认的线框图着色为高保真原型，完整体现 `design_tokens.json` 的视觉语言。
+
+**前置检查** (着色前必须验证):
+
+| 字段路径 | 通过条件 | 阻塞处理 |
+|:---|:---|:---|
+| `primitivePalette.brand` | 至少含 1 个非空颜色值 | 阻塞 — 提示用户先填写品牌色 |
+| `semanticTokens.colors` | 至少含 `bg`/`surface`/`text` 语义映射 | 阻塞 — 提示用户先定义基础语义色 |
+| `semanticTokens.typography` | 至少含 1 个字体族声明 | 警告（非阻塞）— AI 使用系统字体降级 |
+| `motion.preference` | 非空 | 警告（非阻塞）— 默认 `subtle` |
+| `illustration.iconLibrary` | 非空 | 警告（非阻塞）— 不引入图标库 |
+
+> 遇到阻塞项须立即停止并输出缺失字段清单，等待用户补全后再重跑。
+
+**Action**:
+
+1. **读取视觉规格**:
+   - `design_tokens.json` → 完整读取：
+     - `primitivePalette` → CSS 变量定义
+     - `semanticTokens.colors` → 语义色映射
+     - `semanticTokens.typography` → 字体/字号
+     - `mode` → 主题模式（light/dark）
+     - `motion` → 动效时长、缓动曲线、模式名称
+     - `illustration` → 图示风格、图标库
+     - `componentPresets` → 组件 class 字符串
+   - `vision.md` → 提取 Visual Reference 段落（品牌色、竞品截图描述、禁用风格）
+
+2. **着色规则**:
+
+   | 着色维度 | 规则 |
+   |:---|:---|
+   | 颜色 | 用 `semanticTokens.colors` 语义 Token 替换灰度；品牌色来自 `primitivePalette.brand` |
+   | 字体 | 引入 `semanticTokens.typography` 中声明的字体（Google Fonts CDN 或系统字体） |
+   | 动效 | 按 `motion.patterns` 为页面切换/Modal/Toast 添加对应 CSS transition/animation |
+   | 图示 | 按 `illustration.iconLibrary` 引入对应 CDN（Lucide/Heroicons/Tabler）；style=none 则不插图 |
+   | 组件 | 按 `componentPresets` 中的 class 字符串替换线框图中的占位组件 |
+   | 模式 | 若 `mode.support` 含 dark，添加 CSS `@media (prefers-color-scheme: dark)` + 切换按钮 |
+   | 禁用 | 严格遵循 vision.md Visual Reference 中的「禁用风格」描述 |
+
+3. **着色后验证清单**:
+   - [ ] 所有屏幕颜色来自 semanticTokens，无硬编码 Hex（品牌色变量除外）
+   - [ ] 所有动效时长来自 `motion.duration.*`，无魔法数字
+   - [ ] 页面/状态切换控制栏保持线框图灰度风格（不着色，保持调试工具属性）
+   - [ ] `data-el` 标注完整保留
+   - [ ] 每个屏幕的所有状态（default/loading/empty/error）均已视觉化
+
+4. **输出**:
+   - 更新 `[[__DOCS_DIR__]]/global/ui_concept.html`（着色版覆盖线框图版）
+   - 输出总结：
+     ```
+     ### ui_concept.html 已更新（Phase 2 视觉着色）
+
+     **应用的视觉规格**:
+     - 主色: [Primary Token 值]
+     - 字体: [字体名]
+     - 动效: [preference 值，如 subtle]
+     - 图示: [iconLibrary] / style: [style]
+     - 主题: [default + support 列表]
+
+     > 在浏览器打开 `[[__DOCS_DIR__]]/global/ui_concept.html` 确认视觉效果。
+     > 后续运行 `/archi.plan <ID>` 时，AI 将读取此文件确定各任务的 UI 范围。
+     ```
+
+---
+
+### Phase 2.5 — 局部重着色 (Incremental Re-coloring)
+
+**Trigger**: Phase 2 已完成后，某屏幕因 Plan 细化 / Edit / Revise 发生更新，需将新增内容着色至 hi-fi 风格。
+
+**Role**: 视觉设计师
+
+**Action**:
+
+1. 从调用方获取需重着色的屏幕 ID 列表（如 `S-03`, `S-07`）。
+2. 仅处理指定屏幕：
+   - 保留其 `.wf-screen#S-XX` 内的灰度线框新增部分
+   - 按 Phase 2 着色规则（`semanticTokens` / `motion` / `illustration`）对新增部分补色
+   - 其余屏幕内容不动
+3. 输出变更摘要：`MODIFIED: ui_concept.html S-XX（局部重着色，新增 [N] 个状态/区域）`
+
+> **禁止**: 局部重着色时禁全量重跑 Phase 2，禁改动未指定屏幕的任何内容。
