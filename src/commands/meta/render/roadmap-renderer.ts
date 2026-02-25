@@ -49,19 +49,20 @@ function formatGoalLines(goal: string): string {
 
 /**
  * 构建 Mermaid 节点标签（双引号包裹）。
- * 格式：`<b>{标题}</b>[<br/>{goal 各句}]`
- * - 标题加粗，goal 按分句符换行
+ * 格式：`<b>[{id}] {标题}</b>[<br/>{goal 各句}]`
+ * - ID 前置便于与任务列表对应，标题加粗，goal 按分句符换行
  * - 状态由 classDef 背景色区分，无需额外 icon
  *
  * @param task 任务
  */
 function buildNodeLabel(task: Task): string {
+  const id = escapeMermaidText(task.id);
   const title = escapeMermaidText(task.title);
   if (task.goal) {
     const goal = formatGoalLines(escapeMermaidText(task.goal));
-    return `"<b>${title}</b><br/>${goal}"`;
+    return `"<b>[${id}] ${title}</b><br/>${goal}"`;
   }
-  return `"<b>${title}</b>"`;
+  return `"<b>[${id}] ${title}</b>"`;
 }
 
 /**

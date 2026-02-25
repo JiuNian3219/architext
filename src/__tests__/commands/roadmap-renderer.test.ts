@@ -176,9 +176,9 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         { id: "TO", title: "Target", deps: ["FROM"] },
       ]);
       const output = renderRoadmap(data);
-      expect(output).toContain('ALONE["<b>Isolated Node</b>"]');
-      expect(output).toContain('FROM["<b>Source</b>"]');
-      expect(output).toContain('TO["<b>Target</b>"]');
+      expect(output).toContain('ALONE["<b>[ALONE] Isolated Node</b>"]');
+      expect(output).toContain('FROM["<b>[FROM] Source</b>"]');
+      expect(output).toContain('TO["<b>[TO] Target</b>"]');
     });
 
     it("有 goal 的节点：加粗标题 + <br/> + 普通 goal", () => {
@@ -203,7 +203,7 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
       };
       const output = renderRoadmap(data);
       expect(output).toContain(
-        'T1["<b>Project Scaffolding</b><br/>Setup complete"]',
+        'T1["<b>[T1] Project Scaffolding</b><br/>Setup complete"]',
       );
     });
 
@@ -228,7 +228,7 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         ],
       };
       expect(renderRoadmap(data)).toContain(
-        'T1["<b>Task</b><br/>Step A;<br/>Step B;<br/>Step C"]',
+        'T1["<b>[T1] Task</b><br/>Step A;<br/>Step B;<br/>Step C"]',
       );
     });
 
@@ -253,7 +253,7 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         ],
       };
       expect(renderRoadmap(data)).toContain(
-        'T1["<b>任务</b><br/>步骤A；<br/>步骤B；<br/>步骤C"]',
+        'T1["<b>[T1] 任务</b><br/>步骤A；<br/>步骤B；<br/>步骤C"]',
       );
     });
 
@@ -278,7 +278,7 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         ],
       };
       expect(renderRoadmap(data)).toContain(
-        'T1["<b>Task</b><br/>Do A.<br/>Do B."]',
+        'T1["<b>[T1] Task</b><br/>Do A.<br/>Do B."]',
       );
     });
 
@@ -303,14 +303,14 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         ],
       };
       expect(renderRoadmap(data)).toContain(
-        'T1["<b>任务</b><br/>做A。<br/>做B。"]',
+        'T1["<b>[T1] 任务</b><br/>做A。<br/>做B。"]',
       );
     });
 
     it("没有 goal 的节点不含 <br/>", () => {
       const data = buildRoadmap([{ id: "T1", title: "Simple Task" }]);
       const output = renderRoadmap(data);
-      expect(output).toContain('T1["<b>Simple Task</b>"]');
+      expect(output).toContain('T1["<b>[T1] Simple Task</b>"]');
       expect(output).not.toContain("<br/>");
     });
 
