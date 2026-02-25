@@ -195,7 +195,7 @@ describe("Scaffolder Integration", () => {
     }
   });
 
-  it("非 Cursor 编辑器不应创建 Skills 目录", async () => {
+  it("支持 Agent Skills 的编辑器应创建 Skills 目录", async () => {
     const config: InitConfig = {
       language: "zh",
       docDir: ".architext",
@@ -205,9 +205,9 @@ describe("Scaffolder Integration", () => {
 
     await Scaffolder.run(config);
 
-    // trae 不支持 Agent Skills 标准，不应生成 skills 目录
+    // trae 支持 Agent Skills 标准，应生成 skills 目录
     const traeSkillsDir = path.join(tempDir, ".trae/skills");
-    expect(await fs.pathExists(traeSkillsDir)).toBe(false);
+    expect(await fs.pathExists(traeSkillsDir)).toBe(true);
   });
 
   it("重新初始化时 Skills 文件应纳入冲突检测范围", async () => {

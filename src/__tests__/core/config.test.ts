@@ -63,7 +63,9 @@ describe("config", () => {
       await fs.writeJSON(configPath, invalidConfig, { spaces: 2 });
 
       await expect(loadConfig(tempDir)).rejects.toThrow(ConfigParseError);
-      await expect(loadConfig(tempDir)).rejects.toThrow(/结构校验失败/);
+      await expect(loadConfig(tempDir)).rejects.toThrow(
+        /schema validation failed/,
+      );
       await expect(loadConfig(tempDir)).rejects.toThrow(/editors/);
     });
 
