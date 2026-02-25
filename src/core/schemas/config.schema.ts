@@ -5,7 +5,19 @@ import { z } from "zod";
 const SupportedEditorSchema = z.enum(["trae", "cursor", "windsurf", "vscode"]);
 
 /** 项目特征标签 */
-const ProjectFeatureSchema = z.enum(["ui", "data", "cli", "lib", "api"]);
+const ProjectFeatureSchema = z.enum([
+  "ui",
+  "data",
+  "cli",
+  "lib",
+  "api",
+  "mobile",
+  "desktop",
+  "extension",
+  "miniapp",
+  "realtime",
+  "ai",
+]);
 
 /** Init 命令配置快照（lastScaffold 字段） */
 const InitConfigSchema = z.object({
@@ -13,6 +25,7 @@ const InitConfigSchema = z.object({
   editors: z.array(SupportedEditorSchema).min(1),
   docDir: z.string().min(1),
   features: z.array(ProjectFeatureSchema),
+  projectType: z.string().optional(),
 });
 
 /** 支持的语言（与 LocaleLang 保持一致） */

@@ -44,6 +44,8 @@
 
 > 已確定的直接填寫。不確定的留空或寫「推薦」，AI 會基於專案特徵推薦。
 
+**專案類型**: [[__PROJECT_TYPE__]]
+<!-- archi init 自動填入；手動填寫時參考 templates/archi-decompose-roadmap SKILL 中的型別表 -->
 **語言/執行時**: [例：TypeScript + Node.js 22]
 **核心框架**: [例：Next.js 15 / Fastify / Tauri]
 **套件管理器**: [例：pnpm / npm / yarn / cargo]

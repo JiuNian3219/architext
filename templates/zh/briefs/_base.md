@@ -44,6 +44,8 @@
 
 > 已确定的直接填写。不确定的留空或写"推荐"，AI 会基于项目特征推荐。
 
+**项目类型**: [[__PROJECT_TYPE__]]
+<!-- archi init 自动填入；手动填写时参考 templates/archi-decompose-roadmap SKILL 中的类型表 -->
 **语言/运行时**: [例：TypeScript + Node.js 22]
 **核心框架**: [例：Next.js 15 / Fastify / Tauri]
 **包管理器**: [例：pnpm / npm / yarn / cargo]

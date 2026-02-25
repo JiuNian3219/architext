@@ -13,7 +13,7 @@
     "editor": "框架目標 IDE，可多選，逗號分隔",
     "lang": "規則與檔案骨架語言",
     "doc": "自定義檔案路徑，預設使用.architext",
-    "type": "專案型別 (web|api|cli|lib|fullstack|hybrid)",
+    "type": "專案型別 (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
     "failed": "初始化失敗"
   },
   "update": {
@@ -323,7 +323,7 @@
           "editor": "指定 IDE (cursor / trae / windsurf)",
           "lang": "指定語言 (zh / en / zh-Hant)",
           "doc": "自定義檔案目錄名 (預設 .architext)",
-          "type": "專案型別 (web / api / cli / lib / fullstack / hybrid)"
+          "type": "專案型別 (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"
         },
         "update": {
           "desc": "同步最新規則範本到專案，保持規則檔案與框架版本一致。",

@@ -13,17 +13,35 @@ export type SupportedEditor = "trae" | "cursor" | "windsurf" | "vscode";
 /**
  * 项目特征标签（内部驱动 Brief 模板拼装的原子单元）
  */
-export type ProjectFeature = "ui" | "data" | "cli" | "lib" | "api";
+export type ProjectFeature =
+  | "ui"
+  | "data"
+  | "cli"
+  | "lib"
+  | "api"
+  | "mobile"
+  | "desktop"
+  | "extension"
+  | "miniapp"
+  | "realtime"
+  | "ai";
 
 /**
  * 项目类型（用户面向的预设，每种类型映射到一组 features）
  */
 export type ProjectType =
   | "web"
+  | "fullstack"
   | "api"
   | "cli"
   | "lib"
-  | "fullstack"
+  | "mobile"
+  | "miniapp"
+  | "desktop"
+  | "web-desktop"
+  | "extension"
+  | "realtime"
+  | "ai-agent"
   | "hybrid";
 
 /**
@@ -94,6 +112,7 @@ export interface InitConfig {
   editors: SupportedEditor[];
   docDir: string;
   features: ProjectFeature[];
+  projectType?: ProjectType;
 }
 
 /**

@@ -44,10 +44,18 @@ Brief → [本 Skill] → roadmap.json 任务
 
 | 项目类型 | 脚手架须包含（除通用构建工具链外） |
 |:---|:---|
-| Web SPA / PWA | 路由骨架（如 React Router）、全局 App Shell（布局 / Provider / 主题注入） |
-| CLI 工具 | logger 模块、AppError 处理层、命令注册入口 |
-| API 服务 | 路由层、中间件层、DB 连接层、全局错误处理 |
-| 小程序 | 页面路由配置、全局 app.js/ts、请求封装层 |
+| Web SPA / PWA | 路由骨架（如 React Router）+ 全局 App Shell（布局 / Provider / 主题注入） |
+| 全栈 Web（SSR/SSG）| 路由约定（loader/action/页面）+ API Routes 层 + 全局布局 + Auth Session 管理（Cookie/JWT）；[?UI] 主题注入 |
+| CLI 工具 | logger 模块 + AppError 处理层 + 命令注册入口 |
+| API 服务（REST / GraphQL）| 路由层 + 中间件层 + DB 连接层 + 全局错误处理；[?GraphQL] Schema 定义层 + DataLoader |
+| 移动端 App（原生/跨平台）| 导航骨架（React Navigation / Go Router）+ 平台适配层（iOS/Android 权限、原生模块）+ 环境配置（dev/staging/prod）|
+| 小程序 | 页面路由配置 + 全局 app.js/ts + 请求封装层 |
+| 浏览器扩展 | manifest.json（V2/V3）+ Background Service Worker + Content Script 注入层 + 消息总线（background ↔ content ↔ popup）+ Popup/Options 页入口 |
+| 桌面端 App（单机）| 主进程入口（Electron main / Tauri main.rs）+ IPC 通信桥 + 系统级能力（托盘、热键）+ 原生文件系统封装 |
+| Web + 桌面端（Hybrid）| Web 脚手架基础 + 桌面运行时集成（Tauri/Electron）+ 系统级能力（托盘、全局热键、系统通知）；**桌面集成须独立拆分为 INF 子任务**（OS 差异大、与 Web 技术栈完全不同，不适用 Step 2 的"同期执行合并"规则） |
+| 库 / SDK / NPM 包 | 双产物配置（CJS + ESM）+ 公共 API 入口（barrel index.ts）+ 类型声明生成（.d.ts）+ Changelog / 版本工具链；**禁建业务 Task，仅 INF 层** |
+| 实时 / 协作型 App | WebSocket 服务层 + 事件 Schema 定义（共享类型）+ 房间/会话管理基础；[?CRDT] 冲突解决层 |
+| AI Agent / MCP 工具 | LLM 客户端抽象层（provider 无关）+ Prompt 模板管理 + Tool/Function Calling Schema + 对话状态 / Memory 管理；[?MCP] MCP 协议适配器 |
 
 **操作**：将标定结果注入 Step 2 的 INF-01 描述，确保脚手架任务覆盖对应清单。
 
@@ -59,6 +67,7 @@ Brief → [本 Skill] → roadmap.json 任务
 
 1. 逐条功能转化为场景句式：`用户可 [动作] → [可感知结果]`
 2. 共享同一核心流程的场景 → 合并为一个业务 Task
+   > **注意**：「共享功能域/主题」≠「共享核心流程」。属于同一功能域（如"社区互动"）但各自有独立 UI 区域和实现域的场景，须按下方拆分信号独立成 Task，禁因主题相同而强行合并。"共享核心流程"仅指：场景在同一 UI 视图内完成、操作同一数据实体、共享同一状态流转。
 3. 粒度校准（核心原则：**一任务 = 一次 `/archi.plan` 会话 = 一个 `tasks/<slug>/` 子目录**）：
 
     **行为视角（PM）**：
@@ -126,7 +135,23 @@ Infra 任务不直接承载业务逻辑，AI 在执行时上下文单一，不�
 |:---|:---|
 | 同属工程配置、同期执行、技术栈相关 | 合并（如脚手架 + CI + 路由骨架 → 一个 INF 任务） |
 | 技术栈完全不同 且 执行时机明显不同 | 拆分（如 Dexie.js 存储层 vs Shadcn 主题配置） |
+| 含 OS 级系统 API（托盘、全局热键、文件关联等）| **强制拆分**（不受"同期执行"条件约束；OS API 跨平台差异大，与 Web 脚手架共存会使 INF 任务过宽） |
 | 某 Infra 产出物被 ≥2 个业务 Task 直接调用（接口型） | 独立成任务（须声明导出接口契约） |
+
+**隐式标准功能扫描**：以下功能通常不在 Brief 中出现，须按归属分类主动补充（禁遗漏）：
+
+*须补充为独立业务 Task（Phase 2，有用户可见行为）*：
+
+| 检查项 | 触发条件 |
+|:---|:---|
+| 用户 Profile / 账号设置页 | 项目含 Auth（INF 层有认证中间件）|
+
+*须补充为 INF 任务（Phase 1，基础设施）*：
+
+| 检查项 | 触发条件 |
+|:---|:---|
+| 通知基础设施（服务端推送/消息队列层）| ≥1 个 Task 口头提及"通知/提醒"但未建 INF Task |
+| 搜索基础设施（PG FTS 索引 / 外部引擎部署）| ≥2 个业务 Task 各自描述"搜索"功能；须在此决策方案后以 INF Task 承载，下游 Task 依赖它 |
 
 ---
 
@@ -148,6 +173,7 @@ Infra 任务不直接承载业务逻辑，AI 在执行时上下文单一，不�
 ### Step 4 · 依赖与并行优化
 
 - **真实依赖链**：禁所有业务 Task 统一只挂 `INF-01`，须反映真实业务关系。
+- **业务实体依赖（优先于最小依赖）**：若功能 B 的核心操作主体由功能 A 产生（即 A 完成前 B 的数据实体不存在），则 B 须声明对 A 的依赖。此规则优先于最小依赖原则。示例：Usage Log 记录的主体是 Prompt，Prompt 由 FEAT-Prompt_Create 创建 → Usage Log Task 须依赖 Prompt Task，而不仅依赖 INF 层。
 - **最小依赖原则**：能并行的任务不加多余依赖，最大化 Batch 并行度。
 
 ---

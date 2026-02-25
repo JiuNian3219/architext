@@ -163,5 +163,5 @@ export async function collectInitConfig(options: {
   const docDir =
     options.doc || (existingConfig?.docDir as string) || ".architext";
 
-  return { language, editors, docDir, features };
+  return { language, editors, docDir, features, projectType };
 }

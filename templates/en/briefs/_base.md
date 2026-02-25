@@ -44,6 +44,8 @@
 
 > Fill in what's confirmed. Leave blank or write "recommend" for the rest; AI will recommend based on project characteristics.
 
+**Project type**: [[__PROJECT_TYPE__]]
+<!-- Auto-filled by archi init; if writing manually, refer to the project type table in the archi-decompose-roadmap SKILL -->
 **Language/runtime**: [e.g.: TypeScript + Node.js 22]
 **Core framework**: [e.g.: Next.js 15 / Fastify / Tauri]
 **Package manager**: [e.g.: pnpm / npm / yarn / cargo]

@@ -13,7 +13,7 @@
     "editor": "Target IDE, multiple selection is supported, separated by commas",
     "lang": "Rules and document skeleton language",
     "doc": "Custom document path, default is .architext",
-    "type": "Project type (web|api|cli|lib|fullstack|hybrid)",
+    "type": "Project type (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
     "failed": "Initialization failed"
   },
   "update": {
@@ -323,7 +323,7 @@
           "editor": "Target IDE (cursor / trae / windsurf)",
           "lang": "Language (zh / en / zh-Hant)",
           "doc": "Custom doc directory name (default: .architext)",
-          "type": "Project type (web / api / cli / lib / fullstack / hybrid)"
+          "type": "Project type (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"
         },
         "update": {
           "desc": "Sync latest rule templates to project, keep rules aligned with framework version.",

@@ -44,10 +44,18 @@ Identify the project type from the Brief's tech stack / description. Establish a
 
 | Project Type | Scaffold Must Include (beyond common build toolchain) |
 |:---|:---|
-| Web SPA / PWA | Routing skeleton (e.g. React Router), global App Shell (layout / Provider / theme injection) |
-| CLI Tool | Logger module, AppError handling layer, command registration entry |
-| API Service | Router layer, middleware layer, DB connection layer, global error handling |
-| Mini Program | Page routing config, global app.js/ts, request wrapper layer |
+| Web SPA / PWA | Routing skeleton (e.g. React Router) + global App Shell (layout / Provider / theme injection) |
+| Full-Stack Web (SSR/SSG) | Routing conventions (loader/action/pages) + API Routes layer + global layout + Auth session management (Cookie/JWT); [?UI] theme injection |
+| CLI Tool | Logger module + AppError handling layer + command registration entry |
+| API Service (REST / GraphQL) | Router layer + middleware layer + DB connection layer + global error handling; [?GraphQL] Schema definition layer + DataLoader |
+| Mobile App (Native / Cross-platform) | Navigation skeleton (React Navigation / Go Router) + platform adapter layer (iOS/Android permissions, native modules) + environment config (dev/staging/prod) |
+| Mini Program | Page routing config + global app.js/ts + request wrapper layer |
+| Browser Extension | manifest.json (V2/V3) + Background Service Worker + Content Script injection layer + message bus (background ↔ content ↔ popup) + Popup/Options page entry |
+| Desktop App (Standalone) | Main process entry (Electron main / Tauri main.rs) + IPC bridge + system-level capabilities (tray, hotkeys) + native file system wrapper |
+| Web + Desktop (Hybrid) | Web scaffold base + desktop runtime integration (Tauri/Electron) + system-level capabilities (system tray, global hotkeys, system notifications); **desktop integration must be split into a separate INF task** (OS differences are significant; tech stack is entirely different from Web — the Step 2 "same execution window = merge" rule does not apply) |
+| Library / SDK / NPM Package | Dual output config (CJS + ESM) + public API entry (barrel index.ts) + type declaration generation (.d.ts) + changelog / versioning toolchain; **no business Tasks — INF layer only** |
+| Real-time / Collaborative App | WebSocket server layer + event schema definitions (shared types) + room/session management foundation; [?CRDT] conflict resolution layer |
+| AI Agent / MCP Tool | LLM client abstraction layer (provider-agnostic) + prompt template management + Tool/Function Calling schema + conversation state / memory management; [?MCP] MCP protocol adapter |
 
 **Action**: Inject the calibration result into the INF-01 description in Step 2, ensuring the scaffold task covers the checklist for this project type.
 
@@ -59,6 +67,7 @@ Extract user scenarios from the Brief task descriptions and aggregate them into 
 
 1. Convert each item into scenario format: `User can [action] → [perceivable outcome]`
 2. Scenarios sharing the same core flow → merge into one business Task
+   > **Note**: "Shared feature domain / theme" ≠ "Shared core flow". Scenarios belonging to the same domain (e.g. "community interaction") but with independent UI areas and implementation domains must follow the split signals below — never force-merge because they share a theme. "Shared core flow" means: scenarios complete within the same UI view, operate on the same data entity, and share the same state transitions.
 3. Granularity calibration (core principle: **one task = one `/archi.plan` session = one `tasks/<slug>/` subdirectory**):
 
     **Behavior perspective (PM)**:
@@ -125,7 +134,23 @@ Infra tasks don't carry business logic. AI executing them operates in a narrow c
 |:---|:---|
 | Same engineering category, same execution window, related tech stack | Merge (e.g. scaffolding + CI + router skeleton → one INF task) |
 | Completely different tech stack AND clearly different execution timing | Split (e.g. Dexie.js storage layer vs. Shadcn theme config) |
+| Contains OS-level system APIs (system tray, global hotkeys, file associations, etc.) | **Force split** (not subject to the "same execution window" condition; OS APIs have significant cross-platform differences — combining with Web scaffold makes the INF task too wide) |
 | An Infra output is called directly by ≥2 business Tasks (interface-type) | Keep as its own task (must declare exported interface contract) |
+
+**Implicit standard features scan**: The following features rarely appear in a Brief and must be proactively added with correct classification (omission is not allowed):
+
+*Add as standalone business Task (Phase 2 — user-visible behavior)*:
+
+| Check Item | Trigger Condition |
+|:---|:---|
+| User Profile / account settings page | Project includes Auth (INF layer has auth middleware) |
+
+*Add as INF task (Phase 1 — infrastructure)*:
+
+| Check Item | Trigger Condition |
+|:---|:---|
+| Notification infrastructure (server-side push / message queue layer) | ≥1 Task mentions "notifications / reminders" verbally but no INF Task created |
+| Search infrastructure (PG FTS index / external search engine deployment) | ≥2 business Tasks independently describe "search" functionality; decide on the approach here as an INF Task — downstream Tasks depend on it |
 
 ---
 
@@ -147,6 +172,7 @@ The following types **must never become standalone tasks**: inject into the `goa
 ### Step 4 · Dependency & Parallelism Optimization
 
 - **Real dependency chains**: Never attach all business Tasks to `INF-01` only. Dependencies must reflect real business relationships.
+- **Business entity dependency (takes priority over minimal dependency)**: If the core subject of feature B is produced by feature A (i.e. B's data entity does not exist until A is complete), then B must declare a dependency on A. This rule takes precedence over the minimal dependency principle. Example: Usage Log records Prompt usage; Prompts are created by FEAT-Prompt_Create → the Usage Log Task must depend on the Prompt Task, not only on the INF layer.
 - **Minimal dependency principle**: Tasks that can run in parallel must not carry unnecessary deps — maximize Batch parallelism.
 
 ---

@@ -13,7 +13,7 @@
     "editor": "框架目标IDE，可多选，逗号分隔",
     "lang": "规则与文档骨架语言",
     "doc": "自定义文档路径，默认使用.architext",
-    "type": "项目类型 (web|api|cli|lib|fullstack|hybrid)",
+    "type": "项目类型 (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
     "failed": "初始化失败"
   },
   "update": {
@@ -323,7 +323,7 @@
           "editor": "指定 IDE (cursor / trae / windsurf)",
           "lang": "指定语言 (zh / en / zh-Hant)",
           "doc": "自定义文档目录名 (默认 .architext)",
-          "type": "项目类型 (web / api / cli / lib / fullstack / hybrid)"
+          "type": "项目类型 (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"
         },
         "update": {
           "desc": "同步最新规则模板到项目，保持规则文件与框架版本一致。",

@@ -34,6 +34,7 @@ export const GLOBAL_RULES = {
   // 占位符定义
   PLACEHOLDERS: {
     DOCS_DIR: "[[__DOCS_DIR__]]",
+    PROJECT_TYPE: "[[__PROJECT_TYPE__]]",
   },
 } as const;
 
@@ -98,13 +99,35 @@ export interface ProjectTypePreset {
 }
 
 export const PROJECT_TYPE_PRESETS: Record<ProjectType, ProjectTypePreset> = {
-  web: { label: "Web 应用", features: ["ui", "data"] },
-  api: { label: "API 服务", features: ["api", "data"] },
+  web: { label: "Web SPA / PWA", features: ["ui", "data"] },
+  fullstack: { label: "全栈 Web (SSR/SSG)", features: ["ui", "data", "api"] },
+  api: { label: "API 服务 (REST/GraphQL)", features: ["api", "data"] },
   cli: { label: "CLI 工具", features: ["cli"] },
-  lib: { label: "库 / SDK", features: ["lib"] },
-  fullstack: { label: "全栈应用", features: ["ui", "data", "api"] },
+  lib: { label: "库 / SDK / NPM 包", features: ["lib"] },
+  mobile: {
+    label: "移动端 App (RN/Flutter/Expo)",
+    features: ["data", "mobile"],
+  },
+  miniapp: {
+    label: "小程序 (微信/支付宝/uni-app)",
+    features: ["data", "miniapp"],
+  },
+  desktop: {
+    label: "桌面端 App (Electron/Tauri)",
+    features: ["ui", "data", "desktop"],
+  },
+  "web-desktop": {
+    label: "Web + 桌面端 (Hybrid)",
+    features: ["ui", "data", "api", "desktop"],
+  },
+  extension: { label: "浏览器扩展 (Chrome/Firefox)", features: ["extension"] },
+  realtime: {
+    label: "实时/协作型 App",
+    features: ["ui", "data", "api", "realtime"],
+  },
+  "ai-agent": { label: "AI Agent / MCP 工具", features: ["api", "ai"] },
   hybrid: {
-    label: "混合 (全部特征)",
+    label: "全通用特征 (其他类型不符时选此项)",
     features: ["ui", "data", "cli", "lib", "api"],
   },
 };

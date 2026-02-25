@@ -44,10 +44,18 @@ Brief → [本 Skill] → roadmap.json 任務
 
 | 專案類型 | 腳手架須包含（除通用建置工具鏈外） |
 |:---|:---|
-| Web SPA / PWA | 路由骨架（如 React Router）、全域 App Shell（版面配置 / Provider / 主題注入） |
-| CLI 工具 | logger 模組、AppError 處理層、命令註冊入口 |
-| API 服務 | 路由層、中介層、DB 連線層、全域錯誤處理 |
-| 小程式 | 頁面路由設定、全域 app.js/ts、請求封裝層 |
+| Web SPA / PWA | 路由骨架（如 React Router）+ 全域 App Shell（版面配置 / Provider / 主題注入） |
+| 全端 Web（SSR/SSG）| 路由約定（loader/action/頁面）+ API Routes 層 + 全域版面配置 + Auth Session 管理（Cookie/JWT）；[?UI] 主題注入 |
+| CLI 工具 | logger 模組 + AppError 處理層 + 命令註冊入口 |
+| API 服務（REST / GraphQL）| 路由層 + 中介層 + DB 連線層 + 全域錯誤處理；[?GraphQL] Schema 定義層 + DataLoader |
+| 行動端 App（原生/跨平台）| 導航骨架（React Navigation / Go Router）+ 平台適配層（iOS/Android 權限、原生模組）+ 環境配置（dev/staging/prod）|
+| 小程式 | 頁面路由設定 + 全域 app.js/ts + 請求封裝層 |
+| 瀏覽器擴充功能 | manifest.json（V2/V3）+ Background Service Worker + Content Script 注入層 + 訊息匯流排（background ↔ content ↔ popup）+ Popup/Options 頁入口 |
+| 桌面端 App（單機）| 主程序入口（Electron main / Tauri main.rs）+ IPC 通訊橋接 + 系統級能力（系統匣、快速鍵）+ 原生檔案系統封裝 |
+| Web + 桌面端（Hybrid）| Web 腳手架基礎 + 桌面執行時整合（Tauri/Electron）+ 系統級能力（系統匣、全域快速鍵、系統通知）；**桌面整合須獨立拆分為 INF 子任務**（OS 差異大、與 Web 技術棧完全不同，不適用 Step 2 的「同期執行合併」規則） |
+| 函式庫 / SDK / NPM 套件 | 雙產物配置（CJS + ESM）+ 公共 API 入口（barrel index.ts）+ 型別宣告生成（.d.ts）+ Changelog / 版本工具鏈；**禁建業務 Task，僅 INF 層** |
+| 即時 / 協作型 App | WebSocket 服務層 + 事件 Schema 定義（共享型別）+ 房間/會話管理基礎；[?CRDT] 衝突解決層 |
+| AI Agent / MCP 工具 | LLM 客戶端抽象層（provider 無關）+ Prompt 範本管理 + Tool/Function Calling Schema + 對話狀態 / Memory 管理；[?MCP] MCP 協定適配器 |
 
 **操作**：將標定結果注入 Step 2 的 INF-01 描述，確保腳手架任務覆蓋對應清單。
 
@@ -59,6 +67,7 @@ Brief → [本 Skill] → roadmap.json 任務
 
 1. 逐條功能轉化為場景句式：`使用者可 [動作] → [可感知結果]`
 2. 共享同一核心流程的場景 → 合併為一個業務 Task
+   > **注意**：「共享功能域/主題」≠「共享核心流程」。屬於同一功能域（如「社群互動」）但各自有獨立 UI 區域和實作域的場景，須按下方拆分訊號獨立成 Task，禁因主題相同而強行合併。「共享核心流程」僅指：場景在同一 UI 視圖內完成、操作同一資料實體、共享同一狀態流轉。
 3. 粒度校準（核心原則：**一任務 = 一次 `/archi.plan` 會話 = 一個 `tasks/<slug>/` 子目錄**）：
 
     **行為視角（PM）**：
@@ -126,7 +135,23 @@ Infra 任務不直接承載業務邏輯，AI 執行時上下文單一，不存�
 |:---|:---|
 | 同屬工程配置、同期執行、技術棧相關 | 合併（如腳手架 + CI + 路由骨架 → 一個 INF 任務） |
 | 技術棧完全不同 且 執行時機明顯不同 | 拆分（如 Dexie.js 儲存層 vs Shadcn 主題配置） |
+| 含 OS 級系統 API（系統匣、全域快速鍵、檔案關聯等）| **強制拆分**（不受「同期執行」條件約束；OS API 跨平台差異大，與 Web 腳手架共存會使 INF 任務過寬） |
 | 某 Infra 產出物被 ≥2 個業務 Task 直接呼叫（介面型） | 獨立成任務（須聲明導出介面契約） |
+
+**隱式標準功能掃描**：以下功能通常不在 Brief 中出現，須按歸屬分類主動補充（禁遺漏）：
+
+*須補充為獨立業務 Task（Phase 2，有使用者可見行為）*：
+
+| 檢查項 | 觸發條件 |
+|:---|:---|
+| 使用者 Profile / 帳號設定頁 | 專案含 Auth（INF 層有認證中介層）|
+
+*須補充為 INF 任務（Phase 1，基礎設施）*：
+
+| 檢查項 | 觸發條件 |
+|:---|:---|
+| 通知基礎設施（伺服器推播/訊息佇列層）| ≥1 個 Task 口頭提及「通知/提醒」但未建 INF Task |
+| 搜尋基礎設施（PG FTS 索引 / 外部引擎部署）| ≥2 個業務 Task 各自描述「搜尋」功能；須在此決策方案後以 INF Task 承載，下游 Task 依賴它 |
 
 ---
 
@@ -148,6 +173,7 @@ Infra 任務不直接承載業務邏輯，AI 執行時上下文單一，不存�
 ### Step 4 · 依賴與並行優化
 
 - **真實依賴鏈**：禁所有業務 Task 統一只掛 `INF-01`，須反映真實業務關係。
+- **業務實體依賴（優先於最小依賴）**：若功能 B 的核心操作主體由功能 A 產生（即 A 完成前 B 的資料實體不存在），則 B 須聲明對 A 的依賴。此規則優先於最小依賴原則。示例：Usage Log 記錄的主體是 Prompt，Prompt 由 FEAT-Prompt_Create 建立 → Usage Log Task 須依賴 Prompt Task，而不僅依賴 INF 層。
 - **最小依賴原則**：能並行的任務不加多餘依賴，最大化 Batch 並行度。
 
 ---
