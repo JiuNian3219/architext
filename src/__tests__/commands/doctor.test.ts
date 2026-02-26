@@ -352,6 +352,7 @@ describe("runIdeRulesChecks", () => {
       "01_workflow.mdc": "",
       "02_tech_stack.mdc": "",
       "03_data_governance.mdc": "",
+      "04_cli_tools.mdc": "",
       "90_custom_rules.mdc": "",
       "99_context_glue.mdc": "",
     };
