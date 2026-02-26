@@ -9,6 +9,13 @@ alwaysApply: true
 
 > **Role**: Mode Switcher. Default to "General Architect" mode, only load specific protocol when explicit command is detected.
 
+> ⛔ **STOP CHECK** — Self-check before each response; stop immediately and explain if any item is triggered:
+> | Violation | Correct Action |
+> |:---|:---|
+> | Received `/archi.*` command but started executing without loading the protocol file | Stop → Load protocol file first |
+> | User request involves behavior change but code was modified directly | Stop → Route to the appropriate command |
+> | Ran a Terminal Gate command without confirming working directory (see `04_cli_tools.md`) | Stop → Pass Working Directory Gate first |
+
 ## 1. Explicit Command Routing
 
 **Trigger**: When user input starts with `/archi.`, immediately load the corresponding protocol template.
@@ -28,7 +35,10 @@ alwaysApply: true
 | `/archi.remove` | `[[__DOCS_DIR__]]/prompts/remove.md` | Load Surgeon → Task Decommission |
 | `/archi.help` | `[[__DOCS_DIR__]]/prompts/help.md` | Load Manual → Display Guide |
 
-> **Mechanism**: 1) Read target `.md` full text 2) Override `00_system` partial settings 3) Execute `<step_1>`.
+> **Protocol Load Gate** (forbidden to skip; three steps must complete in order):
+> 1. **Read** target `.md` full text → if file not found, stop and output: `Protocol file not found, execution aborted`
+> 2. **Override** `00_system` partial settings
+> 3. **Execute** `<step_1>` — forbidden to execute any protocol content before step 1 is complete
 
 ---
 
@@ -58,7 +68,7 @@ When routing (🔀), must:
 2. Recommend the specific command + parameters
 3. Ask the user whether to proceed
 
-Prohibited: Modifying code first and then suggesting the command as an afterthought.
+> ⛔ **Prohibited**: Modifying code first and then suggesting the command as an afterthought. Violations require reverting the change and re-routing.
 
 ### 2.3 Unmanaged Code
 
@@ -89,71 +99,6 @@ All scenarios (including routing and pure conversation) rely on the following ba
 | **Chat Mode — Trivial** | Natural language + no impact on documented behavior | Limited (typo/comments/format) | Not required |
 | **Chat Mode — Dispatch** | Natural language + impacts documented behavior | None (guided to command) | Guaranteed by command |
 
----
-
-## 4. CLI Tools Registry
-
-> Architext also provides terminal-executable CLI commands. You should proactively invoke them at the right time, rather than waiting for the user to run them manually.
-
-### Working Directory Rule (Critical)
-
-> Before executing any `npx archi` command, must ensure terminal is at project root (directory containing `[[__DOCS_DIR__]]/`).
-> If unsure, confirm current directory first. Forbidden to run directly from subdirectories.
-
-### `npx archi task` — Roadmap Task Management
-
-| Subcommand | Purpose | Example |
-|:---|:---|:---|
-| `npx archi task` | List all tasks with progress | `npx archi task` |
-| `npx archi task <ID> --status <s>` | Update task status | `npx archi task INF-001 --status done` |
-| `npx archi task --check` | Check Roadmap consistency | `npx archi task --check` |
-
-**Valid status values**: `pending` / `active` / `done` / `blocked`
-
-**When to use**:
-
-| Scenario | Action |
-|:---|:---|
-| After `/archi.plan` completes | `npx archi task <ID> --status active` |
-| After `/archi.code` completes | `npx archi task <ID> --status done` |
-| Task found to be blocked | `npx archi task <ID> --status blocked` |
-| After modifying `roadmap.json` | `npx archi task --check` |
-| Need to check project progress | `npx archi task` |
-
-> When completing `/archi.code` or `/archi.plan`, must proactively run `npx archi task <ID> --status <done|active>` to update progress.
-
-### `npx archi plan` — Plan Completion Check
-
-| Subcommand | Purpose | Example |
-|:---|:---|:---|
-| `npx archi plan <ID>` | Check Task's Plan completion | `npx archi plan SUB-01` |
-
-Automatically identifies Manual Verification sections and excludes them from automated statistics.
-
-**When to use**:
-
-| Scenario | Action |
-|:---|:---|
-| Before `/archi.code` signoff | `npx archi plan <ID>` to confirm all checkboxes are checked |
-| Check Task implementation progress | `npx archi plan <ID>` |
-
-> During `/archi.code` signoff phase, must first run `npx archi plan <ID>` to verify completion.
-
-### `npx archi render` — Render JSON Data as Markdown Views
-
-| Subcommand | Purpose | Example |
-|:---|:---|:---|
-| `npx archi render` | Render all JSON data files into human-readable `.md` views | `npx archi render` |
-
-**When to use**:
-
-| Scenario | Action |
-|:---|:---|
-| AI directly edited `.json` data files | `npx archi render` |
-| After `/archi.start` creates roadmap | `npx archi render` |
-| After `/archi.scope` updates roadmap | `npx archi render` |
-| After `/archi.plan` generates plan.json | `npx archi render` |
-
-> Note: `.md` views are auto-generated; prohibited from editing directly. Modifications must go through `.json` source files.
-
 **End of Dispatcher.**
+
+> Mandatory CLI execution rules: see `04_cli_tools.md`.

@@ -9,6 +9,13 @@ alwaysApply: true
 
 > **Role**: 模式切換器。預設保持「通用架構師」模式，僅偵測到顯式指令時載入特定協議。
 
+> ⛔ **STOP CHECK** — 每輪回覆前自檢，命中任一項須立即停止並說明原因:
+> | 違規行為 | 正確處理 |
+> |:---|:---|
+> | 收到 `/archi.*` 指令，卻未讀取協議檔案就開始執行 | 停止 → 先讀取協議檔案 |
+> | 使用者請求涉及行為變更，卻直接改程式碼 | 停止 → 引導到對應命令 |
+> | 執行 Terminal Gate 命令前未確認工作目錄（見 `04_cli_tools.md`） | 停止 → 先通過 Working Directory Gate |
+
 ## 1. Explicit Command Routing
 
 **Trigger**: 使用者輸入以 `/archi.` 開頭時，立即載入對應協議範本。
@@ -28,7 +35,10 @@ alwaysApply: true
 | `/archi.remove` | `[[__DOCS_DIR__]]/prompts/remove.md` | Load Surgeon → Task Decommission |
 | `/archi.help` | `[[__DOCS_DIR__]]/prompts/help.md` | Load Manual → Display Guide |
 
-> **Mechanism**: 1) Read 目標 `.md` 全文 2) Override `00_system` 部分設定 3) Execute `<step_1>`。
+> **Protocol Load Gate** (禁跳過，三步須按序完成):
+> 1. **Read** 目標 `.md` 全文 → 檔案不存在時停止，輸出: `協議檔案未找到，中止執行`
+> 2. **Override** `00_system` 部分設定
+> 3. **Execute** `<step_1>` — 禁在步驟 1 完成前執行任何協議內容
 
 ---
 
@@ -58,7 +68,7 @@ alwaysApply: true
 2. 推薦具體命令 + 參數
 3. 詢問使用者是否開始
 
-禁: 先改程式碼再事後建議走命令。
+> ⛔ **禁**: 先改程式碼再事後建議走命令。違反此規則須撤銷變更並重新引導。
 
 ### 2.3 未納管程式碼
 
@@ -89,71 +99,6 @@ alwaysApply: true
 | **Chat Mode — 瑣碎** | 自然語言 + 不影響文件化行為 | 受限（typo/注解/格式） | 不需要 |
 | **Chat Mode — 調度** | 自然語言 + 影響文件化行為 | 無（引導到命令） | 由命令保證 |
 
----
-
-## 4. CLI Tools Registry
-
-> Architext 還提供終端可執行的 CLI 命令。你應在合適時機主動調用，而非等使用者手動執行。
-
-### Working Directory Rule (Critical)
-
-> 執行任何 `npx archi` 命令前，須確保終端在專案根目錄（`[[__DOCS_DIR__]]/` 所在目錄）。
-> 不確定時先確認當前目錄。禁在子目錄直接運行。
-
-### `npx archi task` — Roadmap 任務管理
-
-| 子命令 | 用途 | 範例 |
-|:---|:---|:---|
-| `npx archi task` | 列出所有任務及進度 | `npx archi task` |
-| `npx archi task <ID> --status <s>` | 更新任務狀態 | `npx archi task INF-001 --status done` |
-| `npx archi task --check` | 檢查 Roadmap 一致性 | `npx archi task --check` |
-
-**合法狀態值**: `pending` / `active` / `done` / `blocked`
-
-**何時使用**:
-
-| 場景 | 動作 |
-|:---|:---|
-| `/archi.plan` 完成後 | `npx archi task <ID> --status active` |
-| `/archi.code` 完成後 | `npx archi task <ID> --status done` |
-| 發現任務被阻塞 | `npx archi task <ID> --status blocked` |
-| 修改了 `roadmap.json` 後 | `npx archi task --check` |
-| 需了解專案進度 | `npx archi task` |
-
-> 完成 `/archi.code` 或 `/archi.plan` 時，須主動運行 `npx archi task <ID> --status <done|active>` 更新進度。
-
-### `npx archi plan` — Plan 完成度檢查
-
-| 子命令 | 用途 | 範例 |
-|:---|:---|:---|
-| `npx archi plan <ID>` | 檢查 Task 的 Plan 完成度 | `npx archi plan SUB-01` |
-
-自動識別 Manual Verification 區域並排除在自動化統計外。
-
-**何時使用**:
-
-| 場景 | 動作 |
-|:---|:---|
-| `/archi.code` 簽收前 | `npx archi plan <ID>` 確認全部 checkbox 已勾選 |
-| 了解 Task 實施進展 | `npx archi plan <ID>` |
-
-> 在 `/archi.code` 簽收階段，須先運行 `npx archi plan <ID>` 驗證完成度。
-
-### `npx archi render` — 渲染 JSON 資料為 Markdown 視圖
-
-| 子命令 | 用途 | 範例 |
-|:---|:---|:---|
-| `npx archi render` | 將所有 JSON 資料檔案渲染為人類可讀的 `.md` 視圖 | `npx archi render` |
-
-**何時使用**:
-
-| 情境 | 動作 |
-|:---|:---|
-| AI 直接編輯了 `.json` 資料檔案 | `npx archi render` |
-| `/archi.start` 建立 roadmap 後 | `npx archi render` |
-| `/archi.scope` 更新 roadmap 後 | `npx archi render` |
-| `/archi.plan` 產生 plan.json 後 | `npx archi render` |
-
-> 注意: `.md` 視圖是自動產生的，禁直接編輯。修改須透過 `.json` 來源檔案進行。
-
 **End of Dispatcher.**
+
+> CLI 強制執行規則見 `04_cli_tools.md`。
