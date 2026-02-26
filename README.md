@@ -1,217 +1,326 @@
+<div align="center">
+
+[简体中文](README.zh-CN.md) · **English**
+
 # 🏛️ Architext
 
-**定位**: 基于提示词工程（Prompt Engineering）的 AI 原生架构协议。
-**核心口号**: "No Docs, No Code." (无文档，不代码)
-**核心分工**: AI 写代码，你做决策。不是一句话生成项目，而是先想清楚，再让 AI 实现。
-**目标**: 将 LLM（如 Claude/GPT-4）从"随意的代码生成器"升级为"严谨的世界级架构师"。
+**The AI Architecture Protocol. Define first, build right.**
+
+[![npm version](https://img.shields.io/npm/v/architext?color=blue&label=npm)](https://www.npmjs.com/package/architext)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+
+**Supported IDEs:** Cursor *(recommended)* · Windsurf · Trae · VS Code
+
+</div>
+
+> **🚧 Early-stage notice**
+>
+> Architext is in early development. The core workflow (init → start → plan → code) is functional, but rough edges remain. If you run into any issues, please [open an Issue](../../issues) — I'll address it quickly. Every piece of feedback directly shapes the project, and I'm grateful you're willing to try it at this stage.
 
 ---
 
-## 0. 核心差异
+## What is Architext?
 
-|  | AI 全权代理模式 (Trae Solo / Bolt / v0) | Architext |
+Architext is a **Document-Driven AI Development (DDAD)** protocol that upgrades your AI coding assistant from a "random code generator" into a "rigorous world-class architect."
+
+Before a single line of code is written, Architext forces you and your AI to align on: **what** you're building, **why** it matters, and **exactly how** it should be implemented — through structured documents that persist across every chat session.
+
+> **No Docs, No Code.** Code is just a downstream artifact of documents.
+
+Architext operates in two layers:
+
+| Layer | How to trigger | Responsibility |
 |:---|:---|:---|
-| **核心假设** | AI 知道用户要什么 | 用户知道自己要什么，但还没想清楚 |
-| **AI 的角色** | 全权代理人 | 产品顾问 + 严格执行者 |
-| **用户的角色** | 验收者（做完了才知道是什么） | 决策者（动手前就看清全貌） |
-| **信息流向** | AI → 用户（"你看这行不行"） | 用户 → AI（"我要的是这个"） |
-| **产品定义权** | AI 隐式决定功能逻辑 | 用户显式定义，AI 严格执行 |
+| **CLI Tool Layer** | `npx archi <command>` | Deploy rule files, prompts, and skills into your project |
+| **AI Command Layer** | `/archi.<command>` in AI chat | Generate documents, plan features, write code, audit |
 
-> 其他工具让 AI 替你做决定，Architext 帮你自己做决定。
+The CLI layer bootstraps the project once. The AI command layer drives all development work on top of those files.
 
 ---
 
-## 1. 核心哲学 (Core Philosophy)
+## Why Architext?
 
-*   **DDAD (Document-Driven AI Development)**:
-    *   **No Docs, No Code**: 代码只是文档的下游产物。
-    *   一切变更必须先修改文档（Spec/UI/Plan），通过审计后，才能生成代码。
-*   **User Agency (用户主权)**:
-    *   AI 的职责是**挖掘和澄清**用户的真实意图，而非替代用户做决策。
-    *   用户在写代码之前就能看到完整的功能逻辑、数据流、交互模式——确认"这就是我要的"之后才进入开发。
-    *   技术选型、功能取舍、优先级排序——所有关键决策的最终决定权在用户手中。
-*   **Meta-Framework (元框架)**:
-    *   **Architecture Agnostic (架构无关)**: Architext 不绑定特定架构。
-    *   支持 MFA (Modular Feature Architecture), FSD, DDD, Clean Architecture 等任意架构模式。
-    *   通过 `map.json` 定义层级，通过 `00_system` 强制执行该架构的边界规则。
-*   **Agent Skill Adoption (技能适配)**:
-    *   **Skills > Tools**: 明确区分 **Tools** (原子能力，如 `read_file`) 与 **Skills** (专家级 Know-How，如 `debug-workflow`, `feature-implementer`)。
-    *   鼓励 AI 优先调用封装好的 **Agent Skills** 来解决复杂问题，获取标准化的“思维链”和“操作流”，而非仅依赖底层的工具调用。
-    *   能用 Skill 解决的，就不要用原始 Prompt 瞎猜。
-*   **Silent Audit (静默审计)**:
-    *   AI 在输出代码前，必须在思维链中运行"自我审计循环"（检查依赖、检查 Token、检查架构边界）。
+|  | AI Full-Agency Mode<br>*(Trae Solo / Bolt / v0)* | **Architext** |
+|:---|:---|:---|
+| **Core Assumption** | AI knows what you want | You know what you want, but haven't thought it through yet |
+| **AI's Role** | Full agent — decides and executes | Product consultant + strict executor |
+| **Your Role** | Reviewer (see it after it's done) | Decision-maker (see the full picture before build) |
+| **Information Flow** | AI → You ("does this work?") | You → AI ("here's exactly what I need") |
+| **Ownership** | AI implicitly decides the logic | You explicitly define, AI strictly executes |
+
+> Other tools let AI make decisions for you. Architext helps you make better decisions with AI.
 
 ---
 
-## 2. 架构解剖 (Anatomy)
+## Quick Start
 
-Architext 由 **CLI 工具** 和 **项目内配置 (.architext)** 两部分组成。
+**Step 1 — CLI: deploy the framework**
 
-### 📁 项目目录结构 (Project Structure)
-
-初始化后，项目目录结构如下：
-
-```
-my-project/
-├── .cursor/rules/              # Cursor IDE 规则目录（如选择 Cursor）
-│   ├── 00_system.mdc
-│   ├── 01_workflow.mdc
-│   ├── 02_tech_stack.mdc
-│   ├── 03_data_governance.mdc
-│   ├── 90_custom_rules.mdc
-│   └── 99_context_glue.mdc
-│
-├── .trae/rules/                # Trae IDE 规则目录（如选择 Trae）
-│   ├── 00_system.md
-│   ├── 01_workflow.md
-│   ├── 02_tech_stack.md
-│   ├── 03_data_governance.md
-│   ├── 90_custom_rules.md
-│   └── 99_context_glue.md
-│
-├── .architext/                 # 文档目录（默认，可通过配置修改）
-│   ├── global/                 # 全局文档（JSON 为数据源，.md 由 render 命令生成）
-│   │   ├── vision.md        # 项目愿景与核心目标（纲领性文档，Markdown 格式）
-│   │   ├── roadmap.json        # 项目进度与任务依赖（Single Source of Truth）
-│   │   ├── map.json            # 架构地图与目录索引
-│   │   ├── dictionary.json     # 统一术语表
-│   │   ├── design_tokens.json  # 设计系统 Token（如项目有 UI）
-│   │   ├── data_snapshot.json  # 数据模型快照（如项目有数据层）
-│   │   └── error_codes.json    # 错误码契约
-│   │
-│   ├── prompts/                # Prompt 模板（供 AI 读取）
-│   │   ├── code.md
-│   │   ├── plan.md
-│   │   ├── start.md
-│   │   └── ...
-│   │
-│   ├── templates/              # 文档模板
-│   │   ├── spec.template.md    # 功能规格模板
-│   │   ├── ui.template.md      # UI 结构模板（ITP, AI 读取）
-│   │   ├── ui.preview.template.html  # UI 视觉预览模板（人类浏览器查看）
-│   │   ├── plan.template.json  # 实施计划 JSON 模板
-│   │   └── scope-brief.template.md  # 需求分解 Brief 模板（/archi.scope 用）
-│   │
-│   └── tasks/                  # 任务文档（按 Roadmap Task 组织）
-│       └── INF-001_feature-name/
-│           ├── spec.md         # 功能规格（Gherkin）
-│           ├── ui.md           # UI 组件结构（ITP, 如适用）
-│           ├── ui.preview.html # UI 视觉预览（浏览器打开查看效果）
-│           └── plan.json       # 实施计划（JSON 格式）
-│
-└── xxx/                        # 业务代码（项目实际代码）
-    └── ...
+```bash
+npm install -g architext
+npx archi init
 ```
 
-**说明**：
-- **IDE Rules 目录**：根据选择的 IDE，rules 文件会被复制到对应的目录（`.cursor/rules/`, `.trae/rules/` 等）
-- **文档目录**：默认使用 `.architext/`，可通过 `architext.json` 配置为其他名称（如 `docs/`）
-- **Rules 文件扩展名**：Cursor 使用 `.mdc`，其他 IDE 使用 `.md`
-- **单一事实来源**：规则文件由 `templates/*/rules/` 统一复制到各 IDE 目录，确保一致性
+```
+✔ Select language    › English
+✔ Select IDE(s)      › Cursor   (multiselect — Cursor / Windsurf / Trae / VS Code)
+✔ Select project type › Web SPA / PWA
 
-### A. 规则矩阵 (The Brain)
-这是注入给 AI 的"世界观"和"法律"，通常通过 IDE 规则（如 `.trae/rules`）加载。
+● Deploying Architext...
+✔ Docs deployed      → .architext/
+      prompts/  global/  templates/  tasks/
+✔ Rules deployed     → .cursor/rules/           (Cursor: .mdc)
+      00_system · 01_workflow · 02_tech_stack · 03_data_governance
+      04_cli_tools · 90_custom_rules · 99_context_glue
+✔ Commands deployed  → .cursor/commands/        (Cursor only)
+      archi.start · archi.scope · archi.plan · archi.code · archi.audit · ...
+✔ Skills deployed    → .cursor/skills/          (Cursor)
+      archi-decompose-roadmap · archi-interview-protocol · archi-plan-options · archi-ui-wireframe
+✔ project-brief.md generated → project root
 
-| 文件 | 角色 | 核心职责 |
-| :--- | :--- | :--- |
-| `00_system.md` | **宪法** | 定义架构师身份、思维循环 (Audit Loop)、工具策略 (Skill Strategy)。 |
-| `01_workflow.md` | **路由** | 识别用户意图，加载对应的 Prompt 模板 (Mode Switcher)。 |
-| `02_tech_stack.md` | **法律** | 定义技术选型红线、命名规范（适配当前架构）。 |
-| `03_data_governance.md` | **管家** | 全局 JSON 数据文件的读写治理规则（读写时机、格式约束）。 |
-| `90_custom_rules.md` | **家规** | 用户自定义的团队习惯与黑名单（高优先级）。 |
-| `99_context_glue.md` | **导航仪** | **注册制寻址**：关联代码与文档，防止失忆。 |
+◆ Done! Fill in project-brief.md, then run /archi.start in your AI editor.
+```
 
-### B. 上下文容器 (.architext)
-维持项目一致性的全局资产，通常存储在 `.architext/` 中。
-JSON 文件为 Single Source of Truth，对应的 `.md` 文件由 `npx archi render` 自动生成。
+**Step 2 — AI chat: initialize your project**
 
-*   `roadmap.json`: 项目进度全景图（DAG 依赖管理）。
-*   `vision.md`: 项目愿景、北极星指标、设计哲学（AI 规划与决策的定调依据，因叙事性内容不适合 JSON 故保持 Markdown）。
-*   `map.json`: 架构地图（定义架构拓扑）。
-*   `dictionary.json`: 统一术语表。
-*   `design_tokens.json`: 视觉物理量。
-*   `data_snapshot.json`: 数据库 Schema 镜像。
-*   `error_codes.json`: 错误码契约。
+`archi init` generates a tailored `project-brief.md` at your project root. Fill it in, then run:
 
----
+```
+/archi.start project-brief.md
+```
 
-## 3. 工作流生命周期 (Workflow Lifecycle)
+The AI reads the brief, interviews you on key decisions, and generates the project's foundation documents (`vision.md`, `roadmap.json`, `tech_stack`, etc.).
 
-通过 AI 对话框交互，AI 自动读取 IDE 规则并触发相应流程（支持 `/archi.*` 指令或自然语言）：
-
-### 🚀 Initialization (启动)
-*   `/archi.start`: **Project Initiation**
-    *   **Context Setup**: 确立技术栈 -> 生成 Roadmap 与全局文档骨架。
-    *   **Architecture Choice**: 选择适合的架构模板（如 MFA, FSD 或 Custom）。
-*   `/archi.inherit`: **Legacy Adoption**
-    *   逆向分析已有代码仓库 -> 生成文档骨架。
-    *   已有功能登记为 `LEG-xx` (done)，生成轻量 Stub Spec。
-    *   与 `/archi.start` 互斥：新项目用 start，已有项目用 inherit。
-
-### 📝 Definition (定义 - 纯文档阶段)
-*   `/archi.scope`: **Requirement Decomposition**
-    *   读取 Scope Brief -> 将大需求分解为多个 Roadmap 任务。
-    *   建立任务间依赖关系，评估对已有功能的影响。
-    *   与 `/archi.start` 的 Roadmap 生成互补：start 从零建立，scope 增量追加。
-*   `/archi.plan`: **Deep Planning**
-    *   对 Roadmap 中已有任务做深度架构访谈 -> 同步全局资产。
-    *   产出 `Spec` (逻辑), `UI` (视觉), `Plan` (步骤)。
-*   `/archi.edit`: **Spec Modification**
-    *   局部变更（先改 Spec 后改代码）。
-*   `/archi.revise`: **Global Revision**
-    *   全局变更（技术栈、架构、愿景等）。分析影响 -> 用户确认 -> 级联更新 Feature 文档。
-
-### ⚡ Execution (执行 - 代码阶段)
-*   `/archi.code`: **Implementation**
-    *   读取 Plan -> 调用 Agent Skill -> 编写代码 -> 运行审计。
-*   `/archi.audit`: **Deep Code Audit**
-    *   独立深度代码审查。带 ID 审查指定任务代码；无 ID 执行项目级体检。
-*   `/archi.fix`: **Debugging**
-    *   诊断 Bug -> 查阅 Error Code -> 修复代码。
-
-### 🔧 Maintenance (维护)
-*   `/archi.map`: **Map Refresh**
-    *   扫描实际目录结构 vs `map.json`，做架构归类，更新架构地图。
-    *   适用场景：手动修改文件后、大规模重构后、目录结构变动时。
-*   `/archi.remove`: **Feature Decommission**
-    *   全链路特性下线：影响分析 -> 用户确认 -> 删除文档+代码 -> 清理全局引用。
-    *   清理范围：Feature 文档、业务代码、roadmap/map/context_glue 中的引用。
-
-### 📖 Utility (辅助)
-*   `/archi.help`: **Manual**
-    *   项目导航与上下文问答。分析项目状态，推荐下一步操作。
-
-
-### 🔧 User CLI 工具命令
-*   `npx archi init`: 初始化项目骨架。
-*   `npx archi update`: 更新项目骨架。
-*   `npx archi doctor`: 检查项目健康状况。
-*   `npx archi template <name>`: 获取模板文件到项目根目录（如 `scope-brief`）。
-*   `npx archi uninstall`: 卸载项目。
-*   `npx archi --help` / `npx archi -h`: 显示帮助指南。
-*   `npx archi --version` / `npx archi -V`: 显示项目版本。
-
-### 🔧 AI CLI 工具命令
-*   `npx archi task [--check]` 或 `npx archi task <id> --status <status>`: 查看/校验/更新 Roadmap 任务状态（直接操作 `roadmap.json`）。`--check` 为选项，非子命令。
-*   `npx archi plan <feature-id>`: 检查指定 Feature 的 Plan 完成度（读取 `plan.json`）。
-*   `npx archi render`: 将 JSON 数据文件生成对应的 Markdown 可读视图。
+> **Existing codebase?** Skip `/archi.start` and use `/archi.inherit` instead — it reverse-engineers your project and registers existing features as `LEG-xx` tasks.
 
 ---
 
-## 4. 核心机制 (Core Mechanism)
+## How It Works
 
-1.  **Chat-Driven (对话驱动)**: 用户在 Chat 中提出需求。
-2.  **Rule Activation (规则激活)**: AI 读取 IDE Rules (`01_workflow`)，识别当前意图。
-3.  **Prompt Loading (提示词加载)**: AI 自动寻找并使用对应的 Prompt 模板（如 `templates/plan.md`）进行引导。
-4.  **Context Anchoring (上下文锚定)**: 通过 `.architext` 中的全局文档锁定项目状态。
+The main trunk of a project lifecycle. Everything happens in your AI chat window.
+
+```
+project-brief.md → /archi.start → [/archi.scope] → /archi.plan → /archi.code → /archi.audit
+                                         ↑
+                               use when you have extra requirements to decompose
+```
+
+**Stage 1 — Initialize**
+
+```
+You:  /archi.start project-brief.md
+
+AI:   [Analyzing project brief...]
+      [Interviewing you on tech stack, architecture style, project type...]
+
+      ✔ ADDED:    .architext/global/vision.md
+      ✔ ADDED:    .architext/global/roadmap.json
+      ✔ ADDED:    .architext/global/dictionary.json
+      ✔ ADDED:    .architext/global/error_codes.json
+      ✔ ADDED:    .architext/global/ui_context.md       (UI projects only)
+      ✔ ADDED:    .architext/global/ui_concept.html     (UI projects only)
+      ✔ MODIFIED: .cursor/rules/02_tech_stack.mdc    (filled with project tech decisions)
+      ✔ MODIFIED: .cursor/rules/90_custom_rules.mdc  (filled with team conventions)
+
+      Next: run /archi.scope to decompose requirements into tasks.
+```
+
+> **Existing codebase?** Use `/archi.inherit` instead — it reverse-engineers your project and registers existing features as `LEG-xx` tasks. Also generates `map.json`.
+
+**Stage 2 — Decompose (optional)**
+
+> Use `/archi.scope` when you have requirements beyond what's in the initial brief. If the brief already covers everything, go straight to Stage 3.
+
+```
+You:  /archi.scope scope-brief.md           ← provide a file, or run bare to trigger an interview
+
+AI:   [Reading vision.md, roadmap.json, map.json, tech_stack...]
+      [Scanning existing tasks for impact analysis...]
+
+      Decomposed into 3 tasks:
+      ✔ MODIFIED: .architext/global/roadmap.json
+        ADDED task FEAT-001 · auth-login        (status: pending)
+        ADDED task FEAT-002 · auth-session      (status: pending, deps: FEAT-001)
+        ADDED task FEAT-003 · user-profile      (status: pending, deps: FEAT-001)
+```
+
+**Stage 3 — Plan**
+
+```
+You:  /archi.plan FEAT-001
+
+AI:   [Reading vision.md, tech_stack.md, map.json, dep specs...]
+      [Interviewing you on logic, data flow, edge cases...]
+
+      Q1. Authentication method? [A] JWT  [B] Session Cookie  [C] OAuth  [Recommended: A]
+      Q2. Should sessions persist across devices? [Y/N]
+      Q3. ...
+
+You:  A | N | ...
+
+AI:   ✔ ADDED:    .architext/tasks/FEAT-001_auth-login/spec.md
+      ✔ ADDED:    .architext/tasks/FEAT-001_auth-login/plan.json
+      ✔ ADDED:    .architext/tasks/FEAT-001_auth-login/ui.md           (UI projects only)
+      ✔ MODIFIED: .architext/global/roadmap.json    (FEAT-001: pending → active)
+      ✔ MODIFIED: .architext/global/map.json
+      ✔ MODIFIED: .architext/global/dictionary.json
+```
+
+Before any code is written, review the generated documents:
+- `spec.md` — Feature logic, Gherkin acceptance criteria, interface contracts
+- `plan.json` — Implementation phases, file-level task breakdown, decisions
+- `ui.md` — Interaction spec, references screens defined in `ui_context.md` (UI projects only)
+
+Confirm "this is exactly what I want" — then proceed to implementation.
+
+**Stage 4 — Implement**
+
+```
+You:  /archi.code FEAT-001
+
+AI:   [Reading spec.md, plan.json, tech_stack.md...]
+      [Status Gate: FEAT-001 is active ✔]
+      [Running Silent Audit Loop: deps / tech rules / arch boundaries...]
+
+      Implementing Phase A: Core Auth Logic
+      ✔ ADDED:    src/features/auth/auth.service.ts
+      ✔ ADDED:    src/features/auth/auth.controller.ts
+      ✔ MODIFIED: src/app.module.ts
+      ✔ MODIFIED: .architext/tasks/FEAT-001_auth-login/plan.json  (Phase A → done)
+```
+
+**Stage 5 — Audit (optional, strongly recommended)**
+
+```
+You:  /archi.audit FEAT-001       ← with ID: audits that task; without ID: project-level health check
+
+AI:   [Reading code + spec + plan + vision + tech_stack...]
+
+      ✔ ADDED: .architext/tasks/FEAT-001_auth-login/audit.md
+
+      Findings: 2 issues
+      [MEDIUM] Missing rate-limit on /auth/login → suggest /archi.fix
+      [LOW]    Token expiry not configurable via env var → suggest /archi.edit
+```
+
+> **Daily development between commands** is driven by natural language Chat Mode — ask questions, tweak code, debug — no slash commands needed. Four of the seven rule files act as always-on base rules: `00_system`, `02_tech_stack`, `90_custom_rules`, `99_context_glue`.
 
 ---
 
-## 5. 核心优势 (Why This Works)
+## Commands
 
-1.  **Universality (通用性)**: 不局限于前端或全栈，适用于任何类型的软件项目 (CLI, Embedded, Backend)。
-2.  **Anti-Hallucination (防幻觉)**: 强制 AI 依赖 Skill 和真实文档。
-3.  **Controllability (可控性)**: "No Docs, No Code" 确保在写代码前，人类已审核过设计方案。
-4.  **Non-Invasive (无侵入)**: 核心逻辑通过 IDE 规则注入，不污染业务代码。
+### AI Chat Commands
 
-> **这就是 Architext**：一套让 AI 真正像资深架构师一样工作的元框架协议。
+| Command | Description |
+|:---|:---|
+| `/archi.start [brief]` | Read a project brief and generate foundation docs (vision / roadmap / tech_stack etc.) |
+| `/archi.inherit` | Reverse-engineer an existing codebase; register features as `LEG-xx` tasks |
+| `/archi.scope [file_path]` | Decompose extra requirements into roadmap tasks; omit file to trigger an interview |
+| `/archi.plan <ID> [context]` | Deep architecture interview → spec / plan ([?UI] also ui.md + ui_concept.html); supply context to reduce questions |
+| `/archi.code <ID>` | Implement from plan phase by phase; only `active` tasks are allowed |
+| `/archi.edit <ID> [context]` | Update feature spec → append new dev phase; history is preserved |
+| `/archi.revise [context]` | Global arch/stack change → impact assessment → cascade update on confirm |
+| `/archi.audit [ID]` | Deep code audit; with ID audits a task, without ID does a project-wide health check |
+| `/archi.fix [ID] <context>` | Root-cause diagnosis and bug fix; ID optional, context describes the symptom |
+| `/archi.map` | Diff map.json against actual file tree and sync |
+| `/archi.remove <ID>` | Decommission a feature: remove code + docs, clean roadmap/map refs |
+| `/archi.help [question]` | No question: recommend next action; with question: locate relevant files and answer |
+
+### CLI Commands
+
+| Command | Purpose |
+|:---|:---|
+| `npx archi init` | Deploy framework files (rules, prompts, skills) |
+| `npx archi update` | Update deployed files to latest version |
+| `npx archi doctor` | Check project health |
+| `npx archi render` | Generate Markdown views from JSON data |
+| `npx archi task [--check]` | View / validate roadmap task status |
+| `npx archi plan <id>` | Check plan completion status for a feature |
+| `npx archi template <name>` | Fetch a template file to project root |
+| `npx archi uninstall` | Remove Architext files from project |
+
+---
+
+## Core Philosophy
+
+**① Document-Driven AI Development (DDAD)**
+
+Code is a downstream artifact of documents. Every change starts with a document update — spec first, code second. This makes every decision traceable and every AI output predictable.
+
+**② User Agency**
+
+AI's job is to surface and clarify your intent — not replace your judgment. You see the complete feature logic, data flow, and interaction model *before* development begins. All critical decisions stay in your hands.
+
+**③ Meta-Framework**
+
+Architext doesn't impose an architecture. It enforces *whichever* architecture you choose — MFA, FSD, DDD, Clean Architecture — through rules and boundaries that the AI cannot ignore.
+
+---
+
+## A Note on Vision
+
+The AI development landscape is evolving at a pace none of us fully anticipated. New models, new tools, new paradigms — every few months, the ground shifts again.
+
+Architext is my attempt to bring some structure to how we work *with* AI in software development. It's not a claim to have found the definitive answer. It's one direction that made sense to me — grounded in the idea that clear thinking before coding leads to better outcomes, regardless of how powerful the AI becomes.
+
+If it's useful to you, great. If you see a better way, I genuinely want to hear it.
+
+---
+
+## FAQ
+
+**Q: How is this different from Cursor's Agent mode or built-in planning?**
+
+Agent mode is great for single sessions. Architext provides persistent context that survives across sessions, team members, and even AI tool switches. Your specs live in the repo — they don't disappear when you close the chat.
+
+---
+
+**Q: Can I use this on an existing codebase?**
+
+Yes. Run `/archi.inherit` — Architext analyzes your existing code and generates a document skeleton. Existing features are registered as `LEG-xx` tasks with stub specs, so you can gradually adopt the workflow without a big-bang rewrite.
+
+> **Note**: `/archi.inherit` is still early-stage. Analysis results for large or complex repos may be incomplete and require manual cleanup. Feel free to open an Issue if you hit problems.
+
+---
+
+**Q: Which IDEs are supported?**
+
+Four IDEs are currently supported. During `archi init` you manually select which ones to deploy (multiselect, any combination):
+
+| IDE | Rules directory | Extension | Status |
+|:---|:---|:---|:---|
+| Cursor | `.cursor/rules/` | `.mdc` | Recommended — most thoroughly tested |
+| Windsurf | `.windsurf/rules/` | `.md` | Supported |
+| Trae | `.trae/rules/` | `.md` | Supported |
+| VS Code | `.github/instructions/` | `.instructions.md` | Supported |
+
+Support for additional editors is planned.
+
+---
+
+**Q: Does this work for non-web projects?**
+
+Yes. Architext is architecture-agnostic and project-type-agnostic. It works for CLI tools, Web apps, mini-programs, APIs, backend services, and embedded systems. The templates adapt to your project type during initialization.
+
+---
+
+**Q: Do I have to use every command?**
+
+No. You can start with just `/archi.plan` + `/archi.code` and gradually adopt the rest as your team gets comfortable. The system is designed to be incrementally adoptable.
+
+---
+
+**Q: Is token consumption high?**
+
+Yes. Each command loads multiple context files and performs deep analysis — **token usage is noticeably higher than casual prompting**. This is an inherent cost of document-driven development; the tradeoff is more predictable outputs and far fewer "wait, that's not what I meant" cycles.
+
+---
+
+<div align="center">
+
+**[Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [Issues](../../issues)**
+
+> This is Architext: a meta-framework protocol that makes AI work like a senior architect.
+
+</div>
