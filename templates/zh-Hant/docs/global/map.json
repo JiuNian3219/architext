@@ -22,6 +22,11 @@
         "when": "讀寫全域 JSON 資料檔案時"
       },
       {
+        "file": "04_cli_tools.md",
+        "role": "CLI Reference",
+        "when": "執行 Terminal Gate 命令時 (npx archi task/plan/render 語法速查)"
+      },
+      {
         "file": "99_context_glue.md",
         "role": "Context Bridge",
         "when": "觸碰程式碼時，自動關聯上下文檔案"

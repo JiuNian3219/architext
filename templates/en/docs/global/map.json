@@ -22,6 +22,11 @@
         "when": "When reading/writing global JSON data files"
       },
       {
+        "file": "04_cli_tools.md",
+        "role": "CLI Reference",
+        "when": "When executing Terminal Gate commands (npx archi task/plan/render syntax reference)"
+      },
+      {
         "file": "99_context_glue.md",
         "role": "Context Bridge",
         "when": "Automatically links context docs when touching code"
