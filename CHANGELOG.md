@@ -6,22 +6,13 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ---
 
-## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.2...HEAD) / 待发布
-
----
-
-## [0.0.2](https://github.com/JiuNian3219/architext/compare/v0.0.1...v0.0.2) - 2026-02-26
+## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.1...HEAD) / 待发布
 
 ### Added / 新增
 
 - 双语文档支持（英文 + 简体中文）/ Bilingual documentation (English + Simplified Chinese)
 - GitHub 社区文件：贡献指南、Issue 模板、PR 模板 / GitHub community files: CONTRIBUTING, issue templates, PR template
 - GitHub Actions CI 与自动发布流程 / GitHub Actions CI and automated release workflow
-- 架构参考文档 `docs/internals.md` / Architecture reference document
-
-### Fixed / 修复
-
-- 修复 npm 页面 README 链接无法跳转 / Fix README links not working on npm package page
 
 ---
 
