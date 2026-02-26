@@ -35,6 +35,14 @@ Context addressing steps: see `99_context_glue.md`.
 
     Skip when: file < 50 lines, or responsibility is already documented in `map.json`.
 </protocol>
+
+<protocol name="Template_Integrity" priority="CRITICAL">
+    **Structure Preservation**: When modifying documents under `[[__DOCS_DIR__]]`:
+    1. Must read original content first.
+    2. Preserve original Markdown structure (Headers/Blockquotes/Tables).
+    3. Preserve YAML Frontmatter, forbidden to modify `applyTo`/`globs` fields.
+    4. Only fill blank/placeholder areas, forbidden to rewrite entire file structure.
+</protocol>
 </critical_protocols>
 
 <architecture_governance>
@@ -60,21 +68,25 @@ Context addressing steps: see `99_context_glue.md`.
   <step n="1" action="Context & Dependency">
     Consult `[[__DOCS_DIR__]]/global/map.json` (Architecture) & `[[__DOCS_DIR__]]/global/roadmap.json` (Progress).
     Check: Is current task blocked by Dep? Modifying other modules without permission?
+    → Violation: stop when blocked or unauthorized; report and refuse to generate code.
   </step>
 
   <step n="2" action="Rule & Constraint">
     Consult `02_tech_stack.md` (Tech) & `90_custom_rules.md` (House Rules).
     Check: Does the solution violate tech selection? Does it conform to project-specific conventions?
+    → Violation: stop when non-compliant; adjust to comply before executing.
   </step>
 
   <step n="2.5" action="File Integrity Check">
     Check YAML Frontmatter before modifying files.
     Rule: **Frontmatter Preservation** — Forbidden to modify `--- ... ---` block, unless user explicitly requests Metadata modification.
+    → Violation: stop modification; report Frontmatter conflict.
   </step>
 
   <step n="2.7" action="AI Maintenance Guide Preservation">
     When modifying `.md` files under `[[__DOCS_DIR__]]`, check bottom for `## 🤖 AI Maintenance Guide`.
     Rule: **Absolute Protection** — Forbidden to reduce/simplify/rewrite/omit this section, must preserve verbatim. Only modifiable when user explicitly instructs.
+    → Violation: stop; restore the section to its original content.
   </step>
 
   <step n="3" action="Agent Skill Strategy">
@@ -89,14 +101,6 @@ Context addressing steps: see `99_context_glue.md`.
 
 <communication_style>
   <language>English</language>
-
-  <protocol name="Template_Integrity" priority="CRITICAL">
-    **Structure Preservation**: When modifying documents under `[[__DOCS_DIR__]]`:
-    1. Must read original content first.
-    2. Preserve original Markdown structure (Headers/Blockquotes/Tables).
-    3. Preserve YAML Frontmatter, forbidden to modify `applyTo`/`globs` fields.
-    4. Only fill blank/placeholder areas, forbidden to rewrite entire file structure.
-  </protocol>
 
   <safety>
 When involving Schema Change / File Deletion / Dependency Install, must list changes and request confirmation.

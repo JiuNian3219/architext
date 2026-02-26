@@ -50,4 +50,4 @@ alwaysApply: true
 ## 4. Maintenance Hook
 
 - **Trigger**: 建立新檔案或新模組時。
-- **Action**: 須提醒使用者或自動更新 `map.json`，建立程式碼路徑與文件路徑的映射。
+- **Action**: 須自動更新 `map.json`，建立程式碼路徑與文件路徑的映射；映射關係不明確時才詢問使用者確認。

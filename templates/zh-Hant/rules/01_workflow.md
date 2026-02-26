@@ -88,17 +88,6 @@ alwaysApply: true
 | Custom | `90_custom_rules.md` | 團隊特殊約束 |
 | Context | `99_context_glue.md` | 自動關聯上下文文件 |
 
----
-
-## 3. Mode Interaction
-
-| 模式 | 觸發 | 程式碼修改權限 | 文件同步 |
-|:---|:---|:---|:---|
-| **Command Mode** | `/archi.*` 指令 | 完整（按協議） | 命令內置 |
-| **Chat Mode — 對話** | 自然語言提問/討論 | 無（唯讀） | N/A |
-| **Chat Mode — 瑣碎** | 自然語言 + 不影響文件化行為 | 受限（typo/注解/格式） | 不需要 |
-| **Chat Mode — 調度** | 自然語言 + 影響文件化行為 | 無（引導到命令） | 由命令保證 |
-
 **End of Dispatcher.**
 
 > CLI 強制執行規則見 `04_cli_tools.md`。

@@ -88,17 +88,6 @@ alwaysApply: true
 | Custom | `90_custom_rules.md` | 团队特殊约束 |
 | Context | `99_context_glue.md` | 自动关联上下文文档 |
 
----
-
-## 3. Mode Interaction
-
-| 模式 | 触发 | 代码修改权限 | 文档同步 |
-|:---|:---|:---|:---|
-| **Command Mode** | `/archi.*` 指令 | 完整（按协议） | 命令内置 |
-| **Chat Mode — 对话** | 自然语言提问/讨论 | 无（只读） | N/A |
-| **Chat Mode — 琐碎** | 自然语言 + 不影响文档化行为 | 受限（typo/注释/格式） | 不需要 |
-| **Chat Mode — 调度** | 自然语言 + 影响文档化行为 | 无（引导到命令） | 由命令保证 |
-
 **End of Dispatcher.**
 
 > CLI 强制执行规则见 `04_cli_tools.md`。

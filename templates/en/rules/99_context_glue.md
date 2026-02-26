@@ -50,4 +50,4 @@ When reading or editing code files, must execute the following addressing steps:
 ## 4. Maintenance Hook
 
 - **Trigger**: When creating a new file or new module.
-- **Action**: Must remind user or automatically update `map.json` to establish mapping between code path and document path.
+- **Action**: Must automatically update `map.json` to establish mapping between code path and document path; only ask user when the mapping relationship is unclear.

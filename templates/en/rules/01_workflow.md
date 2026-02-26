@@ -88,17 +88,6 @@ All scenarios (including routing and pure conversation) rely on the following ba
 | Custom | `90_custom_rules.md` | Team-specific constraints |
 | Context | `99_context_glue.md` | Auto-associate context documents |
 
----
-
-## 3. Mode Interaction
-
-| Mode | Trigger | Code Modification | Doc Sync |
-|:---|:---|:---|:---|
-| **Command Mode** | `/archi.*` command | Full (per protocol) | Built into command |
-| **Chat Mode — Conversation** | Natural language Q&A / discussion | None (read-only) | N/A |
-| **Chat Mode — Trivial** | Natural language + no impact on documented behavior | Limited (typo/comments/format) | Not required |
-| **Chat Mode — Dispatch** | Natural language + impacts documented behavior | None (guided to command) | Guaranteed by command |
-
 **End of Dispatcher.**
 
 > Mandatory CLI execution rules: see `04_cli_tools.md`.

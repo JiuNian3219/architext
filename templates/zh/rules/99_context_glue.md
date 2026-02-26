@@ -50,4 +50,4 @@ alwaysApply: true
 ## 4. Maintenance Hook
 
 - **Trigger**: 创建新文件或新模块时。
-- **Action**: 须提醒用户或自动更新 `map.json`，建立代码路径与文档路径的映射。
+- **Action**: 须自动更新 `map.json`，建立代码路径与文档路径的映射；映射关系不明确时才询问用户确认。

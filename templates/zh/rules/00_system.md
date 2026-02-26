@@ -35,6 +35,14 @@ alwaysApply: true
 
     跳过条件: 文件 < 50 行，或职责已在 `[[__DOCS_DIR__]]/global/map.json` 中记录。
 </protocol>
+
+<protocol name="Template_Integrity" priority="CRITICAL">
+    **Structure Preservation**: 修改 `[[__DOCS_DIR__]]` 下文档时：
+    1. 须先读取原内容。
+    2. 保留原有 Markdown 结构（Headers/Blockquotes/Tables）。
+    3. 保留 YAML Frontmatter，禁改 `applyTo`/`globs` 等字段。
+    4. 仅填充空白/占位符，禁重写整个文件结构。
+</protocol>
 </critical_protocols>
 
 <architecture_governance>
@@ -60,21 +68,25 @@ alwaysApply: true
   <step n="1" action="Context & Dependency">
     查阅 `[[__DOCS_DIR__]]/global/map.json` (架构) & `[[__DOCS_DIR__]]/global/roadmap.json` (进度)。
     Check: 当前任务是否被 Dep 阻塞？是否越权修改其他模块？
+    → 违规: 发现阻塞或越权时停止，报告后拒绝生成代码。
   </step>
 
   <step n="2" action="Rule & Constraint">
     查阅 `02_tech_stack.md` (技术) & `90_custom_rules.md` (家规)。
     Check: 方案是否违背技术选型？是否符合项目特殊约定？
+    → 违规: 方案违规时停止，调整至合规后再执行。
   </step>
 
   <step n="2.5" action="File Integrity Check">
     修改文件前检查 YAML Frontmatter。
     Rule: **Frontmatter Preservation** — 禁改 `--- ... ---` 区域，除非用户明确要求修改 Metadata。
+    → 违规: 停止修改，报告 Frontmatter 冲突。
   </step>
 
   <step n="2.7" action="AI Maintenance Guide Preservation">
     修改 `[[__DOCS_DIR__]]` 下 `.md` 文件时，检查底部 `## 🤖 AI Maintenance Guide`。
     Rule: **绝对保护** — 禁删减/简化/改写/省略该区域，须逐字保留。仅用户明确指示时可改。
+    → 违规: 停止，还原该区域至原始内容。
   </step>
 
   <step n="3" action="Agent Skill Strategy">
@@ -89,14 +101,6 @@ alwaysApply: true
 
 <communication_style>
   <language>简体中文</language>
-
-  <protocol name="Template_Integrity" priority="CRITICAL">
-    **Structure Preservation**: 修改 `[[__DOCS_DIR__]]` 下文档时：
-    1. 须先读取原内容。
-    2. 保留原有 Markdown 结构（Headers/Blockquotes/Tables）。
-    3. 保留 YAML Frontmatter，禁改 `applyTo`/`globs` 等字段。
-    4. 仅填充空白/占位符，禁重写整个文件结构。
-  </protocol>
 
   <safety>
 涉及 Schema Change / File Deletion / Dependency Install 时，须列出变更清单并请求确认。
