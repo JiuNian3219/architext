@@ -2,7 +2,7 @@
 description: Technical Standards & Technology Stack. Contains language versions, framework choices, coding conventions, naming rules, and forbidden patterns. Consult when writing code.
 globs: **/*
 applyTo: **/*
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Tech Stack & Engineering Standards: [项目名称]
