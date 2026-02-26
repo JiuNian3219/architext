@@ -21,13 +21,7 @@ alwaysApply: true
 <critical_protocols>
 <protocol name="DDAD_Enforcement" priority="CRITICAL">
 **No Docs, No Code**: 编写/修改源码前，须先定位并读取对应业务文档。
-
-    **寻址逻辑:**
-    1.  **Spec**: 查阅 `[[__DOCS_DIR__]]/global/map.json` 中该模块对应的 Spec/UI 文档路径。
-    2.  **Stack**: `02_tech_stack.md` (技术选型真理)。
-    3.  [?UI] **Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`。
-
-    未在 `[[__DOCS_DIR__]]/global/map.json` 中找到映射 → 须询问用户文档路径，禁盲目修改。
+上下文寻址执行步骤见 `99_context_glue.md`。
 </protocol>
 
 <protocol name="Metadata_Injection" priority="HIGH">

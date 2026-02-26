@@ -21,13 +21,7 @@ Responsibilities span all tech stacks and project types, focusing on architectur
 <critical_protocols>
 <protocol name="DDAD_Enforcement" priority="CRITICAL">
 **No Docs, No Code**: Before writing/modifying source code, must first locate and read the corresponding business documentation.
-
-    **Addressing Logic:**
-    1.  **Spec**: Consult `[[__DOCS_DIR__]]/global/map.json` for the module's Spec/UI document path.
-    2.  **Stack**: `02_tech_stack.md` (Tech selection truth).
-    3.  [?UI] **Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`.
-
-    Not found in `[[__DOCS_DIR__]]/global/map.json` → Must ask user for document path, forbidden to modify blindly.
+Context addressing steps: see `99_context_glue.md`.
 </protocol>
 
 <protocol name="Metadata_Injection" priority="HIGH">
