@@ -20,7 +20,7 @@ Thank you for your interest in contributing to Architext! This document covers e
 
 ```bash
 # 1. Fork and clone the repository
-git clone https://github.com/<your-username>/architext.git
+git clone https://github.com/JiuNian3219/architext.git
 cd architext
 
 # 2. Install dependencies
@@ -141,7 +141,7 @@ Please use the issue templates:
 
 ```bash
 # 1. Fork 并克隆仓库
-git clone https://github.com/<your-username>/architext.git
+git clone https://github.com/JiuNian3219/architext.git
 cd architext
 
 # 2. 安装依赖
