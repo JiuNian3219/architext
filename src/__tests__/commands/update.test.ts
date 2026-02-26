@@ -24,7 +24,10 @@ import {
   auditRoadmap,
   auditPlans,
 } from "../../commands/meta/update/auditor.ts";
-import { updateRules } from "../../commands/meta/update/handlers.ts";
+import {
+  updateRules,
+  updateSilentFiles,
+} from "../../commands/meta/update/handlers.ts";
 import {
   EXPECTED_ROADMAP_VERSION,
   ROADMAP_MIGRATIONS,
@@ -336,6 +339,7 @@ describe("updateRules", () => {
     tempDir = await createTempDir();
     vi.spyOn(TemplateManager, "getRoot").mockResolvedValue("/mock/root");
     vi.spyOn(fs, "pathExists").mockResolvedValue(true as never);
+    vi.spyOn(TemplateManager, "processFile").mockResolvedValue(undefined);
   });
 
   afterEach(async () => {
@@ -344,7 +348,6 @@ describe("updateRules", () => {
   });
 
   it("confirm 返回 false 时应返回 null", async () => {
-    // vi.mock 已在模块级将 confirm mock 为 () => false
     const result = await updateRules(BASE_CONFIG, tempDir);
     expect(result).toBeNull();
   });
@@ -356,6 +359,183 @@ describe("updateRules", () => {
 
     const result = await updateRules(BASE_CONFIG, tempDir);
     expect(result).toBeNull();
+  });
+
+  it("用户确认后应覆盖 AUTO_UPDATE_RULES 并返回正确结构", async () => {
+    const { confirm, isCancel } = await import("@clack/prompts");
+    vi.mocked(confirm).mockResolvedValueOnce(true as never);
+    vi.mocked(isCancel).mockReturnValueOnce(false);
+
+    const result = await updateRules(BASE_CONFIG, tempDir);
+
+    expect(result).not.toBeNull();
+    expect(result!.updated).toContain("00_system");
+    expect(result!.updated).toContain("01_workflow");
+    expect(result!.updated).toContain("03_data_governance");
+    expect(result!.updated).toContain("99_context_glue");
+    expect(result!.templated).toContain("02_tech_stack");
+    expect(result!.skipped).toContain("90_custom_rules");
+  });
+
+  it("用户确认后 processFile 调用次数应与 editors × AUTO_UPDATE_RULES + tech_stack 一致", async () => {
+    const { confirm, isCancel } = await import("@clack/prompts");
+    vi.mocked(confirm).mockResolvedValueOnce(true as never);
+    vi.mocked(isCancel).mockReturnValueOnce(false);
+
+    await updateRules(BASE_CONFIG, tempDir);
+
+    // cursor × 4 条 AUTO_UPDATE_RULES + 1 条 tech_stack = 5 次
+    expect(TemplateManager.processFile).toHaveBeenCalledTimes(5);
+  });
+
+  it("源规则文件不存在时应跳过并返回空 updated", async () => {
+    const { confirm, isCancel } = await import("@clack/prompts");
+    vi.mocked(confirm).mockResolvedValueOnce(true as never);
+    vi.mocked(isCancel).mockReturnValueOnce(false);
+
+    // 第一次调用是 resolveTemplateLang 的语言目录检查（true），其余都不存在
+    vi.spyOn(fs, "pathExists")
+      .mockResolvedValueOnce(true as never)
+      .mockResolvedValue(false as never);
+
+    const result = await updateRules(BASE_CONFIG, tempDir);
+
+    expect(result).not.toBeNull();
+    expect(result!.updated).toHaveLength(0);
+    expect(result!.templated).toHaveLength(0);
+    expect(result!.skipped).toContain("90_custom_rules");
+  });
+
+  it("多个 editors 时 updated 中不应有重复的规则名", async () => {
+    const multiConfig: ArchitextConfig = {
+      ...BASE_CONFIG,
+      editors: ["cursor", "windsurf"],
+    };
+    const { confirm, isCancel } = await import("@clack/prompts");
+    vi.mocked(confirm).mockResolvedValueOnce(true as never);
+    vi.mocked(isCancel).mockReturnValueOnce(false);
+
+    const result = await updateRules(multiConfig, tempDir);
+
+    expect(result).not.toBeNull();
+    const uniqueCount = new Set(result!.updated).size;
+    expect(uniqueCount).toBe(result!.updated.length);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+// Handlers — updateSilentFiles
+// ═══════════════════════════════════════════════════════════
+
+describe("updateSilentFiles", () => {
+  let tempDir: string;
+
+  beforeEach(async () => {
+    tempDir = await createTempDir();
+    vi.spyOn(TemplateManager, "getRoot").mockResolvedValue("/mock/root");
+    vi.spyOn(TemplateManager, "plan").mockResolvedValue([]);
+    vi.spyOn(TemplateManager, "execute").mockResolvedValue(undefined);
+    vi.spyOn(TemplateManager, "processFile").mockResolvedValue(undefined);
+    vi.spyOn(fs, "pathExists").mockResolvedValue(true as never);
+    vi.spyOn(fs, "readdir").mockResolvedValue([] as never);
+    vi.spyOn(fs, "ensureDir").mockResolvedValue(undefined as never);
+  });
+
+  afterEach(async () => {
+    await cleanupTempDir(tempDir);
+    vi.restoreAllMocks();
+  });
+
+  it("plan 均返回空数组时应返回 count: 0", async () => {
+    const result = await updateSilentFiles(BASE_CONFIG, tempDir);
+    expect(result.count).toBe(0);
+    expect(TemplateManager.plan).toHaveBeenCalledTimes(2);
+    expect(TemplateManager.execute).toHaveBeenCalledTimes(2);
+  });
+
+  it("prompts plan 返回 2 个操作时 count 应为 2", async () => {
+    vi.spyOn(TemplateManager, "plan")
+      .mockResolvedValueOnce([
+        { src: "/a", dest: "/b" },
+        { src: "/c", dest: "/d" },
+      ] as never)
+      .mockResolvedValueOnce([] as never);
+
+    const result = await updateSilentFiles(BASE_CONFIG, tempDir);
+    expect(result.count).toBe(2);
+  });
+
+  it("prompts 与 templates 的 count 应累加", async () => {
+    vi.spyOn(TemplateManager, "plan")
+      .mockResolvedValueOnce([{ src: "/a", dest: "/b" }] as never)
+      .mockResolvedValueOnce([
+        { src: "/c", dest: "/d" },
+        { src: "/e", dest: "/f" },
+      ] as never);
+
+    const result = await updateSilentFiles(BASE_CONFIG, tempDir);
+    expect(result.count).toBe(3);
+  });
+
+  it("editors 有 commands 且存在 .md 文件时应处理 commands 并计入 count", async () => {
+    vi.spyOn(fs, "readdir").mockResolvedValue([
+      "archi.start.md",
+      "archi.plan.md",
+      "README.txt",
+    ] as never);
+
+    const result = await updateSilentFiles(BASE_CONFIG, tempDir);
+    // 只有 .md 文件（2 个）被处理，.txt 跳过
+    expect(result.count).toBe(2);
+    expect(TemplateManager.processFile).toHaveBeenCalledTimes(2);
+  });
+
+  it("editors 无 commands 配置（如 windsurf）时应跳过 commands 处理", async () => {
+    const windsurfConfig: ArchitextConfig = {
+      ...BASE_CONFIG,
+      editors: ["windsurf"],
+    };
+    vi.spyOn(fs, "readdir").mockResolvedValue(["archi.start.md"] as never);
+
+    const result = await updateSilentFiles(windsurfConfig, tempDir);
+    expect(result.count).toBe(0);
+    expect(TemplateManager.processFile).not.toHaveBeenCalled();
+  });
+
+  it("语言目录不存在时应回退到 zh 并使用 zh 路径调用 plan", async () => {
+    const enConfig: ArchitextConfig = { ...BASE_CONFIG, language: "en" };
+    vi.spyOn(fs, "pathExists").mockImplementation(async (p) => {
+      const normalized = String(p).replace(/\\/g, "/");
+      return !normalized.endsWith("/en");
+    });
+
+    await updateSilentFiles(enConfig, tempDir);
+
+    const [firstPromptCall] = vi.mocked(TemplateManager.plan).mock.calls;
+    // 无论 Windows(\) 还是 Unix(/)，路径中应包含语言段 "zh"
+    expect(firstPromptCall[0]).toMatch(/[/\\]zh[/\\]/);
+  });
+
+  it("readdir 抛出异常时应静默忽略，不影响 count", async () => {
+    vi.spyOn(fs, "readdir").mockRejectedValue(
+      new Error("permission denied") as never,
+    );
+
+    const result = await updateSilentFiles(BASE_CONFIG, tempDir);
+    expect(result.count).toBe(0);
+  });
+
+  it("多个 editors 时每个有 commands 的 editor 都应分别处理 .md 文件", async () => {
+    const multiConfig: ArchitextConfig = {
+      ...BASE_CONFIG,
+      editors: ["cursor", "windsurf"],
+    };
+    vi.spyOn(fs, "readdir").mockResolvedValue(["archi.start.md"] as never);
+
+    const result = await updateSilentFiles(multiConfig, tempDir);
+    // 只有 cursor 有 commands，故只处理 1 次
+    expect(result.count).toBe(1);
+    expect(TemplateManager.processFile).toHaveBeenCalledTimes(1);
   });
 });
 
