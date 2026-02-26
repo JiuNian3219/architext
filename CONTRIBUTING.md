@@ -113,6 +113,10 @@ Templates in `templates/` are the **core product asset** — they directly affec
 - **No breaking changes to protocol structure** without discussion in an issue first.
 - Keep the `<meta>`, `<step_1_load>`, and `<step_N_signoff>` blocks in every protocol file — they are mandatory.
 
+### Architecture Reference
+
+If you want to understand the internal mechanics — how each command reads/writes assets, Gate logic, Chat Mode behavior, and the complete read/write matrix — read [`docs/internals.md`](docs/internals.md). It's the most complete technical reference for the system.
+
 ### Reporting Issues
 
 Please use the issue templates:
@@ -229,6 +233,10 @@ chore(deps): 升级 vitest 至 v4
 - **三语同步**：修改 `templates/zh/` 下的任何文件时，**必须**同步更新 `templates/zh-Hant/` 和 `templates/en/` 中的对应文件。三个版本的结构（XML 标签、表格列数、步骤数量）必须完全一致，仅内容语言不同。
 - **禁止在未经讨论的情况下破坏性修改协议结构**，请先在 Issue 中讨论。
 - 每个协议文件中的 `<meta>`、`<step_1_load>`、`<step_N_signoff>` 三个区块为**强制项**，不可删除。
+
+### 架构参考文档
+
+如果你想深入理解内部机制——每个命令的资产读写关系、Gate 逻辑、Chat Mode 行为、完整读写矩阵——请阅读 [`docs/internals.md`](docs/internals.md)，这是系统最完整的技术参考。
 
 ### 提交 Issue
 
