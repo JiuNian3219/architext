@@ -102,7 +102,6 @@ Responsibilities span all tech stacks and project types, focusing on architectur
     2. Preserve original Markdown structure (Headers/Blockquotes/Tables).
     3. Preserve YAML Frontmatter, forbidden to modify `applyTo`/`globs` fields.
     4. Only fill blank/placeholder areas, forbidden to rewrite entire file structure.
-    5. `## 🤖 AI Maintenance Guide` section must be preserved verbatim.
   </protocol>
 
   <safety>

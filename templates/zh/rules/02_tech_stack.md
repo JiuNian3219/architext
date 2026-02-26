@@ -137,7 +137,7 @@ UI 制品层级：
 
 ---
 
-## 3. Architecture & File Placement Strategy (架构与文件归位策略)
+## 7. Architecture & File Placement Strategy (架构与文件归位策略)
 ### Repository Architecture (仓库形态)
 * **Strategy:** [例如：Monorepo (Turborepo) 或 Single Repo (单体仓库)]
 * **Workspace:** [例如：pnpm workspaces，共享依赖提升至 Root。]
@@ -166,7 +166,7 @@ UI 制品层级：
 
 ## 8. Anti-Patterns (负面清单)
 * **No Orphan .gitkeep:** 空目录可用 `.gitkeep` 占位以便 Git 跟踪；目录已有其他文件时须删除 `.gitkeep`。
-* **No Rogue File Placement:** 创建新文件前须查 §3 File Placement Rules 表，禁凭 AI 训练数据的默认习惯自行放置（尤其是测试文件）。
+* **No Rogue File Placement:** 创建新文件前须查 §7 File Placement Rules 表，禁凭 AI 训练数据的默认习惯自行放置（尤其是测试文件）。
 * **No [技术 1]:** [例如：No Redux - 本项目过重，勿用。]
 * **No [技术 2]:** [例如：No Raw SQL - 必须使用 ORM 防止注入。]
 * **No [模式 1]:** [例如：禁止在组件内部直接 fetch 数据，必须封装在 Service 层。]

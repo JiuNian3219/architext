@@ -141,7 +141,7 @@ Component naming must follow `Prefix+Function` format:
 
 ---
 
-## 3. Architecture & File Placement Strategy
+## 7. Architecture & File Placement Strategy
 
 ### Repository Architecture
 * **Strategy:** [e.g. Monorepo (Turborepo) or Single Repo]
@@ -171,7 +171,7 @@ Component naming must follow `Prefix+Function` format:
 
 ## 8. Anti-Patterns
 * **No Orphan .gitkeep:** Empty dirs may use `.gitkeep` for Git tracking; remove `.gitkeep` when dir has other files.
-* **No Rogue File Placement:** Check §3 File Placement Rules before creating any new file — placement must not rely on AI training-data defaults (especially for test files).
+* **No Rogue File Placement:** Check §7 File Placement Rules before creating any new file — placement must not rely on AI training-data defaults (especially for test files).
 * **No [Tech 1]:** [e.g. No Redux - This project is too heavy, do not use.]
 * **No [Tech 2]:** [e.g. No Raw SQL - Must use ORM to prevent injection.]
 * **No [Pattern 1]:** [e.g. Forbidden to fetch data directly inside components, must encapsulate in Service layer.]

@@ -102,7 +102,6 @@ alwaysApply: true
     2. 保留原有 Markdown 结构（Headers/Blockquotes/Tables）。
     3. 保留 YAML Frontmatter，禁改 `applyTo`/`globs` 等字段。
     4. 仅填充空白/占位符，禁重写整个文件结构。
-    5. `## 🤖 AI Maintenance Guide` 区域须原封不动保留。
   </protocol>
 
   <safety>
