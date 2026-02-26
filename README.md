@@ -1,6 +1,6 @@
 <div align="center">
 
-[简体中文](README.zh-CN.md) · **English**
+[简体中文](https://github.com/JiuNian3219/architext/blob/main/README.zh-CN.md) · **English**
 
 # 🏛️ Architext
 
@@ -319,7 +319,7 @@ Yes. Each command loads multiple context files and performs deep analysis — **
 
 <div align="center">
 
-**[Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [Issues](../../issues)**
+**[Contributing](https://github.com/JiuNian3219/architext/blob/main/CONTRIBUTING.md) · [Changelog](https://github.com/JiuNian3219/architext/blob/main/CHANGELOG.md) · [Issues](https://github.com/JiuNian3219/architext/issues)**
 
 > This is Architext: a meta-framework protocol that makes AI work like a senior architect.
 

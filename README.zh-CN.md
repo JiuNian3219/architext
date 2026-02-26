@@ -1,6 +1,6 @@
 <div align="center">
 
-**简体中文** · [English](README.md)
+**简体中文** · [English](https://github.com/JiuNian3219/architext/blob/main/README.md)
 
 # 🏛️ Architext
 
@@ -319,7 +319,7 @@ Agent 模式适合单次会话。Architext 提供跨会话、跨成员、跨 AI 
 
 <div align="center">
 
-**[贡献指南](CONTRIBUTING.md) · [更新日志](CHANGELOG.md) · [Issues](../../issues)**
+**[贡献指南](https://github.com/JiuNian3219/architext/blob/main/CONTRIBUTING.md) · [更新日志](https://github.com/JiuNian3219/architext/blob/main/CHANGELOG.md) · [Issues](https://github.com/JiuNian3219/architext/issues)**
 
 > 这就是 Architext：一套让 AI 真正像资深架构师一样工作的元框架协议。
 
