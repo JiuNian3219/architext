@@ -342,7 +342,7 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
       const data = buildRoadmap([{ id: "A", title: "A" }]);
       const output = renderRoadmap(data);
       expect(output).toContain("```mermaid");
-      expect(output).toContain("graph TD");
+      expect(output).toContain("graph LR");
       expect(output).toContain("```");
     });
 

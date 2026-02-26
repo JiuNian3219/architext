@@ -112,7 +112,7 @@ export function renderRoadmap(
   // ── Mermaid Dependency Graph ──
   lines.push(`<!-- VISUAL_START -->\n`);
   lines.push("```mermaid");
-  lines.push("graph TD");
+  lines.push("graph LR");
   lines.push("");
 
   // classDef 定义
