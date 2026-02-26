@@ -57,7 +57,17 @@ Identify the project type from the Brief's tech stack / description. Establish a
 | Real-time / Collaborative App | WebSocket server layer + event schema definitions (shared types) + room/session management foundation; [?CRDT] conflict resolution layer |
 | AI Agent / MCP Tool | LLM client abstraction layer (provider-agnostic) + prompt template management + Tool/Function Calling schema + conversation state / memory management; [?MCP] MCP protocol adapter |
 
-**Action**: Inject the calibration result into the INF-01 description in Step 2, ensuring the scaffold task covers the checklist for this project type.
+**Action (two outputs)**:
+1. **Inject into Step 2 INF-01**: Write the corresponding type's scaffold checklist into the INF-01 description.
+2. **Inject into Step 1 scene constraint**: Constrain the scenario sentence format for Step 1 based on project type. The following rules apply when extracting business scenarios:
+
+| Project Type | Scenario Template | Forbidden Vocabulary |
+|:---|:---|:---|
+| CLI Tool | `User can [run command / pass arg] → [terminal output]` | page, route, component, UI |
+| Library / SDK | `Caller can [invoke API X] → [returns Y]` | user, interface, interaction |
+| API Service | `Client can [HTTP METHOD /path] → [response structure]` | frontend, page, component |
+| Mini Program | `User can [action] on [page name] → [visible result in WeChat]` | backend route, REST |
+| Web SPA / Full-Stack / Mobile / Desktop | `User can [action] → [perceivable outcome]` | (no special restriction) |
 
 ---
 
@@ -79,7 +89,8 @@ Extract user scenarios from the Brief task descriptions and aggregate them into 
     | Task spans 3+ independent UI areas or implementation domains | Split |
     | A single `/archi.plan` session cannot fully describe behavior in one spec.md | Split |
     | Two tasks share >50% of their file set | Merge |
-    | One task is meaningless without the other | Merge |
+
+    > **Note**: If "Task B is meaningless without Task A", this describes a sequential dependency — **never merge**. Declare `deps: [A]` on B in Step 4 instead.
 
     **Engineering perspective (independent of behavior — either trigger = split)**:
 
@@ -91,16 +102,20 @@ Extract user scenarios from the Brief task descriptions and aggregate them into 
 
     > **Why add the engineering perspective**: The behavior perspective describes "what the user sees"; the engineering perspective describes "what the AI must simultaneously master during `/archi.code`". A task that is behaviorally cohesive (same screen) but spans multiple unrelated implementation domains will cause the AI to lose focus and produce poor cross-domain code.
 
-    **Granularity hard limits (quantitative)**:
+    **Granularity limits**:
 
-    > One Roadmap Task = the minimum functional unit that can produce **one cohesive spec.md + one executable plan.json**.
+    > One Roadmap Task = the minimum functional unit that **AI can handle without further decomposition and produce one cohesive spec.md** (HTN Primitive executability principle).
 
-    | Metric | Limit | Action when exceeded |
+    *Decomposition-phase proxy metrics (assessable directly from the Brief)*:
+
+    | Proxy Metric | Limit | Action when exceeded |
     |:---|:---|:---|
-    | spec.md Scenario count | ≤ 6 | Return to `/archi.scope` to split — task is too large |
-    | plan.json Phase count | ≤ 4 | Same |
+    | Number of independent user operation flows in the task description | ≤ 3 | Split |
+    | Number of independent data entities involved (each with its own state transitions) | ≤ 2 | Split |
+    | Number of independent concerns joined by "and / plus / also" in the description | ≤ 1 | Split |
+    | Task acceptance cannot be validated independently without running another business Task | — | Check coupling; redraw interface boundary (INVEST-I) |
 
-    > These limits serve as a predictive check during decomposition. If during `/archi.plan` the estimated counts are projected to exceed these limits, pause and prompt the user to return to `/archi.scope` for re-splitting. Never force-fit into a single task.
+    > During `/archi.plan`, if spec.md Scenario count is projected to exceed 6 or plan.json Phase count to exceed 4, pause and prompt the user to return to `/archi.scope` for re-splitting. Never force-fit into a single task.
 
 **DoD format**: `When done, user can <verifiable user behavior>; boundary: <what is explicitly excluded>`
 
@@ -126,15 +141,20 @@ For all business Tasks, ask: do multiple Tasks depend on X, and must X exist bef
 
 **Core Task Planning Contract**: Tasks with `tag: Core` must end their `description` with a declaration of their primary exported interface (function signature or key interface name). Downstream Task `/archi.plan` sessions can wire directly to this interface without reading upstream implementation, ensuring cross-task planning consistency and predictability.
 
-**Infra task granularity principle (opposite of business Task — lean toward merging)**:
+**Infra task granularity principle: avoid micro-tasks, but never stack across layers**:
 
-Infra tasks don't carry business logic. AI executing them operates in a narrow context and is not at risk of "domain overload". Over-splitting Infra only adds dependency chain complexity with no benefit.
+- **No micro-splitting**: Config items within the same architectural layer with no meaningful technical distinction (e.g. ESLint + Prettier + TypeScript strict + commitlint) → merge to reduce task count and dependency chain noise.
+- **No cross-layer stacking**: Each independent architectural layer has its own technical domain details. Merging them still causes AI context overload — and packing multiple layers into one INF task creates the longest possible critical path, delaying the start of all downstream business Tasks.
+
+> **Architectural layer reference** (each layer has independent implementation boundaries — in principle each becomes its own task):
+> Project scaffold (build / code quality toolchain) | Data layer (DB connection / ORM / migrations) | Auth layer (auth middleware / session / JWT) | API routing layer (route registration / middleware chain / global error handling) | Frontend infrastructure (theme / Design Tokens / global layout) | Third-party service integrations (each service as its own INF task)
 
 | Signal | Action |
 |:---|:---|
-| Same engineering category, same execution window, related tech stack | Merge (e.g. scaffolding + CI + router skeleton → one INF task) |
-| Completely different tech stack AND clearly different execution timing | Split (e.g. Dexie.js storage layer vs. Shadcn theme config) |
-| Contains OS-level system APIs (system tray, global hotkeys, file associations, etc.) | **Force split** (not subject to the "same execution window" condition; OS APIs have significant cross-platform differences — combining with Web scaffold makes the INF task too wide) |
+| Related config items within the same architectural layer (e.g. all code quality toolchain items, or router skeleton + global error middleware both belonging to the API routing layer) | Merge |
+| Spans independent architectural layers (e.g. DB connection layer + Auth middleware, or API routing + frontend theme system) | Split |
+| Completely different tech stacks (e.g. local storage layer vs. theme config) | Split |
+| Contains OS-level system APIs (system tray, global hotkeys, file associations, etc.) | **Force split** (Step 0 forced rule — not subject to same-layer merge condition) |
 | An Infra output is called directly by ≥2 business Tasks (interface-type) | Keep as its own task (must declare exported interface contract) |
 
 **Implicit standard features scan**: The following features rarely appear in a Brief and must be proactively added with correct classification (omission is not allowed):
@@ -144,6 +164,8 @@ Infra tasks don't carry business logic. AI executing them operates in a narrow c
 | Check Item | Trigger Condition |
 |:---|:---|
 | User Profile / account settings page | Project includes Auth (INF layer has auth middleware) |
+| Account security / password settings page | Includes Auth and user can change password or link third-party accounts |
+| Notification center / message list page | Includes notification infrastructure and notifications have "read/unread" state |
 
 *Add as INF task (Phase 1 — infrastructure)*:
 
@@ -151,12 +173,18 @@ Infra tasks don't carry business logic. AI executing them operates in a narrow c
 |:---|:---|
 | Notification infrastructure (server-side push / message queue layer) | ≥1 Task mentions "notifications / reminders" verbally but no INF Task created |
 | Search infrastructure (PG FTS index / external search engine deployment) | ≥2 business Tasks independently describe "search" functionality; decide on the approach here as an INF Task — downstream Tasks depend on it |
+| Permission / role management layer (RBAC) | Includes Auth and has ≥2 user roles (e.g. admin / user) |
+| File storage integration layer (S3 / OSS wrapper) | ≥1 Task involves file upload / download / preview |
+| Email / SMS sending integration | Task mentions "send email / verification code / SMS notification" |
+| Payment integration layer | Task mentions "payment / order / checkout / refund" |
 
 ---
 
 ### Step 3 · NFR Filter
 
 The following types **must never become standalone tasks**: inject into the `goal` of the first task that implements the capability (`[NFR] <note>`); other affected tasks are noted only in the NFR list below. `/archi.plan` will propagate these NFRs into the constraints section of the corresponding spec.md.
+
+> **"First task" definition**: The task earliest in the dependency chain whose `deps` contain only INF-layer tasks (no business prerequisites) and that is the first to involve this NFR capability. When multiple candidates exist in the same Batch, use the one with the smallest ID.
 
 | Type | Common Forms | Note |
 |:---|:---|:---|
@@ -223,7 +251,7 @@ The following types **must never become standalone tasks**: inject into the `goa
 > - `/archi.scope` → caller displays to user for confirmation, then writes to `roadmap.json` after "OK"
 > - `/archi.start` → caller writes directly to `roadmap.json`
 
-Produces two parts:
+Produces three parts:
 
 **① Task data** (maps directly to `roadmap.json` phases/tasks structure):
 
@@ -248,6 +276,17 @@ Produces two parts:
 }
 ```
 
-**② NFR merge list** (metadata for the caller to display):
+**② NFR merge list** (returned alongside task data; caller appends as `nfr` top-level field in roadmap; `/archi.plan` `step_1_load` must read this list):
 
-- [NFR name] → injected into [task ID] goal | affected: [other task IDs]
+| NFR Name | Injected Into Task ID | Constraint Summary | Affected Task IDs |
+|:---|:---|:---|:---|
+| (example) i18n | FEAT-01 | All copy must use i18n keys — no hardcoded strings | FEAT-02, FEAT-03 |
+
+**③ Parallel execution batches** (DAG topology layers — tasks within the same Layer can be handled by separate parallel AI sessions):
+
+```
+Layer 0 ║ INF-01
+Layer 1 ║ INF-02 · INF-03              ← both depend on INF-01
+Layer 2 ║ FEAT-01 · FEAT-02            ← depend on INF-02 / INF-03 respectively
+Layer 3 ║ FEAT-03                      ← depends on FEAT-01
+```
