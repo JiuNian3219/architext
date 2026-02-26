@@ -126,6 +126,13 @@
     9.  **Static Check Zero**: All static check issues resolved.
     10. **step_4 Gate**: Confirm all step_4 checks (Static + Test + Task Verification) have passed.
     11. **Linkage Check**: Read the `featureRelations` array from `[[__DOCS_DIR__]]/global/map.json`; semantically compare the current task against each `sources` field. If matched, output: `⚠️ Linkage: [aggregator] — [checkNote]`, reminding to confirm whether the aggregator needs to be updated after this implementation. Skip if `featureRelations` is empty.
+    12. **Data Governance**: When this implementation introduces new content, directly write to the corresponding global index:
+
+        | Trigger | File | Action |
+        |:---|:---|:---|
+        | New business entity · verb · shared utility | `dictionary.json` | Directly append |
+        | New error scenario | `error_codes.json` | Directly append |
+        | [?Data] Schema actually changed | `data_snapshot.json` | Directly sync |
 
     Detail issues can be Auto-Fixed with explanation; major risks marked `⚠️ Risk` with alternatives proposed.
 </step_5_audit>

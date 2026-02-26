@@ -98,11 +98,19 @@ alwaysApply: true
     生成代码或执行动作。注释解释 Why 而非 What。
   </step>
 
-  <step n="5" action="DDAD Drift Check">
-    输出代码后，对比本次变更与已读取的 spec.md 关键点位（接口签名、行为逻辑、Gherkin 场景关键步骤）：
+  <step n="5" action="Post-Code Checks">
+    输出代码后执行（跳过条件：纯问答 / 无代码变更 / 仅 typo · comment · format）：
+
+    **A. Spec 漂移**（已读 spec.md 时）:
     - ✅ 变更在 spec 范围内 → 无需操作
-    - ⚠️ 变更超出 spec 范围（新接口 · 改签名 · 新行为 · 新场景）→ 输出 `⚠️ Spec 漂移`，建议运行 `/archi.edit <ID>` 同步文档
-    跳过条件：纯问答 / 无代码变更 / 仅 typo · comment · format。
+    - ⚠️ 超出 spec 范围（新接口 · 改签名 · 新行为 · 新场景）→ 输出 `⚠️ Spec 漂移`，建议 `/archi.edit <ID>`
+
+    **B. 数据治理**:
+    | 触发条件 | 文件 | 动作 |
+    |:---|:---|:---|
+    | 引入未登记的业务实体 · 动作 · 共享工具 | `dictionary.json` | 直接追加写入 |
+    | 引入未注册的错误场景 | `error_codes.json` | 直接追加写入 |
+    | [?Data] Schema 有变更 | `data_snapshot.json` | 直接同步 |
   </step>
 </thinking_process>
 

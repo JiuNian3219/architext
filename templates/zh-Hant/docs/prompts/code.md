@@ -126,6 +126,13 @@
     9.  **Static Check Zero**: 所有靜態檢查問題已解決。
     10. **step_4 Gate**: 確認 step_4 所有檢查（Static + Test + Task Verification）已通過。
     11. **聯動檢查**: 讀取 `[[__DOCS_DIR__]]/global/map.json` 中的 `featureRelations` 陣列，將本次實現的功能與各條 `sources` 欄位做語義對比。命中時輸出提示：`⚠️ 聯動: [aggregator] — [checkNote]`，提醒在當前實現完成後確認聚合方是否需要同步。`featureRelations` 為空則跳過。
+    12. **資料治理**: 本次實現引入新內容時，須直接寫入對應全域索引：
+
+        | 觸發條件 | 檔案 | 動作 |
+        |:---|:---|:---|
+        | 新業務實體 · 動作 · 共享工具 | `dictionary.json` | 直接追加寫入 |
+        | 新錯誤情境 | `error_codes.json` | 直接追加寫入 |
+        | [?Data] Schema 實際變更 | `data_snapshot.json` | 直接同步 |
 
     細節問題可 Auto-Fix 並說明；重大風險標註 `⚠️ Risk` 並提出替代方案。
 </step_5_audit>

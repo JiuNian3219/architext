@@ -1,4 +1,4 @@
----
+﻿---
 description: AI collaboration governance rules for JSON data files. Defines read/write specs, update timing & format constraints for global data files.
 globs: "**/*.json"
 applyTo: "**/*.json"
@@ -15,10 +15,10 @@ alwaysApply: true
 |:---|:---|:---|:---|
 | `roadmap.json` | Roadmap | `/archi.plan`, `/archi.code` start | `/archi.start` creates; AI direct edit or `npx archi task` updates status |
 | `map.json` | Architecture Map | When touching code (via context_glue) | `/archi.plan` Step 3 (global sync); `/archi.inherit` Step 3.6; `/archi.map` |
-| `dictionary.json` | Glossary | When generating variable names | `/archi.plan` Step 3; proactively add new terms |
+| `dictionary.json` | Glossary | When generating variable names | `/archi.plan` Step 3; step_5 auto-appends after code/fix |
 | `design_tokens.json` | Design Tokens [?UI] | When generating UI code | `/archi.start` creates; update on design changes |
 | `data_snapshot.json` | Data Snapshot [?Data] | `/archi.plan` Q1 design; `/archi.code` implementation | Plan phase designs Schema; Code phase syncs actual changes |
-| `error_codes.json` | Error Contracts | When writing error handling | `/archi.plan` Step 3; when discovering new error scenarios |
+| `error_codes.json` | Error Contracts | When writing error handling | `/archi.plan` Step 3; step_5 auto-appends after code/fix |
 
 ---
 

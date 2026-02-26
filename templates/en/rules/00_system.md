@@ -98,11 +98,19 @@ Context addressing steps: see `99_context_glue.md`.
     Generate code or execute action. Comments explain Why, not What.
   </step>
 
-  <step n="5" action="DDAD Drift Check">
-    After outputting code, compare this change against loaded spec.md key points (interface signatures, behavior logic, Gherkin scenario key steps):
+  <step n="5" action="Post-Code Checks">
+    After outputting code, execute the following (skip when: pure Q&A / no code changes / typo · comment · format only):
+
+    **A. Spec Drift** (when spec.md was loaded):
     - ✅ Change within spec scope → No action needed
-    - ⚠️ Change exceeds spec scope (new interface · changed signature · new behavior · new scenario) → Output `⚠️ Spec Drift`; recommend running `/archi.edit <ID>` to sync documentation
-    Skip when: pure Q&A / no code changes / typo · comment · format only.
+    - ⚠️ Exceeds spec scope (new interface · changed signature · new behavior · new scenario) → Output `⚠️ Spec Drift`; recommend `/archi.edit <ID>`
+
+    **B. Data Governance**:
+    | Trigger | File | Action |
+    |:---|:---|:---|
+    | Introduces unregistered business entity · verb · shared utility | `dictionary.json` | Directly append |
+    | Introduces unregistered error scenario | `error_codes.json` | Directly append |
+    | [?Data] Schema changed | `data_snapshot.json` | Directly sync |
   </step>
 </thinking_process>
 

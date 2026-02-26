@@ -15,10 +15,10 @@ alwaysApply: true
 |:---|:---|:---|:---|
 | `roadmap.json` | 路線圖 | `/archi.plan`, `/archi.code` 開始時 | `/archi.start` 建立; AI 直接編輯或 `npx archi task` 更新狀態 |
 | `map.json` | 架構地圖 | 觸碰程式碼時 (via context_glue) | `/archi.plan` Step 3 (全域同步); `/archi.inherit` Step 3.6; `/archi.map` |
-| `dictionary.json` | 術語字典 | 生成變數名稱時 | `/archi.plan` Step 3; 發現新術語時主動新增 |
+| `dictionary.json` | 術語字典 | 生成變數名稱時 | `/archi.plan` Step 3; code/fix 後 step_5 自動追加 |
 | `design_tokens.json` | 設計令牌 [?UI] | 生成 UI 程式碼時 | `/archi.start` 建立; 設計變更時更新 |
 | `data_snapshot.json` | 資料快照 [?Data] | `/archi.plan` Q1 設計; `/archi.code` 實作時 | Plan 階段設計 Schema; Code 階段同步實際變更 |
-| `error_codes.json` | 錯誤碼契約 | 撰寫錯誤處理時 | `/archi.plan` Step 3; 發現新錯誤情境時 |
+| `error_codes.json` | 錯誤碼契約 | 撰寫錯誤處理時 | `/archi.plan` Step 3; code/fix 後 step_5 自動追加 |
 
 ---
 
