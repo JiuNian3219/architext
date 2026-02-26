@@ -1,6 +1,6 @@
 ---
 name: archi-plan-options
-description: Architext 架構決策選項庫。定義五個核心維度（Core Structure / Interaction Pattern / Data Flow / Error Handling / Access & Scope）的候選方案及 AI+/AI- 分析。含慣例繼承規則、專案標籤路由邏輯、推薦 vs 展開判斷準則，供 /archi.plan step_2 Part 2（架構建議階段）引用。
+description: Architext 架構決策選項庫。定義五個核心維度（Core Structure / Interaction Pattern / Data Flow / Error Handling / Access & Scope）的候選方案及 AI+/AI- 分析，覆蓋 Web/CLI/API/Lib/Mobile/MiniApp/Extension/Desktop/AI Agent 等專案類型。含慣例繼承規則、專案標籤路由邏輯、推薦 vs 展開判斷準則，供 /archi.plan step_2 Part 2（架構建議階段）引用。
 ---
 
 # 架構決策選項庫
@@ -36,7 +36,7 @@ description: Architext 架構決策選項庫。定義五個核心維度（Core S
 
 ### Step 2 · 專案標籤路由
 
-根據 step_1_load 已啟用的專案標籤（`[?UI]` / `[?Data]` / `[?CLI]` / `[?Lib]` / `[?API]`）選擇適用維度，略過不適用的維度。路由規則見各維度標題。
+根據 step_1_load 已啟用的專案標籤（`[?UI]` / `[?Data]` / `[?CLI]` / `[?Lib]` / `[?API]` / `[?Mobile]` / `[?MiniApp]` / `[?Extension]` / `[?Desktop]` / `[?AI]`）選擇適用維度，略過不適用的維度。路由規則見各維度標題。
 
 ### Step 3 · 推薦 vs 展開
 
@@ -105,6 +105,65 @@ description: Architext 架構決策選項庫。定義五個核心維度（Core S
 | D | Nested Sub-resource | 巢狀路由表達從屬關係，如 `GET /users/:id/posts`。適合資源間有明確父子關係的場景 | 路由結構反映資料關係，AI 可從路由推斷查詢邏輯 | 巢狀超 2 層路由冗長，權限檢查須逐級驗證父資源所有權 |
 | Z | 自訂 | (請描述你的 API 設計方案) | - | - |
 
+### [?Mobile] 導航架構策略
+
+> 決定此功能在行動端導航體系中的位置與流轉方式。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Stack Navigator | 層級式頁面堆疊，使用者進入詳情後可返回。適合操作流程有明確層級深度的場景 | 最常見的行動端導航模式，AI 生成 push/pop 準確率高 | 深層巢狀時需維護複雜的路由參數傳遞，參數型別安全易丟失 |
+| B | Tab Navigator | 底部/頂部固定標籤列，切換各功能入口。適合功能並列、使用者需頻繁切換的應用主框架 | Tab 結構固定明確，AI 可逐 Tab 獨立生成，互不干擾 | 不同 Tab 的狀態隔離與共享資料同步需額外處理，AI 易遺漏 Tab 切換時的資料刷新 |
+| C | Drawer Navigator | 側邊抽屜式導航選單。適合功能較多、不適合 Tab 展示的後台類應用 | 抽屜選單結構清晰，AI 生成列表項和路由對應準確 | 抽屜手勢與內部列表捲動手勢衝突較難處理，跨平台行為差異 AI 常忽略 |
+| D | Modal / Bottom Sheet | 強制回應頁面或底部彈出面板，不脫離當前上下文。適合快速操作、篩選、確認等次級流程 | 上下文局部化，不跳轉根頁面，AI 生成條件渲染邏輯準確 | Focus Trap、手勢關閉、鍵盤彈起適配 AI 常處理不完整；iOS/Android 行為差異多 |
+| Z | 自訂 | (請描述你的行動端導航方案) | - | - |
+
+### [?MiniApp] 頁面架構與請求策略
+
+> 決定此功能在小程式頁面體系中的組織形式和網路請求封裝方式。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Single Page | 功能集中在單個小程式頁面內完成，無跨頁跳轉。適合功能聚焦、操作步驟少的場景 | 頁面上下文集中，AI 可在單檔案內完整生成邏輯，錯誤率低 | 功能擴展時單頁邏輯膨脹，可維護性下降 |
+| B | Page + Sub-page Flow | 主頁面 + 跳轉詳情/編輯子頁面，透過 `navigateTo` 傳參。適合有明確主從關係的場景 | 頁面間職責清晰，AI 可按頁面獨立生成，上下文互不干擾 | 頁面間參數傳遞須序列化，資料量大時需用 EventBus 或全域 store，AI 易遺漏 |
+| C | Tabbar + Module | 底部 Tabbar 框架 + 各模組獨立頁面，適合功能並列的主應用框架 | Tabbar 結構穩定，AI 可模組化生成各 Tab 內容 | 跨 Tab 資料共享須全域狀態管理，小程式 store 生態較碎片，AI 方案選型易混淆 |
+| D | WebView Hybrid | 部分功能透過 WebView 內嵌 H5 頁面實作，適合複雜富文字編輯或已有 Web 資產複用 | 可複用 Web 技術堆疊，功能完整性高 | WebView 與原生通訊透過 bridge，AI 生成訊息協議易有相容性問題；受平台沙盒限制 |
+| Z | 自訂 | (請描述你的小程式頁面方案) | - | - |
+
+### [?Extension] 架構層分配策略
+
+> 決定此功能的核心邏輯部署在 Background Service Worker、Content Script 還是 Popup 層。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Background-Centric | 核心邏輯在 Background Service Worker，其他層僅做 UI 展示和訊息轉發。適合需持續執行、跨分頁共享狀態的場景 | 邏輯集中，訊息協議單向清晰，AI 可在單檔案生成主要邏輯 | Service Worker 生命週期短暫（MV3），須處理喚醒和狀態持久化 |
+| B | Content-Centric | 主要邏輯注入目標頁面的 Content Script，與頁面 DOM 深度互動。適合頁面增強、劃詞翻譯、內容修改類功能 | 可直接操作頁面 DOM，不需要訊息中轉 | 與頁面 JS 環境隔離（isolated world），須透過 window.postMessage 通訊，AI 常混淆隔離邊界 |
+| C | Popup-Centric | 主要互動和邏輯在 Popup 頁面，Background 僅做最小權限代理。適合功能簡單、點擊即用的工具型擴充 | Popup 本質是普通網頁，AI 生成 UI 程式碼與 Web 無異 | Popup 關閉時狀態丟失，須持久化到 chrome.storage；Popup 與 Background 生命週期獨立 |
+| D | Full Architecture | Background + Content + Popup 各承擔特定職責，透過訊息總線協調。適合功能複雜的綜合型擴充 | 職責分層明確，各層可獨立開發和測試 | 三層訊息協議複雜，AI 容易遺漏訊息路由或混淆發送方/接收方 |
+| Z | 自訂 | (請描述你的擴充架構方案) | - | - |
+
+### [?Desktop] 程序模型與 IPC 策略
+
+> 決定此功能的業務邏輯如何在主程序（Main）與渲染程序（Renderer）之間分配。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Main-Centric | 核心業務邏輯在主程序，渲染程序僅負責展示和使用者輸入。適合需頻繁呼叫系統 API（檔案系統、原生選單、系統通知）的場景 | 主程序邏輯集中，AI 在單處生成業務邏輯；型別透過 IPC 契約約束 | 主程序阻塞會導致整個 App 無回應；渲染程序須等待 IPC 回應，AI 易忘記非同步處理 |
+| B | Renderer-Centric | 業務邏輯主要在渲染程序，主程序僅暴露最小系統 API 代理。適合以 UI 為核心、系統呼叫較少的應用 | 渲染程序可使用瀏覽器標準 API，AI 生成程式碼與 Web 開發一致 | 系統級呼叫須透過 contextBridge 預載，AI 常忘記宣告 preload 白名單導致安全問題 |
+| C | Worker Thread | 計算密集型邏輯遷移至 Worker Thread，避免阻塞 UI 執行緒。適合檔案處理、資料轉換等重型任務 | 將重型任務與 UI 解耦，回應性好 | Worker Thread 無法直接存取 DOM 和 IPC，須透過 MessageChannel 通訊，AI 容易遺漏序列化約束 |
+| Z | 自訂 | (請描述你的桌面端程序分配方案) | - | - |
+
+### [?AI] LLM 整合與 Agent 架構策略
+
+> 決定此功能如何整合 LLM 能力、組織 Prompt 和管理 Agent 執行流程。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Direct API Call | 直接呼叫 LLM Provider API（OpenAI/Claude/Gemini 等）。適合功能簡單、無需切換 Provider 的場景 | 實作最簡，AI 生成 SDK 呼叫程式碼準確率高 | 與 Provider 強耦合；切換模型須改程式碼；串流輸出處理在各 Provider 間不統一 |
+| B | Provider Abstraction | 封裝統一 LLM 客戶端介面，底層可切換 Provider。適合需支援多模型或本地模型的場景 | 介面穩定，AI 可針對抽象層生成呼叫程式碼而無需關心底層 Provider | 抽象層設計複雜，不同 Provider 的能力差異（context window、tool calling 格式）難以完全統一 |
+| C | Tool / Function Calling | 為 LLM 定義 Tool Schema，由 LLM 決策何時呼叫。適合需 AI 主動呼叫外部能力（搜尋、程式碼執行、資料庫查詢）的場景 | Tool Schema 結構化，AI 可從型別定義生成呼叫適配程式碼 | Tool 執行錯誤的重試策略、多 Tool 並行呼叫的狀態管理，AI 容易遺漏冪等性處理 |
+| D | Multi-Agent Orchestration | 多個專職 Agent 協作完成複雜任務，含路由器/協調者角色。適合任務複雜度高、單次對話無法完成的工作流 | 各 Agent 職責單一，AI 可獨立生成每個 Agent 的 Prompt 和工具集 | Agent 間狀態傳遞、迴圈偵測、成本控制極難設計正確，AI 生成的協調邏輯容易產生無限迴圈 |
+| Z | 自訂 | (請描述你的 AI 整合方案) | - | - |
+
 ---
 
 ## 維度 2 · Interaction Pattern（必用）
@@ -159,6 +218,65 @@ description: Architext 架構決策選項庫。定義五個核心維度（Core S
 | C | Decorator / Annotation | 透過裝飾器宣告行為。適合框架級函式庫，宣告式設定減少樣板程式碼 | 宣告式程式碼簡潔，意圖清晰 | TS 裝飾器提案仍在演進，AI 可能混淆舊版和新版語法 |
 | Z | 自訂 | (請描述消費者的使用方式) | - | - |
 
+### [?Mobile] 行動端互動模式
+
+> 決定使用者在行動裝置上如何操作此功能、看到何種回饋。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Standard List / Card | 資料以列表或卡片展示，點擊進入詳情。適合內容瀏覽和管理類功能 | 與 Web 端 CRUD Table 類似，AI 生成 FlatList/ScrollView 準確率高 | 大列表須 FlatList 虛擬化；下拉刷新、上拉載入 AI 常遺漏邊界處理 |
+| B | Form / Wizard | 多步表單或引導式輸入。適合註冊、建立流程 | 每步表單獨立，AI 可逐步生成欄位和校驗 | 鍵盤彈起導致視圖遮擋須處理 KeyboardAvoidingView；步驟間資料共享需狀態提升 |
+| C | Gesture-Driven | 依賴滑動、長按等手勢操作，如左划刪除、拖曳排序。適合高頻操作的輕量互動 | 手勢語義直觀，使用者操作流暢 | 手勢衝突（內部捲動 vs 外部手勢）極難除錯；跨平台手勢函式庫 API 差異大，AI 易混淆 |
+| D | Bottom Sheet / Action Sheet | 點擊觸發底部滑出面板或操作選單。適合次級操作、篩選、快速選擇 | 無需路由跳轉，上下文局部化 | 手勢關閉、鍵盤配合、巢狀捲動須精細處理；iOS/Android 行為差異 AI 常忽略 |
+| Z | 自訂 | (請描述你的行動端互動方案) | - | - |
+
+### [?MiniApp] 小程式互動模式
+
+> 決定使用者在小程式內如何與此功能互動。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Native Components | 使用平台原生元件（button、input、scroll-view），遵循平台 UI 規範。適合大部分標準功能 | 原生元件有平台保障，AI 生成標準小程式程式碼準確率高 | 原生元件樣式定制受限，CSS 支援不如 Web 完整 |
+| B | Custom Component | 封裝自訂元件，提取可複用 UI 單元。適合樣式定制要求高或多處複用的場景 | 元件化提高上下文局部性，AI 可獨立生成每個元件 | 小程式自訂元件的 slot、properties、triggerEvent 與 Web 元件有細節差異，AI 易混淆 |
+| C | Half-Screen / Full-Screen Popup | 半屏彈窗或全屏覆蓋層。適合詳情查看、確認操作、篩選面板 | 彈窗結構明確，AI 生成條件渲染邏輯準確 | z-index 層級管理和動畫過渡須注意微信小程式的渲染層特殊性 |
+| Z | 自訂 | (請描述你的小程式互動方案) | - | - |
+
+### [?Extension] 擴充互動入口模式
+
+> 決定使用者透過何種入口與擴充功能互動。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Browser Action Popup | 點擊擴充圖示彈出小型 Popup 視窗。適合設定面板、快速操作、狀態展示 | Popup 是獨立 HTML 頁面，AI 生成程式碼與普通 Web 無異 | Popup 寬高有限（約 600×600px），關閉即銷毀，須將資料持久化到 chrome.storage |
+| B | Context Menu | 右鍵選單注入選項。適合對選取文字/連結/圖片的快速處理 | 選單項目註冊邏輯簡單，AI 一次生成即可 | 選單顯示條件須精確宣告；操作結果須透過訊息通知使用者 |
+| C | Content Injection | 在目標頁面注入按鈕、浮標、工具列等 UI 元素。適合頁面增強類功能 | 注入 UI 的 HTML/CSS 自成體系，AI 可獨立生成 | 須處理頁面樣式污染（使用 Shadow DOM 隔離）；目標頁面 DOM 變化時注入點可能失效 |
+| D | Side Panel | 瀏覽器側邊欄（Chrome sidePanel API），常駐於瀏覽器右側。適合持續使用的工具面板 | 有完整頁面空間，與瀏覽器原生整合，UX 自然 | sidePanel API 較新，跨瀏覽器相容性有限；須使用者主動開啟 |
+| Z | 自訂 | (請描述你的擴充互動方案) | - | - |
+
+### [?Desktop] 桌面端互動模式
+
+> 決定使用者如何與此桌面應用功能互動，以及使用哪種系統級 UI 範式。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Window-Based UI | 標準應用視窗，UI 與 Web App 相近。適合功能複雜、需要較大操作空間的應用 | AI 生成的 Web UI 程式碼可直接複用；桌面端增量僅在於 IPC 呼叫 | 須處理多視窗管理、視窗尺寸記憶等桌面特有細節 |
+| B | Tray / Menu Bar App | 常駐系統托盤或 macOS 選單列，點擊彈出小型懸浮視窗。適合後台服務、快速查看類工具 | 互動面小且固定，AI 可在極小上下文內完成 | 托盤圖示隨系統主題切換須維護兩套圖示；懸浮視窗尺寸和定位須精確計算 |
+| C | Global Hotkey Trigger | 全域快速鍵喚起，跨應用使用。適合 Spotlight 類快速啟動工具、剪貼簿管理器 | 使用者無需切換焦點，體驗流暢 | 註冊全域快速鍵須系統權限；快速鍵衝突難以預測；macOS/Windows 註冊 API 不同 |
+| D | Native Dialogs | 使用系統原生檔案選擇器、對話方塊、通知。適合檔案操作、系統級提醒場景 | 原生對話方塊零樣式維護成本，使用者熟悉 | 原生對話方塊 API 在 Electron/Tauri 中呼叫方式不同，須查閱文件確認 |
+| Z | 自訂 | (請描述你的桌面端互動方案) | - | - |
+
+### [?AI] Agent 互動輸出模式
+
+> 決定使用者如何觸發 AI 能力，以及如何接收 AI 的輸出結果。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Chat Interface | 對話式輸入/輸出，支援多輪上下文。適合開放式問答、輔助創作類功能 | 對話結構線性，AI 可按訊息對生成處理邏輯 | 多輪上下文的 Token 管理（裁剪/摘要）易被忽略，超出上下文視窗時回應品質驟降 |
+| B | Command-Driven | 使用者發出結構化指令，AI 執行並返回結果。適合 AI 輔助完成特定任務（程式碼生成、文件整理）的場景 | 指令格式可 Schema 化，AI 生成解析和執行邏輯準確 | 須處理指令解析失敗、參數缺失的降級策略；使用者須學習指令語法 |
+| C | Streaming Output | AI 輸出以串流形式逐步渲染，使用者即時看到生成過程。適合生成內容較長的場景 | 串流 API 模式標準（SSE/Stream），主流 SDK 均支援 | 串流中斷的重試和已渲染內容的回滾較複雜；Markdown 串流渲染的跳脫 Bug AI 常處理不好 |
+| D | Autonomous Agent | AI 自主規劃並執行多步任務，最終返回完整結果。適合複雜工作流自動化 | 無需使用者逐步介入，端到端完成任務 | 中間步驟的可觀測性（進度展示）、任務失敗的部分回滾、成本控制極難正確實作 |
+| Z | 自訂 | (請描述你的 AI 互動輸出方案) | - | - |
+
 ---
 
 ## 維度 3 · Data Flow
@@ -201,7 +319,7 @@ description: Architext 架構決策選項庫。定義五個核心維度（Core S
 
 ## 維度 5 · Access & Scope
 
-**適用條件**: 專案含 `[?Web/API]` 標籤時提問權限控制；含 `[?Lib]` 標籤時提問封裝策略；純 `[?CLI]` 通常略過。
+**適用條件**: 專案含 `[?Web/API]` 標籤時提問權限控制；含 `[?MiniApp]` 標籤時提問小程式授權模式；含 `[?Lib]` 標籤時提問封裝策略；純 `[?CLI]` 通常略過。
 **慣例繼承**: `02_tech_stack.md` §9 Auth & Access 有值 → 認證**機制**繼承（如 JWT/RBAC），但**權限級別**仍為功能級決策（如某功能 Public vs Owner Only）。
 
 ### [?Web/API] 權限控制
@@ -217,6 +335,18 @@ description: Architext 架構決策選項庫。定義五個核心維度（Core S
 | E | Team / Shared | 團隊/組織成員可存取。適合協作場景、多租戶系統 | 權限邊界以團隊為單位，粒度適中 | 須查詢團隊成員關係表，涉及複雜 JOIN；跨團隊共享進一步複雜化 |
 | F | Tier / Subscription | 按付費等級限制功能。適合 SaaS 產品的分級功能 | 規則可設定化，與業務邏輯解耦 | Mock 支付狀態和計費邏輯困難，測試需要大量 fixture 資料 |
 | Z | 自訂 | (請描述你的權限方案) | - | - |
+
+### [?MiniApp] 小程式授權模式
+
+> 決定此功能需要哪種平台授權級別。
+
+| ID | 選項 | 說明 | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Anonymous | 無需授權，匿名存取。適合瀏覽型功能 | 無授權流程，AI 生成最簡 | 須額外考慮限流防刷，無使用者身份時無法關聯歷史資料 |
+| B | Platform Auth (openid) | 靜默授權獲取 openid，不彈授權對話方塊。適合大多數需要區分使用者但不需要完整資料的場景 | 無需使用者操作，code2session 流程標準，AI 生成準確率高 | openid 僅在同一小程式/同一平台下唯一，跨平台或跨小程式須用 unionid |
+| C | Phone Binding | 對話方塊授權獲取手機號，綁定到業務帳號。適合需要真實身份關聯或與已有帳號系統對接的場景 | 平台處理真實性驗證，業務側僅需儲存關聯關係 | 手機號授權按鈕有嚴格 UI 限制（須為 button 元件，禁 JS 觸發），AI 容易生成不符合規範的觸發方式 |
+| D | Full Profile Auth | 請求完整使用者資料授權（暱稱/頭像）。適合社交類功能或需要展示使用者資訊的場景 | 一次授權獲取完整使用者資訊 | 微信已於 2022 年收緊此授權，須用新版 getUserProfile API，舊版 getUserInfo 已廢棄，AI 訓練資料中舊版程式碼較多易混淆 |
+| Z | 自訂 | (請描述你的小程式授權方案) | - | - |
 
 ### [?Lib] 封裝與可見性
 

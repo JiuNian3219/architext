@@ -1,6 +1,6 @@
 ---
 name: archi-plan-options
-description: Architext architecture decision option library. Defines candidate approaches and AI+/AI- analysis for five core dimensions (Core Structure / Interaction Pattern / Data Flow / Error Handling / Access & Scope). Includes convention inheritance rules, project tag routing logic, and recommend vs. expand criteria. Referenced by /archi.plan step_2 Part 2 (architecture recommendation phase).
+description: Architext architecture decision option library. Defines candidate approaches and AI+/AI- analysis for five core dimensions (Core Structure / Interaction Pattern / Data Flow / Error Handling / Access & Scope), covering Web/CLI/API/Lib/Mobile/MiniApp/Extension/Desktop/AI Agent project types. Includes convention inheritance rules, project tag routing logic, and recommend vs. expand criteria. Referenced by /archi.plan step_2 Part 2 (architecture recommendation phase).
 ---
 
 # Architecture Decision Option Library
@@ -36,7 +36,7 @@ Read `02_tech_stack.md` Section 9 (project conventions).
 
 ### Step 2 · Project Tag Routing
 
-Use project tags activated in step_1_load (`[?UI]` / `[?Data]` / `[?CLI]` / `[?Lib]` / `[?API]`) to select applicable dimensions; skip inapplicable ones. Routing rules are in each dimension's heading.
+Use project tags activated in step_1_load (`[?UI]` / `[?Data]` / `[?CLI]` / `[?Lib]` / `[?API]` / `[?Mobile]` / `[?MiniApp]` / `[?Extension]` / `[?Desktop]` / `[?AI]`) to select applicable dimensions; skip inapplicable ones. Routing rules are in each dimension's heading.
 
 ### Step 3 · Recommend vs. Expand
 
@@ -105,6 +105,65 @@ Route to the applicable option library by project tag:
 | D | Nested Sub-resource | Nested routes express parent-child relationships, e.g. `GET /users/:id/posts`. Suited for resources with clear hierarchy | Route structure mirrors data relationships; AI can infer query logic from routes | Nesting beyond 2 levels makes routes verbose; auth checks must verify parent resource ownership at each level |
 | Z | Custom | (describe your API design approach) | - | - |
 
+### [?Mobile] Navigation Architecture Strategy
+
+> Determines where this feature sits in the mobile navigation hierarchy and how it is reached.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Stack Navigator | Hierarchical page stack; users navigate deeper and can go back. Suited for flows with clear depth | Most common mobile navigation pattern; AI generates push/pop with high accuracy | Deep nesting requires complex route parameter passing; parameter type safety easily lost |
+| B | Tab Navigator | Fixed bottom/top tab bar switching between feature entry points. Suited for parallel features users switch frequently | Tab structure is fixed and explicit; AI can generate each Tab independently without interference | State isolation between Tabs and shared data sync require extra handling; AI easily misses data refresh on Tab switch |
+| C | Drawer Navigator | Side-drawer navigation menu. Suited for many features that don't fit a Tab bar, like admin-style apps | Drawer menu structure is clear; AI accurately generates list items and route mappings | Drawer gesture conflicts with inner list scroll; cross-platform behavior differences AI often ignores |
+| D | Modal / Bottom Sheet | Modal page or bottom slide-up panel without leaving the current context. Suited for quick actions, filters, confirmations | Context is localized; no root navigation needed; AI generates conditional rendering accurately | Focus Trap, gesture-close, keyboard-raise adaptation AI often handles incompletely; iOS/Android behavior differences |
+| Z | Custom | (describe your mobile navigation approach) | - | - |
+
+### [?MiniApp] Page Architecture & Request Strategy
+
+> Determines the organization of this feature within the mini-program page structure and network request encapsulation.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Single Page | Feature is completed within a single mini-program page with no cross-page navigation. Suited for focused, low-step features | Page context is concentrated; AI can generate the full logic in a single file with low error rate | Logic bloats as features grow, reducing maintainability |
+| B | Page + Sub-page Flow | Main page + navigated detail/edit sub-pages passing params via `navigateTo`. Suited for clear parent-child relationships | Each page has clear responsibility; AI can generate pages independently without context overlap | Cross-page parameter passing requires serialization; large data needs EventBus or global store, which AI easily misses |
+| C | Tabbar + Module | Bottom Tabbar framework + independent module pages. Suited for parallel-feature main application shells | Tabbar structure is stable; AI can generate each Tab's content modularly | Cross-Tab data sharing requires global state management; mini-program store ecosystems are fragmented, AI's choice often confused |
+| D | WebView Hybrid | Embeds H5 pages in WebView for complex rich-text editing or reusing existing web assets | Can reuse web tech stack; high feature completeness | WebView-to-native communication via bridge; AI-generated message protocols easily have compatibility issues; limited by platform sandbox |
+| Z | Custom | (describe your mini-program page approach) | - | - |
+
+### [?Extension] Architecture Layer Assignment Strategy
+
+> Determines whether the core logic lives in the Background Service Worker, Content Script, or Popup layer.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Background-Centric | Core logic in Background Service Worker; other layers only do UI display and message forwarding. Suited for features needing persistent execution and cross-tab shared state | Logic centralized; message protocol is one-way and clear; AI can generate main logic in a single file | Service Worker lifespan is short (MV3); must handle wake-up and state persistence |
+| B | Content-Centric | Main logic injected into the page's Content Script for deep DOM interaction. Suited for page enhancement, text selection, content modification | Can directly manipulate the page DOM without message relay | JS environments are isolated (isolated world); must communicate via window.postMessage; AI often confuses isolation boundaries |
+| C | Popup-Centric | Main interaction and logic in the Popup page; Background only acts as minimal permission proxy. Suited for simple, click-to-use tool extensions | Popup is just a regular webpage; AI generates UI code identical to web | State lost when Popup closes; must persist to chrome.storage; Popup and Background have independent lifecycles |
+| D | Full Architecture | Background + Content + Popup each handle specific responsibilities, coordinated via a message bus. Suited for complex multi-function extensions | Clear layer separation; each layer can be developed and tested independently | Three-layer message protocol is complex; AI easily misses message routing or confuses sender/receiver |
+| Z | Custom | (describe your extension architecture approach) | - | - |
+
+### [?Desktop] Process Model & IPC Strategy
+
+> Determines how this feature's business logic is distributed between the Main process and Renderer process.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Main-Centric | Core business logic in the Main process; Renderer only handles display and user input. Suited for frequent system API calls (filesystem, native menus, system notifications) | Logic centralized in Main; AI generates business logic in one place; types constrained via IPC contract | Main process blocking makes the entire app unresponsive; Renderer must await IPC responses; AI easily forgets async handling |
+| B | Renderer-Centric | Business logic primarily in Renderer; Main only exposes minimal system API proxies. Suited for UI-centric apps with few system calls | Renderer can use browser standard APIs; AI generates code identical to web development | System calls require contextBridge preloading; AI often forgets to declare preload whitelist, causing security issues |
+| C | Worker Thread | Computation-heavy logic moved to Worker Thread to avoid blocking the UI thread. Suited for file processing, data transformation, heavy tasks | Decouples heavy tasks from UI; good responsiveness | Worker Thread cannot directly access DOM or IPC; must communicate via MessageChannel; AI easily misses serialization constraints |
+| Z | Custom | (describe your desktop process distribution approach) | - | - |
+
+### [?AI] LLM Integration & Agent Architecture Strategy
+
+> Determines how this feature integrates LLM capabilities, organizes Prompts, and manages Agent execution flow.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Direct API Call | Calls LLM Provider API (OpenAI/Claude/Gemini, etc.) directly. Suited for simple features with no need to switch providers | Simplest implementation; AI generates SDK call code with high accuracy | Tightly coupled to provider; switching models requires code changes; streaming output handling inconsistent across providers |
+| B | Provider Abstraction | Wraps a unified LLM client interface with swappable provider backends. Suited for supporting multiple models or local models | Interface is stable; AI can generate call code targeting the abstraction without caring about the underlying provider | Abstraction design is complex; capability differences between providers (context window, tool calling format) are hard to fully unify |
+| C | Tool / Function Calling | Defines Tool Schema for the LLM; LLM decides when to invoke tools. Suited for AI actively calling external capabilities (search, code execution, DB queries) | Tool Schema is structured; AI can generate call adapter code from type definitions | Retry strategies for tool execution errors and state management for concurrent multi-tool calls are easily missed |
+| D | Multi-Agent Orchestration | Multiple specialized Agents collaborate on complex tasks with a router/orchestrator role. Suited for workflows too complex for a single conversation | Each Agent has a single responsibility; AI can independently generate each Agent's Prompt and toolset | State passing between Agents, cycle detection, and cost control are extremely hard to design correctly; AI-generated orchestration logic easily produces infinite loops |
+| Z | Custom | (describe your AI integration approach) | - | - |
+
 ---
 
 ## Dimension 2 · Interaction Pattern (always apply)
@@ -159,6 +218,65 @@ Route to the applicable option library by project tag:
 | C | Decorator / Annotation | Declare behavior via decorators. Suited for framework-level libs; declarative config reduces boilerplate | Declarative code is concise; intent is clear | TS decorator proposal is still evolving; AI may confuse old and new decorator syntax |
 | Z | Custom | (describe your consumer usage approach) | - | - |
 
+### [?Mobile] Mobile Interaction Mode
+
+> Determines how users operate this feature on mobile devices and what feedback they see.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Standard List / Card | Data displayed as a list or cards; tap to see detail. Suited for content browsing and management features | Similar to Web CRUD Table; AI generates FlatList/ScrollView with high accuracy | Large lists need FlatList virtualization; pull-to-refresh and load-more boundary handling AI often misses |
+| B | Form / Wizard | Multi-step forms or guided input. Suited for registration and creation flows | Each step's form is independent; AI can progressively generate fields and validation | Keyboard pop-up causing view occlusion requires KeyboardAvoidingView; cross-step data sharing needs state lifting |
+| C | Gesture-Driven | Relies on swipe, long-press gestures (e.g., swipe-to-delete, drag-to-reorder). Suited for lightweight, high-frequency interactions | Gesture semantics are intuitive; user interactions feel smooth | Gesture conflicts (inner scroll vs. outer gesture) are extremely hard to debug; cross-platform gesture lib API differences AI easily confuses |
+| D | Bottom Sheet / Action Sheet | Tap triggers a bottom slide-up panel or action menu. Suited for secondary actions, filters, quick selections | No route navigation; context is localized | Gesture-to-close, keyboard coordination, and nested scroll need careful handling; iOS/Android behavioral differences AI often ignores |
+| Z | Custom | (describe your mobile interaction approach) | - | - |
+
+### [?MiniApp] Mini-Program Interaction Mode
+
+> Determines how users interact with this feature inside the mini-program.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Native Components | Uses platform native components (button, input, scroll-view) following platform UI guidelines. Suited for most standard features | Native components are platform-guaranteed; AI generates standard mini-program code with high accuracy | Native component style customization is limited; CSS support less complete than web |
+| B | Custom Component | Encapsulates reusable UI units as custom components. Suited for high customization or multi-use scenarios | Component encapsulation improves context locality; AI can generate each component independently | Mini-program custom components have slot/properties/triggerEvent nuances different from web components; AI easily confuses them |
+| C | Half-Screen / Full-Screen Popup | Half-screen popup or full-screen overlay. Suited for detail viewing, confirmation actions, filter panels | Popup structure is clear; AI generates conditional rendering logic accurately | z-index management and animation transitions need attention due to WeChat mini-program's renderer layer behavior |
+| Z | Custom | (describe your mini-program interaction approach) | - | - |
+
+### [?Extension] Extension Interaction Entry Mode
+
+> Determines through which entry point users interact with the extension feature.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Browser Action Popup | Clicking the extension icon opens a small Popup window. Suited for config panels, quick actions, status displays | Popup is a standalone HTML page; AI generates code identical to regular web | Popup dimensions are limited (~600×600px); state is destroyed on close; data must be persisted to chrome.storage |
+| B | Context Menu | Injects options into the right-click context menu. Suited for quick processing of selected text/links/images | Menu item registration logic is simple; AI can generate it in one pass | Menu display conditions must be precisely declared; operation results must be relayed to users via messages |
+| C | Content Injection | Injects buttons, floating icons, or toolbars into target pages. Suited for page enhancement features | The injected UI's HTML/CSS is self-contained; AI can generate it independently | Must handle page style pollution (using Shadow DOM isolation); injection points may break when target page's DOM changes |
+| D | Side Panel | Browser sidebar (Chrome sidePanel API), always present on the right. Suited for persistent tool panels | Full page space available; natural browser-native integration UX | sidePanel API is relatively new; limited cross-browser compatibility; requires user to manually enable |
+| Z | Custom | (describe your extension interaction approach) | - | - |
+
+### [?Desktop] Desktop Interaction Mode
+
+> Determines how users interact with this desktop application feature and which system-level UI paradigm to use.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Window-Based UI | Standard application window; UI is similar to a web app. Suited for feature-rich apps requiring larger workspace | AI-generated web UI code can be reused directly; desktop increment is only IPC calls | Must handle multi-window management, window-size memory, and other desktop-specific details |
+| B | Tray / Menu Bar App | Persistent system tray or macOS menu bar app; clicking opens a small floating window. Suited for background services and quick-view tools | Small, fixed interaction surface; AI can complete in minimal context | Tray icons must have light/dark variants; floating window size and position need precise calculation |
+| C | Global Hotkey Trigger | Global keyboard shortcut to summon the app cross-application. Suited for Spotlight-style launchers and clipboard managers | Users don't need to switch focus; smooth UX | Registering global hotkeys requires system permissions; key conflicts are unpredictable; macOS/Windows registration APIs differ |
+| D | Native Dialogs | Uses system native file pickers, dialogs, and notifications. Suited for file operations and system-level alerts | Zero style maintenance cost; users are familiar | Native dialog API calls differ between Electron and Tauri; must consult docs |
+| Z | Custom | (describe your desktop interaction approach) | - | - |
+
+### [?AI] Agent Interaction Output Mode
+
+> Determines how users trigger AI capabilities and how they receive AI output.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Chat Interface | Conversational input/output with multi-turn context. Suited for open-ended Q&A and assisted creation features | Conversation structure is linear; AI can generate handling logic per message pair | Multi-turn context Token management (trimming/summarization) is easily overlooked; response quality drops sharply when context window is exceeded |
+| B | Command-Driven | User issues structured commands; AI executes and returns results. Suited for AI-assisted specific tasks (code generation, document reorganization) | Command format can be schema-driven; AI generates parsing and execution logic accurately | Must handle command parse failures and missing parameters with graceful degradation; users must learn command syntax |
+| C | Streaming Output | AI output is progressively rendered as a stream; users see generation in real time. Suited for long-form generated content | Streaming API pattern is standard (SSE/Stream); supported by all major SDKs | Retrying on stream interruption and rolling back already-rendered content are complex; AI often struggles with Markdown streaming render escaping bugs |
+| D | Autonomous Agent | AI autonomously plans and executes multi-step tasks, returning complete results. Suited for complex workflow automation | No need for users to intervene step-by-step; end-to-end task completion | Observability of intermediate steps (progress display), partial rollback on failure, and cost control are extremely hard to implement correctly |
+| Z | Custom | (describe your AI interaction output approach) | - | - |
+
 ---
 
 ## Dimension 3 · Data Flow
@@ -201,7 +319,7 @@ Only add supplementary handling if this feature has **special exception scenario
 
 ## Dimension 5 · Access & Scope
 
-**Applicability**: Ask about access control when project has `[?Web/API]` tags; ask about encapsulation when project has `[?Lib]` tags; typically skip for pure `[?CLI]`.
+**Applicability**: Ask about access control when project has `[?Web/API]` tags; ask about mini-program authorization when project has `[?MiniApp]` tags; ask about encapsulation when project has `[?Lib]` tags; typically skip for pure `[?CLI]`.
 **Convention inheritance**: If `02_tech_stack.md` §9 Auth & Access has a value → authentication **mechanism** is inherited (e.g. JWT/RBAC), but **permission level** is still a feature-level decision (e.g. this feature: Public vs. Owner Only).
 
 ### [?Web/API] Access Control
@@ -217,6 +335,18 @@ Only add supplementary handling if this feature has **special exception scenario
 | E | Team / Shared | Team/org members can access. Suited for collaboration, multi-tenant systems | Permission boundary is at team granularity; appropriate scope | Must query team membership table with complex JOINs; cross-team sharing adds further complexity |
 | F | Tier / Subscription | Feature-gated by subscription tier. Suited for SaaS products with tiered features | Rules can be config-driven; decoupled from business logic | Mocking payment state and billing logic is difficult; tests require large volumes of fixture data |
 | Z | Custom | (describe your access control approach) | - | - |
+
+### [?MiniApp] Mini-Program Authorization Mode
+
+> Determines which platform authorization level this feature requires.
+
+| ID | Option | Description | AI+ | AI- |
+|:---|:---|:---|:---|:---|
+| A | Anonymous | No authorization needed; anonymous access. Suited for browse-only features | No auth flow; AI generates the simplest implementation | Must add rate limiting to prevent abuse; no user identity means no ability to associate history data |
+| B | Platform Auth (openid) | Silent authorization obtains openid without showing a permission dialog. Suited for most features needing user distinction but not full profile data | No user action required; code2session flow is standard; AI generation accuracy is high | openid is unique only within the same mini-program/platform; cross-platform or cross-mini-program scenarios need unionid |
+| C | Phone Binding | Dialog authorization to obtain phone number, bound to business account. Suited for real identity association or integration with existing account systems | Platform handles authenticity verification; business side only needs to store the association | Phone number authorization has strict UI restrictions (must use button component, JS trigger forbidden); AI easily generates non-compliant trigger methods |
+| D | Full Profile Auth | Requests full user profile authorization (nickname/avatar). Suited for social features or scenarios requiring user info display | Single authorization obtains complete user information | WeChat tightened this authorization in 2022; must use new getUserProfile API; deprecated getUserInfo is common in AI training data causing confusion |
+| Z | Custom | (describe your mini-program authorization approach) | - | - |
 
 ### [?Lib] Encapsulation & Visibility
 
