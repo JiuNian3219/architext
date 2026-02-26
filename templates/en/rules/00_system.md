@@ -97,6 +97,13 @@ Context addressing steps: see `99_context_glue.md`.
   <step n="4" action="Implementation">
     Generate code or execute action. Comments explain Why, not What.
   </step>
+
+  <step n="5" action="DDAD Drift Check">
+    After outputting code, compare this change against loaded spec.md key points (interface signatures, behavior logic, Gherkin scenario key steps):
+    - ✅ Change within spec scope → No action needed
+    - ⚠️ Change exceeds spec scope (new interface · changed signature · new behavior · new scenario) → Output `⚠️ Spec Drift`; recommend running `/archi.edit <ID>` to sync documentation
+    Skip when: pure Q&A / no code changes / typo · comment · format only.
+  </step>
 </thinking_process>
 
 <communication_style>

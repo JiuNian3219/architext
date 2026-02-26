@@ -97,6 +97,13 @@ alwaysApply: true
   <step n="4" action="Implementation">
     生成程式碼或執行動作。註釋解釋 Why 而非 What。
   </step>
+
+  <step n="5" action="DDAD Drift Check">
+    輸出程式碼後，對比本次變更與已讀取的 spec.md 關鍵點位（介面簽章、行為邏輯、Gherkin 場景關鍵步驟）：
+    - ✅ 變更在 spec 範圍內 → 無需操作
+    - ⚠️ 變更超出 spec 範圍（新介面 · 改簽章 · 新行為 · 新場景）→ 輸出 `⚠️ Spec 漂移`，建議執行 `/archi.edit <ID>` 同步文件
+    跳過條件：純問答 / 無程式碼變更 / 僅 typo · comment · format。
+  </step>
 </thinking_process>
 
 <communication_style>

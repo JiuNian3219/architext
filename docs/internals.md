@@ -437,7 +437,7 @@ graph LR
 | 资产 | Chat Mode 行为 | 对比 Command Mode |
 |:---|:---|:---|
 | `map.json` | Silent Audit Loop Step 1 读取（如非空） | plan/code/map 显式读写 |
-| `spec.md` | DDAD 要求改代码前读取 | plan 创建、edit 修改 |
+| `spec.md` | DDAD 改代码前读取；改代码后 step_5 漂移检查 | plan 创建、edit 修改 |
 | `02_tech_stack.md` | Silent Audit Loop Step 2 读取 | 所有执行命令读取 |
 | `dictionary.json` | data_governance 建议"主动添加"（无强制） | plan step_3 显式更新 |
 | `data_snapshot.json` | data_governance 建议"同步变更"（无强制） | plan step_3 显式更新 |
@@ -1099,7 +1099,7 @@ init 时按编辑器能力自动展开为正确的调用方式。
 | `fix` | **-** | — | - | - | R | R | **R/W** | - |
 | `map` | R | — | - | - | - | - | - | - |
 | `remove` | - | — | - | 清理 | 删除 | 删除 | 删除 | 删除 |
-| **Chat Mode** | R(AuditLoop) | IDE隐式 | R(AuditLoop) | R(寻址) | R(DDAD) | - | - | - |
+| **Chat Mode** | R(AuditLoop) | IDE隐式 | R(AuditLoop) | R(寻址) | R(DDAD)/⚠️ | - | - | - |
 | `npx archi plan` | - | — | - | - | - | - | R | - |
 
 > `04_cli_tools.md` 随所有规则文件一起由 `init` 部署，靠 IDE Rules 机制隐式加载。它**不属于** `01_workflow.md §2.4` 定义的 4 层基底规则；`01_workflow.md` 末尾以注脚形式引用它（`CLI 强制执行规则见 04_cli_tools.md`），作用范围是 Terminal Gate 执行前的工作目录检查。
