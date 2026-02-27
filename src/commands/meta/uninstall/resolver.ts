@@ -8,12 +8,20 @@ import {
 } from "../../../core/rules.ts";
 import { TemplateManager } from "../../../core/template.ts";
 
+export interface UninstallPlan {
+  /** 需要删除的文件/目录绝对路径（已去重） */
+  files: string[];
+  /** 文件删除后需要检查是否为空、空则删除的目录（已去重，按深度降序排列） */
+  dirsToCheck: string[];
+}
+
 /**
- * 计算需要卸载的文件列表
+ * 计算需要卸载的文件列表及删除后需要检查是否为空的目录列表
  * @param cwd 当前工作目录
- * @returns 唯一的文件绝对路径列表
  */
-export async function resolveFilesToDelete(cwd: string): Promise<string[]> {
+export async function resolveFilesToDelete(
+  cwd: string,
+): Promise<UninstallPlan> {
   const config = await loadConfig(cwd);
   const filesToDelete: string[] = [];
 
@@ -116,9 +124,68 @@ export async function resolveFilesToDelete(cwd: string): Promise<string[]> {
             }
           }
         }
+
+        // 处理 Skills 文件（如果编辑器配置了 skills）
+        if (editorConfig.skills) {
+          const skillsTargetDir = path.resolve(
+            cwd,
+            editorConfig.skills.targetDir,
+          );
+          if (await fs.pathExists(skillsTargetDir)) {
+            try {
+              const templateRoot = await TemplateManager.getRoot();
+              const skillsSource = path.join(
+                templateRoot,
+                "zh",
+                GLOBAL_RULES.PATHS.SKILLS_SOURCE,
+              );
+              if (await fs.pathExists(skillsSource)) {
+                const skillDirs = await fs.readdir(skillsSource);
+                for (const skillDir of skillDirs) {
+                  const skillTargetPath = path.join(skillsTargetDir, skillDir);
+                  if (await fs.pathExists(skillTargetPath)) {
+                    filesToDelete.push(skillTargetPath);
+                  }
+                }
+              }
+            } catch {
+              // 如果无法读取模板，忽略错误
+            }
+          }
+        }
       }
     }
   }
 
-  return Array.from(new Set(filesToDelete));
+  // 收集删除后需要检查是否为空的目录
+  // 仅收集 Architext 已知管理的目录，避免误删用户目录
+  const dirsToCheckSet = new Set<string>();
+  if (config?.editors && config.editors.length > 0) {
+    for (const editor of config.editors) {
+      const editorConfig = EDITOR_CONFIGS[editor];
+      if (!editorConfig) continue;
+
+      const rulesDir = path.resolve(cwd, editorConfig.targetDir);
+      dirsToCheckSet.add(rulesDir);
+      // 编辑器根目录（如 .cursor、.windsurf）
+      dirsToCheckSet.add(path.dirname(rulesDir));
+
+      if (editorConfig.commands) {
+        dirsToCheckSet.add(path.resolve(cwd, editorConfig.commands.targetDir));
+      }
+      if (editorConfig.skills) {
+        dirsToCheckSet.add(path.resolve(cwd, editorConfig.skills.targetDir));
+      }
+    }
+  }
+
+  // 按路径深度降序，优先删除更深的目录
+  const dirsToCheck = Array.from(dirsToCheckSet).sort(
+    (a, b) => b.split(path.sep).length - a.split(path.sep).length,
+  );
+
+  return {
+    files: Array.from(new Set(filesToDelete)),
+    dirsToCheck,
+  };
 }
