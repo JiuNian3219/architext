@@ -17,8 +17,8 @@ export class TemplateManager {
    */
   static async getRoot(): Promise<string> {
     const candidates = [
-      path.join(__dirname, "../templates"), // 生产环境：代码已编译到 dist/，templates 被复制到 dist/templates
-      path.resolve(__dirname, "../../templates"), // 开发环境：直接引用 src 同级的 templates
+      path.join(__dirname, "templates"), // 生产：__dirname=dist/，templates 由 tsup 复制到 dist/templates
+      path.resolve(__dirname, "../templates"), // 开发：__dirname=src/，templates 在项目根目录
     ];
 
     for (const candidate of candidates) {

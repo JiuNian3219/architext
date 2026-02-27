@@ -23,8 +23,8 @@ export const uninstallCommand = async () => {
     return;
   }
 
-  // 待删除的文件列表
-  const uniqueFiles = await resolveFilesToDelete(cwd);
+  // 待删除的文件列表及空目录检查列表
+  const { files: uniqueFiles, dirsToCheck } = await resolveFilesToDelete(cwd);
 
   if (uniqueFiles.length === 0) {
     outro(color.green(t("success")));
@@ -53,6 +53,17 @@ export const uninstallCommand = async () => {
     for (const file of uniqueFiles) {
       await fs.remove(file);
     }
+
+    // 按深度降序检查目录：若已为空则一并删除
+    for (const dir of dirsToCheck) {
+      if (dir === cwd) continue;
+      if (!(await fs.pathExists(dir))) continue;
+      const entries = await fs.readdir(dir);
+      if (entries.length === 0) {
+        await fs.remove(dir);
+      }
+    }
+
     s.stop(t("done"));
     outro(color.green(t("success")));
   } catch (error: unknown) {

@@ -66,11 +66,7 @@ export class ConflictResolver {
   ): Promise<"overwrite" | "skip" | "cancel"> {
     logger.warn(t("conflict_title"));
 
-    const limit = 5;
-    conflicts.slice(0, limit).forEach((f) => logger.info(`  - ${f}`));
-    if (conflicts.length > limit) {
-      logger.dim(t("conflict_more", { count: conflicts.length - limit }));
-    }
+    conflicts.forEach((f) => logger.info(`  - ${f}`));
 
     const action = await select({
       message: t("conflict_msg"),

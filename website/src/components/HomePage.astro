@@ -2,7 +2,6 @@
 
 ---
 import type { TranslationData } from '../i18n/translations';
-import pkg from '../../package.json';
 
 interface Props {
   T: TranslationData;
@@ -10,7 +9,19 @@ interface Props {
 }
 
 const { T, lang } = Astro.props;
-const version = pkg.version;
+
+// 构建时从 npm 拉取已发布版本，始终与 npm install 的实际版本一致
+// 若 npm 不可达（如 Docker 网络隔离），回退为占位符
+let version = "0.0.0";
+try {
+  const res = await fetch('https://registry.npmjs.org/architext/latest');
+  if (res.ok) {
+    const data = await res.json() as { version: string };
+    version = data.version;
+  }
+} catch {
+  // fallback when npm unreachable
+}
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://architext.cn').replace(/\/$/, '');
 const canonical  = lang === 'zh' ? `${siteOrigin}/zh/` : `${siteOrigin}/`;
