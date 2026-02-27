@@ -82,6 +82,7 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             docker pull ${{ env.REGISTRY_IMAGE }}
             docker rm -f architext-web || true
             docker run -d \
@@ -110,6 +111,7 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             docker pull ${{ env.REGISTRY_IMAGE }}
             docker rm -f architext-web-preview || true
             docker run -d \
