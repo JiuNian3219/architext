@@ -1,0 +1,14 @@
+# 容器内部 Caddy 配置：仅静态服务，TLS 由网关 Caddy 负责
+
+:80 {
+    root * /usr/share/caddy
+
+    encode gzip
+
+    file_server
+
+    handle_errors {
+        rewrite * /404.html
+        file_server
+    }
+}

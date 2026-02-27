@@ -1,0 +1,119 @@
+name: Deploy Website
+
+on:
+  push:
+    branches: [main, preview]
+    paths:
+      - 'website/**'
+      - '.github/workflows/deploy-website.yml'
+  pull_request:
+    branches: [main, preview]
+    paths:
+      - 'website/**'
+  workflow_dispatch: {}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Prepare lowercase owner
+        shell: bash
+        run: |
+          echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
+      - name: Login to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ env.OWNER_LC }}/architext-website
+          tags: |
+            type=ref,event=pr
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=preview,enable=${{ github.ref == 'refs/heads/preview' }}
+
+      - name: Build and Push Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./website
+          file: ./website/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            PUBLIC_UMAMI_WEBSITE_ID=${{ secrets.UMAMI_WEBSITE_ID }}
+            PUBLIC_UMAMI_SCRIPT_URL=${{ secrets.UMAMI_SCRIPT_URL }}
+          cache-to: type=inline
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: Production
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Prepare image reference
+        shell: bash
+        run: |
+          echo "REGISTRY_IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/architext-website:latest" >> "$GITHUB_ENV"
+
+      - name: Deploy Production
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            docker pull ${{ env.REGISTRY_IMAGE }}
+            docker rm -f architext-web || true
+            docker run -d \
+              --name architext-web \
+              --restart unless-stopped \
+              --network caddy_net \
+              ${{ env.REGISTRY_IMAGE }}
+
+  deploy-preview:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: Preview
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/preview'
+
+    steps:
+      - name: Prepare image reference
+        shell: bash
+        run: |
+          echo "REGISTRY_IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/architext-website:preview" >> "$GITHUB_ENV"
+
+      - name: Deploy Preview
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            docker pull ${{ env.REGISTRY_IMAGE }}
+            docker rm -f architext-web-preview || true
+            docker run -d \
+              --name architext-web-preview \
+              --restart unless-stopped \
+              --network caddy_net \
+              ${{ env.REGISTRY_IMAGE }}

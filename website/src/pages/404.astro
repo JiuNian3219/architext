@@ -1,0 +1,80 @@
+---
+import { t } from '../i18n/translations';
+
+const T = t.en;
+---
+<!DOCTYPE html>
+<html lang={T.htmlLang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{T.notFound.title}</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    :root {
+      --bg: #0c0b0a;
+      --text: #e4ddd3;
+      --text-2: #9a9088;
+      --amber: #b88a3f;
+      --line: rgba(235, 220, 190, 0.07);
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background-image:
+        linear-gradient(rgba(235,220,190,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(235,220,190,0.022) 1px, transparent 1px);
+      background-size: 10px 10px;
+    }
+    .wrap { text-align: center; }
+    .code {
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--amber);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .msg { font-size: 1rem; color: var(--text-2); margin-bottom: 2rem; }
+    .links {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .links a {
+      color: var(--amber);
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(184, 138, 63, 0.3);
+      border-radius: 6px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .links a:hover {
+      background: rgba(184, 138, 63, 0.1);
+      border-color: var(--amber);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="code">404</div>
+    <p class="msg">{T.notFound.message}</p>
+    <div class="links">
+      <a href="/">{T.notFound.home}</a>
+      <a href="/zh/">首页</a>
+    </div>
+  </div>
+</body>
+</html>

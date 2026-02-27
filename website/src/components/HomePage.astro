@@ -1,0 +1,932 @@
+
+
+---
+import type { TranslationData } from '../i18n/translations';
+import pkg from '../../package.json';
+
+interface Props {
+  T: TranslationData;
+  lang: string;
+}
+
+const { T, lang } = Astro.props;
+const version = pkg.version;
+
+const siteOrigin = (Astro.site?.toString() ?? 'https://architext.cn').replace(/\/$/, '');
+const canonical  = lang === 'zh' ? `${siteOrigin}/zh/` : `${siteOrigin}/`;
+
+const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID as string | undefined;
+const umamiScriptUrl = import.meta.env.PUBLIC_UMAMI_SCRIPT_URL as string | undefined;
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Architext',
+  description: T.meta.description,
+  url: siteOrigin,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  softwareVersion: version,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  downloadUrl: 'https://www.npmjs.com/package/architext',
+  sameAs: ['https://github.com/JiuNian3219/architext'],
+});
+---
+<!DOCTYPE html>
+<html lang={T.htmlLang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Primary -->
+  <title>{T.meta.title}</title>
+  <meta name="description" content={T.meta.description} />
+  <meta name="keywords"    content={T.meta.keywords} />
+  <meta name="author"      content="Architext" />
+  <meta name="robots"      content="index, follow" />
+  <link rel="canonical"    href={canonical} />
+
+  <!-- Open Graph -->
+  <meta property="og:type"              content="website" />
+  <meta property="og:site_name"         content="Architext" />
+  <meta property="og:title"             content={T.meta.title} />
+  <meta property="og:description"       content={T.meta.description} />
+  <meta property="og:url"               content={canonical} />
+  <meta property="og:image"             content={`${siteOrigin}/og-image.png`} />
+  <meta property="og:image:width"        content="1200" />
+  <meta property="og:image:height"       content="630" />
+  <meta property="og:locale"            content={T.meta.ogLocale} />
+  <meta property="og:locale:alternate"  content={T.meta.ogLocaleAlt} />
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:image"       content={`${siteOrigin}/og-image.png`} />
+  <meta name="twitter:title"       content={T.meta.title} />
+  <meta name="twitter:description" content={T.meta.description} />
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="en"    href={`${siteOrigin}/`} />
+  <link rel="alternate" hreflang="zh"    href={`${siteOrigin}/zh/`} />
+  <link rel="alternate" hreflang="x-default" href={`${siteOrigin}/`} />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
+
+  <!-- Umami Analytics (仅在环境变量存在时注入) -->
+  {umamiWebsiteId && umamiScriptUrl && (
+    <script
+      defer
+      src={umamiScriptUrl}
+      data-website-id={umamiWebsiteId}
+    ></script>
+  )}
+  <style>
+    /* ── Reset ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+    /* ── Design tokens ──────────────────────────────── */
+    :root {
+      --bg:          #0c0b0a;
+      --surface:     #141210;
+      --surface-2:   #1b1915;
+      --line:        rgba(235, 220, 190, 0.07);
+      --line-strong: rgba(235, 220, 190, 0.13);
+      --text:        #e4ddd3;
+      --text-2:      #9a9088;
+      --text-3:      #625c55;
+      --amber:       #b88a3f;
+      --amber-dim:   rgba(184, 138, 63, 0.10);
+      --green:       #6b9e6b;
+      --yellow:      #c9a84c;
+      --font-sans:   -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono:   'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Architectural graph-paper texture */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(235,220,190,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(235,220,190,0.022) 1px, transparent 1px),
+        linear-gradient(rgba(235,220,190,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(235,220,190,0.05) 1px, transparent 1px);
+      background-size: 10px 10px, 10px 10px, 60px 60px, 60px 60px;
+      background-position: -0.5px -0.5px, -0.5px -0.5px, -0.5px -0.5px, -0.5px -0.5px;
+    }
+
+    /* ── Utility ────────────────────────────────────── */
+    .z1 { position: relative; z-index: 1; }
+    a { color: inherit; text-decoration: none; }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0.1em 0.4em;
+      color: var(--amber);
+    }
+
+    /* ── Nav ────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(12, 11, 10, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.55rem;
+      font-size: 0.95rem; font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .nav-right {
+      display: flex; align-items: center; gap: 1.75rem;
+    }
+    .nav-right a {
+      font-size: 0.85rem; color: var(--text-2);
+      transition: color 0.15s;
+    }
+    .nav-right a:hover { color: var(--text); }
+
+    /* Language switcher */
+    .lang-switch {
+      display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.28rem 0.75rem;
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      font-size: 0.78rem; color: var(--text-3);
+      font-family: var(--font-mono);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .lang-switch:hover { border-color: var(--amber); color: var(--amber); }
+
+    .nav-gh {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.3rem 0.85rem;
+      border: 1px solid var(--line-strong);
+      border-radius: 5px;
+      font-size: 0.82rem;
+      color: var(--text-2) !important;
+      transition: border-color 0.15s, color 0.15s !important;
+    }
+    .nav-gh:hover { border-color: var(--amber); color: var(--amber) !important; }
+
+    /* ── Section base ───────────────────────────────── */
+    .section {
+      max-width: 1080px; margin: 0 auto;
+      padding: 6rem 2.5rem;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 700; letter-spacing: -0.03em; line-height: 1.15;
+      color: var(--text); max-width: 540px;
+    }
+    .section-desc {
+      margin-top: 0.9rem;
+      font-size: 0.975rem; color: var(--text-2);
+      max-width: 500px; line-height: 1.75;
+    }
+    .divider {
+      border: none; border-top: 1px solid var(--line);
+      max-width: 1080px; margin: 0 auto;
+    }
+
+    /* ── Hero ───────────────────────────────────────── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 7rem 2rem 5rem;
+      overflow: hidden;
+    }
+    /* Corner registration marks */
+    .hero::before, .hero::after {
+      content: '';
+      position: absolute;
+      width: 20px; height: 20px;
+      border-color: rgba(184,138,63,0.22);
+      border-style: solid; z-index: 0;
+    }
+    .hero::before { top: 5rem; left: 2.5rem; border-width: 1px 0 0 1px; }
+    .hero::after  { bottom: 5rem; right: 2.5rem; border-width: 0 1px 1px 0; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--line-strong); border-radius: 3px;
+      padding: 0.28rem 0.75rem;
+      font-size: 0.73rem; color: var(--text-3);
+      letter-spacing: 0.06em; margin-bottom: 2.5rem;
+      font-family: var(--font-mono);
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 7.5vw, 5.75rem);
+      font-weight: 700; letter-spacing: -0.04em; line-height: 1.02;
+      color: var(--text); max-width: 820px;
+    }
+    .hero h1 em { font-style: normal; color: var(--amber); }
+    .hero-tagline {
+      margin-top: 1.4rem;
+      font-size: 1.1rem; color: var(--text-2);
+      max-width: 440px; line-height: 1.7;
+    }
+
+    /* Command bar */
+    .cmd-bar {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      margin-top: 2.75rem;
+      background: var(--surface); border: 1px solid var(--line-strong);
+      border-radius: 6px; padding: 0.65rem 1.1rem;
+      font-family: var(--font-mono); font-size: 0.88rem;
+      cursor: pointer; transition: border-color 0.15s;
+      position: relative;
+    }
+    .cmd-bar:hover { border-color: var(--amber); }
+    .cmd-prompt { color: var(--text-3); }
+    .cmd-btn {
+      font-size: 0.72rem; color: var(--text-3);
+      border: 1px solid var(--line); border-radius: 3px;
+      padding: 0.15rem 0.45rem; font-family: var(--font-sans);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .cmd-bar:hover .cmd-btn { border-color: var(--amber); color: var(--amber); }
+    .cmd-copied {
+      position: absolute; top: -2rem; right: 0;
+      background: var(--surface-2); border: 1px solid var(--line-strong);
+      font-size: 0.72rem; color: var(--amber);
+      padding: 0.2rem 0.5rem; border-radius: 3px;
+      opacity: 0; pointer-events: none; transition: opacity 0.15s;
+    }
+    .cmd-bar.is-copied .cmd-copied { opacity: 1; }
+
+    .hero-actions {
+      display: flex; gap: 0.75rem; align-items: center;
+      margin-top: 1.25rem; flex-wrap: wrap; justify-content: center;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      padding: 0.6rem 1.2rem; border-radius: 5px;
+      font-size: 0.875rem; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .btn-amber {
+      background: var(--amber); color: var(--bg); border-color: var(--amber);
+    }
+    .btn-amber:hover { background: #ca9a49; border-color: #ca9a49; }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--line-strong); color: var(--text-2);
+    }
+    .btn-outline:hover { border-color: var(--text-2); color: var(--text); }
+
+    /* Terminal window */
+    .hero-terminal {
+      margin-top: 4rem; width: 100%; max-width: 660px;
+      background: var(--surface); border: 1px solid var(--line-strong);
+      border-radius: 8px; overflow: hidden;
+      box-shadow: 0 32px 64px rgba(0,0,0,0.45);
+    }
+    .term-bar {
+      display: flex; align-items: center; gap: 0.45rem;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.025);
+    }
+    .term-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .term-dot-r { background: #9a4040; }
+    .term-dot-y { background: #8a7030; }
+    .term-dot-g { background: #3a7040; }
+    .term-title { margin: 0 auto; font-size: 0.72rem; color: var(--text-3); font-family: var(--font-mono); }
+    .term-body {
+      padding: 1.1rem 1.4rem;
+      font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.85;
+    }
+    .tc-dim    { color: var(--text-3); }
+    .tc-text   { color: var(--text); }
+    .tc-amber  { color: var(--amber); }
+    .tc-green  { color: var(--green); }
+    .tc-yellow { color: var(--yellow); }
+
+    /* Scroll cue */
+    .scroll-cue {
+      margin-top: 3rem;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.4rem; color: var(--text-3); font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 36px;
+      background: linear-gradient(180deg, var(--amber) 0%, transparent 100%);
+      animation: drip 2s ease-in-out infinite;
+    }
+    @keyframes drip {
+      0%, 100% { opacity: 0.4; } 50% { opacity: 1; }
+    }
+
+    /* ── IDE chips ──────────────────────────────────── */
+    .ide-section {
+      border-top: 1px solid var(--line);
+      text-align: center; padding: 2.5rem 2rem 3rem;
+    }
+    .ide-label {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-3);
+      margin-bottom: 1.25rem;
+    }
+    .ide-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem;
+    }
+    .ide-chip {
+      display: flex; align-items: center; gap: 0.45rem;
+      border: 1px solid var(--line); border-radius: 4px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.8rem; color: var(--text-3); font-family: var(--font-mono);
+    }
+    .ide-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    /* ── Compare table ──────────────────────────────── */
+    .compare-wrap {
+      margin-top: 3.5rem; border: 1px solid var(--line);
+      border-radius: 8px; overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      padding: 0.9rem 1.4rem; text-align: left;
+      font-size: 0.85rem; border-bottom: 1px solid var(--line);
+    }
+    th {
+      color: var(--text-3); font-weight: 500;
+      font-size: 0.76rem; letter-spacing: 0.05em; text-transform: uppercase;
+      background: rgba(255,255,255,0.015);
+    }
+    td:first-child { color: var(--text-2); width: 26%; }
+    tr:last-child td { border-bottom: none; }
+    .td-bad  { color: var(--text-3); }
+    .td-good { color: var(--amber); }
+    .td-head { color: var(--amber) !important; font-weight: 600 !important; }
+
+    /* ── Cards ──────────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1px; margin-top: 2px;
+      background: var(--line);
+      border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+    }
+    .card {
+      background: var(--bg); padding: 1.75rem 1.5rem;
+      transition: background 0.15s;
+    }
+    .card:hover { background: var(--surface); }
+    .card-icon { width: 36px; height: 36px; margin-bottom: 1rem; }
+    .card h3 { font-size: 0.93rem; font-weight: 600; margin-bottom: 0.45rem; }
+    .card p  { font-size: 0.845rem; color: var(--text-2); line-height: 1.7; }
+
+    /* ── Workflow ───────────────────────────────────── */
+    .workflow-diagram { margin-top: 3.5rem; overflow-x: auto; padding-bottom: 0.5rem; }
+    .workflow-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .wd-cmd {
+      font-size: 0.78rem; font-family: var(--font-mono);
+      color: var(--amber); margin-bottom: 0.5rem;
+    }
+    .wd-desc { font-size: 0.875rem; color: var(--text-2); line-height: 1.7; }
+    .wd-desc code {
+      font-size: 0.83em; background: var(--surface-2);
+      border: 1px solid var(--line); border-radius: 3px;
+      padding: 0.08em 0.35em; color: var(--amber);
+    }
+
+    /* ── Quick Start ────────────────────────────────── */
+    .qs-block {
+      margin-top: 3rem; background: var(--surface);
+      border: 1px solid var(--line-strong);
+      border-radius: 8px; overflow: hidden;
+    }
+    .qs-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.8rem 1.25rem; border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+    }
+    .qs-tabs { display: flex; }
+    .qs-tab {
+      padding: 0.3rem 0.85rem; font-size: 0.78rem; cursor: pointer;
+      color: var(--text-3); border-bottom: 1.5px solid transparent;
+      transition: all 0.15s; font-family: var(--font-mono);
+    }
+    .qs-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+    .qs-lang { font-size: 0.72rem; color: var(--text-3); font-family: var(--font-mono); }
+    .qs-body {
+      padding: 1.25rem 1.4rem;
+      font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.9;
+    }
+    .qc { color: var(--text-3); }
+    .qt { color: var(--text); }
+    .qp { color: var(--amber); }
+    .qo { color: var(--green); }
+    .cmd-table-wrap {
+      margin-top: 2.5rem; border: 1px solid var(--line);
+      border-radius: 8px; overflow: hidden;
+    }
+    .group-row td {
+      font-size: 0.7rem !important;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber) !important;
+      background: rgba(184,138,63,0.05);
+      padding: 0.55rem 1.4rem !important;
+      border-bottom: 1px solid var(--line) !important;
+    }
+
+    /* ── CTA ────────────────────────────────────────── */
+    .cta-section {
+      max-width: 620px; margin: 0 auto;
+      padding: 0 2rem 8rem; text-align: center;
+    }
+    .cta-inner {
+      position: relative; border: 1px solid var(--line-strong);
+      border-radius: 10px; padding: 3.5rem 2.5rem;
+      background: var(--surface);
+    }
+    .cta-inner::before {
+      content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 1px; background: var(--amber);
+    }
+    .cta-inner h2 {
+      font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+      font-weight: 700; letter-spacing: -0.03em;
+    }
+    .cta-inner p { margin-top: 0.75rem; color: var(--text-2); font-size: 0.9rem; }
+    .cta-btns {
+      display: flex; gap: 0.75rem; justify-content: center;
+      margin-top: 2rem; flex-wrap: wrap;
+    }
+
+    /* ── Footer ─────────────────────────────────────── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--line);
+      padding: 1.75rem 2.5rem;
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      display: flex; align-items: center; gap: 0.45rem;
+      font-size: 0.88rem; font-weight: 600; color: var(--text-2);
+    }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a {
+      font-size: 0.8rem; color: var(--text-3); transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--text-2); }
+    .footer-copy { font-size: 0.76rem; color: var(--text-3); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="z1">
+  <a href={lang === 'zh' ? '/zh/' : '/'} class="nav-logo">
+    <!-- Logo mark: geometric "A" with engineering registration dots -->
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="2.5"  cy="2.5"  r="1" fill="#b88a3f" opacity="0.45"/>
+      <circle cx="23.5" cy="2.5"  r="1" fill="#b88a3f" opacity="0.45"/>
+      <circle cx="2.5"  cy="23.5" r="1" fill="#b88a3f" opacity="0.45"/>
+      <circle cx="23.5" cy="23.5" r="1" fill="#b88a3f" opacity="0.45"/>
+      <path d="M 6.5 21 L 13 5 L 19.5 21" stroke="#b88a3f" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="9.5" y1="15" x2="16.5" y2="15" stroke="#b88a3f" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    Architext
+  </a>
+  <div class="nav-right">
+    <a href="#workflow">{T.nav.workflow}</a>
+    <a href="#why">{T.nav.why}</a>
+    <a href="#start">{T.nav.quickstart}</a>
+    <a href={T.otherLangHref} class="lang-switch" aria-label="Switch language">
+      <!-- Globe icon -->
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+      </svg>
+      {T.otherLang}
+    </a>
+    <a href="https://github.com/JiuNian3219/architext" target="_blank" rel="noopener" class="nav-gh">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <svg width="6" height="6" viewBox="0 0 6 6" aria-hidden="true">
+      <circle cx="3" cy="3" r="3" fill="#6b9e6b"/>
+    </svg>
+    v{version} &nbsp;·&nbsp; {T.hero.badge}
+  </div>
+
+  <h1 set:html={T.hero.titleHtml} />
+  <p class="hero-tagline">{T.hero.tagline}</p>
+
+  <div class="cmd-bar z1" id="cmdBar">
+    <span class="cmd-prompt">$</span>
+    <span class="tc-text">npx archi init</span>
+    <span class="cmd-btn">copy</span>
+    <span class="cmd-copied">copied</span>
+  </div>
+
+  <div class="hero-actions z1">
+    <a href="#start" class="btn btn-amber">{T.hero.ctaPrimary}</a>
+    <a href="https://github.com/JiuNian3219/architext" target="_blank" rel="noopener" class="btn btn-outline">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      {T.hero.ctaSecondary}
+    </a>
+  </div>
+
+  <!-- Terminal demo (CLI output — kept in English as authentic output) -->
+  <div class="hero-terminal z1">
+    <div class="term-bar">
+      <div class="term-dot term-dot-r"></div>
+      <div class="term-dot term-dot-y"></div>
+      <div class="term-dot term-dot-g"></div>
+      <span class="term-title">~ npx archi init</span>
+    </div>
+    <div class="term-body">
+      <div><span class="tc-dim">$</span> <span class="tc-text">npx archi init</span></div>
+      <div class="tc-dim">——————————————————————————————————</div>
+      <div><span class="tc-amber">◆</span> <span class="tc-text">Select language</span>  <span class="tc-dim">› English</span></div>
+      <div><span class="tc-amber">◆</span> <span class="tc-text">Select IDE(s)</span>     <span class="tc-dim">› Cursor</span></div>
+      <div><span class="tc-amber">◆</span> <span class="tc-text">Select project type</span> <span class="tc-dim">› Web SPA / PWA</span></div>
+      <div>&nbsp;</div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">Docs deployed</span>     <span class="tc-dim">→ .architext/</span></div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">Rules deployed</span>    <span class="tc-dim">→ .cursor/rules/</span></div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">Commands deployed</span> <span class="tc-dim">→ .cursor/commands/</span></div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">Skills deployed</span>   <span class="tc-dim">→ .cursor/skills/</span></div>
+      <div>&nbsp;</div>
+      <div><span class="tc-amber">◆</span> Done. Fill in <span class="tc-yellow">project-brief.md</span>, then run <span class="tc-yellow">/archi.start</span> in Cursor.</div>
+    </div>
+  </div>
+
+  <div class="scroll-cue z1">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+<!-- IDE CHIPS -->
+<div class="ide-section z1">
+  <p class="ide-label">{T.ide.label}</p>
+  <div class="ide-row">
+    <div class="ide-chip">
+      <div class="ide-dot" style="background:var(--green)"></div>
+      Cursor <span style="margin-left:.3rem;opacity:.5;font-size:.7rem">{T.ide.cursorNote}</span>
+    </div>
+    <div class="ide-chip"><div class="ide-dot" style="background:var(--text-3)"></div> Windsurf</div>
+    <div class="ide-chip"><div class="ide-dot" style="background:var(--text-3)"></div> Trae</div>
+    <div class="ide-chip"><div class="ide-dot" style="background:var(--text-3)"></div> VS Code</div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- WHY -->
+<section id="why" class="z1">
+  <div class="section">
+    <span class="eyebrow">{T.why.eyebrow}</span>
+    <h2 class="section-title" set:html={T.why.title} />
+    <p class="section-desc">{T.why.desc}</p>
+
+    <div class="compare-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>{T.why.tableHead1}</th>
+            <th class="td-head">{T.why.tableHead2}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {T.why.rows.map(row => (
+            <tr>
+              <td>{row.label}</td>
+              <td class="td-bad">{row.bad}</td>
+              <td class="td-good">{row.good}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid" style="margin-top:2px;">
+      <!-- Card 1: Document stack SVG -->
+      <div class="card">
+        <div class="card-icon">
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="6"  width="18" height="22" rx="2" stroke="rgba(184,138,63,0.22)" stroke-width="1"/>
+            <rect x="6"  y="10" width="18" height="22" rx="2" fill="var(--surface-2)" stroke="#b88a3f" stroke-width="1"/>
+            <line x1="9"  y1="16" x2="21" y2="16" stroke="#b88a3f" stroke-width="1" stroke-linecap="round" opacity="0.65"/>
+            <line x1="9"  y1="20" x2="21" y2="20" stroke="#b88a3f" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+            <line x1="9"  y1="24" x2="15" y2="24" stroke="#b88a3f" stroke-width="1" stroke-linecap="round" opacity="0.28"/>
+          </svg>
+        </div>
+        <h3>{T.why.cards[0].title}</h3>
+        <p>{T.why.cards[0].desc}</p>
+      </div>
+      <!-- Card 2: Module grid SVG -->
+      <div class="card">
+        <div class="card-icon">
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4"  y="4"  width="10" height="10" rx="1.5" stroke="#b88a3f" stroke-width="1" opacity="0.9"/>
+            <rect x="20" y="4"  width="10" height="10" rx="1.5" stroke="#b88a3f" stroke-width="1" opacity="0.4"/>
+            <rect x="4"  y="20" width="10" height="10" rx="1.5" stroke="#b88a3f" stroke-width="1" opacity="0.4"/>
+            <rect x="20" y="20" width="10" height="10" rx="1.5" stroke="#b88a3f" stroke-width="1" opacity="0.75"/>
+            <line x1="14" y1="9"  x2="20" y2="9"  stroke="#b88a3f" stroke-width="1" stroke-dasharray="1.5 1.5" opacity="0.4"/>
+            <line x1="9"  y1="14" x2="9"  y2="20" stroke="#b88a3f" stroke-width="1" stroke-dasharray="1.5 1.5" opacity="0.4"/>
+            <line x1="25" y1="14" x2="25" y2="20" stroke="#b88a3f" stroke-width="1" stroke-dasharray="1.5 1.5" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3>{T.why.cards[1].title}</h3>
+        <p>{T.why.cards[1].desc}</p>
+      </div>
+      <!-- Card 3: Circular persistence SVG -->
+      <div class="card">
+        <div class="card-icon">
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 17 6 A 11 11 0 1 1 6.5 23" stroke="#b88a3f" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M 4 21 L 6.5 23 L 8.5 20.5" stroke="#b88a3f" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="17" cy="17" r="3" stroke="#b88a3f" stroke-width="1" opacity="0.55"/>
+            <line x1="17" y1="13" x2="17" y2="12" stroke="#b88a3f" stroke-width="1" opacity="0.4"/>
+            <line x1="17" y1="21" x2="17" y2="22" stroke="#b88a3f" stroke-width="1" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3>{T.why.cards[2].title}</h3>
+        <p>{T.why.cards[2].desc}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- WORKFLOW -->
+<section id="workflow" class="z1">
+  <div class="section">
+    <span class="eyebrow">{T.workflow.eyebrow}</span>
+    <h2 class="section-title" set:html={T.workflow.title} />
+    <p class="section-desc">{T.workflow.desc}</p>
+
+    <!-- Workflow diagram SVG: architectural section-cut style -->
+    <div class="workflow-diagram">
+      <svg
+        viewBox="0 0 860 170"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style="width:100%; min-width:700px; display:block;"
+        role="img"
+        aria-label="Architext workflow diagram"
+      >
+        <!-- Section-cut reference line -->
+        <line x1="20" y1="14" x2="840" y2="14" stroke="rgba(184,138,63,0.1)" stroke-width="0.5" stroke-dasharray="3 3"/>
+        <circle cx="20"  cy="14" r="2.5" stroke="rgba(184,138,63,0.28)" stroke-width="0.8" fill="none"/>
+        <circle cx="840" cy="14" r="2.5" stroke="rgba(184,138,63,0.28)" stroke-width="0.8" fill="none"/>
+
+        <!-- Node 1: /archi.start -->
+        <rect x="20" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.55)" stroke-width="1" fill="rgba(184,138,63,0.04)"/>
+        <line x1="20" y1="30" x2="27" y2="30" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
+        <line x1="20" y1="30" x2="20" y2="37" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
+        <line x1="140" y1="82" x2="133" y2="82" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
+        <line x1="140" y1="82" x2="140" y2="75" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
+        <text x="80" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
+        <text x="80" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.start</text>
+        <text x="80" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">vision.md</text>
+        <text x="80" y="117" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">roadmap.json</text>
+
+        <!-- Arrow 1→2 -->
+        <line x1="142" y1="56" x2="195" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
+        <path d="M 191 52 L 196 56 L 191 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- Node 2: /archi.scope (optional, dashed) -->
+        <rect x="200" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.22)" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="260" y="52" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">/archi</text>
+        <text x="260" y="68" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">.scope</text>
+        <text x="260" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">roadmap tasks</text>
+        <text x="260" y="22" text-anchor="middle" fill="#4a4540" font-size="8.5" font-family="monospace">{T.workflow.svgOptional}</text>
+
+        <!-- Arrow 2→3 -->
+        <line x1="322" y1="56" x2="375" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
+        <path d="M 371 52 L 376 56 L 371 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- Node 3: /archi.plan -->
+        <rect x="380" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.48)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
+        <text x="440" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
+        <text x="440" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.plan</text>
+        <text x="440" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">spec.md</text>
+        <text x="440" y="117" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">plan.json</text>
+
+        <!-- Arrow 3→4 -->
+        <line x1="502" y1="56" x2="555" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
+        <path d="M 551 52 L 556 56 L 551 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- Node 4: /archi.code -->
+        <rect x="560" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.48)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
+        <text x="620" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
+        <text x="620" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.code</text>
+        <text x="620" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">source code</text>
+
+        <!-- Arrow 4→5 -->
+        <line x1="682" y1="56" x2="735" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
+        <path d="M 731 52 L 736 56 L 731 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- Node 5: /archi.audit -->
+        <rect x="740" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.42)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
+        <text x="800" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
+        <text x="800" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.audit</text>
+        <text x="800" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">audit.md</text>
+
+        <!-- Stage labels -->
+        <text x="80"  y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[0]}</text>
+        <text x="260" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[1]}</text>
+        <text x="440" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[2]}</text>
+        <text x="620" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[3]}</text>
+        <text x="800" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[4]}</text>
+      </svg>
+    </div>
+
+    <div class="workflow-details">
+      {T.workflow.details.map(d => (
+        <div>
+          <p class="wd-cmd">{d.cmd}</p>
+          <p class="wd-desc" set:html={d.desc} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- QUICK START -->
+<section id="start" class="z1">
+  <div class="section">
+    <span class="eyebrow">{T.quickstart.eyebrow}</span>
+    <h2 class="section-title" set:html={T.quickstart.title} />
+
+    <div class="qs-block">
+      <div class="qs-header">
+        <div class="qs-tabs">
+          <div class="qs-tab active" id="tab-new">{T.quickstart.tab1}</div>
+          <div class="qs-tab" id="tab-existing">{T.quickstart.tab2}</div>
+        </div>
+        <span class="qs-lang">bash</span>
+      </div>
+      <div class="qs-body" id="qs-new">
+        <div><span class="qc">{T.quickstart.new.comment1}</span></div>
+        <div><span class="qp">$</span> <span class="qt">npx archi init</span></div>
+        <div>&nbsp;</div>
+        <div><span class="qc">{T.quickstart.new.comment2}</span></div>
+        <div><span class="qp">&gt;</span> <span class="qt">/archi.start project-brief.md</span></div>
+        <div>&nbsp;</div>
+        <div><span class="qo">{T.quickstart.new.out1}</span></div>
+        <div><span class="qo">{T.quickstart.new.out2}</span></div>
+        <div><span class="qo">{T.quickstart.new.out3}</span></div>
+      </div>
+      <div class="qs-body" id="qs-existing" style="display:none">
+        <div><span class="qc">{T.quickstart.existing.comment1}</span></div>
+        <div><span class="qp">$</span> <span class="qt">npx archi init</span></div>
+        <div>&nbsp;</div>
+        <div><span class="qc">{T.quickstart.existing.comment2}</span></div>
+        <div><span class="qp">&gt;</span> <span class="qt">/archi.inherit</span></div>
+        <div>&nbsp;</div>
+        <div><span class="qo">{T.quickstart.existing.out1}</span></div>
+        <div><span class="qo">{T.quickstart.existing.out2}</span></div>
+        <div><span class="qo">{T.quickstart.existing.out3}</span></div>
+      </div>
+    </div>
+
+    <div class="cmd-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            {T.quickstart.tableHead.map(h => <th>{h}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {T.quickstart.tableGroups.map(group => (
+            <>
+              <tr class="group-row">
+                <td colspan="3">{group.label}</td>
+              </tr>
+              {group.rows.map(row => (
+                <tr>
+                  <td><code>{row.cmd}</code></td>
+                  <td style="color:var(--text-2);font-size:0.85rem;">{row.desc}</td>
+                  <td style="color:var(--text-3);font-size:0.82rem;font-family:var(--font-mono);">{row.out}</td>
+                </tr>
+              ))}
+            </>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section z1">
+  <div class="cta-inner">
+    <h2>{T.cta.title}</h2>
+    <p set:html={T.cta.desc} />
+    <div class="cta-btns">
+      <a href="https://github.com/JiuNian3219/architext" target="_blank" rel="noopener" class="btn btn-amber">{T.cta.btn1}</a>
+      <a href="https://github.com/JiuNian3219/architext/blob/main/README.md" target="_blank" rel="noopener" class="btn btn-outline">{T.cta.btn2}</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="z1">
+  <div class="footer-logo">
+    <svg width="18" height="18" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="2.5"  cy="2.5"  r="0.8" fill="#b88a3f" opacity="0.45"/>
+      <circle cx="23.5" cy="2.5"  r="0.8" fill="#b88a3f" opacity="0.45"/>
+      <circle cx="2.5"  cy="23.5" r="0.8" fill="#b88a3f" opacity="0.45"/>
+      <circle cx="23.5" cy="23.5" r="0.8" fill="#b88a3f" opacity="0.45"/>
+      <path d="M 6.5 21 L 13 5 L 19.5 21" stroke="#b88a3f" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="9.5" y1="15" x2="16.5" y2="15" stroke="#b88a3f" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+    Architext
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/JiuNian3219/architext" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.npmjs.com/package/architext" target="_blank" rel="noopener">npm</a>
+    <a href="https://github.com/JiuNian3219/architext/blob/main/CHANGELOG.md" target="_blank" rel="noopener">{T.footer.changelog}</a>
+    <a href="https://github.com/JiuNian3219/architext/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">{T.footer.contributing}</a>
+  </div>
+  <div class="footer-copy">MIT License</div>
+</footer>
+
+<script>
+  // Copy command bar
+  const bar = document.getElementById('cmdBar');
+  bar?.addEventListener('click', () => {
+    navigator.clipboard.writeText('npx archi init').then(() => {
+      bar.classList.add('is-copied');
+      setTimeout(() => bar.classList.remove('is-copied'), 1800);
+    });
+  });
+
+  // Quick Start tabs
+  const tabNew      = document.getElementById('tab-new');
+  const tabExisting = document.getElementById('tab-existing');
+  const qsNew       = document.getElementById('qs-new');
+  const qsExisting  = document.getElementById('qs-existing');
+
+  tabNew?.addEventListener('click', () => {
+    tabNew.classList.add('active');
+    tabExisting?.classList.remove('active');
+    if (qsNew) qsNew.style.display = '';
+    if (qsExisting) qsExisting.style.display = 'none';
+  });
+  tabExisting?.addEventListener('click', () => {
+    tabExisting.classList.add('active');
+    tabNew?.classList.remove('active');
+    if (qsExisting) qsExisting.style.display = '';
+    if (qsNew) qsNew.style.display = 'none';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://architext.cn/sitemap-index.xml

@@ -36,6 +36,9 @@ pnpm-debug.log*
 # Architext
 .architext/*
 
+# Astro (website)
+website/.astro
+
 # System Files
 .DS_Store
 Thumbs.db

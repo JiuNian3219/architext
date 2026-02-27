@@ -15,6 +15,9 @@
     "prepare": "husky"
   },
   "lint-staged": {
+    "ignore": [
+      "website/.astro/**"
+    ],
     "*.{js,ts,tsx,jsx}": [
       "eslint --fix",
       "prettier --write"

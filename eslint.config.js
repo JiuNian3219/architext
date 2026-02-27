@@ -4,7 +4,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default [
-  { ignores: ["dist", "node_modules", "templates"] },
+  { ignores: ["dist", "node_modules", "templates", "website/.astro"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettierConfig,
