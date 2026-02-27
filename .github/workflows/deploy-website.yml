@@ -4,12 +4,12 @@ on:
   push:
     branches: [main, preview]
     paths:
-      - 'website/**'
-      - '.github/workflows/deploy-website.yml'
+      - "website/**"
+      - ".github/workflows/deploy-website.yml"
   pull_request:
     branches: [main, preview]
     paths:
-      - 'website/**'
+      - "website/**"
   workflow_dispatch: {}
 
 jobs:
