@@ -2,7 +2,7 @@
 
 ---
 import type { TranslationData } from '../i18n/translations';
-import pkg from '../../package.json';
+import pkg from '../../../package.json';
 
 interface Props {
   T: TranslationData;
@@ -10,7 +10,19 @@ interface Props {
 }
 
 const { T, lang } = Astro.props;
-const version = pkg.version;
+
+// 构建时从 npm 拉取已发布版本，始终与 npm install 的实际版本一致
+// 若 npm 不可达（网络隔离的 CI 环境），回退到本地 package.json
+let version: string = pkg.version;
+try {
+  const res = await fetch('https://registry.npmjs.org/architext/latest');
+  if (res.ok) {
+    const data = await res.json() as { version: string };
+    version = data.version;
+  }
+} catch {
+  // fallback to local version
+}
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://architext.cn').replace(/\/$/, '');
 const canonical  = lang === 'zh' ? `${siteOrigin}/zh/` : `${siteOrigin}/`;

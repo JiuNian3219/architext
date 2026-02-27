@@ -11,4 +11,12 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
+  vite: {
+    server: {
+      fs: {
+        // 允许 dev server 访问 website/ 上级目录（读取根 package.json 版本号）
+        allow: [".."],
+      },
+    },
+  },
 });
