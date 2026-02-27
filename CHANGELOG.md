@@ -6,7 +6,18 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ---
 
-## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.2...HEAD) / 待发布
+## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.3...HEAD) / 待发布
+
+---
+
+## [0.0.3](https://github.com/JiuNian3219/architext/releases/tag/v0.0.3) - 2026-02-27
+
+### Fixed / 修复
+
+- `archi init` 冲突检测现在展示全部冲突文件，移除之前的 5 条显示上限 / `archi init` conflict detection now shows all conflicting files, removing the previous 5-item display limit
+- `archi uninstall` 补全 Skills 文件（`.cursor/skills/archi-*/` 等）的删除逻辑，之前这些文件不会被清理 / `archi uninstall` now correctly removes Skills directories (e.g. `.cursor/skills/archi-*/`), which were previously left behind
+- `archi uninstall` 删除文件后自动清理空目录（rules、commands、skills 及编辑器根目录），解决目录残留问题 / `archi uninstall` now removes empty directories (rules, commands, skills, and editor root dirs) after file deletion
+- 官网落地页版本号改为构建时从 npm 注册表拉取，始终显示已发布版本，不再依赖本地 package.json / Website landing page version is now fetched from npm registry at build time, always showing the published version instead of local package.json
 
 ---
 
