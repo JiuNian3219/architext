@@ -13,6 +13,23 @@ vi.mock("fs-extra", async () => {
   return actual;
 });
 
+// 测试时 TemplateManager.getRoot 依赖 __dirname，Vitest 从 src/ 运行，路径与生产/开发不同。
+// Mock 为项目根目录的 templates。vi.mock 会 hoist，用 process.cwd()（npm test 时即项目根）计算路径。
+vi.mock("../../core/template.ts", async (importOriginal) => {
+  const pathMod = await import("path");
+  const mod = await importOriginal<typeof import("../../core/template.ts")>();
+  const templatesPath = pathMod.join(process.cwd(), "templates");
+  const TM = mod.TemplateManager;
+  return {
+    ...mod,
+    TemplateManager: {
+      plan: TM.plan.bind(TM),
+      execute: TM.execute.bind(TM),
+      getRoot: vi.fn().mockResolvedValue(templatesPath),
+    },
+  };
+});
+
 describe("Scaffolder Integration", () => {
   let tempDir: string;
   let originalCwd: string;
