@@ -3,8 +3,13 @@
 import { confirm, isCancel } from "@clack/prompts";
 import fs from "fs-extra";
 import path from "path";
-import { EDITOR_CONFIGS, GLOBAL_RULES } from "../../../core/rules.ts";
+import {
+  EDITOR_CONFIGS,
+  GLOBAL_RULES,
+  resolveCapabilityRefs,
+} from "../../../core/rules.ts";
 import { TemplateManager } from "../../../core/template.ts";
+import { FileOpType } from "../../../types/index.ts";
 import type { ArchitextConfig } from "../../../types/index.ts";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
@@ -50,11 +55,28 @@ async function resolveTemplateLang(
 
 /**
  * 构造占位符替换映射
+ *
+ * @param config - 配置
+ * @returns 占位符替换映射
  */
 function buildReplacements(config: ArchitextConfig): Record<string, string> {
   return {
     [GLOBAL_RULES.PLACEHOLDERS.DOCS_DIR]: config.docDir,
   };
+}
+
+/**
+ * 构建能力标记解析器
+ * 解析 [[SKILL: ...]] / [[NO-SKILL: ...]]，按 config.editors 是否支持 Skill 展开或移除。
+ *
+ * @param config - 配置
+ * @returns 能力标记解析器
+ */
+function buildCapabilityResolver(
+  config: ArchitextConfig,
+): (content: string) => string {
+  const hasSkills = config.editors.some((e) => !!EDITOR_CONFIGS[e]?.skills);
+  return (content: string) => resolveCapabilityRefs(content, { hasSkills });
 }
 
 /**
@@ -74,6 +96,7 @@ export async function updateSilentFiles(
   const sourceDir = path.join(templateRoot, templateLang);
   const targetDir = path.resolve(cwd, config.docDir);
   const replacements = buildReplacements(config);
+  const capabilityResolver = buildCapabilityResolver(config);
 
   let count = 0;
 
@@ -85,6 +108,10 @@ export async function updateSilentFiles(
     promptsTarget,
     replacements,
   );
+  // 解析 [[SKILL:...]] / [[NO-SKILL:...]]
+  promptOps.forEach((op) => {
+    if (op.type === FileOpType.Template) op.resolver = capabilityResolver;
+  });
   await TemplateManager.execute(promptOps);
   count += promptOps.length;
 
@@ -96,6 +123,9 @@ export async function updateSilentFiles(
     templatesTarget,
     replacements,
   );
+  templateOps.forEach((op) => {
+    if (op.type === FileOpType.Template) op.resolver = capabilityResolver;
+  });
   await TemplateManager.execute(templateOps);
   count += templateOps.length;
 
@@ -116,7 +146,12 @@ export async function updateSilentFiles(
       const srcPath = path.join(promptsSource, promptFile);
       const baseName = path.basename(promptFile, ".md");
       const destPath = path.join(commandsTarget, `archi.${baseName}.md`);
-      await TemplateManager.processFile(srcPath, destPath, replacements);
+      await TemplateManager.processFile(
+        srcPath,
+        destPath,
+        replacements,
+        capabilityResolver,
+      );
       count++;
     }
   }
