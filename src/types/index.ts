@@ -8,7 +8,12 @@ export type LocaleLang = "zh" | "zh-Hant" | "en";
 /**
  * 支持的编辑器类型
  */
-export type SupportedEditor = "trae" | "cursor" | "windsurf" | "vscode";
+export type SupportedEditor =
+  | "trae"
+  | "cursor"
+  | "windsurf"
+  | "vscode"
+  | "claude";
 
 /**
  * 项目特征标签（内部驱动 Brief 模板拼装的原子单元）

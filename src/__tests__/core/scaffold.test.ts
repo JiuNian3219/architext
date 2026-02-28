@@ -99,6 +99,32 @@ describe("Scaffolder Integration", () => {
     );
   });
 
+  it("should generate Claude Code specific files", async () => {
+    const config: InitConfig = {
+      language: "en",
+      editors: ["claude"],
+      docDir: "docs",
+      features: ["ui"],
+    };
+
+    await Scaffolder.run(config);
+
+    // 验证：Claude Code 规则目录
+    const claudeRuleDir = path.join(tempDir, ".claude/rules");
+    expect(await fs.pathExists(claudeRuleDir)).toBe(true);
+
+    // 验证：Commands 文件是否生成 (.claude/commands)
+    const claudeCmdDir = path.join(tempDir, ".claude/commands");
+    expect(await fs.pathExists(claudeCmdDir)).toBe(true);
+    expect(await fs.pathExists(path.join(claudeCmdDir, "archi.start.md"))).toBe(
+      true,
+    );
+
+    // 验证：Skills 目录是否生成 (.claude/skills)
+    const claudeSkillsDir = path.join(tempDir, ".claude/skills");
+    expect(await fs.pathExists(claudeSkillsDir)).toBe(true);
+  });
+
   it("should fallback to default language if requested language template missing", async () => {
     // 假设我们请求一个不存在的语言
     // 注意：这里需要确保 Config 类型允许 string，或者我们 cast 一下

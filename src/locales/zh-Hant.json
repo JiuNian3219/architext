@@ -10,7 +10,7 @@
   },
   "init": {
     "desc": "初始化 Architext 框架，配置編輯器規則和檔案骨架",
-    "editor": "框架目標 IDE，可多選，逗號分隔",
+    "editor": "框架目標 IDE，可多選，逗號分隔 (cursor/windsurf/trae/vscode/claude)",
     "lang": "規則與檔案骨架語言",
     "doc": "自定義檔案路徑，預設使用.architext",
     "type": "專案型別 (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
@@ -320,7 +320,7 @@
       "cli": {
         "init": {
           "desc": "初始化 Architext 框架。產生規則檔案、檔案目錄、Prompt 範本、Project Brief。",
-          "editor": "指定 IDE (cursor / trae / windsurf)",
+          "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude)",
           "lang": "指定語言 (zh / en / zh-Hant)",
           "doc": "自定義檔案目錄名 (預設 .architext)",
           "type": "專案型別 (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"

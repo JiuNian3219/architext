@@ -2,7 +2,13 @@
 import { z } from "zod";
 
 /** 支持的编辑器类型 */
-const SupportedEditorSchema = z.enum(["trae", "cursor", "windsurf", "vscode"]);
+const SupportedEditorSchema = z.enum([
+  "trae",
+  "cursor",
+  "windsurf",
+  "vscode",
+  "claude",
+]);
 
 /** 项目特征标签 */
 const ProjectFeatureSchema = z.enum([

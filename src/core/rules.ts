@@ -88,6 +88,17 @@ export const EDITOR_CONFIGS: Record<SupportedEditor, EditorRuleConfig> = {
       targetDir: ".github/skills",
     },
   },
+  claude: {
+    label: "Claude Code",
+    targetDir: ".claude/rules",
+    targetExt: ".md",
+    commands: {
+      targetDir: ".claude/commands",
+    },
+    skills: {
+      targetDir: ".claude/skills",
+    },
+  },
 };
 
 export const SUPPORTED_EDITORS = Object.keys(
@@ -185,10 +196,14 @@ export function resolveCapabilityRefs(
   content: string,
   capabilities: EditorCapabilities,
 ): string {
-  // [[SKILL: desc]]：有 Skill → 展开为 desc；无 Skill → 移除
+  // [[SKILL: skill_name|描述]]：有 Skill → 展开为 Skill 工具调用指令；无 Skill → 移除
+  // 格式：[[SKILL: skill_name|描述]] → 展开为"请使用 Skill 工具调用 skill_name，参数：描述"
   content = content.replace(
-    /\[\[SKILL: ([^\]]+)\]\]/g,
-    (_match, desc: string) => (capabilities.hasSkills ? desc : ""),
+    /\[\[SKILL: ([^|]+)\|(.+?)\]\]/g,
+    (_match, skillName: string, args: string) =>
+      capabilities.hasSkills
+        ? `请使用 Skill 工具调用 \`${skillName.trim()}\`，参数：${args.trim()}`
+        : "",
   );
 
   // [[NO-SKILL: desc]]：无 Skill → 展开为 desc；有 Skill → 移除
