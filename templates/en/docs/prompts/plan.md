@@ -44,6 +44,7 @@
     ```
     ### Task Context: [Task Name] ([ID])
 
+    **Task Type**: [Inferred from ID prefix: Infrastructure / Feature / Quality / Edit]
     **Goal**: [roadmap task's goal; highlight any [User Presets] if present]
     **Upstream Dependencies**: [completed dependency tasks and their key interfaces/types, or "None"]
     **Project Features**: [activated UI/Data/CLI/Lib/API tags]
@@ -56,18 +57,32 @@
 
 <step_1_5_complexity>
     **Role**: Product Consultant
-    **Action**: Assess task complexity to decide whether to run the full step_2 flow:
+    **Action**: Detect task type, assess complexity, decide flow path.
 
-    **① Granularity hard-limit check (before complexity verdict)**:
+    **⓪ Task Type detection (execute first)**:
 
-    | Metric | Limit |
-    |:---|:---|
-    | Estimated spec.md Scenario count | ≤ 6 |
-    | Estimated plan.json Phase count | ≤ 4 |
+    Infer task type from `<ID>` prefix; applies to all subsequent steps:
 
-    > Estimation method: based on the roadmap task goal and dependency context loaded in step_1, quickly enumerate the core behavior paths. Trigger if over the limit — no need for precise calculation.
+    | ID Prefix | Task Type | spec § 2 Primary Dimension | spec § 4 Interface Exports |
+    |:---|:---|:---|:---|
+    | `INF-` | Infrastructure | Structural (config contracts) | **Required** (downstream infrastructure) |
+    | `FEAT-` | Feature | Behavioral (behavior scenarios) | Required when has downstream deps |
+    | `POLISH-` | Quality | Quantitative (quality targets) | Usually omit |
+    | `EDIT-` | Edit | Inherit from original task | Inherit |
 
-    **② Complexity verdict (only after granularity passes)**:
+    > Mixed tasks (e.g. INF task with behavior aspect) may combine dimensions in § 2; use sub-headings to distinguish.
+
+    **① Granularity hard-limit check (by Task Type)**:
+
+    | Task Type | Acceptance Criteria item cap | plan.json Phase cap |
+    |:---|:---|:---|
+    | Feature | ≤ 6 Scenarios | ≤ 4 |
+    | Infrastructure | ≤ 8 Contracts | ≤ 5 |
+    | Quality | ≤ 4 Targets | ≤ 3 |
+
+    > Estimation method: based on roadmap task goal and dependency context from step_1, quickly enumerate core paths. Trigger if over limit — no precise calculation needed.
+
+    **② Complexity verdict (after granularity passes)**:
 
     | Signal | Verdict | Flow |
     |:---|:---|:---|
@@ -76,7 +91,7 @@
 
     **Simple Mode**:
     - Skip 5-dimension architecture recommendations and User Confirm Gate
-    - spec condensed to 1-2 Gherkin scenarios
+    - spec condensed to 1-2 Acceptance Criteria items (format by Task Type)
     - plan condensed to a single Phase
     - Confirm at signoff (replacing step_2 Gate)
 </step_1_5_complexity>
@@ -190,14 +205,29 @@
 
 <step_4_generate>
     **Role**: Doc Engineer
-    **Input**: Confirmed Unified Proposal (task design + architecture recommendations) + updated global context.
+    **Input**: Confirmed Unified Proposal (task design + architecture recommendations) + updated global context + Task Type from step_1_5.
     **Action**: Generate standard docs under `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/`.
 
     **1. `spec.md`** (Mandatory):
     - Template: `templates/spec.template.md`.
-    - Convert confirmed task design and architecture recommendations to Gherkin Scenarios.
-    - Each Scenario must map to a concrete flow step or exception path from the task design; do not invent scenarios.
-    - If upstream task, must include explicit Interface/Type definitions.
+
+    **spec § 2 dimension format by Task Type**:
+
+    | Task Type | § 2 Primary Dimension | Format requirement |
+    |:---|:---|:---|
+    | Feature | Behavioral | Gherkin (Given/When/Then); each Scenario maps to concrete flow step or exception path from task design |
+    | Infrastructure | Structural | Configuration Contract per config file/service (Path + Key Settings + Constraints + Verify). Key Settings **must state concrete values**; no generic descriptions (e.g. "configure X") |
+    | Quality | Quantitative | Quality Target; each optimization goal has Metric + Baseline + Target + Verify |
+    | Edit | Inherit from original | Same as original task type |
+
+    > Mixed tasks use sub-headings in § 2 to distinguish dimensions (e.g. INF task with Behavioral subsection for hotkey behavior).
+
+    **spec § 4 Interface Exports**: INF tasks **required** (downstream infrastructure must declare exports); FEAT tasks required when has downstream deps.
+    **spec § 5 Constraints**: **Required** — extract relevant red lines from vision.md + 02_tech_stack.md.
+
+    **General rules**:
+    - Do not invent Acceptance Criteria; each must correspond to concrete content in task design.
+    - If upstream task, must include explicit Interface/Type definitions in § 4.
 
     **2. `ui.md`** [?UI]:
     - Template: `templates/ui.template.md`.
@@ -217,20 +247,58 @@
     - Template: `templates/plan.template.json`.
     - Dynamically adjust Phases by project type; ensure each Task's context is self-contained.
     - Task descriptions explicitly state "Additive Only" + "Respect Unknowns".
-    - **`decisions`**: Fill per dimension; `choice` supports multi-select (e.g. `A B`, space-separated), custom (`Z: …`); `rationale` must explain reasoning for code phase; do not leave empty.
-    - **`notes`**: Fill each task's `notes` with: `[scope] · [spec ref] · [key constraints] · Verify: [concrete operation]`; used by `/archi.code` step_4 to locate context and run e2e; do not leave empty.
-      > Example: `Implement POST /auth/login · spec §3.1 · JWT must not contain password · Verify: curl POST /auth/login returns 200 + token field`
+
+    **WBS decomposition three principles (must follow when generating plan.json)**:
+
+    **Principle 1 — Deliverable-oriented**: Each task `title` describes **deliverable** not activity.
+    > ✅ Good: `apps/web/tsconfig.json — strict + path aliases`
+    > ❌ Bad: `Configure TypeScript`
+
+    **Principle 2 — 100% coverage**: After generation, verify coverage:
+    | Check | Rule |
+    |:---|:---|
+    | Each spec § 2 Acceptance Criteria item | Must have ≥1 task covering it |
+    | Each spec § 4 Interface Export | Must have task responsible for creating/exposing it |
+    | Each spec § 5 Constraint | Must be referenced in some task's notes |
+    Add tasks until 100% covered.
+
+    **Principle 3 — Granularity and mutual exclusion**:
+    | Signal | Verdict |
+    |:---|:---|
+    | Task involves ≥3 unrelated files | Too coarse — split |
+    | Task title cannot map to concrete output file | Too abstract — concretize |
+    | Two tasks modify same file same region | Violates mutual exclusion — merge or redraw boundary |
+    | Task notes single sentence with no verification | Insufficient info — supplement |
+
+    **`decisions` quality standard**:
+    - `rationale` **must include implementation guidance**; not only "why choose" but "how to configure after choosing".
+    > ✅ Good: `pnpm workspace manages apps/ + packages/; Turborepo pipeline: build→lint→type-check three-level cache; root scripts unified entry`
+    > ❌ Bad: `Brief explicitly requires` ← zero implementation guidance
+
+    **`notes` quality standard**:
+    - Format: `[output file path or operation target] · [spec ref] · [key constraints] · Verify: [executable command + expected result]`
+    - Used by `/archi.code` step_4 to locate and run e2e; do not leave empty.
+    > ✅ Good: `Create apps/web/next.config.ts · spec §2.2 · transpilePackages: ['@repo/ui'], output: 'standalone' · no CSS-in-JS · Verify: pnpm --filter web build succeeds (exit 0)`
+    > ❌ Bad: `Configure Next.js · spec §2.2` ← no concrete content, constraints, or verification
+    > ❌ Bad: `Create file · spec §2.1 · Verify: check file exists` ← "check file exists" not executable
+    > **Red Flag**: notes degenerate to title synonym. Each notes must contain information **not present** in title.
+
     - Run `npx archi render` after generation to produce readable `.md` view.
 </step_4_generate>
 
 <step_5_audit>
     **Role**: Chief Auditor
     **Checklist**:
-    1.  **Design Fidelity**: Do Scenarios fully cover confirmed task design (flow steps and exception paths)?
-    2.  **Tech Consistency**: Any undeclared tech used?
-    3.  **Data Integrity**: Do Scenario entities match confirmed core entities?
-    4.  **Error Handling**: Is Error Handling recommendation covered?
-    5.  **AX Compliance**: Are Anti-Clobbering and Interface Stability rules followed?
+    1.  **Design Fidelity**: Do spec § 2 Acceptance Criteria fully cover confirmed task design?
+    2.  **Dimension Match**: Does spec § 2 dimension format match Task Type (INF→Structural, FEAT→Behavioral, POLISH→Quantitative)?
+    3.  **Tech Consistency**: Any undeclared tech used?
+    4.  **Data Integrity**: Do spec entities match confirmed core entities?
+    5.  **Error Handling**: Is Error Handling recommendation covered?
+    6.  **Interface Exports**: Is INF task § 4 filled? Do tasks with downstream deps declare interfaces?
+    7.  **Constraints**: Does § 5 include relevant red lines from vision.md + tech_stack?
+    8.  **WBS Coverage**: Does plan.json 100% cover each spec Acceptance Criteria item?
+    9.  **Notes Quality**: Does each plan.json task notes include concrete deliverable + constraints + executable verification?
+    10. **AX Compliance**: Are Anti-Clobbering and Interface Stability rules followed?
 
     Silently fix issues; mark critical issues with `⚠️ Risk Warning`.
 </step_5_audit>

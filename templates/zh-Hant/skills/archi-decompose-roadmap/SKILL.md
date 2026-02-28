@@ -1,6 +1,6 @@
 ---
 name: archi-decompose-roadmap
-description: Architext 任務分解專家。五步分解法：先標定專案類型校準基建清單，再雙視角提取業務 Task 和 Infra 任務，NFR 橫切關注點歸併入 goal（不獨立成任務），建立真實依賴鏈並輸出並行批次。產出符合 Tier 1 Schema 的 roadmap.json 任務，作為 `/archi.plan` 的輸入契約。用於任何需要生成或追加 Roadmap 任務的場景。
+description: Architext 任務分解專家。五步分解法：先標定專案類型校準基建清單，再雙視角提取業務 Task 和 Infra 任務，識別 Polish 打磨任務，NFR 橫切關注點按權重決定注入或獨立，建立真實依賴鏈並輸出並行批次。任務透過 ID 前綴（INF/FEAT/POLISH/EDIT）編碼類型，tag 欄位承載業務領域標籤。產出符合 Tier 1 Schema 的 roadmap.json 任務，作為 `/archi.plan` 的輸入契約。
 ---
 
 # Roadmap 任務分解
@@ -13,15 +13,15 @@ Brief → [本 Skill] → roadmap.json 任務
                    /archi.plan <task-id>
                    讀: vision.md + map.json + tech_stack.md
                    寫: spec.md（行為規格/驗收標準）
-                       ui.md（元件結構，AI 編碼真相源）[?UI]
-                   視覺參考: [[__DOCS_DIR__]]/global/ui_context.md [?UI]
+                       ui.md（任務 UI 範圍聲明）[?UI]
                        plan.json（可執行步驟 + 測試用例 checkbox）
                    也更新: map.json / dictionary.json / data_snapshot.json
+                   視覺參考: [[__DOCS_DIR__]]/global/ui_context.md [?UI]
                             ↓
                    /archi.code → 讀 spec.md + ui.md + plan.json → 寫程式碼
 ```
 
-> **Skill 職責邊界**：
+> **Skill 的職責邊界**：
 > - 負責：任務的 what（描述）、done 標準（goal）、依賴鏈、設計決策注入、Core 介面契約
 > - 不負責：檔案路徑（map.json 管）、變數命名（dictionary.json 管）、測試用例（plan.json 管）、UI 元件結構（ui.md 管）
 >
@@ -31,7 +31,7 @@ Brief → [本 Skill] → roadmap.json 任務
 
 | 模式 | 觸發來源 | 輸入 | 限制 |
 |:---|:---|:---|:---|
-| 從零建立 | `/archi.start` | Brief 功能清單 | 禁生成 EDIT 任務 |
+| 從零建立 | `/archi.start` | Brief 功能列表 | 禁生成 EDIT 任務 |
 | 增量追加 | `/archi.scope` | Brief + 已有 Roadmap 上下文 | 禁改已有任務，ID 沿用水位 |
 
 ---
@@ -44,16 +44,16 @@ Brief → [本 Skill] → roadmap.json 任務
 
 | 專案類型 | 腳手架須包含（除通用建置工具鏈外） |
 |:---|:---|
-| Web SPA / PWA | 路由骨架（如 React Router）+ 全域 App Shell（版面配置 / Provider / 主題注入） |
-| 全端 Web（SSR/SSG）| 路由約定（loader/action/頁面）+ API Routes 層 + 全域版面配置 + Auth Session 管理（Cookie/JWT）；[?UI] 主題注入 |
+| Web SPA / PWA | 路由骨架（如 React Router）+ 全域 App Shell（佈局 / Provider / 主題注入） |
+| 全棧 Web（SSR/SSG）| 路由約定（loader/action/頁面）+ API Routes 層 + 全域佈局 + Auth Session 管理（Cookie/JWT）；[?UI] 主題注入 |
 | CLI 工具 | logger 模組 + AppError 處理層 + 命令註冊入口 |
-| API 服務（REST / GraphQL）| 路由層 + 中介層 + DB 連線層 + 全域錯誤處理；[?GraphQL] Schema 定義層 + DataLoader |
+| API 服務（REST / GraphQL）| 路由層 + 中介軟體層 + DB 連接層 + 全域錯誤處理；[?GraphQL] Schema 定義層 + DataLoader |
 | 行動端 App（原生/跨平台）| 導航骨架（React Navigation / Go Router）+ 平台適配層（iOS/Android 權限、原生模組）+ 環境配置（dev/staging/prod）|
-| 小程式 | 頁面路由設定 + 全域 app.js/ts + 請求封裝層 |
-| 瀏覽器擴充功能 | manifest.json（V2/V3）+ Background Service Worker + Content Script 注入層 + 訊息匯流排（background ↔ content ↔ popup）+ Popup/Options 頁入口 |
-| 桌面端 App（單機）| 主程序入口（Electron main / Tauri main.rs）+ IPC 通訊橋接 + 系統級能力（系統匣、快速鍵）+ 原生檔案系統封裝 |
-| Web + 桌面端（Hybrid）| Web 腳手架基礎 + 桌面執行時整合（Tauri/Electron）+ 系統級能力（系統匣、全域快速鍵、系統通知）；**桌面整合須獨立拆分為 INF 子任務**（OS 差異大、與 Web 技術棧完全不同，不適用 Step 2 的「同期執行合併」規則） |
-| 函式庫 / SDK / NPM 套件 | 雙產物配置（CJS + ESM）+ 公共 API 入口（barrel index.ts）+ 型別宣告生成（.d.ts）+ Changelog / 版本工具鏈；**禁建業務 Task，僅 INF 層** |
+| 小程序 | 頁面路由配置 + 全域 app.js/ts + 請求封裝層 |
+| 瀏覽器擴充 | manifest.json（V2/V3）+ Background Service Worker + Content Script 注入層 + 訊息匯流排（background ↔ content ↔ popup）+ Popup/Options 頁入口 |
+| 桌面端 App（單機）| 主進程入口（Electron main / Tauri main.rs）+ IPC 通訊橋 + 系統級能力（托盤、熱鍵）+ 原生檔案系統封裝 |
+| Web + 桌面端（Hybrid）| Web 腳手架基礎 + 桌面執行時整合（Tauri/Electron）+ 系統級能力（托盤、全域熱鍵、系統通知）；**桌面整合須獨立拆分為 INF 子任務**（OS 差異大、與 Web 技術棧完全不同，不適用 Step 2 的「同期執行合併」規則） |
+| 庫 / SDK / NPM 套件 | 雙產物配置（CJS + ESM）+ 公共 API 入口（barrel index.ts）+ 型別聲明生成（.d.ts）+ Changelog / 版本工具鏈；**禁建業務 Task，僅 INF 層** |
 | 即時 / 協作型 App | WebSocket 服務層 + 事件 Schema 定義（共享型別）+ 房間/會話管理基礎；[?CRDT] 衝突解決層 |
 | AI Agent / MCP 工具 | LLM 客戶端抽象層（provider 無關）+ Prompt 範本管理 + Tool/Function Calling Schema + 對話狀態 / Memory 管理；[?MCP] MCP 協定適配器 |
 
@@ -64,10 +64,10 @@ Brief → [本 Skill] → roadmap.json 任務
 | 專案類型 | 場景句式範本 | 禁止出現的詞彙 |
 |:---|:---|:---|
 | CLI 工具 | `使用者可 [執行命令/傳參] → [終端輸出結果]` | 頁面、路由、元件、UI |
-| 函式庫 / SDK | `呼叫方可 [呼叫 API X] → [回傳 Y]` | 使用者、介面、互動 |
-| API 服務 | `客戶端可 [HTTP METHOD /path] → [回應結構]` | 前端、頁面、元件 |
-| 小程式 | `使用者可在 [頁面名] [操作] → [微信端可見結果]` | 後端路由、REST |
-| Web SPA / 全端 / 行動端 / 桌面端 | `使用者可 [動作] → [可感知結果]` | （無特殊限制）|
+| 庫 / SDK | `呼叫方可 [呼叫 API X] → [返回 Y]` | 使用者、介面、互動 |
+| API 服務 | `客戶端可 [HTTP METHOD /path] → [響應結構]` | 前端、頁面、元件 |
+| 小程序 | `使用者可在 [頁面名] [操作] → [微信端可見結果]` | 後端路由、REST |
+| Web SPA / 全棧 / 行動端 / 桌面端 | `使用者可 [動作] → [可感知結果]` | （無特殊限制）|
 
 ---
 
@@ -77,12 +77,12 @@ Brief → [本 Skill] → roadmap.json 任務
 
 1. 逐條功能轉化為場景句式：`使用者可 [動作] → [可感知結果]`
 2. 共享同一核心流程的場景 → 合併為一個業務 Task
-   > **注意**：「共享功能域/主題」≠「共享核心流程」。屬於同一功能域（如「社群互動」）但各自有獨立 UI 區域和實作域的場景，須按下方拆分訊號獨立成 Task，禁因主題相同而強行合併。「共享核心流程」僅指：場景在同一 UI 視圖內完成、操作同一資料實體、共享同一狀態流轉。
+   > **注意**：「共享功能域/主題」≠「共享核心流程」。屬於同一功能域（如「社群互動」）但各自有獨立 UI 區域和實作域的場景，須按下方拆分信號獨立成 Task，禁因主題相同而強行合併。「共享核心流程」僅指：場景在同一 UI 視圖內完成、操作同一資料實體、共享同一狀態流轉。
 3. 粒度校準（核心原則：**一任務 = 一次 `/archi.plan` 會話 = 一個 `tasks/<slug>/` 子目錄**）：
 
     **行為視角（PM）**：
 
-    | 訊號 | 動作 |
+    | 信號 | 動作 |
     |:---|:---|
     | 描述含「和」（兩個獨立關注點） | 拆分 |
     | DoD 超過 4 條驗收標準 | 拆分 |
@@ -94,13 +94,13 @@ Brief → [本 Skill] → roadmap.json 任務
 
     **實作視角（工程，與行為視角獨立判斷，任一觸發即拆分）**：
 
-    | 訊號 | 動作 | 範例 |
+    | 信號 | 動作 | 範例 |
     |:---|:---|:---|
     | 任務內含 ≥2 個**實作域**，且各域可獨立單元測試 | 拆分 | 純計算層 + UI 渲染層 → 各自獨立 |
     | 實作時需同時掌握 ≥3 個相互獨立的技術關注點 | 拆分 | 字元渲染 + 狀態機 + 動效 API → 三件事 |
     | 某一關注點有獨立的邊界複雜度（如 IME、Canvas、第三方圖表 API） | 獨立出該關注點 | 輸入捕獲 + IME 單獨成任務 |
 
-    > **為何加入實作視角**：行為視角描述「使用者看到什麼」，實作視角描述「AI 實作時需同時掌握什麼」。一個任務行為上內聚（同一頁面），但工程上橫跨多個不同域時，AI 在 `/archi.code` 階段會因上下文過寬而顧此失彼。
+    > **為什麼要加工程視角**：行為視角描述「使用者看到什麼」，工程視角描述「AI 實作時需同時掌握什麼」。一個任務行為上內聚（同一頁面），但工程上橫跨多個不同域時，AI 在 `/archi.code` 階段會因上下文過寬而顧此失彼。
 
     **粒度上限**：
 
@@ -117,9 +117,15 @@ Brief → [本 Skill] → roadmap.json 任務
 
     > `/archi.plan` 執行中若預估 spec.md Scenario > 6 或 plan.json Phase > 4，須暫停並提示使用者返回 `/archi.scope` 重新拆分，禁強行塞進單一任務。
 
-**DoD 格式**：`完成後，使用者可 <可驗證的使用者行為>；邊界：<明確不做的事>`
+**DoD 格式**（按任務類型）：
 
-> DoD 是 `/archi.plan` 生成 spec.md 驗收標準和 plan.json 測試用例的基準。須精準描述使用者可感知結果，禁寫實作細節（檔案路徑、函式名稱、測試命令由 plan 階段決定）。
+| 任務類型 | goal 格式 |
+|:---|:---|
+| `FEAT-xx` | `完成後，使用者可 <可驗證的使用者行為>；邊界：<明確不做的事>` |
+| `INF-xx` | `完成後，<基礎設施產出物描述>，透過 <驗證命令> 驗證；邊界：<明確不做的事>` |
+| `POLISH-xx` | `完成後，<品質指標> 從 <基線> 提升至 <目標>；邊界：<明確不做的事>` |
+
+> DoD 是 `/archi.plan` 生成 spec.md 驗收標準和 plan.json 測試用例的基準。FEAT 任務須描述使用者可感知結果；INF 任務須描述基礎設施產出物和驗證方式；POLISH 任務須描述可量化的品質目標。禁寫實作細節（檔案路徑、函數名、測試命令由 plan 階段決定）。
 
 以下情況歸屬父任務，禁獨立成條：**輕量**結果頁 / 完成頁、空狀態頁、確認彈窗。
 
@@ -136,27 +142,27 @@ Brief → [本 Skill] → roadmap.json 任務
 | Infra 類型 | 判斷標準 |
 |:---|:---|
 | 專案腳手架 / 全域 Schema / 型別定義 | 所有業務 Task 均依賴；須覆蓋 Step 0 標定的專案類型清單 |
-| 共享核心引擎（打字引擎、規則引擎等） | 滿足以下**任一**條件：① 2 個以上業務 Task 直接呼叫；② 純邏輯層、可獨立單元測試、與 UI 完全解耦。`tag: Core` |
+| 共享核心引擎（打字引擎、規則引擎等） | 滿足以下**任一**條件：① 2 個以上業務 Task 直接呼叫；② 純邏輯層、可獨立單元測試、與 UI 完全解耦。ID 仍用 `INF-xx`（本質是基礎設施），`tag` 可標註為業務域標籤（如 `Core`、`Engine`） |
 | 第三方整合層 | 多個業務 Task 複用同一外部服務 |
 
-**Core 任務規劃契約**：`tag: Core` 任務的 `description` 末尾須聲明主要導出介面（函式簽名或關鍵 interface 名稱）。
+**共享引擎規劃契約**：共享核心引擎類 INF 任務的 `description` 末尾須聲明主要匯出介面（函數簽名或關鍵 interface 名稱）。
 下游 Task 的 `/archi.plan` 會話可直接對接該介面，無需讀上游實作，保障跨任務規劃的一致性與可預測性。
 
 **Infra 任務粒度原則：避免微粒化，但禁止跨層堆積**：
 
-- **禁微粒化**：無實質技術差異的同層配置項（如 ESLint + Prettier + TypeScript strict + commitlint）→ 合併，減少任務數、降低依賴鏈雜訊。
+- **禁微粒化**：無實質技術差異的同層配置項（如 ESLint + Prettier + TypeScript strict + commitlint）→ 合併，減少任務數、降低依賴鏈噪音。
 - **禁跨層堆積**：每個獨立的架構層各有獨立技術細節，合併後 AI 上下文同樣會失焦；且將多層堆入同一 INF 任務會把關鍵路徑拉至最長，推遲所有業務 Task 的啟動時機。
 
 > **架構層參考**（每層有獨立實作邊界，原則上各自成任務）：
-> 專案腳手架（建置 / 程式碼品質工具鏈）| 資料層（DB 連線 / ORM / 遷移）| 認證層（Auth 中介層 / Session / JWT）| API 路由層（路由註冊 / 中介層鏈 / 全域錯誤處理）| 前端基礎設施（主題 / Design Token / 全域版面配置）| 第三方服務整合（各服務獨立成 INF 任務）
+> 專案腳手架（建置 / 程式碼品質工具鏈）| 資料層（DB 連接 / ORM / 遷移）| 認證層（Auth 中介軟體 / Session / JWT）| API 路由層（路由註冊 / 中介軟體鏈 / 全域錯誤處理）| 前端基礎設施（主題 / Design Token / 全域佈局）| 第三方服務整合（各服務獨立成 INF 任務）
 
-| 訊號 | 動作 |
+| 信號 | 動作 |
 |:---|:---|
-| 同一架構層內的關聯配置項（如程式碼品質工具鏈各項、或路由骨架與全域錯誤中介層同屬 API 路由層）| 合併 |
-| 跨越獨立架構層（如 DB 連線層 + Auth 中介層、或 API 路由 + 前端主題系統）| 拆分 |
-| 技術棧完全不同（如本機儲存層 vs 主題配置）| 拆分 |
-| 含 OS 級系統 API（系統匣、全域快速鍵、檔案關聯等）| **強制拆分**（Step 0 強制規則，不受「同層合併」條件約束） |
-| 某 Infra 產出物被 ≥2 個業務 Task 直接呼叫（介面型） | 獨立成任務（須聲明導出介面契約） |
+| 同一架構層內的關聯配置項（如程式碼品質工具鏈各項、或路由骨架與全域錯誤中介軟體同屬 API 路由層）| 合併 |
+| 跨越獨立架構層（如 DB 連接層 + Auth 中介軟體、或 API 路由 + 前端主題系統）| 拆分 |
+| 技術棧完全不同（如本地儲存層 vs 主題配置）| 拆分 |
+| 含 OS 級系統 API（托盤、全域熱鍵、檔案關聯等）| **強制拆分**（Step 0 強制規則，不受「同層合併」條件約束） |
+| 某 Infra 產出物被 ≥2 個業務 Task 直接呼叫（介面型） | 獨立成任務（須聲明匯出介面契約） |
 
 **隱式標準功能掃描**：以下功能通常不在 Brief 中出現，須按歸屬分類主動補充（禁遺漏）：
 
@@ -164,7 +170,7 @@ Brief → [本 Skill] → roadmap.json 任務
 
 | 檢查項 | 觸發條件 |
 |:---|:---|
-| 使用者 Profile / 帳號設定頁 | 專案含 Auth（INF 層有認證中介層）|
+| 使用者 Profile / 帳號設定頁 | 專案含 Auth（INF 層有認證中介軟體）|
 | 帳號安全 / 密碼設定頁 | 含 Auth 且使用者可修改密碼或綁定第三方帳號 |
 | 通知中心 / 訊息列表頁 | 含通知基礎設施且通知有「已讀/未讀」狀態 |
 
@@ -172,58 +178,85 @@ Brief → [本 Skill] → roadmap.json 任務
 
 | 檢查項 | 觸發條件 |
 |:---|:---|
-| 通知基礎設施（伺服器推播/訊息佇列層）| ≥1 個 Task 口頭提及「通知/提醒」但未建 INF Task |
+| 通知基礎設施（服務端推送/訊息佇列層）| ≥1 個 Task 口頭提及「通知/提醒」但未建 INF Task |
 | 搜尋基礎設施（PG FTS 索引 / 外部引擎部署）| ≥2 個業務 Task 各自描述「搜尋」功能；須在此決策方案後以 INF Task 承載，下游 Task 依賴它 |
 | 權限 / 角色管理層（RBAC）| 含 Auth 且有 ≥2 種使用者角色（如 admin / user）|
 | 檔案儲存整合層（S3 / OSS 封裝）| ≥1 個 Task 涉及檔案上傳 / 下載 / 預覽 |
-| 電子郵件 / 簡訊發送整合 | Task 提及「發送郵件 / 驗證碼 / 簡訊通知」|
-| 支付整合層 | Task 提及「支付 / 下單 / 結帳 / 退款」|
+| 郵件 / 簡訊發送整合 | Task 提及「發送郵件 / 驗證碼 / 簡訊通知」 |
+| 支付整合層 | Task 提及「支付 / 下單 / 結帳 / 退款」 |
 
 ---
 
-### Step 3 · NFR 過濾
+### Step 3 · NFR 過濾與 Polish 任務識別
 
-以下類型**禁獨立成任務**：注入首個實現該能力的任務 `goal` 末尾（`[NFR] <說明>`）；其餘受影響任務僅在 NFR 清單中標注。`/archi.plan` 執行時會將 NFR 注入對應的 spec.md 約束章節。
+橫切關注點按**工作量權重**決定處理方式：輕量級注入 goal，重量級獨立成 `POLISH-xx` 任務。
 
-> **「首個任務」定義**：在依賴鏈中，`deps` 僅含 INF 層（無業務前置依賴）且最早涉及該 NFR 能力的任務。同層（同 Batch）有多個候選時，取 ID 最小的那個。
+> **「首個任務」定義**（用於 NFR 注入）：在依賴鏈中，`deps` 僅含 INF 層（無業務前置依賴）且最早涉及該 NFR 能力的任務。同層（同 Batch）有多個候選時，取 ID 最小的那個。
 
-| 類型 | 常見形式 | 注意 |
+**判定標準**：
+
+| 信號 | 處理 |
+|:---|:---|
+| 僅需業務 Task 內「順手做」（如用 i18n key 替代硬編碼） | **NFR 注入** — 寫入首個相關任務 goal 末尾 `[NFR] <說明>` |
+| 需獨立基礎設施搭建（如整合 next-intl、建立翻譯檔案體系） | **INF 任務** — 建 `INF-xx`，Phase 1 |
+| 需跨功能專項工作，且驗收可獨立度量（如 Lighthouse ≥ 90、全面 a11y 審計） | **POLISH 任務** — 建 `POLISH-xx`，Phase 3 |
+
+**按類型對照**：
+
+| 類型 | 輕量級 → NFR 注入 | 重量級 → 獨立任務 |
 |:---|:---|:---|
-| 國際化 | i18n、多語言、翻譯文案 | — |
-| 視覺主題（配置型） | 品牌色 Token、Tailwind 主題色、CSS 變數定義 | NFR，注入腳手架任務 |
-| 視覺主題（功能型） | 深色/淺色切換按鈕、OS 偏好偵測、主題持久化 | **非 NFR**，須建立獨立業務 Task（有使用者可見行為） |
-| 動效風格規範 | 頁面切換方式、過渡時長約定 | NFR，注入首個含動效的 Task goal |
-| 效能優化 | 懶載入、虛擬列表、快取策略 | — |
-| 無障礙 | A11y、鍵盤導航、螢幕閱讀器 | — |
+| 國際化 | 業務 Task 內用 i18n key | 整合 i18n 框架 + 翻譯檔案結構 → `INF-xx`；全量翻譯覆蓋 + 語言切換 UI → `POLISH-xx` |
+| 視覺主題（配置型） | 品牌色 Token 注入腳手架 | — |
+| 視覺主題（功能型） | — | 深色/淺色切換 + OS 偏好檢測 → `FEAT-xx`（有使用者可見行為） |
+| 動效風格 | 過渡時長約定注入首個含動效 Task | — |
+| 效能優化 | 單個 Task 內的懶載入/快取 | 跨功能專項優化（首屏 < 2s、包體積目標）→ `POLISH-xx` |
+| 可訪問性 | 單個 Task 內的 ARIA 屬性 | 全面 a11y 審計 + 修復 → `POLISH-xx` |
+| 打包分發 | — | 桌面端打包 + 自動更新配置 → `POLISH-xx` |
 
 ---
 
 ### Step 4 · 依賴與並行優化
 
 - **真實依賴鏈**：禁所有業務 Task 統一只掛 `INF-01`，須反映真實業務關係。
-- **業務實體依賴（優先於最小依賴）**：若功能 B 的核心操作主體由功能 A 產生（即 A 完成前 B 的資料實體不存在），則 B 須聲明對 A 的依賴。此規則優先於最小依賴原則。示例：Usage Log 記錄的主體是 Prompt，Prompt 由 FEAT-Prompt_Create 建立 → Usage Log Task 須依賴 Prompt Task，而不僅依賴 INF 層。
+- **業務實體依賴（優先於最小依賴）**：若功能 B 的核心操作主體由功能 A 產生（即 A 完成前 B 的資料實體不存在），則 B 須聲明對 A 的依賴。此規則優先於最小依賴原則。範例：Usage Log 記錄的主體是 Prompt，Prompt 由 FEAT-Prompt_Create 建立 → Usage Log Task 須依賴 Prompt Task，而不僅依賴 INF 層。
 - **最小依賴原則**：能並行的任務不加多餘依賴，最大化 Batch 並行度。
 
 ---
 
 ## 任務規則
 
-1. **ID 生成**：沿用已有 Roadmap 編號水位，從各前綴最大值 +1 起；全新專案從 `INF-01` / `FEAT-01` 起。
+1. **ID 前綴與任務類型**：
 
-2. **Phase 歸屬**：
+   ID 前綴是任務類型的**唯一標識**，`/archi.plan` 根據前綴選擇 spec 驗收格式。
 
-   | 任務類型 | Phase |
-   |:---|:---|
-   | 專案腳手架、Schema、全域型別 | Phase 1 (Infrastructure) |
-   | 共享核心引擎（Step 2 識別） | Phase 1 (Infrastructure) |
-   | 業務 Task | Phase 2 (Core Features) |
-   | EDIT-xxx（修改已有功能） | 與被修改任務同 Phase |
+   | ID 前綴 | 任務類型 | 含義 | Phase 歸屬 |
+   |:---|:---|:---|:---|
+   | `INF-xx` | Infrastructure | 基礎設施：腳手架、Schema、工具鏈、第三方整合 | Phase 1 |
+   | `FEAT-xx` | Feature | 業務功能：使用者可感知的行為 | Phase 2 |
+   | `POLISH-xx` | Quality | 品質打磨：效能優化、全面 i18n、a11y 審計、打包分發 | Phase 3 |
+   | `EDIT-xx` | Edit | 修改已有功能（僅增量追加模式） | 與被修改任務同 Phase |
 
-3. **設計決策注入**：Brief 中已有設計決策 → 注入對應任務 `goal` 末尾：`[使用者預設] <內容>`；同一條決策禁在多任務重複。`/archi.plan` 將其視為不可更改的硬約束，直接寫入 spec.md，不再提問。
+   沿用已有 Roadmap 編號水位，從各前綴最大值 +1 起；全新專案從 `INF-01` / `FEAT-01` 起。
 
-4. **EDIT 任務**：需修改已有功能 → 建立 `EDIT-xxx`（`tag: Edit`），goal 注明修改範圍；僅增量追加模式下使用。
+2. **Phase 結構**：
 
-5. **Slug 命名**：`slug` 即 `tasks/<slug>/` 資料夾名，須清晰表達任務內容，格式為 `Pascal_Snake_Case`（如 `Typing_Engine_Core`）。每個任務對應唯一一個 task 子目錄，禁重名。
+   | Phase | ID | 名稱 | 內容 |
+   |:---|:---|:---|:---|
+   | Phase 1 | `phase-infra` | Infrastructure | INF-xx 任務（腳手架、資料層、認證、API 骨架等） |
+   | Phase 2 | `phase-core` | Core Features | FEAT-xx 任務（業務功能） |
+   | Phase 3 | `phase-polish` | Polish & Launch | POLISH-xx 任務（品質優化、打包分發）；Brief 無打磨需求時省略此 Phase |
+
+3. **tag 欄位 = 業務領域標籤**：
+
+   `tag` 用於標註任務所屬的**業務領域**（如 `Core`、`Community`、`Auth`、`Data`），自由文字，由 Brief 內容決定。
+
+   > **注意**：`tag` 不決定任務類型 — 任務類型由 ID 前綴決定。例如 `FEAT-05`（`tag: Community`）的任務類型是 Feature 而非 Community。
+
+4. **設計決策注入**：Brief 中已有設計決策 → 注入對應任務 `goal` 末尾：`[使用者預設] <內容>`；同一條決策禁在多任務重複。`/archi.plan` 將其視為不可更改的硬約束，直接寫入 spec.md，不再提問。
+
+5. **EDIT 任務**：需修改已有功能 → 建立 `EDIT-xxx`，goal 註明修改範圍；僅增量追加模式下使用。
+
+6. **Slug 命名**：`slug` 即 `tasks/<slug>/` 資料夾名，須清晰表達任務內容，格式為 `Pascal_Snake_Case`（如 `Typing_Engine_Core`）。每個任務對應唯一一個 task 子目錄，禁重名。
 
 ---
 
@@ -234,13 +267,17 @@ Brief → [本 Skill] → roadmap.json 任務
   "id": "FEAT-01",
   "title": "Task Title In English",
   "status": "pending | blocked",
-  "description": "<1-2 句說明這個任務要建置什麼、涵蓋哪些範圍。Core 任務須在末尾聲明主要導出介面>",
+  "description": "<1-2 句說明這個任務要建構什麼、覆蓋哪些範圍。共享引擎類任務須在末尾聲明主要匯出介面>",
   "goal": "完成後，使用者可 <可驗證的使用者行為>；邊界：<明確不做的事>",
   "deps": ["INF-01"],
-  "tag": "Infra | Core | Feature | Edit",
+  "tag": "<業務領域標籤，自由文字。如 Core, Community, Auth, Data, UI 等>",
   "slug": "Task_Title_Snake_Case"
 }
 ```
+
+> **ID 前綴 vs tag 職責分離**：
+> - `id` 前綴（`INF-` / `FEAT-` / `POLISH-` / `EDIT-`）= 任務類型，決定 `/archi.plan` 的 spec 驗收格式
+> - `tag` = 業務領域標籤，僅用於人類分類瀏覽，不影響 AI 行為
 
 `deps` 為空或全部 `done` → `pending`；有未完成 deps → `blocked`
 
@@ -248,7 +285,7 @@ Brief → [本 Skill] → roadmap.json 任務
 
 ## 中間產物
 
-> 此 Skill 為子程序：產出結構化資料後，控制權交還呼叫方。
+> 此 Skill 為子程式：產出結構化資料後，控制權交還呼叫方。
 > - `/archi.scope` → 呼叫方展示給使用者確認，OK 後寫入 `roadmap.json`
 > - `/archi.start` → 呼叫方直接寫入 `roadmap.json`
 
@@ -260,17 +297,24 @@ Brief → [本 Skill] → roadmap.json 任務
 {
   "phases": [
     {
-      "id": "phase-1",
+      "id": "phase-infra",
       "name": "Infrastructure",
       "tasks": [
         { "id": "INF-01", "title": "...", "status": "pending", "description": "...", "goal": "...", "deps": [], "tag": "Infra", "slug": "..." }
       ]
     },
     {
-      "id": "phase-2",
+      "id": "phase-core",
       "name": "Core Features",
       "tasks": [
-        { "id": "FEAT-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["INF-01"], "tag": "Feature", "slug": "..." }
+        { "id": "FEAT-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["INF-01"], "tag": "Core", "slug": "..." }
+      ]
+    },
+    {
+      "id": "phase-polish",
+      "name": "Polish & Launch",
+      "tasks": [
+        { "id": "POLISH-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["FEAT-01"], "tag": "Quality", "slug": "..." }
       ]
     }
   ]
@@ -290,4 +334,5 @@ Layer 0 ║ INF-01
 Layer 1 ║ INF-02 · INF-03              ← 均依賴 INF-01
 Layer 2 ║ FEAT-01 · FEAT-02            ← 各自依賴 INF-02 / INF-03
 Layer 3 ║ FEAT-03                      ← 依賴 FEAT-01
+Layer 4 ║ POLISH-01 · POLISH-02        ← 依賴相關 FEAT 任務
 ```

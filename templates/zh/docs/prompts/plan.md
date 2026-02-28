@@ -44,6 +44,7 @@
     ```
     ### Task Context: [功能名称] ([ID])
 
+    **任务类型**: [从 ID 前缀推断: Infrastructure / Feature / Quality / Edit]
     **目标**: [roadmap task 的 goal，如含 [用户预设] 须高亮标注]
     **上游依赖**: [已完成的依赖任务及其关键接口/类型，无则写"无"]
     **项目特征**: [已激活的 UI/Data/CLI/Lib/API 标签]
@@ -56,16 +57,30 @@
 
 <step_1_5_complexity>
     **Role**: 产品顾问
-    **Action**: 评估功能复杂度，决定是否走完整 step_2 流程：
+    **Action**: 检测任务类型，评估复杂度，决定流程路径。
 
-    **① 粒度红线检查（优先于复杂度判定）**：
+    **⓪ Task Type 检测（最先执行）**：
 
-    | 指标 | 上限 |
-    |:---|:---|
-    | 预估 spec.md Scenario 数 | ≤ 6 个 |
-    | 预估 plan.json Phase 数 | ≤ 4 个 |
+    从 `<ID>` 前缀推断任务类型，贯穿后续所有 step：
 
-    > 预估方法：根据 step_1 加载的 roadmap task goal 和依赖上下文，快速列举核心行为路径数量。超出上限即触发，无需精确计算。
+    | ID 前缀 | Task Type | spec § 2 主维度 | spec § 4 Interface Exports |
+    |:---|:---|:---|:---|
+    | `INF-` | Infrastructure | Structural（配置契约） | **必填**（下游基础设施） |
+    | `FEAT-` | Feature | Behavioral（行为场景） | 有下游 deps 时必填 |
+    | `POLISH-` | Quality | Quantitative（量化目标） | 通常省略 |
+    | `EDIT-` | Edit | 继承原任务类型 | 继承 |
+
+    > 混合型任务（如 INF 任务含行为面）可在 § 2 中组合多个维度，用子标题区分。
+
+    **① 粒度红线检查（按 Task Type 调整上限）**：
+
+    | Task Type | Acceptance Criteria 条目上限 | plan.json Phase 上限 |
+    |:---|:---|:---|
+    | Feature | ≤ 6 个 Scenarios | ≤ 4 个 |
+    | Infrastructure | ≤ 8 个 Contracts | ≤ 5 个 |
+    | Quality | ≤ 4 个 Targets | ≤ 3 个 |
+
+    > 预估方法：根据 step_1 加载的 roadmap task goal 和依赖上下文，快速列举核心路径数量。超出上限即触发，无需精确计算。
 
     **② 复杂度判定（粒度通过后执行）**：
 
@@ -76,7 +91,7 @@
 
     **Simple 模式**:
     - 跳过 5 维度架构建议和 User Confirm Gate
-    - spec 精简为 1-2 个 Gherkin 场景
+    - spec 精简为 1-2 个 Acceptance Criteria 条目（按 Task Type 选格式）
     - plan 精简为单 Phase
     - signoff 时确认（替代 step_2 的 Gate）
 </step_1_5_complexity>
@@ -191,14 +206,29 @@
 
 <step_4_generate>
     **Role**: 文档工程师
-    **Input**: 确认的 Unified Proposal（功能设计 + 架构建议）+ 已更新的全局上下文。
+    **Input**: 确认的 Unified Proposal（功能设计 + 架构建议）+ 已更新的全局上下文 + step_1_5 检测的 Task Type。
     **Action**: 在 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/` 下生成标准文档。
 
     **1. `spec.md`** (必须):
     - 模板: `templates/spec.template.md`。
-    - 基于确认的功能设计和架构建议，转化为 Gherkin Scenarios。
-    - 每个 Scenario 须对应功能设计中的具体流程步骤或异常路径，禁凭空编造场景。
-    - 若为上游任务，须包含明确的 Interface/Type 定义。
+
+    **spec § 2 按 Task Type 选择维度格式**：
+
+    | Task Type | § 2 主维度 | 格式要求 |
+    |:---|:---|:---|
+    | Feature | Behavioral | Gherkin (Given/When/Then)，每个 Scenario 对应功能设计中的具体流程步骤或异常路径 |
+    | Infrastructure | Structural | Configuration Contract，每个配置文件/服务一个 Contract（Path + Key Settings + Constraints + Verify）。Key Settings **须写出具体值**，禁泛化描述（如"配置 X"） |
+    | Quality | Quantitative | Quality Target，每个优化目标含 Metric + Baseline + Target + Verify |
+    | Edit | 继承原任务 | 同原任务类型 |
+
+    > 混合型任务在 § 2 内用子标题区分维度（如 INF 任务含 Behavioral 子节描述热键行为）。
+
+    **spec § 4 Interface Exports**：INF 任务**必填**（下游基础设施须声明导出约定），FEAT 任务有下游 deps 时必填。
+    **spec § 5 Constraints**：**必填** — 从 vision.md + 02_tech_stack.md 提取与本任务相关的红线。
+
+    **通用规则**:
+    - 禁凭空编造 Acceptance Criteria 条目，须对应功能设计中的具体内容。
+    - 若为上游任务，须在 § 4 包含明确的 Interface/Type 定义。
 
     **2. `ui.md`** [?UI]:
     - 模板 `templates/ui.template.md`。
@@ -218,20 +248,58 @@
     - 模板: `templates/plan.template.json`。
     - 根据项目类型动态调整 Phase；确保每个 Task 上下文自包含。
     - 任务描述中明确 "Additive Only" + "Respect Unknowns"。
-    - **`decisions`**: 按各维度填写；`choice` 支持多选（如 `A B`，空格分隔）、自定义（`Z: …`）；`rationale` 须填写理由，供 code 阶段参照，禁留空。
-    - **`notes`**: 每个 task 的 `notes` 须填写：`[范围] · [spec 引用] · [关键约束] · 验证: [具体操作]`；供 `/archi.code` step_4 精确定位并执行 e2e，禁留空。
-      > 示例：`实现 POST /auth/login · spec §3.1 · JWT 禁含 password · 验证: curl POST /auth/login 返回 200 + token 字段`
+
+    **WBS 分解三原则（生成 plan.json 时须遵循）**：
+
+    **原则 1 — 交付物导向**: 每个 task 的 `title` 描述**产出物**而非活动。
+    > ✅ 好: `apps/web/tsconfig.json — strict + path aliases`
+    > ❌ 差: `配置 TypeScript`
+
+    **原则 2 — 100% 覆盖**: 生成后须逐项确认覆盖度：
+    | 检查项 | 规则 |
+    |:---|:---|
+    | spec § 2 每个 Acceptance Criteria 条目 | 须有 ≥1 个 task 覆盖 |
+    | spec § 4 每个 Interface Export | 须有 task 负责创建/暴露该接口 |
+    | spec § 5 每个 Constraint | 须有 task 的 notes 中引用该约束 |
+    遗漏则补充 task 直到 100%。
+
+    **原则 3 — 粒度与互斥**:
+    | 信号 | 判定 |
+    |:---|:---|
+    | task 涉及 ≥3 个不相关文件 | 太粗 — 须拆分 |
+    | task 的 title 无法对应到具体产出文件 | 太抽象 — 须具体化 |
+    | 两个 task 修改同一文件同一区域 | 违反互斥 — 合并或重划边界 |
+    | task 的 notes 只有一句话且无验证项 | 信息量不足 — 须补充 |
+
+    **`decisions` 质量标准**:
+    - `rationale` **须含实施指导**，不仅说明"为什么选"，须说明"选了怎么配"。
+    > ✅ 好: `pnpm workspace 管理 apps/ + packages/；Turborepo pipeline: build→lint→type-check 三级缓存；root scripts 统一入口`
+    > ❌ 差: `Brief 明确要求` ← 零实施指导
+
+    **`notes` 质量标准**:
+    - 格式: `[产出文件路径或操作对象] · [spec 引用] · [关键约束] · 验证: [可执行命令 + 期望结果]`
+    - 供 `/archi.code` step_4 精确定位并执行 e2e，禁留空。
+    > ✅ 好: `创建 apps/web/next.config.ts · spec §2.2 · transpilePackages: ['@repo/ui'], output: 'standalone' · 禁 CSS-in-JS · 验证: pnpm --filter web build 成功 (exit 0)`
+    > ❌ 差: `配置 Next.js · spec §2.2` ← 无具体内容、无约束、无验证
+    > ❌ 差: `创建文件 · spec §2.1 · 验证: 检查文件存在` ← "检查文件存在" 不可执行
+    > **Red Flag**: notes 退化为 title 同义重复。每个 notes 须包含 title 中**不存在**的信息量。
+
     - 生成后运行 `npx archi render` 生成可读的 `.md` 视图。
 </step_4_generate>
 
 <step_5_audit>
     **Role**: 首席审计官
     **Checklist**:
-    1.  **Design Fidelity**: Spec 中的 Scenarios 是否完整覆盖确认的功能设计（流程步骤和异常路径）？
-    2.  **Tech Consistency**: 是否用了未声明技术？
-    3.  **Data Integrity**: Scenario 中的实体和字段是否与确认的核心实体一致？
-    4.  **Error Handling**: 是否覆盖架构建议中错误处理的选择？
-    5.  **AX Compliance**: 是否遵守 Anti-Clobbering 和 Interface Stability？
+    1.  **Design Fidelity**: Spec § 2 的 Acceptance Criteria 是否完整覆盖确认的功能设计？
+    2.  **Dimension Match**: Spec § 2 的维度格式是否与 Task Type 匹配（INF→Structural, FEAT→Behavioral, POLISH→Quantitative）？
+    3.  **Tech Consistency**: 是否用了未声明技术？
+    4.  **Data Integrity**: Spec 中的实体和字段是否与确认的核心实体一致？
+    5.  **Error Handling**: 是否覆盖架构建议中错误处理的选择？
+    6.  **Interface Exports**: INF 任务的 § 4 是否填写？有下游 deps 的任务是否声明了接口？
+    7.  **Constraints**: § 5 是否包含来自 vision.md + tech_stack 的相关红线？
+    8.  **WBS Coverage**: plan.json 是否 100% 覆盖 spec 的每个 Acceptance Criteria 条目？
+    9.  **Notes Quality**: plan.json 每个 task 的 notes 是否含具体产出物 + 约束 + 可执行验证？
+    10. **AX Compliance**: 是否遵守 Anti-Clobbering 和 Interface Stability？
 
     如有问题则静默修正；严重问题标记 `⚠️ Risk Warning`。
 </step_5_audit>
