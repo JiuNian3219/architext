@@ -37,7 +37,7 @@
        - 補充 Gherkin Scenarios（覆蓋正常流程 + 異常路徑）
        - 補充介面/型別定義（如該功能是其他功能的上游）
     5. 更新 `Spec-Status: Stub → Full`。
-    6. [?UI] 如模組有 UI → 同步生成或更新 `ui.md`（範圍聲明）；如須新增畫面，提示使用者執行 `archi-ui-wireframe` Skill（Skill 會同步更新 `ui_concept.html` + `ui_context.md`）。
+    6. [?UI] 如模組有 UI → 同步生成或更新 `ui.md`（範圍聲明）；如須新增畫面，[[SKILL: archi-ui-wireframe|呼叫 skill 或提示使用者執行]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 並提示使用者按該檔案執行）]]（Skill 會同步更新 `ui_concept.html` + `ui_context.md`）。
     7. 生成 `plan.json`（全部 task 為 done，記錄已實作內容）。
     8. 向使用者輸出補全後的 spec 摘要。
 
@@ -49,14 +49,14 @@
     **Role**: 需求分析師 & 設計師
     **Action**:
     - 根據 `[context]` 修改 spec.md（邏輯/規則變更）和 ui.md（結構/互動變更）。
-    - [?UI 修改] 透過 Skill 同步更新 `ui_concept.html` + `ui_context.md`（Skill 為兩個檔案的唯一寫者）：
+    - [?UI 修改] [[SKILL: archi-ui-wireframe|按 skill 的協議，按以下規則同步更新 `ui_concept.html` + `ui_context.md`（Skill 為兩個檔案的唯一寫者）]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 並遵循其協議執行）]]：
 
       | 變更類型 | 判定標準 | 處理方式 |
       |:---|:---|:---|
       | 無畫面影響 | 僅邏輯/資料變更，無視覺差異 | 僅改 spec.md，`ui_concept.html` / `ui_context.md` 不動 |
-      | 輕微 UI 調整 | 新增/修改狀態、彈窗、局部區域，不改整體版面 | 呼叫 Skill（修改畫面模式）更新兩個檔案，輸出 `MODIFIED: S-XX` |
-      | 畫面結構變更 | 版面重構、新增獨立畫面、導覽路徑變化 | 呼叫 Skill（修改畫面模式）更新兩個檔案，輸出 `MODIFIED: S-XX`；若已完成 Phase 2 著色，同步重新著色 |
-      | 功能縮減 | 畫面/區域整體移除 | 呼叫 Skill（刪除畫面模式）更新兩個檔案，輸出 `REMOVED: S-XX` |
+      | 輕微 UI 調整 | 新增/修改狀態、彈窗、局部區域，不改整體版面 | 呼叫 skill（修改畫面模式）更新兩個檔案，輸出 `MODIFIED: S-XX` |
+      | 畫面結構變更 | 版面重構、新增獨立畫面、導覽路徑變化 | 呼叫 skill（修改畫面模式）更新兩個檔案，輸出 `MODIFIED: S-XX`；若已完成 Phase 2 著色，同步重新著色 |
+      | 功能縮減 | 畫面/區域整體移除 | 呼叫 skill（刪除畫面模式）更新兩個檔案，輸出 `REMOVED: S-XX` |
 
     - 需求模糊時向使用者提問 (A/B/C/D 選項) 確認細節。
 

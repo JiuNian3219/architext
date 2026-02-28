@@ -114,9 +114,9 @@
 
     #### Part 2: Architecture Recommendations (架構建議)
 
-    [[SKILL: 按 `archi-plan-options` Skill 的三步選用邏輯（慣例繼承 → 標籤路由 → 推薦 vs 展開），從五個維度的選項庫中為本功能生成架構建議]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-plan-options/SKILL.md` 並遵循其三步選用邏輯執行）]]
+    [[SKILL: archi-plan-options|按 skill 的三步選用邏輯（慣例繼承 → 標籤路由 → 推薦 vs 展開），從五個維度的選項庫中為本功能生成架構建議。]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-plan-options/SKILL.md` 並遵循其三步選用邏輯執行）]]
 
-    展開 Q-table 時，格式遵循 [[SKILL: `archi-interview-protocol` Skill 的標準輸出格式]][[NO-SKILL: `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md`]]。
+    展開 Q-table 時，格式遵循 [[SKILL: archi-interview-protocol|skill 的標準輸出格式]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 並遵循其規則執行）]]。
 
     #### Output Format
 
@@ -202,13 +202,13 @@
     **2. `ui.md`** [?UI]:
     - 範本 `templates/ui.template.md`。
     - **有 `ui_context.md`（主路徑）**:
-      1. **UI 偏差檢查**（寫 `ui.md` 前必須執行）：對比 step_2 確認的功能設計與 `ui_context.md` 中的畫面索引，識別偏差：
+      1. **UI 偏差檢查**（寫 `ui.md` 前必須執行）：對比 step_2 確認的功能設計與 `ui_context.md` 中的畫面索引，識別偏差。[[SKILL: archi-ui-wireframe|按 skill 的協議處理 UI 偏差]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 並遵循其協議執行）]]。判定標準與處理方式：
 
          | 偏差類型 | 判定標準 | 處理方式 |
          |:---|:---|:---|
          | 無偏差 | 畫面索引與設計一致 | 直接寫 `ui.md`，引用畫面 ID |
-         | 輕微增量 | 新增狀態/彈窗/局部區域，不改整體布局 | 呼叫 `archi-ui-wireframe` Skill（Plan 細化模式）更新 `ui_concept.html` + `ui_context.md`，在 `ui.md` 注明 `MODIFIED: S-XX` |
-         | 結構性偏差 | 布局重構、新增獨立畫面、流程路徑變化 | **暫停**，向使用者輸出偏差說明，等待 **OK** 後呼叫 Skill 更新 `ui_concept.html` + `ui_context.md`，再寫 `ui.md` |
+         | 輕微增量 | 新增狀態/彈窗/局部區域，不改整體布局 | 呼叫 skill（Plan 細化模式）更新 `ui_concept.html` + `ui_context.md`，在 `ui.md` 注明 `MODIFIED: S-XX` |
+         | 結構性偏差 | 布局重構、新增獨立畫面、流程路徑變化 | **暫停**，向使用者輸出偏差說明，等待 **OK** 後呼叫 skill 更新 `ui_concept.html` + `ui_context.md`，再寫 `ui.md` |
 
       2. 完成偏差處理後，按 `ui.template.md` 填寫畫面範圍聲明和差異元件。
     - **無 `ui_context.md`（降級路徑）**: 按完整 ITP v3.0 描述元件樹，引用 `design_tokens.json` Token 定義。

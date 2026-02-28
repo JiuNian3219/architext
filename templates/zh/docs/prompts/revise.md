@@ -120,7 +120,7 @@
     **Phase 2 — 级联更新 Task 文档**:
     对每个受影响的 Task，按 `/archi.edit` 标准执行:
     1.  更新 `spec.md`（逻辑/规则因全局变更而需调整的部分）。
-    2.  [?UI] 更新 `ui.md`（范围/交互因全局变更而需调整的部分）；如屏幕结构受影响，运行 `archi-ui-wireframe` Skill（局部更新模式）同步更新 `ui_concept.html` + `ui_context.md`。
+    2.  [?UI] 更新 `ui.md`（范围/交互因全局变更而需调整的部分）；如屏幕结构受影响，[[SKILL: archi-ui-wireframe|运行 skill（局部更新模式）同步更新 `ui_concept.html` + `ui_context.md`]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]。
     3.  在 `plan.json` 的 `phases` 中追加新 Phase: `Phase X: Global Revision — [变更主题] (<Date>)`，列出落地任务。
 
     **Output**: 每个文件的变更摘要（全局 + Task）。

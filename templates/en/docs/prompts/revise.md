@@ -120,7 +120,7 @@
     **Phase 2 — Cascade Update Task Docs**:
     For each affected Task, follow `/archi.edit` standards:
     1.  Update `spec.md` (logic/rules that need adjustment due to global changes).
-    2.  [?UI] Update `ui.md` (scope/interaction adjustments due to global changes); if screen structure is affected, run `archi-ui-wireframe` Skill (incremental update mode) to sync both `ui_concept.html` + `ui_context.md`.
+    2.  [?UI] Update `ui.md` (scope/interaction adjustments due to global changes); if screen structure is affected, [[SKILL: archi-ui-wireframe|run skill (incremental update mode) to sync both `ui_concept.html` + `ui_context.md`]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]].
     3.  Append new Phase to `plan.json` `phases`: `Phase X: Global Revision — [Change Topic] (<Date>)`, listing implementation tasks.
 
     **Output**: Change summary for each file (global + Task).

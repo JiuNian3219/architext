@@ -104,7 +104,7 @@
     **Trigger**: Only when Step 1 finds "Required" or "Can supplement" gaps.
     **Input**: Step 1 gap list. Max 3–6 questions.
 
-    [[SKILL: Follow `archi-interview-protocol` Skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
+    [[SKILL: archi-interview-protocol|Follow the skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
 </step_2_supplementary>
 
 <step_3_constitution>
@@ -161,7 +161,7 @@
     - If user provided nothing, keep template default
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    [[SKILL: Follow the `archi-decompose-roadmap` Skill protocol to generate the task chain from the Brief feature list and write to roadmap.json]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]], then proceed to the next step immediately without user confirmation.
+    [[SKILL: archi-decompose-roadmap|Follow the skill protocol to generate the task chain from the Brief feature list and write to roadmap.json, then proceed to the next step immediately without user confirmation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
 
     ### 3.5 Other global docs (as needed)
     - `dictionary.json`: Extract domain terms from Brief
@@ -202,7 +202,7 @@
 
 <step_4_5_ui_wireframe>
     **Trigger**: Only when project features include [?UI].
-    **Action**: Auto-invoke `archi-ui-wireframe` Skill (Phase 1 wireframe).
+    **Action**: [[SKILL: archi-ui-wireframe|Follow the skill protocol to auto-invoke Phase 1 wireframe generation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]
     - Start generation without user confirmation
     - Read the just-written vision.md + roadmap.json + design_tokens.json + 02_tech_stack
     - Write `ui_concept.html` + `ui_context.md`

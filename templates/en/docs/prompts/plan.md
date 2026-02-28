@@ -114,9 +114,9 @@
 
     #### Part 2: Architecture Recommendations
 
-    [[SKILL: Follow `archi-plan-options` Skill's three-step selection logic (Convention Inheritance -> Tag Routing -> Recommend vs. Expand) to generate architecture recommendations across five dimensions.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-plan-options/SKILL.md` and follow its three-step logic)]]
+    [[SKILL: archi-plan-options|Follow the skill's three-step selection logic (Convention Inheritance -> Tag Routing -> Recommend vs. Expand) to generate architecture recommendations across five dimensions.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-plan-options/SKILL.md` and follow its three-step logic)]]
 
-    When expanding a Q-table, follow the format in [[SKILL: `archi-interview-protocol` Skill's standard output format]][[NO-SKILL: `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md`]].
+    When expanding a Q-table, follow the format in [[SKILL: archi-interview-protocol|the skill's standard output format]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]].
 
     #### Output Format
 
@@ -202,13 +202,13 @@
     **2. `ui.md`** [?UI]:
     - Template: `templates/ui.template.md`.
     - **With `ui_context.md` (primary path)**:
-      1. **UI Divergence Check** (required before writing `ui.md`): Compare the confirmed task design from step_2 against the screen inventory in `ui_context.md`:
+      1. **UI Divergence Check** (required before writing `ui.md`): Compare the confirmed task design from step_2 against the screen inventory in `ui_context.md`. [[SKILL: archi-ui-wireframe|Follow the skill protocol to handle UI divergence.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]. Criteria and action:
 
          | Divergence type | Criteria | Action |
          |:---|:---|:---|
          | No divergence | Screen index matches design | Write `ui.md` directly, reference screen ID |
-         | Minor addition | New state / modal / local area, overall layout unchanged | Call `archi-ui-wireframe` Skill (Plan refinement mode) to update `ui_concept.html` + `ui_context.md`; note `MODIFIED: S-XX` in `ui.md` |
-         | Structural divergence | Layout restructure, new standalone screen, flow path change | **Pause** — present divergence summary to user, wait for **OK**, then call Skill to update `ui_concept.html` + `ui_context.md`, then write `ui.md` |
+         | Minor addition | New state / modal / local area, overall layout unchanged | Call skill (Plan refinement mode) to update `ui_concept.html` + `ui_context.md`; note `MODIFIED: S-XX` in `ui.md` |
+         | Structural divergence | Layout restructure, new standalone screen, flow path change | **Pause** — present divergence summary to user, wait for **OK**, then call skill to update `ui_concept.html` + `ui_context.md`, then write `ui.md` |
 
       2. After resolving divergence, fill in screen scope and delta components per `ui.template.md`.
     - **Without `ui_context.md` (fallback path)**: Write full ITP v3.0 component tree, referencing `design_tokens.json` token definitions.

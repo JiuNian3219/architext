@@ -113,9 +113,9 @@
 
     #### Part 2: Architecture Recommendations (架构建议)
 
-    [[SKILL: 按 `archi-plan-options` Skill 的三步选用逻辑（约定继承 → 标签路由 → 推荐 vs 展开），从五个维度的选项库中为本功能生成架构建议]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-plan-options/SKILL.md` 并遵循其三步选用逻辑执行）]]
+    [[SKILL: archi-plan-options|按 skill 的三步选用逻辑（约定继承 → 标签路由 → 推荐 vs 展开），从五个维度的选项库中为本功能生成架构建议。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-plan-options/SKILL.md` 并遵循其三步选用逻辑执行）]]
 
-    展开 Q-table 时，格式遵循 [[SKILL: `archi-interview-protocol` Skill 的标准输出格式]][[NO-SKILL: `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md`]]。
+    展开 Q-table 时，格式遵循 [[SKILL: archi-interview-protocol|skill 的标准输出格式]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则执行）]]。
 
     #### Output Format
 
@@ -203,13 +203,13 @@
     **2. `ui.md`** [?UI]:
     - 模板 `templates/ui.template.md`。
     - **有 `ui_context.md`（主路径）**:
-      1. **UI 偏差检查**（写 `ui.md` 前必须执行）：对比 step_2 确认的功能设计与 `ui_context.md` 中的屏幕索引，识别偏差：
+      1. **UI 偏差检查**（写 `ui.md` 前必须执行）：对比 step_2 确认的功能设计与 `ui_context.md` 中的屏幕索引，识别偏差。[[SKILL: archi-ui-wireframe|按 skill 的协议处理 UI 偏差]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]。判定标准与处理方式：
 
          | 偏差类型 | 判定标准 | 处理方式 |
          |:---|:---|:---|
          | 无偏差 | 屏幕索引与设计一致 | 直接写 `ui.md`，引用屏幕 ID |
-         | 轻微增量 | 新增状态/弹窗/局部区域，不改整体布局 | 调用 `archi-ui-wireframe` Skill（Plan 细化模式）更新 `ui_concept.html` + `ui_context.md`，在 `ui.md` 注明 `MODIFIED: S-XX` |
-         | 结构性偏差 | 布局重构、新增独立屏幕、流程路径变化 | **暂停**，向用户输出偏差说明，等待 **OK** 后调用 Skill 更新 `ui_concept.html` + `ui_context.md`，再写 `ui.md` |
+         | 轻微增量 | 新增状态/弹窗/局部区域，不改整体布局 | 调用 skill（Plan 细化模式）更新 `ui_concept.html` + `ui_context.md`，在 `ui.md` 注明 `MODIFIED: S-XX` |
+         | 结构性偏差 | 布局重构、新增独立屏幕、流程路径变化 | **暂停**，向用户输出偏差说明，等待 **OK** 后调用 skill 更新 `ui_concept.html` + `ui_context.md`，再写 `ui.md` |
 
       2. 完成偏差处理后，按 `ui.template.md` 填写屏幕范围声明和差异组件。
     - **无 `ui_context.md`（降级路径）**: 按完整 ITP v3.0 描述组件树，引用 `design_tokens.json` Token 定义。

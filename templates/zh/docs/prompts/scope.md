@@ -102,14 +102,14 @@
     **Trigger**: 仅当 Step 2 发现"必须"或"可补"级缺口时执行。
     **Input**: Step 2 的缺口列表。问题数上限 3 题。
 
-    [[SKILL: 按 `archi-interview-protocol` Skill 的核心规则和标准输出格式提问。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则）]]
+    [[SKILL: archi-interview-protocol|按 skill 的核心规则和标准输出格式提问。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则）]]
 </step_2_5_supplementary>
 
 <step_3_decompose>
     **Role**: 首席架构师
     **Input**: Brief 全文 + 项目上下文 + 补充回答（如有）。
 
-    **Action**: [[SKILL: 按 `archi-decompose-roadmap` Skill 的协议，基于 Scope Brief 任务清单生成增量任务数据]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
+    **Action**: [[SKILL: archi-decompose-roadmap|按 skill 的协议，基于 Scope Brief 任务清单生成增量任务数据。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
 
     **展示格式**（将 Skill 产出的任务数据转换为以下格式，向用户呈现后等待确认）：
 
@@ -171,7 +171,7 @@
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
-    | [?UI] 推荐 | 运行 `archi-ui-wireframe` Skill（追加模式） | 为新增任务追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
+    | [?UI] 推荐 | [[SKILL: archi-ui-wireframe|运行 skill（追加模式）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]] | 为新增任务追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
     | 1 | `/archi.plan <第一个 pending 任务 ID>` | 对首个可执行任务做深度规划 |
     | 2 | 审查 roadmap | 确认依赖关系和优先级 |
 </step_5_signoff>

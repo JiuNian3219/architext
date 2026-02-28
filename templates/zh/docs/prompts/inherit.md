@@ -221,7 +221,7 @@
     ### 3.7 其他全局文档（按需）
     - `dictionary.json`: 从代码提取领域术语
     - [?UI] `design_tokens.json`: 从 CSS 变量/主题提取
-    - [?UI] `ui_concept.html` + `ui_context.md`: **不由本命令生成**。继承完成后，提示用户运行 `archi-ui-wireframe` Skill 生成全局 UI 线框图（Skill 同时生成两个文件）。
+    - [?UI] `ui_concept.html` + `ui_context.md`: **不由本命令生成**。继承完成后，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]] 生成全局 UI 线框图（Skill 同时生成两个文件）。
     - [?Data] `data_snapshot.json`: 从 schema/migration 提取
     - `error_codes.json`: 从代码中的错误定义提取
 

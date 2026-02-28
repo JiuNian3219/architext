@@ -104,7 +104,7 @@
     **Trigger**: 仅当 Step 1 发现"必须"或"可补"级缺口时执行。
     **Input**: Step 1 的缺口列表。问题数上限 3-6 题。
 
-    [[SKILL: 按 `archi-interview-protocol` Skill 的核心规则和标准输出格式提问。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则）]]
+    [[SKILL: archi-interview-protocol|按 skill 的核心规则和标准输出格式提问。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则）]]
 </step_2_supplementary>
 
 <step_3_constitution>
@@ -161,7 +161,7 @@
     - 如用户未提供任何自定义规则，保持模板默认内容
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    [[SKILL: 按 `archi-decompose-roadmap` Skill 的协议，基于 Brief 任务列表生成任务链，写入 roadmap.json]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]，生成后直接进入下一步，无需用户确认。
+    [[SKILL: archi-decompose-roadmap|按 skill 的协议，基于 Brief 任务列表生成任务链，写入 roadmap.json，生成后直接进入下一步，无需用户确认。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
 
     ### 3.5 其他全局文档 (按需)
     - `dictionary.json`: 从 Brief 提取领域术语
@@ -202,7 +202,7 @@
 
 <step_4_5_ui_wireframe>
     **Trigger**: 仅当项目特征含 [?UI] 时执行。
-    **Action**: 自动调用 `archi-ui-wireframe` Skill（Phase 1 线框图）。
+    **Action**: [[SKILL: archi-ui-wireframe|按 skill 的协议，自动调用 Phase 1 线框图生成。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]
     - 无需用户确认即开始生成
     - 读取刚写入的 vision.md + roadmap.json + design_tokens.json + 02_tech_stack
     - 写入 `ui_concept.html` + `ui_context.md`

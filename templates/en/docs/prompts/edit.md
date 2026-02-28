@@ -37,7 +37,7 @@
        - Add Gherkin Scenarios (covering normal flows + exception paths)
        - Add interface/type definitions (if this task is upstream of others)
     5. Update `Spec-Status: Stub → Full`.
-    6. [?UI] If module has UI → generate or update `ui.md` (scope declaration); if new screens are needed, notify user to run the `archi-ui-wireframe` Skill (Skill syncs both `ui_concept.html` + `ui_context.md`).
+    6. [?UI] If module has UI → generate or update `ui.md` (scope declaration); if new screens are needed, [[SKILL: archi-ui-wireframe|invoke skill or notify user to run]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and prompt user to follow the document)]] (Skill syncs both `ui_concept.html` + `ui_context.md`).
     7. Generate `plan.json` (all tasks as done, recording implemented content).
     8. Present enriched spec summary to user.
 
@@ -49,14 +49,14 @@
     **Role**: Requirements Analyst & Designer
     **Action**:
     - Modify spec.md (logic/rule changes) and ui.md (structure/interaction changes) based on `[context]`.
-    - [?UI Modification] Sync `ui_concept.html` + `ui_context.md` via Skill (Skill is the sole writer of both files):
+    - [?UI Modification] [[SKILL: archi-ui-wireframe|Follow the skill protocol to sync `ui_concept.html` + `ui_context.md` (Skill is the sole writer of both files)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]:
 
       | Change Type | Criteria | Action |
       |:---|:---|:---|
       | No screen impact | Logic/data only, no visual diff | Update spec.md only; `ui_concept.html` / `ui_context.md` unchanged |
-      | Minor UI tweak | New/modified state, popup, or local area; overall layout unchanged | Call Skill (Modify screens mode) to update both files; output `MODIFIED: S-XX` |
-      | Screen structure change | Layout refactor, new standalone screen, navigation path change | Call Skill (Modify screens mode) to update both files; output `MODIFIED: S-XX`; if Phase 2 coloring is done, re-color only the modified screen |
-      | Task reduction | Screen/region removed entirely | Call Skill (Remove screens mode) to update both files; output `REMOVED: S-XX` |
+      | Minor UI tweak | New/modified state, popup, or local area; overall layout unchanged | Call skill (Modify screens mode) to update both files; output `MODIFIED: S-XX` |
+      | Screen structure change | Layout refactor, new standalone screen, navigation path change | Call skill (Modify screens mode) to update both files; output `MODIFIED: S-XX`; if Phase 2 coloring is done, re-color only the modified screen |
+      | Task reduction | Screen/region removed entirely | Call skill (Remove screens mode) to update both files; output `REMOVED: S-XX` |
 
     - Ask user questions (A/B/C/D options) to confirm details when requirements are vague.
 
