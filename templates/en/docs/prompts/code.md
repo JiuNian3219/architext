@@ -32,6 +32,7 @@
     3.  **Load Context** (Use Roadmap `📁 Slug` to locate):
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — Logic & Scenarios
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — task UI scope declaration (if exists)
+        - [?Complex] `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/design.md` — Technical design (if exists): state machine/pipeline/protocol definitions, parameter table, invariants
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI screen index (screen IDs / routes / states / navigation graph / shared components)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — read-only visual reference (calibrate layout against this during implementation; do not redesign — design is already locked in ui.md)
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — Task breakdown (contains `notes` shorthand; must reference during execution)
@@ -65,6 +66,7 @@
     - **Code Organization**: Follow the architecture pattern and file placement strategy defined in `02_tech_stack.md`.
     - **Comments**: Explain Why, not What; reject nonsense comments.
     - **Naming**: Self-documenting names; reject `a`, `b`, `tmp` etc. (except loop variable `i`).
+    - [?Complex] **Design Adherence**: When `design.md` exists, implementation must strictly follow its state machine/pipeline/protocol definitions; parameters must reference design.md § 3 values (no hardcoding other values); must satisfy all § 4 Invariants (use assert or runtime checks).
     - **Error Handling**: Prohibit swallowing errors/silent failures; must properly propagate errors and provide observable feedback to callers (UI: Toast; CLI: Exit Code; API: Status Code + Body).
     - **Robustness**: Explicitly handle edge cases (Loading/Error/Empty/Timeout); prohibit writing only Happy Path.
     - **SOTA**: Follow tech_stack best practices; reject explicitly forbidden outdated patterns.
@@ -126,7 +128,10 @@
     9.  **Static Check Zero**: All static check issues resolved.
     10. **step_4 Gate**: Confirm all step_4 checks (Static + Test + Task Verification) have passed.
     11. **Linkage Check**: Read the `featureRelations` array from `[[__DOCS_DIR__]]/global/map.json`; semantically compare the current task against each `sources` field. If matched, output: `⚠️ Linkage: [aggregator] — [checkNote]`, reminding to confirm whether the aggregator needs to be updated after this implementation. Skip if `featureRelations` is empty.
-    12. **Data Governance**: When this implementation introduces new content, directly write to the corresponding global index:
+    12. [?Complex] **Design Compliance**: Do code state transitions, processing flow, message protocol match `design.md` § 2? [[SKILL: archi-design-patterns|Reference skill's self-check list to compare implementation vs. design]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` and use its self-check list to verify)]].
+    13. [?Complex] **Invariant Enforcement**: Are `design.md` § 4 invariants enforced in code via assert/runtime checks?
+    14. [?Complex] **Parameter Alignment**: Do timeout, retry interval etc. in code match `design.md` § 3 parameter table (no hardcoded deviant values)?
+    15. **Data Governance**: When this implementation introduces new content, directly write to the corresponding global index:
 
         | Trigger | File | Action |
         |:---|:---|:---|

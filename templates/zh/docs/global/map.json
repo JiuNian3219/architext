@@ -82,6 +82,11 @@
       "purpose": "任务级 UI 范围声明 — 引用 ui_context.md 中的屏幕 ID，指定本任务涵盖的屏幕/组件范围"
     },
     {
+      "file": "design.md",
+      "category": "Technical Design",
+      "purpose": "[?Complex] 技术方案设计 — 核心机制的状态机/流水线/协议定义、参数表与不变量"
+    },
+    {
       "file": "plan.json",
       "category": "Plan",
       "purpose": "详细步骤拆解与测试用例 (Execution)"

@@ -82,6 +82,11 @@
       "purpose": "Task-level UI scope declaration — references screen IDs from ui_context.md to define this task's screen/component scope"
     },
     {
+      "file": "design.md",
+      "category": "Technical Design",
+      "purpose": "[?Complex] Technical design — state machine/pipeline/protocol definitions, parameter table, invariants"
+    },
+    {
       "file": "plan.json",
       "category": "Plan",
       "purpose": "Detailed Step Breakdown & Test Cases (Execution)"

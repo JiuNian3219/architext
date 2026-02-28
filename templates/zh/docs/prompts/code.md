@@ -32,6 +32,7 @@
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 逻辑与场景
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — 本任务 UI 范围声明(如存在)
+        - [?Complex] `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/design.md` — 技术方案设计(如存在)：状态机/流水线/协议定义、参数表、不变量
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI 屏幕索引（屏幕 ID/路由/状态/导航关系/共享组件）
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 只读视觉参考（实现时以此校准布局结构，禁基于此重新设计，设计已在 ui.md 确定）
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — 任务拆解（含 `notes` 速记，执行时须参照）
@@ -65,6 +66,7 @@
     - **Code Organization**: 遵循 `02_tech_stack.md` 中定义的架构模式与文件归位策略。
     - **Comments**: 解释 Why 而非 What；拒绝废话注释。
     - **Naming**: 自解释命名；拒绝 `a`, `b`, `tmp` 等无意义名（循环变量 `i` 除外）。
+    - [?Complex] **Design Adherence**: 存在 `design.md` 时，实现须严格遵循其定义的状态机/流水线/协议；参数须引用 design.md § 3 的值（禁硬编码其他值）；须满足 § 4 所有 Invariants（可用 assert 或运行时检查守护）。
     - **Error Handling**: 禁吞错/禁静默失败；须正确传播错误并给调用方可观测反馈（UI: Toast；CLI: Exit Code；API: Status Code + Body）。
     - **Robustness**: 显式处理边界(Loading/Error/Empty/Timeout)；禁只写 Happy Path。
     - **SOTA**: 遵循 tech_stack 定义的最佳实践；拒绝明确禁止的过时模式。
@@ -126,7 +128,10 @@
     9.  **Static Check Zero**: 所有静态检查问题已解决。
     10. **step_4 Gate**: 确认 step_4 所有检查（Static + Test + Task Verification）已通过。
     11. **联动检查**: 读取 `[[__DOCS_DIR__]]/global/map.json` 中的 `featureRelations` 数组，将本次实现的功能与各条 `sources` 字段做语义对比。命中时输出提示：`⚠️ 联动: [aggregator] — [checkNote]`，提醒在当前实现完成后确认聚合方是否需要同步。`featureRelations` 为空则跳过。
-    12. **数据治理**: 本次实现引入新内容时，须直接写入对应全局索引：
+    12. [?Complex] **Design Compliance**: 代码的状态转移、处理流程、消息协议是否与 `design.md` § 2 一致？[[SKILL: archi-design-patterns|引用 skill 的自检清单逐项对比实现与设计]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 并用其自检清单验证）]]。
+    13. [?Complex] **Invariant Enforcement**: `design.md` § 4 的不变量是否在代码中有对应的 assert/运行时检查？
+    14. [?Complex] **Parameter Alignment**: 代码中的超时、重试间隔等数值是否与 `design.md` § 3 参数表一致（禁硬编码偏离值）？
+    15. **数据治理**: 本次实现引入新内容时，须直接写入对应全局索引：
 
         | 触发条件 | 文件 | 动作 |
         |:---|:---|:---|

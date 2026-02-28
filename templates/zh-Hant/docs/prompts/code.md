@@ -32,6 +32,7 @@
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 邏輯與場景
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — 本任務 UI 範圍聲明(如存在)
+        - [?Complex] `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/design.md` — 技術方案設計(如存在)：狀態機/流水線/協議定義、參數表、不變量
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI 畫面索引（畫面 ID/路由/狀態/導覽關係/共享元件）
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 唯讀視覺參考（實作時以此校準布局結構，禁基於此重新設計，設計已在 ui.md 確定）
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — 任務拆解（含 `notes` 速記，執行時須參照）
@@ -65,6 +66,7 @@
     - **Code Organization**: 遵循 `02_tech_stack.md` 中定義的架構模式與檔案歸位策略。
     - **Comments**: 解釋 Why 而非 What；拒絕廢話註解。
     - **Naming**: 自解釋命名；拒絕 `a`, `b`, `tmp` 等無意義名（迴圈變數 `i` 除外）。
+    - [?Complex] **Design Adherence**: 存在 `design.md` 時，實作須嚴格遵循其定義的狀態機/流水線/協議；參數須引用 design.md § 3 的值（禁硬編碼其他值）；須滿足 § 4 所有 Invariants（可用 assert 或執行時檢查守護）。
     - **Error Handling**: 禁吞錯/禁靜默失敗；須正確傳播錯誤並給呼叫方可觀測回饋（UI: Toast；CLI: Exit Code；API: Status Code + Body）。
     - **Robustness**: 顯式處理邊界(Loading/Error/Empty/Timeout)；禁只寫 Happy Path。
     - **SOTA**: 遵循 tech_stack 定義的最佳實務；拒絕明確禁止的過時模式。
@@ -126,7 +128,10 @@
     9.  **Static Check Zero**: 所有靜態檢查問題已解決。
     10. **step_4 Gate**: 確認 step_4 所有檢查（Static + Test + Task Verification）已通過。
     11. **聯動檢查**: 讀取 `[[__DOCS_DIR__]]/global/map.json` 中的 `featureRelations` 陣列，將本次實現的功能與各條 `sources` 欄位做語義對比。命中時輸出提示：`⚠️ 聯動: [aggregator] — [checkNote]`，提醒在當前實現完成後確認聚合方是否需要同步。`featureRelations` 為空則跳過。
-    12. **資料治理**: 本次實現引入新內容時，須直接寫入對應全域索引：
+    12. [?Complex] **Design Compliance**: 程式碼的狀態轉移、處理流程、訊息協議是否與 `design.md` § 2 一致？[[SKILL: archi-design-patterns|引用 skill 的自檢清單逐項對比實作與設計]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 並用其自檢清單驗證）]]。
+    13. [?Complex] **Invariant Enforcement**: `design.md` § 4 的不變量是否在程式碼中有對應的 assert/執行時檢查？
+    14. [?Complex] **Parameter Alignment**: 程式碼中的超時、重試間隔等數值是否與 `design.md` § 3 參數表一致（禁硬編碼偏離值）？
+    15. **資料治理**: 本次實現引入新內容時，須直接寫入對應全域索引：
 
         | 觸發條件 | 檔案 | 動作 |
         |:---|:---|:---|

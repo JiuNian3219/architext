@@ -82,6 +82,11 @@
       "purpose": "任務級 UI 範圍聲明 — 引用 ui_context.md 中的畫面 ID，指定本任務涵蓋的畫面/元件範圍"
     },
     {
+      "file": "design.md",
+      "category": "Technical Design",
+      "purpose": "[?Complex] 技術方案設計 — 核心機制的狀態機/流水線/協議定義、參數表與不變量"
+    },
+    {
       "file": "plan.json",
       "category": "Plan",
       "purpose": "詳細步驟拆解與測試案例 (Execution)"

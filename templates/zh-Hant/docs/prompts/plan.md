@@ -94,6 +94,18 @@
     - spec 精簡為 1-2 個 Acceptance Criteria 條目（按 Task Type 選格式）
     - plan 精簡為單一 Phase
     - signoff 時確認（取代 step_2 的 Gate）
+
+    **③ Design 信號檢測（Standard 判定後執行）**：
+
+    Standard 任務中，檢測是否需要生成 `design.md`（技術方案設計）：
+
+    | 信號 | 判定 |
+    |:---|:---|
+    | 架構建議選型的 AI- 含複雜度警告（如「極難正確實現」、「狀態管理複雜」、「連線洩漏」） | **Standard + Design** |
+    | 涉及自訂狀態機、非平凡演算法、多元件協調協議、重試/恢復策略 | **Standard + Design** |
+    | 標準 CRUD / 配置 / 簡單整合 | **Standard**（無 design.md） |
+
+    > Standard + Design 時，step_2 須輸出機制預覽（Part 1.5），step_4 須額外生成 `design.md`。
 </step_1_5_complexity>
 
 <step_2_interview>
@@ -133,6 +145,19 @@
 
     展開 Q-table 時，格式遵循 [[SKILL: archi-interview-protocol|skill 的標準輸出格式]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 並遵循其規則執行）]]。
 
+    #### Part 1.5: Mechanism Preview (機制預覽) [?Complex]
+
+    僅當 step_1_5 判定為 **Standard + Design** 時輸出。列出需要技術方案設計的核心機制及擬用模式：
+
+    ```
+    ### 機制預覽 (將生成 design.md)
+    | 機制 | 模式 | 簡述 |
+    |:---|:---|:---|
+    | [機制名稱] | [State Machine / Pipeline / Decision Matrix / Protocol] | [一句話描述] |
+    ```
+
+    > 使用者可在此增刪機制或修改模式選擇。
+
     #### Output Format
 
     ```
@@ -149,6 +174,12 @@
     | 錯誤處理 | [專案約定值] | 專案約定 | ref: 02_tech_stack.md §9 |
     | ... | ... | ... | ... |
 
+    [僅 Standard + Design]:
+    ### 機制預覽 (將生成 design.md)
+    | 機制 | 模式 | 簡述 |
+    |:---|:---|:---|
+    | ... | ... | ... |
+
     [僅對需要使用者裁決的維度展開選項表]:
     **[Q<n>] 問題標題**
     > 為什麼需要使用者決定（一句話）
@@ -164,6 +195,7 @@
     > - 設計修正: 「註冊不需要電子郵件驗證步驟」
     > - 維度覆寫: 「核心結構=C, 錯誤處理=B D」
     > - 問題回答: 「Q1=B」
+    > - 機制修改: 「去掉 Pipeline，重連不需要那麼複雜」
     ```
 
     **⌨️ INPUT**: 回覆 **OK** 全部接受；或自由文字標註修改項。無需按固定格式。
@@ -243,7 +275,16 @@
       2. 完成偏差處理後，按 `ui.template.md` 填寫畫面範圍聲明和差異元件。
     - **無 `ui_context.md`（降級路徑）**: 按完整 ITP v3.0 描述元件樹，引用 `design_tokens.json` Token 定義。
 
-    **3. `plan.json`** (必須):
+    **3. `design.md`** [?Complex]:
+    - 範本: `templates/design.template.md`。
+    - 僅在 step_1_5 判定為 **Standard + Design** 時生成。
+    - § 2 Core Mechanisms: 按 step_2 確認的機制預覽，呼叫 [[SKILL: archi-design-patterns|skill 的模式選擇指南和標準格式生成機制描述並執行自檢]][[NO-SKILL: （Skill 未安裝：請閱讀 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 並遵循其模式格式和自檢清單執行）]]。
+    - § 3 Parameters: 所有機制中的數值須具體化，禁模糊描述。
+    - § 4 Invariants: 每條須可測試，須對應 plan.json 的 test 條目。
+    - § 5 Failure Modes: 每個故障須有檢測方式 + 降級行為。
+    - § 6 Trace Verification: 從 spec § 2 每條 AC 追蹤設計路徑，有 Gap 須回補。
+
+    **4. `plan.json`** (必須):
     - 範本: `templates/plan.template.json`。
     - 根據專案型別動態調整 Phase；確保每個 Task 上下文自包含。
     - 任務描述中明確 "Additive Only" + "Respect Unknowns"。
@@ -299,6 +340,9 @@
     8.  **WBS Coverage**: plan.json 是否 100% 覆蓋 spec 的每個 Acceptance Criteria 條目？
     9.  **Notes Quality**: plan.json 每個 task 的 notes 是否含具體產出物 + 約束 + 可執行驗證？
     10. **AX Compliance**: 是否遵守 Anti-Clobbering 和 Interface Stability？
+    11. [?Complex] **Design Trace**: design.md § 6 Trace Verification 是否所有 AC 均為 ✓（無 Gap）？
+    12. [?Complex] **Parameter Specificity**: design.md § 3 是否所有參數都有具體值（無「適當」/「合理」等模糊詞）？
+    13. [?Complex] **Self-Check Pass**: design.md § 2 每個機制的自檢清單是否全部通過？
 
     如有問題則靜默修正；嚴重問題標記 `⚠️ Risk Warning`。
 </step_5_audit>

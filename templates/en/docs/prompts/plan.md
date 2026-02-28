@@ -94,6 +94,18 @@
     - spec condensed to 1-2 Acceptance Criteria items (format by Task Type)
     - plan condensed to a single Phase
     - Confirm at signoff (replacing step_2 Gate)
+
+    **③ Design signal detection (after Standard verdict)**:
+
+    For Standard tasks, detect whether to generate `design.md` (technical design):
+
+    | Signal | Verdict |
+    |:---|:---|
+    | Architecture option's AI- contains complexity warning (e.g. "extremely hard to implement correctly", "state management complex", "connection leak") | **Standard + Design** |
+    | Involves custom state machine, non-trivial algorithm, multi-component coordination protocol, retry/recovery strategy | **Standard + Design** |
+    | Standard CRUD / config / simple integration | **Standard** (no design.md) |
+
+    > When Standard + Design: step_2 must output mechanism preview (Part 1.5); step_4 must additionally generate `design.md`.
 </step_1_5_complexity>
 
 <step_2_interview>
@@ -133,6 +145,19 @@
 
     When expanding a Q-table, follow the format in [[SKILL: archi-interview-protocol|the skill's standard output format]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]].
 
+    #### Part 1.5: Mechanism Preview [?Complex]
+
+    Output only when step_1_5 verdict is **Standard + Design**. List core mechanisms needing technical design and intended pattern:
+
+    ```
+    ### Mechanism Preview (will generate design.md)
+    | Mechanism | Pattern | Brief |
+    |:---|:---|:---|
+    | [name] | [State Machine / Pipeline / Decision Matrix / Protocol] | [one-sentence description] |
+    ```
+
+    > User may add/remove mechanisms or change pattern selection here.
+
     #### Output Format
 
     ```
@@ -149,6 +174,12 @@
     | Error Handling | [Convention value] | Project Convention | ref: 02_tech_stack.md §9 |
     | ... | ... | ... | ... |
 
+    [Only when Standard + Design]:
+    ### Mechanism Preview (will generate design.md)
+    | Mechanism | Pattern | Brief |
+    |:---|:---|:---|
+    | ... | ... | ... |
+
     [Only expand option table for dimensions requiring user decision]:
     **[Q<n>] Question title**
     > Why user decision is needed (one sentence)
@@ -164,6 +195,7 @@
     > - Design correction: "Registration doesn't need email verification step"
     > - Dimension override: "Core Structure=C, Error Handling=B D"
     > - Question answer: "Q1=B"
+    > - Mechanism change: "Remove Pipeline, reconnection doesn't need that complexity"
     ```
 
     **⌨️ INPUT**: Reply **OK** to accept all; or free-text annotations for changes. No fixed format required.
@@ -243,7 +275,16 @@
       2. After resolving divergence, fill in screen scope and delta components per `ui.template.md`.
     - **Without `ui_context.md` (fallback path)**: Write full ITP v3.0 component tree, referencing `design_tokens.json` token definitions.
 
-    **3. `plan.json`** (Mandatory):
+    **3. `design.md`** [?Complex]:
+    - Template: `templates/design.template.md`.
+    - Generate only when step_1_5 verdict is **Standard + Design**.
+    - § 2 Core Mechanisms: Per step_2 confirmed mechanism preview, call [[SKILL: archi-design-patterns|skill's pattern selection guide and standard format to generate mechanism descriptions and run self-checks]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` and follow its pattern formats and self-check lists)]].
+    - § 3 Parameters: All mechanism numeric values must be concrete; no vague descriptions.
+    - § 4 Invariants: Each must be testable; must map to plan.json test entries.
+    - § 5 Failure Modes: Each failure must have detection + fallback behavior.
+    - § 6 Trace Verification: Trace design path from each spec § 2 AC; fix gaps by returning to § 2 or § 5.
+
+    **4. `plan.json`** (Mandatory):
     - Template: `templates/plan.template.json`.
     - Dynamically adjust Phases by project type; ensure each Task's context is self-contained.
     - Task descriptions explicitly state "Additive Only" + "Respect Unknowns".
@@ -299,6 +340,9 @@
     8.  **WBS Coverage**: Does plan.json 100% cover each spec Acceptance Criteria item?
     9.  **Notes Quality**: Does each plan.json task notes include concrete deliverable + constraints + executable verification?
     10. **AX Compliance**: Are Anti-Clobbering and Interface Stability rules followed?
+    11. [?Complex] **Design Trace**: Are all ACs in design.md § 6 Trace Verification ✓ (no Gap)?
+    12. [?Complex] **Parameter Specificity**: Does design.md § 3 have concrete values for all parameters (no "appropriate"/"reasonable" etc.)?
+    13. [?Complex] **Self-Check Pass**: Are all self-check lists for each mechanism in design.md § 2 passed?
 
     Silently fix issues; mark critical issues with `⚠️ Risk Warning`.
 </step_5_audit>

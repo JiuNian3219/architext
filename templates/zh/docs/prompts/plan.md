@@ -94,6 +94,18 @@
     - spec 精简为 1-2 个 Acceptance Criteria 条目（按 Task Type 选格式）
     - plan 精简为单 Phase
     - signoff 时确认（替代 step_2 的 Gate）
+
+    **③ Design 信号检测（Standard 判定后执行）**：
+
+    Standard 任务中，检测是否需要生成 `design.md`（技术方案设计）：
+
+    | 信号 | 判定 |
+    |:---|:---|
+    | 架构建议选型的 AI- 含复杂度警告（如"极难正确实现"、"状态管理复杂"、"连接泄漏"） | **Standard + Design** |
+    | 涉及自定义状态机、非平凡算法、多组件协调协议、重试/恢复策略 | **Standard + Design** |
+    | 标准 CRUD / 配置 / 简单集成 | **Standard**（无 design.md） |
+
+    > Standard + Design 时，step_2 须输出机制预览（Part 1.5），step_4 须额外生成 `design.md`。
 </step_1_5_complexity>
 
 <step_2_interview>
@@ -132,6 +144,19 @@
 
     展开 Q-table 时，格式遵循 [[SKILL: archi-interview-protocol|skill 的标准输出格式]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则执行）]]。
 
+    #### Part 1.5: Mechanism Preview (机制预览) [?Complex]
+
+    仅当 step_1_5 判定为 **Standard + Design** 时输出。列出需要技术方案设计的核心机制及拟用模式：
+
+    ```
+    ### 机制预览 (将生成 design.md)
+    | 机制 | 模式 | 简述 |
+    |:---|:---|:---|
+    | [机制名称] | [State Machine / Pipeline / Decision Matrix / Protocol] | [一句话描述] |
+    ```
+
+    > 用户可在此增删机制或修改模式选择。
+
     #### Output Format
 
     ```
@@ -148,6 +173,12 @@
     | 错误处理 | [项目约定值] | 项目约定 | ref: 02_tech_stack.md §9 |
     | ... | ... | ... | ... |
 
+    [仅 Standard + Design]:
+    ### 机制预览 (将生成 design.md)
+    | 机制 | 模式 | 简述 |
+    |:---|:---|:---|
+    | ... | ... | ... |
+
     [仅对需要用户裁决的维度展开选项表]:
     **[Q<n>] 问题标题**
     > 为什么需要用户决定（一句话）
@@ -163,6 +194,7 @@
     > - 设计修正: "注册不需要邮箱验证步骤"
     > - 维度覆写: "核心结构=C, 错误处理=B D"
     > - 问题回答: "Q1=B"
+    > - 机制修改: "去掉 Pipeline，重连不需要那么复杂"
     ```
 
     **Goal**: 锁定 `spec`, `ui`(如适用), `data_snapshot.json`(如适用)。
@@ -244,7 +276,16 @@
       2. 完成偏差处理后，按 `ui.template.md` 填写屏幕范围声明和差异组件。
     - **无 `ui_context.md`（降级路径）**: 按完整 ITP v3.0 描述组件树，引用 `design_tokens.json` Token 定义。
 
-    **3. `plan.json`** (必须):
+    **3. `design.md`** [?Complex]:
+    - 模板: `templates/design.template.md`。
+    - 仅在 step_1_5 判定为 **Standard + Design** 时生成。
+    - § 2 Core Mechanisms: 按 step_2 确认的机制预览，调用 [[SKILL: archi-design-patterns|skill 的模式选择指南和标准格式生成机制描述并执行自检]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 并遵循其模式格式和自检清单执行）]]。
+    - § 3 Parameters: 所有机制中的数值须具体化，禁模糊描述。
+    - § 4 Invariants: 每条须可测试，须对应 plan.json 的 test 条目。
+    - § 5 Failure Modes: 每个故障须有检测方式 + 降级行为。
+    - § 6 Trace Verification: 从 spec § 2 每条 AC 追踪设计路径，有 Gap 须回补。
+
+    **4. `plan.json`** (必须):
     - 模板: `templates/plan.template.json`。
     - 根据项目类型动态调整 Phase；确保每个 Task 上下文自包含。
     - 任务描述中明确 "Additive Only" + "Respect Unknowns"。
@@ -300,6 +341,9 @@
     8.  **WBS Coverage**: plan.json 是否 100% 覆盖 spec 的每个 Acceptance Criteria 条目？
     9.  **Notes Quality**: plan.json 每个 task 的 notes 是否含具体产出物 + 约束 + 可执行验证？
     10. **AX Compliance**: 是否遵守 Anti-Clobbering 和 Interface Stability？
+    11. [?Complex] **Design Trace**: design.md § 6 Trace Verification 是否所有 AC 均为 ✓（无 Gap）？
+    12. [?Complex] **Parameter Specificity**: design.md § 3 是否所有参数都有具体值（无"适当"/"合理"等模糊词）？
+    13. [?Complex] **Self-Check Pass**: design.md § 2 每个机制的自检清单是否全部通过？
 
     如有问题则静默修正；严重问题标记 `⚠️ Risk Warning`。
 </step_5_audit>
