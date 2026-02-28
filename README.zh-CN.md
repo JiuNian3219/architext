@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 
-**支持的 IDE：** Cursor *(推荐)* · Windsurf · Trae · VS Code · Claude Code
+**支持的 IDE：** Cursor *(推荐)* · Windsurf · Trae · VS Code · Claude Code · OpenCode
 
 </div>
 
@@ -64,7 +64,7 @@ npx archi init
 
 ```
 ✔ 选择语言      › 简体中文
-✔ 选择 IDE      › Cursor   (多选 — Cursor / Windsurf / Trae / VS Code / Claude Code)
+✔ 选择 IDE      › Cursor   (多选 — Cursor / Windsurf / Trae / VS Code / Claude Code / OpenCode)
 ✔ 选择项目类型  › Web SPA / PWA
 
 ● 正在部署 Architext...
@@ -295,6 +295,7 @@ Agent 模式适合单次会话。Architext 提供跨会话、跨成员、跨 AI 
 | Trae | `.trae/rules/` | `.md` | 支持 |
 | VS Code | `.github/instructions/` | `.instructions.md` | 支持 |
 | Claude Code | `.claude/rules/` | `.md` | 支持 |
+| OpenCode | `.opencode/rules/` | `.md` | 支持 |
 
 后续计划扩展更多编辑器支持。
 

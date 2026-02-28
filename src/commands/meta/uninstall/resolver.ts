@@ -31,8 +31,53 @@ export async function resolveFilesToDelete(
     filesToDelete.push(configPath);
   }
 
+  // OpenCode 配置文件 (opencode.json)：仅当 opencodeInstructionsAdded 为 true 时移除我们添加的路径。
+  // 用户原有 instructions 中的 .opencode/rules/*.md 不会被误删。
+  if (
+    config?.editors?.includes("opencode") &&
+    config?.opencodeInstructionsAdded
+  ) {
+    const openCodeConfigPath = path.resolve(cwd, "opencode.json");
+    const archiPath = ".opencode/rules/*.md";
+    if (await fs.pathExists(openCodeConfigPath)) {
+      try {
+        const content = JSON.parse(
+          await fs.readFile(openCodeConfigPath, "utf-8"),
+        );
+        if (!Array.isArray(content.instructions)) {
+          // instructions 不是数组，跳过
+        } else {
+          const filtered = content.instructions.filter(
+            (p: string) => p !== archiPath,
+          );
+          if (filtered.length === 0) {
+            delete content.instructions;
+            if (Object.keys(content).length === 0) {
+              filesToDelete.push(openCodeConfigPath);
+            } else {
+              await fs.writeFile(
+                openCodeConfigPath,
+                JSON.stringify(content, null, 2),
+                "utf-8",
+              );
+            }
+          } else if (filtered.length !== content.instructions.length) {
+            content.instructions = filtered;
+            await fs.writeFile(
+              openCodeConfigPath,
+              JSON.stringify(content, null, 2),
+              "utf-8",
+            );
+          }
+        }
+      } catch {
+        // JSON 损坏时跳过
+      }
+    }
+  }
+
   if (!config) {
-    return filesToDelete;
+    return { files: filesToDelete, dirsToCheck: [] };
   }
 
   // 文档目录 (.architext)

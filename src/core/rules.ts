@@ -99,6 +99,17 @@ export const EDITOR_CONFIGS: Record<SupportedEditor, EditorRuleConfig> = {
       targetDir: ".claude/skills",
     },
   },
+  opencode: {
+    label: "OpenCode",
+    targetDir: ".opencode/rules",
+    targetExt: ".md",
+    commands: {
+      targetDir: ".opencode/commands",
+    },
+    skills: {
+      targetDir: ".opencode/skills",
+    },
+  },
 };
 
 export const SUPPORTED_EDITORS = Object.keys(

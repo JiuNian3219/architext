@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 
-**Supported IDEs:** Cursor *(recommended)* · Windsurf · Trae · VS Code · Claude Code
+**Supported IDEs:** Cursor *(recommended)* · Windsurf · Trae · VS Code · Claude Code · OpenCode
 
 </div>
 
@@ -64,7 +64,7 @@ npx archi init
 
 ```
 ✔ Select language    › English
-✔ Select IDE(s)      › Cursor   (multiselect — Cursor / Windsurf / Trae / VS Code / Claude Code)
+✔ Select IDE(s)      › Cursor   (multiselect — Cursor / Windsurf / Trae / VS Code / Claude Code / OpenCode)
 ✔ Select project type › Web SPA / PWA
 
 ● Deploying Architext...
@@ -295,6 +295,7 @@ Four IDEs are currently supported. During `archi init` you manually select which
 | Trae | `.trae/rules/` | `.md` | Supported |
 | VS Code | `.github/instructions/` | `.instructions.md` | Supported |
 | Claude Code | `.claude/rules/` | `.md` | Supported |
+| OpenCode | `.opencode/rules/` | `.md` | Supported |
 
 Support for additional editors is planned.
 

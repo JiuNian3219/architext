@@ -13,7 +13,8 @@ export type SupportedEditor =
   | "cursor"
   | "windsurf"
   | "vscode"
-  | "claude";
+  | "claude"
+  | "opencode";
 
 /**
  * 项目特征标签（内部驱动 Brief 模板拼装的原子单元）
@@ -96,6 +97,11 @@ export interface ArchitextConfig {
   updatedAt: string;
   /** 最近一次生成时的配置快照 */
   lastScaffold?: InitConfig;
+  /**
+   * 标记 opencode.json 的 instructions 中 .opencode/rules/*.md 是否为 Architext 添加。
+   * 仅当为 true 时，uninstall 才会移除该路径；用户原有配置不会被误删。
+   */
+  opencodeInstructionsAdded?: boolean;
 }
 
 /**

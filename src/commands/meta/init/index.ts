@@ -1,7 +1,7 @@
 /** @fileoverview init 命令入口，协调 Prompter（交互）和 Scaffolder（执行）以完成项目初始化。 */
 import { intro, outro } from "@clack/prompts";
 import color from "picocolors";
-import { saveConfig } from "../../../core/config.ts";
+import { loadConfig, saveConfig } from "../../../core/config.ts";
 import { logger } from "../../../utils/logger.ts";
 import { UserCancelError } from "../../../core/errors.ts";
 import { Scaffolder } from "../../../core/scaffold.ts";
@@ -36,9 +36,19 @@ export async function initCommand(options: InitOptions): Promise<void> {
   });
 
   try {
-    await Scaffolder.run(config, {
+    const result = await Scaffolder.run(config, {
       resolveConflicts: ConflictResolver.resolve.bind(ConflictResolver),
     });
+
+    if (result?.opencodeInstructionsAdded) {
+      const current = await loadConfig();
+      if (current) {
+        await saveConfig({
+          ...current,
+          opencodeInstructionsAdded: true,
+        });
+      }
+    }
   } catch (error) {
     // ConflictResolver 在文件冲突时可能抛出 UserCancelError
     if (error instanceof UserCancelError) {

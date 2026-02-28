@@ -8,6 +8,7 @@ const SupportedEditorSchema = z.enum([
   "windsurf",
   "vscode",
   "claude",
+  "opencode",
 ]);
 
 /** 项目特征标签 */
@@ -47,6 +48,8 @@ export const ArchitextConfigSchema = z.object({
   version: z.string().optional(),
   updatedAt: z.string().min(1),
   lastScaffold: InitConfigSchema.optional(),
+  /** 标记 .opencode/rules/*.md 是否为 Architext 添加，uninstall 时据此决定是否移除 */
+  opencodeInstructionsAdded: z.boolean().optional(),
 });
 
 export type ArchitextConfigInferred = z.infer<typeof ArchitextConfigSchema>;

@@ -125,6 +125,93 @@ describe("Scaffolder Integration", () => {
     expect(await fs.pathExists(claudeSkillsDir)).toBe(true);
   });
 
+  it("should generate OpenCode specific files and opencode.json", async () => {
+    const config: InitConfig = {
+      language: "en",
+      editors: ["opencode"],
+      docDir: "docs",
+      features: [],
+    };
+
+    await Scaffolder.run(config);
+
+    // 验证：OpenCode 规则目录
+    const rulesDir = path.join(tempDir, ".opencode/rules");
+    expect(await fs.pathExists(rulesDir)).toBe(true);
+
+    // 验证：Commands 目录
+    const commandsDir = path.join(tempDir, ".opencode/commands");
+    expect(await fs.pathExists(commandsDir)).toBe(true);
+    expect(await fs.pathExists(path.join(commandsDir, "archi.start.md"))).toBe(
+      true,
+    );
+
+    // 验证：opencode.json 生成且包含 instructions 字段
+    const configPath = path.join(tempDir, "opencode.json");
+    expect(await fs.pathExists(configPath)).toBe(true);
+    const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
+    expect(content.instructions).toContain(".opencode/rules/*.md");
+  });
+
+  it("should merge Architext path into existing opencode.json instructions", async () => {
+    // 预先写入一个已有 instructions 的 opencode.json
+    const configPath = path.join(tempDir, "opencode.json");
+    const existing = {
+      model: "anthropic/claude-sonnet-4-5",
+      instructions: ["custom/*.md"],
+    };
+    await fs.writeFile(configPath, JSON.stringify(existing, null, 2), "utf-8");
+
+    const config: InitConfig = {
+      language: "en",
+      editors: ["opencode"],
+      docDir: "docs",
+      features: [],
+    };
+
+    await Scaffolder.run(config);
+
+    // instructions 应合并：保留用户原有 + 追加 Architext 路径
+    const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
+    expect(content.instructions).toContain("custom/*.md");
+    expect(content.instructions).toContain(".opencode/rules/*.md");
+  });
+
+  it("should not duplicate .opencode/rules/*.md when already in instructions", async () => {
+    const configPath = path.join(tempDir, "opencode.json");
+    const existing = { instructions: [".opencode/rules/*.md", "AGENTS.md"] };
+    await fs.writeFile(configPath, JSON.stringify(existing, null, 2), "utf-8");
+
+    const config: InitConfig = {
+      language: "en",
+      editors: ["opencode"],
+      docDir: "docs",
+      features: [],
+    };
+
+    const result = await Scaffolder.run(config);
+
+    const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
+    const count = content.instructions.filter(
+      (p: string) => p === ".opencode/rules/*.md",
+    ).length;
+    expect(count).toBe(1);
+    expect(result?.opencodeInstructionsAdded).toBe(false);
+  });
+
+  it("should return opencodeInstructionsAdded true when we add the path", async () => {
+    const config: InitConfig = {
+      language: "en",
+      editors: ["opencode"],
+      docDir: "docs",
+      features: [],
+    };
+
+    const result = await Scaffolder.run(config);
+
+    expect(result?.opencodeInstructionsAdded).toBe(true);
+  });
+
   it("should fallback to default language if requested language template missing", async () => {
     // 假设我们请求一个不存在的语言
     // 注意：这里需要确保 Config 类型允许 string，或者我们 cast 一下

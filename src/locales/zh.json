@@ -10,7 +10,7 @@
   },
   "init": {
     "desc": "初始化 Architext 框架，配置编辑器规则和文档骨架",
-    "editor": "框架目标IDE，可多选，逗号分隔 (cursor/windsurf/trae/vscode/claude)",
+    "editor": "框架目标IDE，可多选，逗号分隔 (cursor/windsurf/trae/vscode/claude/opencode)",
     "lang": "规则与文档骨架语言",
     "doc": "自定义文档路径，默认使用.architext",
     "type": "项目类型 (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
@@ -320,7 +320,7 @@
       "cli": {
         "init": {
           "desc": "初始化 Architext 框架。生成规则文件、文档目录、Prompt 模板、Project Brief。",
-          "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude)",
+          "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "指定语言 (zh / en / zh-Hant)",
           "doc": "自定义文档目录名 (默认 .architext)",
           "type": "项目类型 (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"

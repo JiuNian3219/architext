@@ -10,7 +10,7 @@
   },
   "init": {
     "desc": "Initialize Architext Framework, configure editor rules and document skeleton",
-    "editor": "Target IDE, multiple selection is supported, separated by commas (cursor/windsurf/trae/vscode/claude)",
+    "editor": "Target IDE, multiple selection is supported, separated by commas (cursor/windsurf/trae/vscode/claude/opencode)",
     "lang": "Rules and document skeleton language",
     "doc": "Custom document path, default is .architext",
     "type": "Project type (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
@@ -320,7 +320,7 @@
       "cli": {
         "init": {
           "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates, Project Brief.",
-          "editor": "Target IDE (cursor / trae / windsurf / vscode / claude)",
+          "editor": "Target IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "Language (zh / en / zh-Hant)",
           "doc": "Custom doc directory name (default: .architext)",
           "type": "Project type (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"

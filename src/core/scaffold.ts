@@ -226,8 +226,57 @@ export class Scaffolder {
     }
 
     await this.generateBrief(sourceDir, features, replacements);
+    const opencodeInstructionsAdded =
+      await this.generateOpenCodeConfig(editors);
 
     logger.success(t("complete"));
+    return { opencodeInstructionsAdded };
+  }
+
+  /**
+   * 当 editors 包含 opencode 时，在项目根目录生成或更新 opencode.json。
+   * opencode.json 中的 instructions 字段指向 .opencode/rules/*.md，
+   * 使 OpenCode 能自动加载 Architext 部署的规则文件。
+   * - 文件不存在：创建 { instructions: [".opencode/rules/*.md"] }
+   * - 文件存在但无 instructions：追加 instructions 字段
+   * - 文件存在且有 instructions：若 .opencode/rules/*.md 不在数组中则追加，避免覆盖用户已有配置
+   * @returns 本次是否由 Architext 添加了该路径（用于 architext.json 的 opencodeInstructionsAdded 标记）
+   */
+  private static async generateOpenCodeConfig(
+    editors: string[],
+  ): Promise<boolean> {
+    if (!editors.includes("opencode")) return false;
+
+    const destPath = path.join(process.cwd(), "opencode.json");
+    const archiPath = ".opencode/rules/*.md";
+
+    if (await fs.pathExists(destPath)) {
+      try {
+        const existing = JSON.parse(await fs.readFile(destPath, "utf-8"));
+        const instructions = existing.instructions;
+        if (Array.isArray(instructions)) {
+          if (instructions.includes(archiPath)) return false;
+          instructions.push(archiPath);
+        } else {
+          existing.instructions = [archiPath];
+        }
+        await fs.writeFile(
+          destPath,
+          JSON.stringify(existing, null, 2),
+          "utf-8",
+        );
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    await fs.writeFile(
+      destPath,
+      JSON.stringify({ instructions: [archiPath] }, null, 2),
+      "utf-8",
+    );
+    return true;
   }
 
   /**
