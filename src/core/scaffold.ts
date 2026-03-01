@@ -14,9 +14,9 @@ import {
   BRIEF_BASE_NAME,
   BRIEF_MODULES_NAME,
   BRIEF_OUTPUT_NAME,
+  CONDITIONAL_GLOBAL_FILES,
   EDITOR_CONFIGS,
   GLOBAL_RULES,
-  PROJECT_TYPE_PRESETS,
   resolveCapabilityRefs,
 } from "./rules.ts";
 import { TemplateManager } from "./template.ts";
@@ -38,10 +38,10 @@ export class Scaffolder {
    * @param runOptions 运行时可选项（如 resolveConflicts，由 init 命令注入）
    */
   static async run(options: ScaffoldOptions, runOptions?: ScaffoldRunOptions) {
-    const { language, docDir, editors, features = [], projectType } = options;
+    const { language, docDir, editors, features = [] } = options;
     const templateRoot = await TemplateManager.getRoot();
 
-    // 如果请求的语言模板不存在（例如 zh-Hant 尚未完善），则回退到默认的中文模板，确保初始化流程不中断
+    // 如果请求的语言模板不存在，则回退到默认的中文模板，确保初始化流程不中断
     let templateLang = language;
     if (!(await fs.pathExists(path.join(templateRoot, templateLang)))) {
       logger.warn(t("fallback", { lang: language }));
@@ -51,42 +51,57 @@ export class Scaffolder {
     const sourceDir = path.join(templateRoot, templateLang);
     const targetDir = path.resolve(process.cwd(), docDir);
 
-    // 确保 [[__DOCS_DIR__]] 下的 scripts 和 tasks 空目录存在（用于存放未来计划和脚本）
+    // 确保 [[__DOCS_DIR__]] 下的骨架目录存在（scripts/tasks 存放计划和脚本，refs 存放外部知识引用）
     await fs.ensureDir(path.join(targetDir, "scripts"));
     await fs.ensureDir(path.join(targetDir, "tasks"));
+    await fs.ensureDir(path.join(targetDir, "refs"));
 
-    const projectTypeLabel = projectType
-      ? `${PROJECT_TYPE_PRESETS[projectType]?.label ?? projectType} (${projectType})`
-      : "未指定";
+    const featuresLabel = features.length > 0 ? features.join(", ") : "未指定";
 
     const replacements = {
       [GLOBAL_RULES.PLACEHOLDERS.DOCS_DIR]: docDir,
-      [GLOBAL_RULES.PLACEHOLDERS.PROJECT_TYPE]: projectTypeLabel,
+      [GLOBAL_RULES.PLACEHOLDERS.PROJECT_TYPE]: featuresLabel,
     };
 
-    // 判断所选编辑器中是否有任何一个支持 Agent Skills（如 Cursor）
-    // 用于解析 prompts/commands 中的 [[SKILL: desc]] / [[NO-SKILL: desc]] 能力标记：
-    //   有 Skill → [[SKILL: desc]] 展开为 desc，[[NO-SKILL: desc]] 移除
-    //   无 Skill → [[NO-SKILL: desc]] 展开为 desc，[[SKILL: desc]] 移除
+    // 编辑器能力检测：
+    //   hasSkills: 是否有任一编辑器支持 Agent Skills（Skill 文件读取）
+    //   hasSubagents: 是否有任一编辑器支持子代理（独立上下文 Agent 实例）
     const hasSkills = editors.some((e) => !!EDITOR_CONFIGS[e]?.skills);
+    const hasSubagents = editors.some((e) => !!EDITOR_CONFIGS[e]?.subagents);
+    const docsSource = path.join(sourceDir, GLOBAL_RULES.PATHS.DOCS_SOURCE);
     const capabilityResolver = (content: string) =>
-      resolveCapabilityRefs(content, { hasSkills });
+      resolveCapabilityRefs(content, { hasSkills, hasSubagents }, docsSource);
 
     // 用于记录所有文件操作
     const operations: FileOperation[] = [];
 
-    const docsSource = path.join(sourceDir, GLOBAL_RULES.PATHS.DOCS_SOURCE);
     if (await fs.pathExists(docsSource)) {
       const docOps = await TemplateManager.plan(
         docsSource,
         targetDir,
         replacements,
       );
-      docOps.forEach((op) => {
+
+      const featureSet = new Set<string>(features);
+      const filteredDocOps = docOps.filter((op) => {
+        // shared/ 目录仅用于 [[INCLUDE:]] 展开，不部署到用户项目
+        const relPath = path.relative(targetDir, op.dest);
+        if (
+          relPath.startsWith(`shared${path.sep}`) ||
+          relPath.startsWith("shared/")
+        )
+          return false;
+        const fileName = path.basename(op.dest);
+        const requiredFeature = CONDITIONAL_GLOBAL_FILES[fileName];
+        if (requiredFeature && !featureSet.has(requiredFeature)) return false;
+        return true;
+      });
+
+      filteredDocOps.forEach((op) => {
         op.group = "docs";
         if (op.type === FileOpType.Template) op.resolver = capabilityResolver;
       });
-      operations.push(...docOps);
+      operations.push(...filteredDocOps);
     }
 
     const rulesSource = path.join(sourceDir, GLOBAL_RULES.PATHS.RULES_SOURCE);
@@ -225,9 +240,60 @@ export class Scaffolder {
       await TemplateManager.execute(otherOps);
     }
 
-    await this.generateBrief(sourceDir, features, replacements);
+    if (options.generateBrief !== false) {
+      await this.generateBrief(sourceDir, features, replacements);
+    }
+    const opencodeInstructionsAdded =
+      await this.generateOpenCodeConfig(editors);
 
     logger.success(t("complete"));
+    return { opencodeInstructionsAdded };
+  }
+
+  /**
+   * 当 editors 包含 opencode 时，在项目根目录生成或更新 opencode.json。
+   * opencode.json 中的 instructions 字段指向 .opencode/rules/*.md，
+   * 使 OpenCode 能自动加载 Architext 部署的规则文件。
+   * - 文件不存在：创建 { instructions: [".opencode/rules/*.md"] }
+   * - 文件存在但无 instructions：追加 instructions 字段
+   * - 文件存在且有 instructions：若 .opencode/rules/*.md 不在数组中则追加，避免覆盖用户已有配置
+   * @returns 本次是否由 Architext 添加了该路径（用于 architext.json 的 opencodeInstructionsAdded 标记）
+   */
+  private static async generateOpenCodeConfig(
+    editors: string[],
+  ): Promise<boolean> {
+    if (!editors.includes("opencode")) return false;
+
+    const destPath = path.join(process.cwd(), "opencode.json");
+    const archiPath = ".opencode/rules/*.md";
+
+    if (await fs.pathExists(destPath)) {
+      try {
+        const existing = JSON.parse(await fs.readFile(destPath, "utf-8"));
+        const instructions = existing.instructions;
+        if (Array.isArray(instructions)) {
+          if (instructions.includes(archiPath)) return false;
+          instructions.push(archiPath);
+        } else {
+          existing.instructions = [archiPath];
+        }
+        await fs.writeFile(
+          destPath,
+          JSON.stringify(existing, null, 2),
+          "utf-8",
+        );
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    await fs.writeFile(
+      destPath,
+      JSON.stringify({ instructions: [archiPath] }, null, 2),
+      "utf-8",
+    );
+    return true;
   }
 
   /**

@@ -3,8 +3,14 @@
 import { confirm, isCancel } from "@clack/prompts";
 import fs from "fs-extra";
 import path from "path";
-import { EDITOR_CONFIGS, GLOBAL_RULES } from "../../../core/rules.ts";
+import {
+  CONDITIONAL_GLOBAL_FILES,
+  EDITOR_CONFIGS,
+  GLOBAL_RULES,
+  resolveCapabilityRefs,
+} from "../../../core/rules.ts";
 import { TemplateManager } from "../../../core/template.ts";
+import { FileOpType } from "../../../types/index.ts";
 import type { ArchitextConfig } from "../../../types/index.ts";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
@@ -50,11 +56,32 @@ async function resolveTemplateLang(
 
 /**
  * 构造占位符替换映射
+ *
+ * @param config - 配置
+ * @returns 占位符替换映射
  */
 function buildReplacements(config: ArchitextConfig): Record<string, string> {
   return {
     [GLOBAL_RULES.PLACEHOLDERS.DOCS_DIR]: config.docDir,
   };
+}
+
+/**
+ * 构建能力标记解析器
+ * 解析 [[SKILL: ...]] / [[NO-SKILL: ...]]，按 config.editors 是否支持 Skill 展开或移除。
+ *
+ * @param config - 配置
+ * @returns 能力标记解析器
+ */
+function buildCapabilityResolver(
+  config: ArchitextConfig,
+): (content: string) => string {
+  const hasSkills = config.editors.some((e) => !!EDITOR_CONFIGS[e]?.skills);
+  const hasSubagents = config.editors.some(
+    (e) => !!EDITOR_CONFIGS[e]?.subagents,
+  );
+  return (content: string) =>
+    resolveCapabilityRefs(content, { hasSkills, hasSubagents });
 }
 
 /**
@@ -74,6 +101,7 @@ export async function updateSilentFiles(
   const sourceDir = path.join(templateRoot, templateLang);
   const targetDir = path.resolve(cwd, config.docDir);
   const replacements = buildReplacements(config);
+  const capabilityResolver = buildCapabilityResolver(config);
 
   let count = 0;
 
@@ -85,6 +113,10 @@ export async function updateSilentFiles(
     promptsTarget,
     replacements,
   );
+  // 解析 [[SKILL:...]] / [[NO-SKILL:...]]
+  promptOps.forEach((op) => {
+    if (op.type === FileOpType.Template) op.resolver = capabilityResolver;
+  });
   await TemplateManager.execute(promptOps);
   count += promptOps.length;
 
@@ -96,6 +128,9 @@ export async function updateSilentFiles(
     templatesTarget,
     replacements,
   );
+  templateOps.forEach((op) => {
+    if (op.type === FileOpType.Template) op.resolver = capabilityResolver;
+  });
   await TemplateManager.execute(templateOps);
   count += templateOps.length;
 
@@ -116,7 +151,31 @@ export async function updateSilentFiles(
       const srcPath = path.join(promptsSource, promptFile);
       const baseName = path.basename(promptFile, ".md");
       const destPath = path.join(commandsTarget, `archi.${baseName}.md`);
-      await TemplateManager.processFile(srcPath, destPath, replacements);
+      await TemplateManager.processFile(
+        srcPath,
+        destPath,
+        replacements,
+        capabilityResolver,
+      );
+      count++;
+    }
+  }
+
+  // 补充新增的全局文档模板（仅当文件不存在且 features 匹配时写入，保护用户已有数据）
+  const globalSource = path.join(sourceDir, "docs", "global");
+  const globalTarget = path.join(targetDir, "global");
+  if (await fs.pathExists(globalSource)) {
+    const featureSet = new Set<string>(config.features ?? []);
+    const globalFiles = await fs
+      .readdir(globalSource)
+      .catch(() => [] as string[]);
+    for (const file of globalFiles) {
+      const requiredFeature = CONDITIONAL_GLOBAL_FILES[file];
+      if (requiredFeature && !featureSet.has(requiredFeature)) continue;
+      const destPath = path.join(globalTarget, file);
+      if (await fs.pathExists(destPath)) continue;
+      const srcPath = path.join(globalSource, file);
+      await fs.copy(srcPath, destPath);
       count++;
     }
   }

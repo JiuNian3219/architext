@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 
-**支持的 IDE：** Cursor *(推荐)* · Windsurf · Trae · VS Code
+**支持的 IDE：** Cursor *(推荐)* · Windsurf · Trae · VS Code · Claude Code · OpenCode
 
 </div>
 
@@ -27,6 +27,8 @@ Architext 是一套**文档驱动 AI 开发 (DDAD)** 协议，将你的 AI 编�
 在写下任何一行代码之前，Architext 强制你和 AI 就以下问题达成一致：**要构建什么**、**为什么要做**、**具体怎么实现** —— 通过跨会话持久存储的结构化文档来确保这一点。
 
 > **无文档，不代码。** 代码只是文档的下游产物。
+
+Architext 面向**中小型应用**，为 **1 人团队** 或 **1 人 + AI 助手** 的协作模式设计。无论你用的是对话式 AI 还是未来的「贾维斯式」持续助手，文档驱动的工作流都能让 AI 有稳定的上下文、清晰的执行边界，而你始终掌握决策权。
 
 Architext 以两个层次协同运作：
 
@@ -64,8 +66,9 @@ npx archi init
 
 ```
 ✔ 选择语言      › 简体中文
-✔ 选择 IDE      › Cursor   (多选 — Cursor / Windsurf / Trae / VS Code)
+✔ 选择 IDE      › Cursor   (多选 — Cursor / Windsurf / Trae / VS Code / Claude Code / OpenCode)
 ✔ 选择项目类型  › Web SPA / PWA
+✔ 是否生成 project-brief.md？ › 是（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）
 
 ● 正在部署 Architext...
 ✔ 文档已部署       → .architext/
@@ -84,7 +87,7 @@ npx archi init
 
 **第二步 · AI 对话：初始化项目**
 
-`archi init` 会在项目根目录自动生成一份 `project-brief.md`。填写完毕后，在 AI 编辑器中运行：
+选择生成时，`archi init` 会在项目根目录生成 `project-brief.md`。填写完毕后，在 AI 编辑器中运行：
 
 ```
 /archi.start project-brief.md
@@ -92,7 +95,7 @@ npx archi init
 
 AI 读取 Brief，就关键决策向你提问，生成项目的基础文档（`vision.md`、`roadmap.json`、`tech_stack` 等）。
 
-> **已有代码？** 跳过 `/archi.start`，改用 `/archi.inherit` —— 逆向分析项目，将已有功能注册为 `LEG-xx` 任务，同时生成 `map.json`。
+> **已有代码？** 跳过 `/archi.start`，改用 `/archi.inherit` —— 逆向分析项目，将已有功能注册为 `LEG-xx` 任务，同时生成 `map.json`。可选：代码库尚空时传 `project-brief.md` 补充愿景与路线图。
 
 ---
 
@@ -215,7 +218,7 @@ AI:   [正在读取 代码 + spec + plan + vision + tech_stack...]
 | 命令 | 说明 |
 |:---|:---|
 | `/archi.start [brief]` | 读取需求 Brief，生成项目基础文档（vision / roadmap / tech_stack 等） |
-| `/archi.inherit` | 逆向分析已有代码库，生成文档骨架并注册为 `LEG-xx` 任务 |
+| `/archi.inherit [brief]` | 逆向分析已有代码库；可选传 project-brief.md 补充愿景/路线图（骨架仓库） |
 | `/archi.scope [file_path]` | 将额外需求拆解为 Roadmap 任务；无文件则自动发起访谈 |
 | `/archi.plan <ID> [context]` | 深度架构访谈 → 生成 spec / plan（[?UI] 附 ui.md + ui_concept.html）；可附加已知上下文减少提问 |
 | `/archi.code <ID>` | 按 plan 分阶段实现代码；仅 `active` 任务可进入 |
@@ -294,6 +297,8 @@ Agent 模式适合单次会话。Architext 提供跨会话、跨成员、跨 AI 
 | Windsurf | `.windsurf/rules/` | `.md` | 支持 |
 | Trae | `.trae/rules/` | `.md` | 支持 |
 | VS Code | `.github/instructions/` | `.instructions.md` | 支持 |
+| Claude Code | `.claude/rules/` | `.md` | 支持 |
+| OpenCode | `.opencode/rules/` | `.md` | 支持 |
 
 后续计划扩展更多编辑器支持。
 

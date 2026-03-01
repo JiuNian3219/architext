@@ -3,12 +3,18 @@
 /**
  * 支持的语言类型
  */
-export type LocaleLang = "zh" | "zh-Hant" | "en";
+export type LocaleLang = "zh" | "en";
 
 /**
  * 支持的编辑器类型
  */
-export type SupportedEditor = "trae" | "cursor" | "windsurf" | "vscode";
+export type SupportedEditor =
+  | "trae"
+  | "cursor"
+  | "windsurf"
+  | "vscode"
+  | "claude"
+  | "opencode";
 
 /**
  * 项目特征标签（内部驱动 Brief 模板拼装的原子单元）
@@ -25,24 +31,6 @@ export type ProjectFeature =
   | "miniapp"
   | "realtime"
   | "ai";
-
-/**
- * 项目类型（用户面向的预设，每种类型映射到一组 features）
- */
-export type ProjectType =
-  | "web"
-  | "fullstack"
-  | "api"
-  | "cli"
-  | "lib"
-  | "mobile"
-  | "miniapp"
-  | "desktop"
-  | "web-desktop"
-  | "extension"
-  | "realtime"
-  | "ai-agent"
-  | "hybrid";
 
 /**
  * Commands 配置（用于支持编辑器的自定义命令功能）
@@ -76,6 +64,8 @@ export interface EditorRuleConfig {
   commands?: EditorCommandsConfig;
   /** Agent Skills 配置（可选，仅支持 Agent Skills 标准的编辑器） */
   skills?: EditorSkillsConfig;
+  /** 是否支持子代理（独立上下文的 Agent 实例） */
+  subagents?: boolean;
 }
 
 /**
@@ -91,6 +81,11 @@ export interface ArchitextConfig {
   updatedAt: string;
   /** 最近一次生成时的配置快照 */
   lastScaffold?: InitConfig;
+  /**
+   * 标记 opencode.json 的 instructions 中 .opencode/rules/*.md 是否为 Architext 添加。
+   * 仅当为 true 时，uninstall 才会移除该路径；用户原有配置不会被误删。
+   */
+  opencodeInstructionsAdded?: boolean;
 }
 
 /**
@@ -112,7 +107,8 @@ export interface InitConfig {
   editors: SupportedEditor[];
   docDir: string;
   features: ProjectFeature[];
-  projectType?: ProjectType;
+  /** 是否生成 project-brief.md；生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用 */
+  generateBrief?: boolean;
 }
 
 /**

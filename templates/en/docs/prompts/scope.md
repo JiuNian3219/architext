@@ -102,14 +102,14 @@
     **Trigger**: Only when Step 2 identifies "Required" or "Recommended" gaps.
     **Input**: Step 2 gap list. Max 3 questions.
 
-    [[SKILL: Follow `archi-interview-protocol` Skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
+    [[SKILL: archi-interview-protocol|Follow the skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
 </step_2_5_supplementary>
 
 <step_3_decompose>
     **Role**: Chief Architect
     **Input**: Full Brief + project context + supplementary answers (if any).
 
-    **Action**: [[SKILL: Follow the `archi-decompose-roadmap` Skill protocol to generate incremental task data from the Scope Brief task list]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
+    **Action**: [[SKILL: archi-decompose-roadmap|Follow the skill protocol to generate incremental task data from the Scope Brief task list.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
 
     **Display format** (convert Skill output into the following format, present to user and await confirmation):
 
@@ -171,7 +171,7 @@
 
     | Priority | Action | Description |
     |:---|:---|:---|
-    | [?UI] Recommended | Run `archi-ui-wireframe` Skill (append mode) | Append screens for new tasks to `ui_concept.html`, sync `ui_context.md` |
+    | [?UI] Recommended | [[SKILL: archi-ui-wireframe|Run skill (append mode)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]] | Append screens for new tasks to `ui_concept.html`, sync `ui_context.md` |
     | 1 | `/archi.plan <first pending task ID>` | Deep planning for the first actionable task |
     | 2 | Review roadmap | Confirm dependency relationships and priorities |
 </step_5_signoff>

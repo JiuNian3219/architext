@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 
-**Supported IDEs:** Cursor *(recommended)* · Windsurf · Trae · VS Code
+**Supported IDEs:** Cursor *(recommended)* · Windsurf · Trae · VS Code · Claude Code · OpenCode
 
 </div>
 
@@ -27,6 +27,8 @@ Architext is a **Document-Driven AI Development (DDAD)** protocol that upgrades 
 Before a single line of code is written, Architext forces you and your AI to align on: **what** you're building, **why** it matters, and **exactly how** it should be implemented — through structured documents that persist across every chat session.
 
 > **No Docs, No Code.** Code is just a downstream artifact of documents.
+
+Architext targets **small-to-medium applications**, designed for **solo developers** or **solo + AI assistant** workflows. Whether you use chat-based AI today or a future JARVIS-like persistent assistant, the document-driven approach gives AI stable context, clear execution boundaries, and keeps you in control of every decision.
 
 Architext operates in two layers:
 
@@ -64,8 +66,9 @@ npx archi init
 
 ```
 ✔ Select language    › English
-✔ Select IDE(s)      › Cursor   (multiselect — Cursor / Windsurf / Trae / VS Code)
+✔ Select IDE(s)      › Cursor   (multiselect — Cursor / Windsurf / Trae / VS Code / Claude Code / OpenCode)
 ✔ Select project type › Web SPA / PWA
+✔ Generate project-brief.md? › Yes (fill in project requirements for /archi.start or /archi.inherit)
 
 ● Deploying Architext...
 ✔ Docs deployed      → .architext/
@@ -84,7 +87,7 @@ npx archi init
 
 **Step 2 — AI chat: initialize your project**
 
-`archi init` generates a tailored `project-brief.md` at your project root. Fill it in, then run:
+When you choose to generate it, `archi init` creates a tailored `project-brief.md` at your project root. Fill it in, then run:
 
 ```
 /archi.start project-brief.md
@@ -92,7 +95,7 @@ npx archi init
 
 The AI reads the brief, interviews you on key decisions, and generates the project's foundation documents (`vision.md`, `roadmap.json`, `tech_stack`, etc.).
 
-> **Existing codebase?** Skip `/archi.start` and use `/archi.inherit` instead — it reverse-engineers your project and registers existing features as `LEG-xx` tasks.
+> **Existing codebase?** Skip `/archi.start` and use `/archi.inherit` instead — it reverse-engineers your project and registers existing features as `LEG-xx` tasks. Optional: pass `project-brief.md` when the codebase is minimal (skeleton repo) to supplement vision and roadmap.
 
 ---
 
@@ -215,7 +218,7 @@ AI:   [Reading code + spec + plan + vision + tech_stack...]
 | Command | Description |
 |:---|:---|
 | `/archi.start [brief]` | Read a project brief and generate foundation docs (vision / roadmap / tech_stack etc.) |
-| `/archi.inherit` | Reverse-engineer an existing codebase; register features as `LEG-xx` tasks |
+| `/archi.inherit [brief]` | Reverse-engineer existing codebase; optionally pass project-brief.md to supplement vision/roadmap (skeleton repos) |
 | `/archi.scope [file_path]` | Decompose extra requirements into roadmap tasks; omit file to trigger an interview |
 | `/archi.plan <ID> [context]` | Deep architecture interview → spec / plan ([?UI] also ui.md + ui_concept.html); supply context to reduce questions |
 | `/archi.code <ID>` | Implement from plan phase by phase; only `active` tasks are allowed |
@@ -294,6 +297,8 @@ Four IDEs are currently supported. During `archi init` you manually select which
 | Windsurf | `.windsurf/rules/` | `.md` | Supported |
 | Trae | `.trae/rules/` | `.md` | Supported |
 | VS Code | `.github/instructions/` | `.instructions.md` | Supported |
+| Claude Code | `.claude/rules/` | `.md` | Supported |
+| OpenCode | `.opencode/rules/` | `.md` | Supported |
 
 Support for additional editors is planned.
 

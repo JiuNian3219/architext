@@ -37,7 +37,7 @@
        - Add Gherkin Scenarios (covering normal flows + exception paths)
        - Add interface/type definitions (if this task is upstream of others)
     5. Update `Spec-Status: Stub → Full`.
-    6. [?UI] If module has UI → generate or update `ui.md` (scope declaration); if new screens are needed, notify user to run the `archi-ui-wireframe` Skill (Skill syncs both `ui_concept.html` + `ui_context.md`).
+    6. [?UI] If module has UI → generate or update `ui.md` (scope declaration); if new screens are needed, [[SKILL: archi-ui-wireframe|invoke skill or notify user to run]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and prompt user to follow the document)]] (Skill syncs both `ui_concept.html` + `ui_context.md`).
     7. Generate `plan.json` (all tasks as done, recording implemented content).
     8. Present enriched spec summary to user.
 
@@ -49,14 +49,14 @@
     **Role**: Requirements Analyst & Designer
     **Action**:
     - Modify spec.md (logic/rule changes) and ui.md (structure/interaction changes) based on `[context]`.
-    - [?UI Modification] Sync `ui_concept.html` + `ui_context.md` via Skill (Skill is the sole writer of both files):
+    - [?UI Modification] [[SKILL: archi-ui-wireframe|Follow the skill protocol to sync `ui_concept.html` + `ui_context.md` (Skill is the sole writer of both files)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]:
 
       | Change Type | Criteria | Action |
       |:---|:---|:---|
       | No screen impact | Logic/data only, no visual diff | Update spec.md only; `ui_concept.html` / `ui_context.md` unchanged |
-      | Minor UI tweak | New/modified state, popup, or local area; overall layout unchanged | Call Skill (Modify screens mode) to update both files; output `MODIFIED: S-XX` |
-      | Screen structure change | Layout refactor, new standalone screen, navigation path change | Call Skill (Modify screens mode) to update both files; output `MODIFIED: S-XX`; if Phase 2 coloring is done, re-color only the modified screen |
-      | Task reduction | Screen/region removed entirely | Call Skill (Remove screens mode) to update both files; output `REMOVED: S-XX` |
+      | Minor UI tweak | New/modified state, popup, or local area; overall layout unchanged | Call skill (Modify screens mode) to update both files; output `MODIFIED: S-XX` |
+      | Screen structure change | Layout refactor, new standalone screen, navigation path change | Call skill (Modify screens mode) to update both files; output `MODIFIED: S-XX`; if Phase 2 coloring is done, re-color only the modified screen |
+      | Task reduction | Screen/region removed entirely | Call skill (Remove screens mode) to update both files; output `REMOVED: S-XX` |
 
     - Ask user questions (A/B/C/D options) to confirm details when requirements are vague.
 
@@ -66,18 +66,27 @@
 <step_3_update_plan>
     **Role**: Tech Lead
     **Action**:
-    - Append new phase to `plan.json` phases array: `Phase X: Change Request (<Date>)`.
+    - Append new Phase object to `plan.json` phases array.
     - List specific Tasks (API update, UI tweak, Test update); each must be verifiable.
     - **Status Transition**: If current task status=`done`, reset to `active` after appending the Phase (otherwise `/archi.code` will be rejected by the Status Gate).
 
-    **Terminal Gate** (Do not skip; must complete before step_4 output):
+    **Terminal Gate** (Do not skip; must complete before step_3_5 starts):
     | Step | Command | Pass Condition |
     |:---|:---|:---|
-    | 1 | `npx archi render` | `.md` views generated |
-    | 2 | [if current status=done] `npx archi task <ID> --status active` | Task status reset to active |
+    | 1 | `npx archi task --check` | No ERROR-level issues |
+    | 2 | `npx archi render` | `.md` views generated |
+    | 3 | [if current status=done] `npx archi task <ID> --status active` | Task status reset to active |
 
     **Output**: plan.json with new tasks appended; if status transition was performed, output `MODIFIED: roadmap.json <ID>.status done→active`.
 </step_3_update_plan>
+
+<step_3_5_verify>
+    **Role**: Independent Reviewer
+
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: Review step_2 updated spec.md/ui.md and step_3 appended plan.json new Phase; ensure doc logic is consistent and new Phase tasks are verifiable]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: plan-docs review dimension table item by item)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_3_5_verify>
 
 <step_4_summary>
     **Action** (Gate must complete in step_3):

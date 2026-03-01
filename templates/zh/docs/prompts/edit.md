@@ -17,11 +17,11 @@
     **Role**: 产品经理
     **Action**:
     - 读取 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
-    - [?UI] 读取 `[[__DOCS_DIR__]]/global/ui_context.md`（定位本功能对应的屏幕范围及导航关系）。
+    - （仅ui项目） 读取 `[[__DOCS_DIR__]]/global/ui_context.md`（定位本功能对应的屏幕范围及导航关系）。
     - 检测 spec.md 中的 `Spec-Status` 字段：
       - `Full` → 正常流程，进入 step_2。
       - `Stub` → 进入 step_1_5_enrich。
-    - [?重大 UX 变更] 快速搜索同类产品最佳实践。
+    - （重大UX变更） 快速搜索同类产品最佳实践。
 </step_1_load>
 
 <step_1_5_enrich>
@@ -37,7 +37,7 @@
        - 补充 Gherkin Scenarios（覆盖正常流程 + 异常路径）
        - 补充接口/类型定义（如该功能是其他功能的上游）
     5. 更新 `Spec-Status: Stub → Full`。
-    6. [?UI] 如模块有 UI → 同步生成或更新 `ui.md`（范围声明）；如须新增屏幕，提示用户运行 `archi-ui-wireframe` Skill（Skill 会同步更新 `ui_concept.html` + `ui_context.md`）。
+    6. （仅ui项目） 如模块有 UI → 同步生成或更新 `ui.md`（范围声明）；如须新增屏幕，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]]（Skill 会同步更新 `ui_concept.html` + `ui_context.md`）。
     7. 生成 `plan.json`（全部 task 为 done，记录已实现内容）。
     8. 向用户输出补全后的 spec 摘要。
 
@@ -49,14 +49,14 @@
     **Role**: 需求分析师 & 设计师
     **Action**:
     - 根据 `[context]` 修改 spec.md（逻辑/规则变更）和 ui.md（结构/交互变更）。
-    - [?UI 修改] 按以下规则同步更新 `ui_concept.html` + `ui_context.md`（Skill 作为唯一写者）：
+    - （ui有修改） [[SKILL: archi-ui-wireframe|按 skill 的协议，按以下规则同步更新 `ui_concept.html` + `ui_context.md`（Skill 作为唯一写者）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]：
 
       | 变更类型 | 判定标准 | 处理方式 |
       |:---|:---|:---|
       | 无屏幕影响 | 仅逻辑/数据变更，无视觉差异 | 仅改 spec.md，`ui_concept.html` / `ui_context.md` 不动 |
-      | 轻微 UI 调整 | 新增/修改状态、弹窗、局部区域，不改整体布局 | 调用 Skill（修改屏幕模式）更新两个文件，输出 `MODIFIED: S-XX` |
-      | 屏幕结构变更 | 布局重构、新增独立屏幕、导航路径变化 | 调用 Skill（修改屏幕模式）更新两个文件，输出 `MODIFIED: S-XX`；若已完成 Phase 2 着色，同步重新着色 |
-      | 功能缩减 | 屏幕/区域整体移除 | 调用 Skill（删除屏幕模式）更新两个文件，输出 `REMOVED: S-XX` |
+      | 轻微 UI 调整 | 新增/修改状态、弹窗、局部区域，不改整体布局 | 调用 skill（修改屏幕模式）更新两个文件，输出 `MODIFIED: S-XX` |
+      | 屏幕结构变更 | 布局重构、新增独立屏幕、导航路径变化 | 调用 skill（修改屏幕模式）更新两个文件，输出 `MODIFIED: S-XX`；若已完成 Phase 2 着色，同步重新着色 |
+      | 功能缩减 | 屏幕/区域整体移除 | 调用 skill（删除屏幕模式）更新两个文件，输出 `REMOVED: S-XX` |
 
     - 需求模糊时向用户提问 (A/B/C/D 选项) 确认细节。
 
@@ -70,14 +70,23 @@
     - 列出具体 Tasks (API update, UI tweak, Test update)；每项须可验证。
     - **状态转换**: 若当前任务 status=`done`，追加 Phase 后须将状态重置为 `active`（否则后续 `/archi.code` 将被 Status Gate 拒绝）。
 
-    **Terminal Gate** (禁止跳过，须在 step_4 输出前全部完成):
+    **Terminal Gate** (禁止跳过，须在 step_3_5 开始前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    | 1 | `npx archi render` | `.md` 视图生成完成 |
-    | 2 | [当前 status=done] `npx archi task <ID> --status active` | 任务状态已重置为 active |
+    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
+    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    | 3 | [当前 status=done] `npx archi task <ID> --status active` | 任务状态已重置为 active |
 
     **Output**: 追加了新任务的 plan.json；若执行了状态转换，输出 `MODIFIED: roadmap.json <ID>.status done→active`。
 </step_3_update_plan>
+
+<step_3_5_verify>
+    **Role**: 独立审查官
+
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_2 更新的 spec.md/ui.md 与 step_3 追加的 plan.json 新 Phase，确保文档逻辑自洽、新 Phase tasks 可验证]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 的审查维度表逐项检查）]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_3_5_verify>
 
 <step_4_summary>
     **Action** (Gate 须在 step_3 完成):

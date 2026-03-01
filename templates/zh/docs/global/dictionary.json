@@ -25,7 +25,7 @@
       "replaces": "[替代的原始 API, 如 console.log]"
     }
   ],
-  "components [?UI]": [
+  "components（仅ui项目）": [
     {
       "name": "[组件名]",
       "path": "[文件路径]",

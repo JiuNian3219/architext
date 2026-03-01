@@ -58,7 +58,7 @@
     2. **任务清单完整性**: Brief 任务清单是否足以支撑需求目标？
     3. **影响评估**: Brief 中"受影响的已有任务" → 对照 roadmap/tasks 验证是否存在、状态如何。
     4. **缺口识别**: 检查 Brief 是否有关键信息缺失。
-    5. **联动检查**: 读取 `map.json.featureRelations`，将新任务的描述与各条 `sources` 字段做语义对比，判断新任务是否属于某聚合方的覆盖范围。命中时在摘要中输出联动提示。
+    5. **联动检查**: [[SUBAGENT: archi-feature-relations|mode: check, context: 将新任务描述与 featureRelations sources 做语义对比，命中时在摘要中输出联动提示]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: check 的逻辑执行）]]
 
     **缺口分级**:
     - **必须**: 缺失则无法合理分解（如任务清单为空）
@@ -84,7 +84,7 @@
     |:---|:---|:---|
     | [ID: 名称] | [done/active/stub] | [需修改/需扩展/无影响] |
 
-    **[?有命中] 联动提示**:
+    **（有命中） 联动提示**:
     | 聚合方 | checkNote |
     |:---|:---|
     | [aggregator ID/路径] | [checkNote 内容] |
@@ -102,14 +102,14 @@
     **Trigger**: 仅当 Step 2 发现"必须"或"可补"级缺口时执行。
     **Input**: Step 2 的缺口列表。问题数上限 3 题。
 
-    [[SKILL: 按 `archi-interview-protocol` Skill 的核心规则和标准输出格式提问。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则）]]
+    [[SKILL: archi-interview-protocol|按 skill 的核心规则和标准输出格式提问。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则）]]
 </step_2_5_supplementary>
 
 <step_3_decompose>
     **Role**: 首席架构师
     **Input**: Brief 全文 + 项目上下文 + 补充回答（如有）。
 
-    **Action**: [[SKILL: 按 `archi-decompose-roadmap` Skill 的协议，基于 Scope Brief 任务清单生成增量任务数据]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
+    **Action**: [[SKILL: archi-decompose-roadmap|按 skill 的协议，基于 Scope Brief 任务清单生成增量任务数据。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
 
     **展示格式**（将 Skill 产出的任务数据转换为以下格式，向用户呈现后等待确认）：
 
@@ -147,7 +147,7 @@
     1.  将新任务追加到 `[[__DOCS_DIR__]]/global/roadmap.json` 对应 Phase 的 `tasks` 数组中。
     2.  如需新增 Phase → 追加到 `phases` 数组。
     3.  更新 `lastUpdated` 字段。
-    4.  [?新模块] 更新 `[[__DOCS_DIR__]]/global/map.json` 的 `directoryMapping`：为新增任务预注册推断的模块路径（基于 tech_stack 架构模式和任务描述推断，仅目录级别；详细内容在 `/archi.plan` 时完善）。
+    4.  （新模块） 更新 `[[__DOCS_DIR__]]/global/map.json` 的 `directoryMapping`：为新增任务预注册推断的模块路径（基于 tech_stack 架构模式和任务描述推断，仅目录级别；详细内容在 `/archi.plan` 时完善）。
 
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
@@ -171,7 +171,7 @@
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
-    | [?UI] 推荐 | 运行 `archi-ui-wireframe` Skill（追加模式） | 为新增任务追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
+    | （仅ui项目） 推荐 | [[SKILL: archi-ui-wireframe|运行 skill（追加模式）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]] | 为新增任务追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
     | 1 | `/archi.plan <第一个 pending 任务 ID>` | 对首个可执行任务做深度规划 |
     | 2 | 审查 roadmap | 确认依赖关系和优先级 |
 </step_5_signoff>

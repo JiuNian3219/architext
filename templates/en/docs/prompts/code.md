@@ -24,20 +24,22 @@
 
         | Status | Handling |
         |:---|:---|
-        | `active` 🟢 | Pass, continue |
-        | `pending` ⏳ | Reject — prompt to run `/archi.plan <ID>` first |
-        | `blocked` 🧱 | Reject — prerequisites not completed |
-        | `done` ✅ | Reject — already completed, use `/archi.edit <ID>` for modifications |
+        | `active` | Pass, continue |
+        | `pending` | Reject — prompt to run `/archi.plan <ID>` first |
+        | `blocked` | Reject — prerequisites not completed |
+        | `done` | Reject — already completed, use `/archi.edit <ID>` for modifications |
 
     3.  **Load Context** (Use Roadmap `📁 Slug` to locate):
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — Logic & Scenarios
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — task UI scope declaration (if exists)
+        - [?Complex] `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/design.md` — Technical design (if exists): state machine/pipeline/protocol definitions, parameter table, invariants
         - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI screen index (screen IDs / routes / states / navigation graph / shared components)
         - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — read-only visual reference (calibrate layout against this during implementation; do not redesign — design is already locked in ui.md)
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — Task breakdown (contains `notes` shorthand; must reference during execution)
         - `02_tech_stack.md` — Technical Red Lines
         - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
         - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
+        - **Read Refs** (if any): Read `[[__DOCS_DIR__]]/refs/index.json` (if exists); match by tags and spec.md tech domain semantics; load only matched ref files as supplementary context; skip if `refs/` missing or empty.
 
     **Output**: Atomic list of tasks to implement, marking dependencies and order.
 </step_1_resolve>
@@ -65,6 +67,7 @@
     - **Code Organization**: Follow the architecture pattern and file placement strategy defined in `02_tech_stack.md`.
     - **Comments**: Explain Why, not What; reject nonsense comments.
     - **Naming**: Self-documenting names; reject `a`, `b`, `tmp` etc. (except loop variable `i`).
+    - [?Complex] **Design Adherence**: When `design.md` exists, implementation must strictly follow its state machine/pipeline/protocol definitions; parameters must reference design.md § 3 values (no hardcoding other values); must satisfy all § 4 Invariants (use assert or runtime checks).
     - **Error Handling**: Prohibit swallowing errors/silent failures; must properly propagate errors and provide observable feedback to callers (UI: Toast; CLI: Exit Code; API: Status Code + Body).
     - **Robustness**: Explicitly handle edge cases (Loading/Error/Empty/Timeout); prohibit writing only Happy Path.
     - **SOTA**: Follow tech_stack best practices; reject explicitly forbidden outdated patterns.
@@ -112,30 +115,20 @@
     **Output**: ✅/❌ status and reason for each check; Task Verification evidence.
 </step_4_validate>
 
-<step_5_audit>
-    **Role**: Chief Auditor
-    **Checklist**:
-    1.  **Tech Consistency**: Consistent with `02_tech_stack.md` (libraries/patterns/API style).
-    2.  [?UI] **Design Compliance**: Styles use Token/Preset visual patterns only; no hardcoded magic values.
-    3.  [?Data] **Data Integrity**: Compliant with `data_snapshot.json`; field names/types match.
-    4.  **SOTA**: Reject outdated patterns; adopt tech_stack best practices.
-    5.  [?UI] **Accessibility**: Include necessary accessibility attributes.
-    6.  [?I18n] **I18n**: No hardcoded strings; must use Key/dictionary reference.
-    7.  **Performance**: Avoid unnecessary large dependencies/full imports/useless computation/memory leaks.
-    8.  **Security**: No sensitive info leakage; inputs validated.
-    9.  **Static Check Zero**: All static check issues resolved.
-    10. **step_4 Gate**: Confirm all step_4 checks (Static + Test + Task Verification) have passed.
-    11. **Linkage Check**: Read the `featureRelations` array from `[[__DOCS_DIR__]]/global/map.json`; semantically compare the current task against each `sources` field. If matched, output: `⚠️ Linkage: [aggregator] — [checkNote]`, reminding to confirm whether the aggregator needs to be updated after this implementation. Skip if `featureRelations` is empty.
-    12. **Data Governance**: When this implementation introduces new content, directly write to the corresponding global index:
+<step_5_verify>
+    **Role**: Independent Reviewer
 
-        | Trigger | File | Action |
-        |:---|:---|:---|
-        | New business entity · verb · shared utility | `dictionary.json` | Directly append |
-        | New error scenario | `error_codes.json` | Directly append |
-        | [?Data] Schema actually changed | `data_snapshot.json` | Directly sync |
+    **5A. Code quality review**:
+    [[SUBAGENT: archi-silent-audit|mode: code-impl, context: Review step_3 implemented code (Tech/SOTA/Security/Performance + conditional dimensions)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: code-impl review dimension table item by item)]]
 
-    Detail issues can be Auto-Fixed with explanation; major risks marked `⚠️ Risk` with alternatives proposed.
-</step_5_audit>
+    **5B. Linkage check**:
+    [[SUBAGENT: archi-feature-relations|mode: check, context: Semantically compare this implementation with featureRelations sources]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`, follow mode: check logic)]]
+
+    **5C. Data governance sync**:
+    [[SUBAGENT: archi-data-sync|context: Scan this implementation for new business entities/error codes/Schema; incremental sync per 03_data_governance.md rules]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`, follow its execution protocol)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_5_verify>
 
 <step_6_signoff>
     **Terminal Gate** (Do not skip; must complete before output summary):

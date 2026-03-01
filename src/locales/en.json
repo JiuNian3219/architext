@@ -10,10 +10,10 @@
   },
   "init": {
     "desc": "Initialize Architext Framework, configure editor rules and document skeleton",
-    "editor": "Target IDE, multiple selection is supported, separated by commas",
+    "editor": "Target IDE, multiple selection is supported, separated by commas (cursor/windsurf/trae/vscode/claude/opencode)",
     "lang": "Rules and document skeleton language",
     "doc": "Custom document path, default is .architext",
-    "type": "Project type (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
+    "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
     "failed": "Initialization failed"
   },
   "update": {
@@ -49,6 +49,10 @@
   "help": {
     "desc": "Display Architext command help information"
   },
+  "pack": {
+    "desc": "Pack user data (docs, tasks, custom rules) for backup before upgrade or migration",
+    "output": "Output file path (default: architext-pack.xml)"
+  },
   "scaffold": {
     "fallback": "Template for {lang} not found, falling back to 'zh'",
     "step_docs": "Scaffolding documentation structure...",
@@ -67,7 +71,8 @@
       "title": "Initialize Architext Framework for deploying standardized AI context protocols & IDE rules.",
       "select_editor": "Select target editors",
       "select_lang": "Select documentation language",
-      "select_type": "Select project type",
+      "select_features": "Select project features (multi-select)",
+      "select_generate_brief": "Generate project-brief.md at project root? (Fill in project requirements for /archi.start or /archi.inherit)",
       "select_doc_dir": "Enter documentation directory",
       "config_exists": "Existing config (architext.json) detected. Overwrite?",
       "config_saved": "Config saved to architext.json",
@@ -246,6 +251,17 @@
         }
       }
     },
+    "pack": {
+      "title": "Architext Pack",
+      "no_config": "No .architext.json found — please run archi init first",
+      "packing": "Collecting user data...",
+      "empty": "No user data found, skipping pack",
+      "empty_hint": "Running pack before filling in any docs has no effect",
+      "done": "Packed {count} files → {file}",
+      "hint_recover": "After upgrade, restore with: /archi.recover {file}",
+      "success": "Pack complete",
+      "failed": "Pack failed"
+    },
     "help": {
       "tagline": "No Docs, No Code. — AI-Native Architecture Protocol",
       "section": {
@@ -261,8 +277,9 @@
           "example": "e.g. /archi.start I want to build a Todo CLI tool in Rust"
         },
         "inherit": {
-          "desc": "Take over a legacy project. Full code scan, reverse-engineer architecture, fill docs.",
-          "detail": "For existing codebases lacking Architext documentation"
+          "desc": "Take over a legacy project. Full code scan, reverse-engineer architecture, fill docs. Optionally provide Brief to supplement vision/roadmap.",
+          "detail": "For existing codebases lacking Architext docs; pass project-brief.md when codebase is minimal",
+          "example": "e.g. /archi.inherit project-brief.md"
         },
         "scope": {
           "desc": "Requirement decomposition. Read Scope Brief, break large requirements into Roadmap tasks with dependencies.",
@@ -319,11 +336,11 @@
       },
       "cli": {
         "init": {
-          "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates, Project Brief.",
-          "editor": "Target IDE (cursor / trae / windsurf)",
-          "lang": "Language (zh / en / zh-Hant)",
+          "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates. Optionally generates project-brief.md (fill in for /archi.start or /archi.inherit).",
+          "editor": "Target IDE (cursor / trae / windsurf / vscode / claude / opencode)",
+          "lang": "Language (zh / en)",
           "doc": "Custom doc directory name (default: .architext)",
-          "type": "Project type (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"
+          "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)"
         },
         "update": {
           "desc": "Sync latest rule templates to project, keep rules aligned with framework version.",

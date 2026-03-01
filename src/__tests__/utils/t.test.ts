@@ -12,9 +12,6 @@ describe("getSystemLocale", () => {
     process.env.ARCHITEXT_LANG = "en";
     expect(getSystemLocale()).toBe("en");
 
-    process.env.ARCHITEXT_LANG = "zh-Hant";
-    expect(getSystemLocale()).toBe("zh-Hant");
-
     process.env.ARCHITEXT_LANG = "zh";
     expect(getSystemLocale()).toBe("zh");
   });
@@ -22,14 +19,12 @@ describe("getSystemLocale", () => {
   it("环境变量无效时应回退到系统语言", () => {
     process.env.ARCHITEXT_LANG = "invalid";
     const result = getSystemLocale();
-    expect(["zh", "zh-Hant", "en"]).toContain(result);
+    expect(["zh", "en"]).toContain(result);
   });
 
-  it("应该正确识别繁体中文 locale", () => {
-    // 这个测试需要 Mock Intl.DateTimeFormat
-    // 由于 getSystemLocale 使用系统 API，这里主要测试逻辑分支
+  it("应该正确识别中文 locale", () => {
     const result = getSystemLocale();
-    expect(["zh", "zh-Hant", "en"]).toContain(result);
+    expect(["zh", "en"]).toContain(result);
   });
 });
 

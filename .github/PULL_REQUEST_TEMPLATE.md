@@ -22,11 +22,10 @@
 
 ## Template Changes / 模板变更（如适用）
 
-If you modified files under `templates/`, confirm tri-language sync:
-如果修改了 `templates/` 下的文件，请确认三语同步：
+If you modified files under `templates/`, confirm bilingual sync:
+如果修改了 `templates/` 下的文件，请确认双语同步：
 
 - [ ] `templates/zh/` updated / 已更新
-- [ ] `templates/zh-Hant/` updated / 已更新
 - [ ] `templates/en/` updated / 已更新
 - [ ] Not applicable — no template changes / 不适用，未修改模板
 

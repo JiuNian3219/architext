@@ -1,6 +1,6 @@
 {
   "name": "architext",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "The DDAD (Document-Driven AI Development) protocol and prompt scaffolder for AI-native engineering.",
   "type": "module",
   "scripts": {

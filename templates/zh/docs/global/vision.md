@@ -40,7 +40,7 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 
 ---
 
-## 4. Design & Experience (设计与体验语言) [?UI]
+## 4. Design & Experience (设计与体验语言) （仅ui项目）
 
 > **Note:** 本节仅适用于有 UI 的项目。具体色值和圆角定义请严格参阅 `[[__DOCS_DIR__]]/global/design_tokens.json`。
 

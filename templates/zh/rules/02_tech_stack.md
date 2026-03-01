@@ -50,6 +50,7 @@ alwaysApply: true
 
 ---
 
+<!-- ═══════ 以下为固定协议（禁修改） ═══════ -->
 ## 4. UI Protocol: ITP v3.0 (Dual-Artifact) [可选 - 仅适用于有 UI 的项目]
 <!-- 核心 UI 描述协议 -->
 > **Note:** 如果项目没有 UI（如 CLI、Backend API、Library），可以删除此章节。
@@ -109,7 +110,7 @@ UI 制品层级：
 ### Test Suite (测试套件)
 * **Unit:** Tool: [例如：Vitest / Jest / pytest / cargo test / go test]  Scope: [例如：Utils 工具函数、核心业务逻辑、算法]  Rule: [例如：须 Mock 外部依赖；禁对易变 UI 做快照测试]
 * **Integration:** Tool: [例如：Vitest + Testcontainers / pytest + Docker]  Scope: [例如：API→DB 写入链路 / CLI 完整执行流程]
-* **E2E:** Tool: [例如：[?Web] Playwright / Cypress  [?API] Supertest / httpie  [?CLI] bats / shell script  [?Lib] 示例项目 + 自动化脚本  [?Mobile] Detox / Maestro]  Scope: [例如：[?Web] 核心用户路径  [?API] 关键 endpoint 全链路  [?CLI] 关键命令全流程  [?Lib] 公开 API 典型使用场景]
+* **E2E:** Tool: [例如：（仅ui项目） Playwright / Cypress （仅api项目） Supertest / httpie （仅cli项目） bats / shell script （仅lib项目） 示例项目 + 自动化脚本 （仅mobile项目） Detox / Maestro]  Scope: [例如：（仅ui项目） 核心用户路径 （仅api项目） 关键 endpoint 全链路 （仅cli项目） 关键命令全流程 （仅lib项目） 公开 API 典型使用场景]
 * **Test Command:** [例如：`pnpm test` / `pytest` / `cargo test` / `go test ./...`]
 
 ### Environment Scripts (环境脚本)
@@ -158,9 +159,9 @@ UI 制品层级：
 | :--- | :--- | :--- |
 | **Unit Tests** | [e.g. Centralized 或 Colocation] | `__tests__/utils/date.test.ts` / `utils/date.test.ts` |
 | **Interfaces/Types** | [e.g. Near usage 或 Global types] | `types/user.d.ts` / `domain/user.entity.ts` |
-| **Assets/Images** [?UI] | [e.g. Public 或 Module assets] | `public/images` / `assets/` |
-| **Styles** [?UI] | [e.g. 按组件或全局] | `Button.module.css` / `global.css` |
-| **DTOs/Models** [?Data] | [e.g. Domain 或 Shared] | `domain/user/dto` / `models/` |
+| **Assets/Images**（仅ui项目） | [e.g. Public 或 Module assets] | `public/images` / `assets/` |
+| **Styles**（仅ui项目） | [e.g. 按组件或全局] | `Button.module.css` / `global.css` |
+| **DTOs/Models**（仅data项目） | [e.g. Domain 或 Shared] | `domain/user/dto` / `models/` |
 
 ---
 
@@ -183,10 +184,10 @@ UI 制品层级：
 * **Strategy:** [例如：Fail Fast + Form Validation / Fail Fast (stderr) / Schema Validation + Fail Fast]
 * **Rationale:** [例如：表单密集型应用，需前端实时校验 + 后端快速失败]
 
-### Data Flow (数据流模式) [?UI]
+### Data Flow (数据流模式) （仅ui项目）
 * **Default:** [例如：Standard Request + SWR / Realtime (Socket) / Polling]
 * **Rationale:** [例如：大部分页面为 CRUD 读写，SWR 做缓存和重新验证]
 
-### Auth & Access (认证与权限) [?Web/API]
+### Auth & Access (认证与权限) （仅ui或api项目）
 * **Mechanism:** [例如：JWT + RBAC / Session + Owner Only / API Key]
 * **Rationale:** [例如：多角色后台管理系统，需细粒度权限控制]

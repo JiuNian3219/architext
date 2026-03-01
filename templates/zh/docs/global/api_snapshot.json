@@ -1,0 +1,24 @@
+{
+  "endpoints": [
+    {
+      "method": "[GET | POST | PUT | DELETE | PATCH]",
+      "path": "[/resource/:id]",
+      "description": "[一句话描述端点职责]",
+      "auth": "[required | public | optional]",
+      "requestBody": "[schema 描述或 N/A]",
+      "responses": {
+        "200": "[成功响应结构描述]",
+        "[4xx]": "[ref: error_codes.json#ERR_CODE]"
+      },
+      "owner": "[FEAT-xxx | INF-xxx]"
+    }
+  ],
+  "protocolMapping": [
+    {
+      "statusCode": "[400 | 401 | 403 | 404 | 500 | ...]",
+      "code": "[ERR_CODE]",
+      "meaning": "[含义]",
+      "action": "[调用方行为: Toast / Redirect / Retry / ...]"
+    }
+  ]
+}

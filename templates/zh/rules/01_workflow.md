@@ -37,7 +37,8 @@ alwaysApply: true
 
 > **Protocol Load Gate** (禁跳过，三步须按序完成):
 > 1. **Read** 目标 `.md` 全文 → 文件不存在时停止，输出: `协议文件未找到，中止执行`
-> 2. **Override** `00_system` 部分设定
+> 2. **Override** — 可覆盖: `<system_role>`, `<thinking_process>`, `<communication_style>`。
+>    不可覆盖: `<core_philosophy>`, `<critical_protocols>`, `<architecture_governance>`。
 > 3. **Execute** `<step_1>` — 禁在步骤 1 完成前执行任何协议内容
 
 ---
@@ -73,9 +74,9 @@ alwaysApply: true
 ### 2.3 未纳管代码
 
 修改对象未在 `map.json` 中注册、无对应 Task:
-- 告知用户该模块未纳管
-- 建议 `/archi.inherit` 或 `/archi.scope` 纳入
-- 用户确认"临时调整"后可直接修改
+- **STOP & ASK** — 告知用户该模块未纳管
+- 建议 `/archi.inherit` 或 `/archi.scope` 纳入管理
+- 禁直接修改未纳管代码，须等待用户提供文档路径或完成纳管后再操作
 
 ### 2.4 基底规则
 

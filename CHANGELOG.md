@@ -6,7 +6,36 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ---
 
-## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.3...HEAD) / 待发布
+## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.4...HEAD) / 待发布
+
+---
+
+## [0.0.4](https://github.com/JiuNian3219/architext/releases/tag/v0.0.4) - 2026-03-01
+
+### Added / 新增
+
+- `archi pack` + `/archi.recover` — 用户数据备份与恢复流程 / User data backup and restore flow
+- `/archi.ref` — 外部知识引用管理命令 / External knowledge reference management command
+- `design.md` 技术方案设计模板与 `archi-design-patterns` Skill / Design template and archi-design-patterns Skill
+- 项目初始化流程支持可选生成 `project-brief.md` / Init flow supports optional `project-brief.md` generation
+- 子代理审查层与内容切片机制 / Sub-agent review layer and content slicing mechanism
+- 维度积木 spec 骨架、WBS 分解与任务类型体系 / Spec skeleton, WBS decomposition and task type system
+- OpenCode、Claude Code 作为目标 IDE 支持 / OpenCode and Claude Code as target IDE options
+- 网站 Iterate 区块，Workflow 简化为 start → plan → code → audit 四阶段 / Website Iterate section, simplified Workflow to four stages
+
+### Changed / 变更
+
+- 移除 zh-Hant 支持，简化为 zh + en 双语 / Removed zh-Hant, simplified to zh + en
+- 项目类型重构为特征标签体系 / Project type refactored to feature tag system
+- 移除 terminal-gate-base、status-gate 共享片段，内联至各协议 / Inlined shared gate snippets into protocols
+
+### Fixed / 修复
+
+- 更新 prompts 时解析 `[[SKILL:...]]` / `[[NO-SKILL:...]]` 能力标记 / Parse capability refs when updating prompts
+- 统一 templates 中 Skill 调用格式 / Unified Skill invocation format in templates
+- 在 `02_tech_stack` 中为 ITP 固定协议添加分区标记 / Added section markers for ITP fixed protocols
+- 明确协议可覆盖 `00_system` 的范围 / Clarified protocol override scope for `00_system`
+- 在 `00_system` 中定义跨文件规则优先级链 / Defined cross-file rule priority chain
 
 ---
 

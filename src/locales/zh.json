@@ -10,10 +10,10 @@
   },
   "init": {
     "desc": "初始化 Architext 框架，配置编辑器规则和文档骨架",
-    "editor": "框架目标IDE，可多选，逗号分隔",
+    "editor": "框架目标IDE，可多选，逗号分隔 (cursor/windsurf/trae/vscode/claude/opencode)",
     "lang": "规则与文档骨架语言",
     "doc": "自定义文档路径，默认使用.architext",
-    "type": "项目类型 (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
+    "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
     "failed": "初始化失败"
   },
   "update": {
@@ -49,6 +49,10 @@
   "help": {
     "desc": "显示 Architext 命令帮助信息"
   },
+  "pack": {
+    "desc": "打包用户数据（文档、任务、自定义规则），用于升级或迁移前备份",
+    "output": "输出文件路径（默认: architext-pack.xml）"
+  },
   "scaffold": {
     "fallback": "未找到 {lang} 模板，回退使用 'zh'",
     "step_docs": "正在初始化文档骨架...",
@@ -67,7 +71,8 @@
       "title": "初始化 Architext 框架，用于部署标准化的 AI 上下文协议与 IDE 规则。",
       "select_editor": "请选择您的目标编辑器",
       "select_lang": "请选择项目文档语言",
-      "select_type": "请选择项目类型",
+      "select_features": "请选择项目特征（可多选）",
+      "select_generate_brief": "是否生成 project-brief.md？（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）",
       "select_doc_dir": "请输入文档目录",
       "config_exists": "检测到现有配置文件 (architext.json)。是否覆盖？",
       "config_saved": "配置已保存到 architext.json",
@@ -246,6 +251,17 @@
         }
       }
     },
+    "pack": {
+      "title": "Architext Pack",
+      "no_config": "未找到 .architext.json，请先运行 archi init",
+      "packing": "正在收集用户数据...",
+      "empty": "未找到任何用户数据，跳过打包",
+      "empty_hint": "在 archi init 之后、填写文档之前运行 pack 无意义",
+      "done": "已打包 {count} 个文件 → {file}",
+      "hint_recover": "升级后还原: /archi.recover {file}",
+      "success": "打包完成",
+      "failed": "打包失败"
+    },
     "help": {
       "tagline": "No Docs, No Code. — AI 原生架构协议",
       "section": {
@@ -261,8 +277,9 @@
           "example": "例: /archi.start 我要做一个 Todo CLI 工具，用 Rust 写"
         },
         "inherit": {
-          "desc": "接管旧项目。全量扫描代码，逆向推导架构，填充全局文档。",
-          "detail": "适用于已有代码库但缺少 Architext 文档的项目"
+          "desc": "接管旧项目。全量扫描代码，逆向推导架构，填充全局文档。可选提供 Brief 补充愿景/路线图。",
+          "detail": "适用于已有代码库但缺少 Architext 文档的项目；代码库尚空时可传 project-brief.md",
+          "example": "例: /archi.inherit project-brief.md"
         },
         "scope": {
           "desc": "需求分解。读取 Scope Brief，将大需求拆解为多个 Roadmap 任务并建立依赖关系。",
@@ -319,11 +336,11 @@
       },
       "cli": {
         "init": {
-          "desc": "初始化 Architext 框架。生成规则文件、文档目录、Prompt 模板、Project Brief。",
-          "editor": "指定 IDE (cursor / trae / windsurf)",
-          "lang": "指定语言 (zh / en / zh-Hant)",
+          "desc": "初始化 Architext 框架。生成规则文件、文档目录、Prompt 模板。可选生成 project-brief.md（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）。",
+          "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude / opencode)",
+          "lang": "指定语言 (zh / en)",
           "doc": "自定义文档目录名 (默认 .architext)",
-          "type": "项目类型 (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"
+          "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)"
         },
         "update": {
           "desc": "同步最新规则模板到项目，保持规则文件与框架版本一致。",

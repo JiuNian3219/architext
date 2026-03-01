@@ -1,6 +1,6 @@
 ---
 name: archi-decompose-roadmap
-description: Architext 任务分解专家。五步分解法：先标定项目类型校准基建清单，再双视角提取业务 Task 和 Infra 任务，NFR 横切关注点归并入 goal（不独立成任务），建立真实依赖链并输出并行批次。产出符合 Tier 1 Schema 的 roadmap.json 任务，作为 `/archi.plan` 的输入契约。用于任何需要生成或追加 Roadmap 任务的场景。
+description: Architext 任务分解专家。五步分解法：先标定项目类型校准基建清单，再双视角提取业务 Task 和 Infra 任务，识别 Polish 打磨任务，NFR 横切关注点按权重决定注入或独立，建立真实依赖链并输出并行批次。任务通过 ID 前缀（INF/FEAT/POLISH/EDIT）编码类型，tag 字段承载业务领域标签。产出符合 Tier 1 Schema 的 roadmap.json 任务，作为 `/archi.plan` 的输入契约。
 ---
 
 # Roadmap 任务分解
@@ -13,10 +13,10 @@ Brief → [本 Skill] → roadmap.json 任务
                    /archi.plan <task-id>
                    读: vision.md + map.json + tech_stack.md
                    写: spec.md（行为规格/验收标准）
-                       ui.md（任务 UI 范围声明）[?UI]
+                       仅ui项目: ui.md（任务 UI 范围声明）
                        plan.json（可执行步骤 + 测试用例 checkbox）
                    也更新: map.json / dictionary.json / data_snapshot.json
-                   视觉参考: [[__DOCS_DIR__]]/global/ui_context.md [?UI]
+                   仅ui项目: 视觉参考: [[__DOCS_DIR__]]/global/ui_context.md
                             ↓
                    /archi.code → 读 spec.md + ui.md + plan.json → 写代码
 ```
@@ -45,17 +45,17 @@ Brief → [本 Skill] → roadmap.json 任务
 | 项目类型 | 脚手架须包含（除通用构建工具链外） |
 |:---|:---|
 | Web SPA / PWA | 路由骨架（如 React Router）+ 全局 App Shell（布局 / Provider / 主题注入） |
-| 全栈 Web（SSR/SSG）| 路由约定（loader/action/页面）+ API Routes 层 + 全局布局 + Auth Session 管理（Cookie/JWT）；[?UI] 主题注入 |
+| 全栈 Web（SSR/SSG）| 路由约定（loader/action/页面）+ API Routes 层 + 全局布局 + Auth Session 管理（Cookie/JWT）；仅ui项目: 主题注入 |
 | CLI 工具 | logger 模块 + AppError 处理层 + 命令注册入口 |
-| API 服务（REST / GraphQL）| 路由层 + 中间件层 + DB 连接层 + 全局错误处理；[?GraphQL] Schema 定义层 + DataLoader |
+| API 服务（REST / GraphQL）| 路由层 + 中间件层 + DB 连接层 + 全局错误处理；仅GraphQL项目 Schema 定义层 + DataLoader |
 | 移动端 App（原生/跨平台）| 导航骨架（React Navigation / Go Router）+ 平台适配层（iOS/Android 权限、原生模块）+ 环境配置（dev/staging/prod）|
 | 小程序 | 页面路由配置 + 全局 app.js/ts + 请求封装层 |
 | 浏览器扩展 | manifest.json（V2/V3）+ Background Service Worker + Content Script 注入层 + 消息总线（background ↔ content ↔ popup）+ Popup/Options 页入口 |
 | 桌面端 App（单机）| 主进程入口（Electron main / Tauri main.rs）+ IPC 通信桥 + 系统级能力（托盘、热键）+ 原生文件系统封装 |
 | Web + 桌面端（Hybrid）| Web 脚手架基础 + 桌面运行时集成（Tauri/Electron）+ 系统级能力（托盘、全局热键、系统通知）；**桌面集成须独立拆分为 INF 子任务**（OS 差异大、与 Web 技术栈完全不同，不适用 Step 2 的"同期执行合并"规则） |
 | 库 / SDK / NPM 包 | 双产物配置（CJS + ESM）+ 公共 API 入口（barrel index.ts）+ 类型声明生成（.d.ts）+ Changelog / 版本工具链；**禁建业务 Task，仅 INF 层** |
-| 实时 / 协作型 App | WebSocket 服务层 + 事件 Schema 定义（共享类型）+ 房间/会话管理基础；[?CRDT] 冲突解决层 |
-| AI Agent / MCP 工具 | LLM 客户端抽象层（provider 无关）+ Prompt 模板管理 + Tool/Function Calling Schema + 对话状态 / Memory 管理；[?MCP] MCP 协议适配器 |
+| 实时 / 协作型 App | WebSocket 服务层 + 事件 Schema 定义（共享类型）+ 房间/会话管理基础；仅CRDT项目） 冲突解决层 |
+| AI Agent / MCP 工具 | LLM 客户端抽象层（provider 无关）+ Prompt 模板管理 + Tool/Function Calling Schema + 对话状态 / Memory 管理；仅MCP项目） MCP 协议适配器 |
 
 **操作（两个输出）**：
 1. **注入 Step 2 INF-01**：将对应类型的脚手架清单写入 INF-01 描述。
@@ -117,9 +117,15 @@ Brief → [本 Skill] → roadmap.json 任务
 
     > `/archi.plan` 执行中若预估 spec.md Scenario > 6 或 plan.json Phase > 4，须暂停并提示用户返回 `/archi.scope` 重新拆分，禁强行塞进单一任务。
 
-**DoD 格式**：`完成后，用户可 <可验证的用户行为>；边界：<明确不做的事>`
+**DoD 格式**（按任务类型）：
 
-> DoD 是 `/archi.plan` 生成 spec.md 验收标准和 plan.json 测试用例的基准。须精准描述用户可感知结果，禁写实现细节（文件路径、函数名、测试命令由 plan 阶段决定）。
+| 任务类型 | goal 格式 |
+|:---|:---|
+| `FEAT-xx` | `完成后，用户可 <可验证的用户行为>；边界：<明确不做的事>` |
+| `INF-xx` | `完成后，<基础设施产出物描述>，通过 <验证命令> 验证；边界：<明确不做的事>` |
+| `POLISH-xx` | `完成后，<质量指标> 从 <基线> 提升至 <目标>；边界：<明确不做的事>` |
+
+> DoD 是 `/archi.plan` 生成 spec.md 验收标准和 plan.json 测试用例的基准。FEAT 任务须描述用户可感知结果；INF 任务须描述基础设施产出物和验证方式；POLISH 任务须描述可量化的质量目标。禁写实现细节（文件路径、函数名、测试命令由 plan 阶段决定）。
 
 以下情况归属父任务，禁独立成条：**轻量**结果页 / 完成页、空状态页、确认弹窗。
 
@@ -136,10 +142,10 @@ Brief → [本 Skill] → roadmap.json 任务
 | Infra 类型 | 判断标准 |
 |:---|:---|
 | 项目脚手架 / 全局 Schema / 类型定义 | 所有业务 Task 均依赖；须覆盖 Step 0 标定的项目类型清单 |
-| 共享核心引擎（打字引擎、规则引擎等） | 满足以下**任一**条件：① 2 个以上业务 Task 直接调用；② 纯逻辑层、可独立单元测试、与 UI 完全解耦。`tag: Core` |
+| 共享核心引擎（打字引擎、规则引擎等） | 满足以下**任一**条件：① 2 个以上业务 Task 直接调用；② 纯逻辑层、可独立单元测试、与 UI 完全解耦。ID 仍用 `INF-xx`（本质是基础设施），`tag` 可标注为业务域标签（如 `Core`、`Engine`） |
 | 第三方集成层 | 多个业务 Task 复用同一外部服务 |
 
-**Core 任务规划契约**：`tag: Core` 任务的 `description` 末尾须声明主要导出接口（函数签名或关键 interface 名称）。
+**共享引擎规划契约**：共享核心引擎类 INF 任务的 `description` 末尾须声明主要导出接口（函数签名或关键 interface 名称）。
 下游 Task 的 `/archi.plan` 会话可直接对接该接口，无需读上游实现，保障跨任务规划的一致性与可预测性。
 
 **Infra 任务粒度原则：避免微粒化，但禁止跨层堆积**：
@@ -181,20 +187,31 @@ Brief → [本 Skill] → roadmap.json 任务
 
 ---
 
-### Step 3 · NFR 过滤
+### Step 3 · NFR 过滤与 Polish 任务识别
 
-以下类型**禁独立成任务**：注入首个实现该能力的任务 `goal` 末尾（`[NFR] <说明>`）；其余受影响任务仅在 NFR 清单中标注。`/archi.plan` 执行时会将 NFR 注入对应的 spec.md 约束章节。
+横切关注点按**工作量权重**决定处理方式：轻量级注入 goal，重量级独立成 `POLISH-xx` 任务。
 
-> **"首个任务"定义**：在依赖链中，`deps` 仅含 INF 层（无业务前置依赖）且最早涉及该 NFR 能力的任务。同层（同 Batch）有多个候选时，取 ID 最小的那个。
+> **"首个任务"定义**（用于 NFR 注入）：在依赖链中，`deps` 仅含 INF 层（无业务前置依赖）且最早涉及该 NFR 能力的任务。同层（同 Batch）有多个候选时，取 ID 最小的那个。
 
-| 类型 | 常见形式 | 注意 |
+**判定标准**：
+
+| 信号 | 处理 |
+|:---|:---|
+| 仅需业务 Task 内"顺手做"（如用 i18n key 替代硬编码） | **NFR 注入** — 写入首个相关任务 goal 末尾 `[NFR] <说明>` |
+| 需独立基础设施搭建（如集成 next-intl、创建翻译文件体系） | **INF 任务** — 建 `INF-xx`，Phase 1 |
+| 需跨功能专项工作，且验收可独立度量（如 Lighthouse ≥ 90、全面 a11y 审计） | **POLISH 任务** — 建 `POLISH-xx`，Phase 3 |
+
+**按类型对照**：
+
+| 类型 | 轻量级 → NFR 注入 | 重量级 → 独立任务 |
 |:---|:---|:---|
-| 国际化 | i18n、多语言、翻译文案 | — |
-| 视觉主题（配置型） | 品牌色 Token、Tailwind 主题色、CSS 变量定义 | NFR，注入脚手架任务 |
-| 视觉主题（功能型） | 深色/浅色切换按钮、OS 偏好检测、主题持久化 | **非 NFR**，须建立独立业务 Task（有用户可见行为） |
-| 动效风格规范 | 页面切换方式、过渡时长约定 | NFR，注入首个含动效的 Task goal |
-| 性能优化 | 懒加载、虚拟列表、缓存策略 | — |
-| 可访问性 | A11y、键盘导航、屏幕阅读器 | — |
+| 国际化 | 业务 Task 内用 i18n key | 集成 i18n 框架 + 翻译文件结构 → `INF-xx`；全量翻译覆盖 + 语言切换 UI → `POLISH-xx` |
+| 视觉主题（配置型） | 品牌色 Token 注入脚手架 | — |
+| 视觉主题（功能型） | — | 深色/浅色切换 + OS 偏好检测 → `FEAT-xx`（有用户可见行为） |
+| 动效风格 | 过渡时长约定注入首个含动效 Task | — |
+| 性能优化 | 单个 Task 内的懒加载/缓存 | 跨功能专项优化（首屏 < 2s、包体积目标）→ `POLISH-xx` |
+| 可访问性 | 单个 Task 内的 ARIA 属性 | 全面 a11y 审计 + 修复 → `POLISH-xx` |
+| 打包分发 | — | 桌面端打包 + 自动更新配置 → `POLISH-xx` |
 
 ---
 
@@ -208,22 +225,38 @@ Brief → [本 Skill] → roadmap.json 任务
 
 ## 任务规则
 
-1. **ID 生成**：沿用已有 Roadmap 编号水位，从各前缀最大值 +1 起；全新项目从 `INF-01` / `FEAT-01` 起。
+1. **ID 前缀与任务类型**：
 
-2. **Phase 归属**：
+   ID 前缀是任务类型的**唯一标识**，`/archi.plan` 根据前缀选择 spec 验收格式。
 
-   | 任务类型 | Phase |
-   |:---|:---|
-   | 项目脚手架、Schema、全局类型 | Phase 1 (Infrastructure) |
-   | 共享核心引擎（Step 2 识别） | Phase 1 (Infrastructure) |
-   | 业务 Task | Phase 2 (Core Features) |
-   | EDIT-xxx（修改已有功能） | 与被修改任务同 Phase |
+   | ID 前缀 | 任务类型 | 含义 | Phase 归属 |
+   |:---|:---|:---|:---|
+   | `INF-xx` | Infrastructure | 基础设施：脚手架、Schema、工具链、第三方集成 | Phase 1 |
+   | `FEAT-xx` | Feature | 业务功能：用户可感知的行为 | Phase 2 |
+   | `POLISH-xx` | Quality | 质量打磨：性能优化、全面 i18n、a11y 审计、打包分发 | Phase 3 |
+   | `EDIT-xx` | Edit | 修改已有功能（仅增量追加模式） | 与被修改任务同 Phase |
 
-3. **设计决策注入**：Brief 中已有设计决策 → 注入对应任务 `goal` 末尾：`[用户预设] <内容>`；同一条决策禁在多任务重复。`/archi.plan` 将其视为不可更改的硬约束，直接写入 spec.md，不再提问。
+   沿用已有 Roadmap 编号水位，从各前缀最大值 +1 起；全新项目从 `INF-01` / `FEAT-01` 起。
 
-4. **EDIT 任务**：需修改已有功能 → 创建 `EDIT-xxx`（`tag: Edit`），goal 注明修改范围；仅增量追加模式下使用。
+2. **Phase 结构**：
 
-5. **Slug 命名**：`slug` 即 `tasks/<slug>/` 文件夹名，须清晰表达任务内容，格式为 `Pascal_Snake_Case`（如 `Typing_Engine_Core`）。每个任务对应唯一一个 task 子目录，禁重名。
+   | Phase | ID | 名称 | 内容 |
+   |:---|:---|:---|:---|
+   | Phase 1 | `phase-infra` | Infrastructure | INF-xx 任务（脚手架、数据层、认证、API 骨架等） |
+   | Phase 2 | `phase-core` | Core Features | FEAT-xx 任务（业务功能） |
+   | Phase 3 | `phase-polish` | Polish & Launch | POLISH-xx 任务（质量优化、打包分发）；Brief 无打磨需求时省略此 Phase |
+
+3. **tag 字段 = 业务领域标签**：
+
+   `tag` 用于标注任务所属的**业务领域**（如 `Core`、`Community`、`Auth`、`Data`），自由文本，由 Brief 内容决定。
+
+   > **注意**：`tag` 不决定任务类型 — 任务类型由 ID 前缀决定。例如 `FEAT-05`（`tag: Community`）的任务类型是 Feature 而非 Community。
+
+4. **设计决策注入**：Brief 中已有设计决策 → 注入对应任务 `goal` 末尾：`[用户预设] <内容>`；同一条决策禁在多任务重复。`/archi.plan` 将其视为不可更改的硬约束，直接写入 spec.md，不再提问。
+
+5. **EDIT 任务**：需修改已有功能 → 创建 `EDIT-xxx`，goal 注明修改范围；仅增量追加模式下使用。
+
+6. **Slug 命名**：`slug` 即 `tasks/<slug>/` 文件夹名，须清晰表达任务内容，格式为 `Pascal_Snake_Case`（如 `Typing_Engine_Core`）。每个任务对应唯一一个 task 子目录，禁重名。
 
 ---
 
@@ -234,13 +267,17 @@ Brief → [本 Skill] → roadmap.json 任务
   "id": "FEAT-01",
   "title": "Task Title In English",
   "status": "pending | blocked",
-  "description": "<1-2 句说明这个任务要构建什么、覆盖哪些范围。Core 任务须在末尾声明主要导出接口>",
+  "description": "<1-2 句说明这个任务要构建什么、覆盖哪些范围。共享引擎类任务须在末尾声明主要导出接口>",
   "goal": "完成后，用户可 <可验证的用户行为>；边界：<明确不做的事>",
   "deps": ["INF-01"],
-  "tag": "Infra | Core | Feature | Edit",
+  "tag": "<业务领域标签，自由文本。如 Core, Community, Auth, Data, UI 等>",
   "slug": "Task_Title_Snake_Case"
 }
 ```
+
+> **ID 前缀 vs tag 职责分离**：
+> - `id` 前缀（`INF-` / `FEAT-` / `POLISH-` / `EDIT-`）= 任务类型，决定 `/archi.plan` 的 spec 验收格式
+> - `tag` = 业务领域标签，仅用于人类分类浏览，不影响 AI 行为
 
 `deps` 为空或全部 `done` → `pending`；有未完成 deps → `blocked`
 
@@ -260,17 +297,24 @@ Brief → [本 Skill] → roadmap.json 任务
 {
   "phases": [
     {
-      "id": "phase-1",
+      "id": "phase-infra",
       "name": "Infrastructure",
       "tasks": [
         { "id": "INF-01", "title": "...", "status": "pending", "description": "...", "goal": "...", "deps": [], "tag": "Infra", "slug": "..." }
       ]
     },
     {
-      "id": "phase-2",
+      "id": "phase-core",
       "name": "Core Features",
       "tasks": [
-        { "id": "FEAT-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["INF-01"], "tag": "Feature", "slug": "..." }
+        { "id": "FEAT-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["INF-01"], "tag": "Core", "slug": "..." }
+      ]
+    },
+    {
+      "id": "phase-polish",
+      "name": "Polish & Launch",
+      "tasks": [
+        { "id": "POLISH-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["FEAT-01"], "tag": "Quality", "slug": "..." }
       ]
     }
   ]
@@ -290,4 +334,5 @@ Layer 0 ║ INF-01
 Layer 1 ║ INF-02 · INF-03              ← 均依赖 INF-01
 Layer 2 ║ FEAT-01 · FEAT-02            ← 各自依赖 INF-02 / INF-03
 Layer 3 ║ FEAT-03                      ← 依赖 FEAT-01
+Layer 4 ║ POLISH-01 · POLISH-02        ← 依赖相关 FEAT 任务
 ```

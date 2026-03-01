@@ -61,13 +61,7 @@
 
     ### 2.4 聚合联动检查
 
-    读取 `map.json.featureRelations`，判断被删 Task 是否属于某聚合方的 `sources` 覆盖范围。
-
-    | 情况 | 处理 |
-    |:---|:---|
-    | 不在任何聚合方的 sources 范围内 | 无需特殊处理 |
-    | 在聚合方 sources 范围内 | 在影响报告中列出，提示删除后须检查聚合方内容是否需要同步移除 |
-    | 被删 Task 本身是 aggregator | 同时移除 `featureRelations` 中该条记录 |
+    [[SUBAGENT: archi-feature-relations|mode: cleanup, context: 检查被删 Task 在 featureRelations 中的引用（作为 aggregator 或属于某 sources 范围），输出影响报告]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: cleanup 的逻辑执行）]]
 
     ### 2.5 跨 Task 引用
 
@@ -139,13 +133,7 @@
     |:---|:---|:---|
     | 1 | `npx archi task --check` | 无 ERROR 级问题，无悬空依赖 |
     | 2 | `npx archi render` | `.md` 视图生成完成 |
-    | 3 | 运行项目构建命令 | 零编译错误 |
-
-    | 检查项 | 通过标准 |
-    |:---|:---|
-    | Roadmap 一致性 | `--check` 通过，无悬空依赖 |
-    | 构建 | 零编译错误 |
-    | 残留引用 | 代码中无对已删模块的 import/require |
+    | 3 | 运行项目构建命令 | 零编译错误；代码中无对已删模块的 import/require |
 
     构建失败或发现残留引用 → 定位并修复后重检。
 </step_4_verify>

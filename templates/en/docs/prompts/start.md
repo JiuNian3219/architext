@@ -104,7 +104,7 @@
     **Trigger**: Only when Step 1 finds "Required" or "Can supplement" gaps.
     **Input**: Step 1 gap list. Max 3–6 questions.
 
-    [[SKILL: Follow `archi-interview-protocol` Skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
+    [[SKILL: archi-interview-protocol|Follow the skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
 </step_2_supplementary>
 
 <step_3_constitution>
@@ -161,7 +161,7 @@
     - If user provided nothing, keep template default
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    [[SKILL: Follow the `archi-decompose-roadmap` Skill protocol to generate the task chain from the Brief feature list and write to roadmap.json]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]], then proceed to the next step immediately without user confirmation.
+    [[SKILL: archi-decompose-roadmap|Follow the skill protocol to generate the task chain from the Brief feature list and write to roadmap.json, then proceed to the next step immediately without user confirmation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
 
     ### 3.5 Other global docs (as needed)
     - `dictionary.json`: Extract domain terms from Brief
@@ -186,23 +186,17 @@
     **Output**: Write all files, then run `npx archi render` to generate visual `.md`.
 </step_3_constitution>
 
-<step_4_audit>
-    **Role**: Chief Auditor
-    **Checklist**:
-    1.  **Vision completeness**: Does `vision.md` include North Star metric and design philosophy?
-    2.  **Tech Stack consistency**: Is rule file `02_tech_stack` aligned with Brief preferences? Contains full stack?
-    3.  **Custom Rules**: Did Brief supplementary notes/tech red lines get written to rule file `90_custom_rules`?
-    4.  **Roadmap compliance**: Run `npx archi task --check` to verify.
-    5.  [?UI] **Design Tokens**: Does `design_tokens.json` have base color/font/spacing definitions?
-    6.  **Brief alignment**: All Brief core features mapped to Roadmap tasks?
-    7.  **Zero omission**: All user-provided content routed to correct files?
+<step_4_verify>
+    **Role**: Independent Reviewer
 
-    Silently fix issues; mark critical ones with `Risk Warning`.
-</step_4_audit>
+    [[SUBAGENT: archi-silent-audit|mode: init, context: Review step_3 generated global files (vision, tech_stack, roadmap, dictionary, etc.)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: init review dimension table item by item)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_4_verify>
 
 <step_4_5_ui_wireframe>
     **Trigger**: Only when project features include [?UI].
-    **Action**: Auto-invoke `archi-ui-wireframe` Skill (Phase 1 wireframe).
+    **Action**: [[SKILL: archi-ui-wireframe|Follow the skill protocol to auto-invoke Phase 1 wireframe generation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]
     - Start generation without user confirmation
     - Read the just-written vision.md + roadmap.json + design_tokens.json + 02_tech_stack
     - Write `ui_concept.html` + `ui_context.md`

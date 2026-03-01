@@ -27,8 +27,8 @@
         - `[[__DOCS_DIR__]]/global/dictionary.json`
         - `[[__DOCS_DIR__]]/global/error_codes.json`
         - `02_tech_stack.md`
-        - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
-        - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
+        - （仅ui项目） `[[__DOCS_DIR__]]/global/design_tokens.json`
+        - （仅data项目） `[[__DOCS_DIR__]]/global/data_snapshot.json`
     2.  **Scan Task Index**: 扫描 `[[__DOCS_DIR__]]/tasks/` 目录，建立 Task 索引（ID、名称、状态）。
     3.  **Intent Analysis**: 根据用户 `[context]`，初步定位受影响的全局资产类别。
 
@@ -104,7 +104,7 @@
     **Phase 1 — 修改全局资产**:
     按用户确认的清单修改全局文件。每个文件修改后输出变更摘要。
 
-    **[?UI] Phase 1.5 — 设计系统变更检查**:
+    **（仅ui项目） Phase 1.5 — 设计系统变更检查**:
     若 `design_tokens.json` 有以下变更，须在 Phase 2 完成后执行对应操作：
 
     | 变更范围 | 影响 | 处理方式 |
@@ -120,11 +120,19 @@
     **Phase 2 — 级联更新 Task 文档**:
     对每个受影响的 Task，按 `/archi.edit` 标准执行:
     1.  更新 `spec.md`（逻辑/规则因全局变更而需调整的部分）。
-    2.  [?UI] 更新 `ui.md`（范围/交互因全局变更而需调整的部分）；如屏幕结构受影响，运行 `archi-ui-wireframe` Skill（局部更新模式）同步更新 `ui_concept.html` + `ui_context.md`。
+    2.  （仅ui项目） 更新 `ui.md`（范围/交互因全局变更而需调整的部分）；如屏幕结构受影响，[[SKILL: archi-ui-wireframe|运行 skill（局部更新模式）同步更新 `ui_concept.html` + `ui_context.md`]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]。
     3.  在 `plan.json` 的 `phases` 中追加新 Phase: `Phase X: Global Revision — [变更主题] (<Date>)`，列出落地任务。
 
     **Output**: 每个文件的变更摘要（全局 + Task）。
 </step_4_execute>
+
+<step_4_5_verify>
+    **Role**: 独立审查官
+
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_4 Phase 2 级联更新的 Task 文档（spec.md、ui.md、plan.json 新 Phase），确保与修改后的全局资产一致，Plan tasks 可验证]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 的审查维度表逐项检查）]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_4_5_verify>
 
 <step_5_summary>
     **Role**: 审计官

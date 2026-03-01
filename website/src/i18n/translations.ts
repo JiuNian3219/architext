@@ -35,6 +35,12 @@ interface WorkflowDetail {
   desc: string;
 }
 
+interface IterateItem {
+  cmd: string;
+  title: string;
+  desc: string;
+}
+
 export interface TranslationData {
   htmlLang: string;
   otherLang: string;
@@ -48,6 +54,7 @@ export interface TranslationData {
   };
   nav: {
     workflow: string;
+    iterate: string;
     why: string;
     quickstart: string;
   };
@@ -76,8 +83,14 @@ export interface TranslationData {
     title: string;
     desc: string;
     svgOptional: string;
-    stageLabels: [string, string, string, string, string];
+    stageLabels: [string, string, string, string];
     details: WorkflowDetail[];
+  };
+  iterate: {
+    eyebrow: string;
+    title: string;
+    desc: string;
+    items: IterateItem[];
   };
   quickstart: {
     eyebrow: string;
@@ -114,7 +127,7 @@ export const t: Record<Locale, TranslationData> = {
     meta: {
       title: "Architext — The AI Architecture Protocol",
       description:
-        "A document-driven AI development protocol. Define first, build right. Upgrades your AI coding assistant from random code generator to rigorous architect.",
+        "A document-driven AI development protocol for small-to-medium apps. Built for solo developers and AI-assisted workflows. Define first, build right.",
       keywords:
         "AI architecture, document-driven development, AI coding workflow, Cursor IDE, software architecture protocol, spec-first development, AI development framework, DDAD",
       ogLocale: "en_US",
@@ -122,6 +135,7 @@ export const t: Record<Locale, TranslationData> = {
     },
     nav: {
       workflow: "Workflow",
+      iterate: "Iterate",
       why: "Why",
       quickstart: "Quick Start",
     },
@@ -178,14 +192,18 @@ export const t: Record<Locale, TranslationData> = {
           title: "Session-persistent",
           desc: "Context survives across sessions, team members, and AI tool switches. Specs live in your repo forever.",
         },
+        {
+          title: "Built for solo + AI",
+          desc: "Targets small-to-medium applications. Whether you use chat-based AI today or a future JARVIS-like assistant, documents give AI stable context and keep you in control.",
+        },
       ],
     },
     workflow: {
       eyebrow: "Workflow",
-      title: "Five stages.<br>No ambiguity.",
+      title: "Four stages.<br>No ambiguity.",
       desc: "Every AI command maps to a distinct lifecycle stage. No mixing concerns, no guesswork about what the AI is doing.",
       svgOptional: "optional",
-      stageLabels: ["INIT", "DECOMPOSE", "PLAN", "BUILD", "REVIEW"],
+      stageLabels: ["INIT", "PLAN", "BUILD", "REVIEW"],
       details: [
         {
           cmd: "/archi.start",
@@ -198,6 +216,37 @@ export const t: Record<Locale, TranslationData> = {
         {
           cmd: "/archi.code <ID>",
           desc: "Read the doc trio (spec + plan + ui). Validate Status Gate — <code>active</code> only. Implement phase by phase, marking each step <code>done</code> in <code>plan.json</code>.",
+        },
+        {
+          cmd: "/archi.audit [ID]",
+          desc: "Read-only deep review against spec. Produces a structured findings report with CRITICAL / WARNING / INFO tiers — no code is touched. Use <code>/archi.fix</code> to act on findings.",
+        },
+      ],
+    },
+    iterate: {
+      eyebrow: "Day 2+",
+      title: "Project live.<br>Stay in control.",
+      desc: "Every ongoing change — new requirements, spec updates, bug fixes, architectural pivots — has a dedicated command that keeps your document chain intact.",
+      items: [
+        {
+          cmd: "/archi.scope",
+          title: "Add requirements",
+          desc: "Decompose new requirements into roadmap tasks at any point. Incremental by design — never overwrites existing tasks.",
+        },
+        {
+          cmd: "/archi.edit",
+          title: "Change a spec",
+          desc: "Update a feature's spec or UI definition. A new Phase is appended to plan.json; the original decision history is always preserved.",
+        },
+        {
+          cmd: "/archi.fix",
+          title: "Fix a bug",
+          desc: "Root-cause diagnosis against spec. Appends a Bugfix Phase to plan.json, then surgically fixes only what broke.",
+        },
+        {
+          cmd: "/archi.revise",
+          title: "Revise architecture",
+          desc: "Project-wide change: impact analysis first, you confirm, then cascade update of all affected feature docs.",
         },
       ],
     },
@@ -223,6 +272,36 @@ export const t: Record<Locale, TranslationData> = {
       tableHead: ["Command", "Purpose", "Outputs"],
       tableGroups: [
         {
+          label: "CLI — Framework",
+          rows: [
+            {
+              cmd: "archi init",
+              desc: "Deploy framework files (docs, rules, skills, IDE configs) into the project. Optionally generates project-brief.md (fill in for /archi.start or /archi.inherit). Run once per project.",
+              out: "docs · rules · skills · IDE configs · project-brief (optional)",
+            },
+            {
+              cmd: "archi update",
+              desc: "Sync prompts and rules to the latest version. User-owned docs (vision, roadmap, specs) are never touched.",
+              out: "updated prompts + rules",
+            },
+            {
+              cmd: "archi pack",
+              desc: "Bundle user-owned data (vision, roadmap, specs, plans, rules) into a single XML for backup before upgrade or migration.",
+              out: "architext-pack.xml",
+            },
+            {
+              cmd: "archi uninstall",
+              desc: "Remove all framework-managed files from the project. User-owned docs are preserved.",
+              out: "framework files removed",
+            },
+            {
+              cmd: "archi doctor",
+              desc: "Inspect environment and project config — checks Node version, config file integrity, and deployed file health.",
+              out: "diagnostic report",
+            },
+          ],
+        },
+        {
           label: "Initialize",
           rows: [
             {
@@ -232,7 +311,7 @@ export const t: Record<Locale, TranslationData> = {
             },
             {
               cmd: "/archi.inherit",
-              desc: "Reverse-engineer existing codebase; register features as LEG-xx tasks",
+              desc: "Reverse-engineer existing codebase; optionally provide project-brief.md to supplement vision/roadmap (for skeleton repos)",
               out: "roadmap (LEG-xx) · map.json · stub specs",
             },
           ],
@@ -296,6 +375,11 @@ export const t: Record<Locale, TranslationData> = {
               out: "code deleted · refs cleaned",
             },
             {
+              cmd: "/archi.recover",
+              desc: "Restore user data from an architext-pack.xml after upgrade or migration (run archi pack first, then archi uninstall + archi init)",
+              out: "restored docs + tasks + rules",
+            },
+            {
               cmd: "/archi.help",
               desc: "No arg: recommend next action based on project state. With arg: locate relevant files and answer",
               out: "guidance only (no write)",
@@ -328,7 +412,7 @@ export const t: Record<Locale, TranslationData> = {
     meta: {
       title: "Architext — AI 架构协议",
       description:
-        "文档驱动的 AI 开发协议。先定义，再构建。让你的 AI 编程助手从随机代码生成器升级为严格的架构师。",
+        "面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。",
       keywords:
         "AI 架构协议, 文档驱动开发, AI 编程工作流, Cursor IDE, 软件架构规范, 规格优先开发, AI 开发框架, DDAD",
       ogLocale: "zh_CN",
@@ -336,6 +420,7 @@ export const t: Record<Locale, TranslationData> = {
     },
     nav: {
       workflow: "工作流",
+      iterate: "迭代",
       why: "为什么",
       quickstart: "快速开始",
     },
@@ -392,14 +477,18 @@ export const t: Record<Locale, TranslationData> = {
           title: "会话持久",
           desc: "上下文在会话、团队成员和 AI 工具切换之间保持不变。规格文档永久存储在仓库中。",
         },
+        {
+          title: "为 1 人 + AI 设计",
+          desc: "面向中小型应用。无论你用的是对话式 AI 还是未来的「贾维斯式」持续助手，文档都能让 AI 有稳定上下文，而你始终掌握决策权。",
+        },
       ],
     },
     workflow: {
       eyebrow: "工作流",
-      title: "五个阶段。<br>零模糊地带。",
+      title: "四个阶段。<br>零模糊地带。",
       desc: "每个 AI 命令对应一个明确的生命周期阶段。不混淆关注点，不猜测 AI 在做什么。",
       svgOptional: "可选",
-      stageLabels: ["初始化", "需求拆解", "规划", "构建", "审查"],
+      stageLabels: ["初始化", "规划", "构建", "审查"],
       details: [
         {
           cmd: "/archi.start",
@@ -412,6 +501,37 @@ export const t: Record<Locale, TranslationData> = {
         {
           cmd: "/archi.code <ID>",
           desc: "读取文档三件套（spec + plan + ui），验证状态门控（仅 <code>active</code> 通过），按阶段逐步实现，并在 <code>plan.json</code> 中标记每步 <code>done</code>。",
+        },
+        {
+          cmd: "/archi.audit [ID]",
+          desc: "只读深度审查，对照规格生成 CRITICAL / WARNING / INFO 三级发现报告，不修改任何代码。用 <code>/archi.fix</code> 处理发现的问题。",
+        },
+      ],
+    },
+    iterate: {
+      eyebrow: "持续迭代",
+      title: "项目上线后，<br>保持掌控。",
+      desc: "无论是追加需求、变更规格、修复缺陷还是调整架构，每种场景都有专属命令，始终维护文档链的完整性。",
+      items: [
+        {
+          cmd: "/archi.scope",
+          title: "追加需求",
+          desc: "在项目任何阶段将新需求增量分解为 roadmap 任务，设计上不会重写任何已有任务。",
+        },
+        {
+          cmd: "/archi.edit",
+          title: "变更规格",
+          desc: "更新功能 spec 或 UI 定义，向 plan.json 追加新 Phase，原始决策历史永久保留。",
+        },
+        {
+          cmd: "/archi.fix",
+          title: "修复缺陷",
+          desc: "对照 spec 进行根因诊断，向 plan.json 追加 Bugfix Phase，然后外科手术式精准修复。",
+        },
+        {
+          cmd: "/archi.revise",
+          title: "调整架构",
+          desc: "项目级变更：先输出影响分析，用户确认后，级联更新所有受影响的功能文档。",
         },
       ],
     },
@@ -437,6 +557,36 @@ export const t: Record<Locale, TranslationData> = {
       tableHead: ["命令", "用途", "产物"],
       tableGroups: [
         {
+          label: "CLI — 框架管理",
+          rows: [
+            {
+              cmd: "archi init",
+              desc: "将框架文件（文档、规则、技能、IDE 配置）部署到项目中。可选生成 project-brief.md（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）。每个项目执行一次。",
+              out: "文档 · 规则 · 技能 · IDE 配置 · project-brief（可选）",
+            },
+            {
+              cmd: "archi update",
+              desc: "将 prompts 和规则同步到最新版本，不会触碰用户自有文档（vision、roadmap、spec 等）。",
+              out: "更新后的 prompts + 规则",
+            },
+            {
+              cmd: "archi pack",
+              desc: "将用户自有数据（vision、roadmap、spec、plan、规则）打包为单个 XML 文件，供升级或迁移前备份。",
+              out: "architext-pack.xml",
+            },
+            {
+              cmd: "archi uninstall",
+              desc: "从项目中移除所有框架管理的文件，用户自有文档不受影响。",
+              out: "框架文件已移除",
+            },
+            {
+              cmd: "archi doctor",
+              desc: "检查运行环境和项目配置 — 验证 Node 版本、配置文件完整性及已部署文件的健康状态。",
+              out: "诊断报告",
+            },
+          ],
+        },
+        {
           label: "初始化",
           rows: [
             {
@@ -446,7 +596,7 @@ export const t: Record<Locale, TranslationData> = {
             },
             {
               cmd: "/archi.inherit",
-              desc: "逆向分析已有代码库，将现有功能注册为 LEG-xx 任务",
+              desc: "逆向分析已有代码库；可选传 project-brief.md 补充愿景/路线图（适用于骨架仓库）",
               out: "roadmap (LEG-xx) · map.json · Stub spec",
             },
           ],
@@ -505,9 +655,19 @@ export const t: Record<Locale, TranslationData> = {
               out: "更新后的 map.json",
             },
             {
+              cmd: "/archi.ref",
+              desc: "管理外部知识引用（第三方 API、公司 SDK、业务规则）：add 摘要存储 | list 查看 | update 刷新 | remove 删除；plan/code 按 tags 自动注入",
+              out: "refs/{id}.md|yaml|json · refs/index.json",
+            },
+            {
               cmd: "/archi.remove",
               desc: "全链路下线：删除文档和代码，清理 roadmap/map/dict/error_codes 引用",
               out: "代码删除 · 引用清理",
+            },
+            {
+              cmd: "/archi.recover",
+              desc: "从 architext-pack.xml 还原用户数据，用于框架升级或迁移（先运行 archi pack 备份，再 archi uninstall + archi init）",
+              out: "还原后的文档 · 任务 · 规则",
             },
             {
               cmd: "/archi.help",
