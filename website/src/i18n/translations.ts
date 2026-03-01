@@ -276,8 +276,8 @@ export const t: Record<Locale, TranslationData> = {
           rows: [
             {
               cmd: "archi init",
-              desc: "Deploy framework files (docs, rules, skills, IDE configs) into the project. Run once per project.",
-              out: "docs · rules · skills · IDE configs",
+              desc: "Deploy framework files (docs, rules, skills, IDE configs) into the project. Optionally generates project-brief.md (fill in for /archi.start or /archi.inherit). Run once per project.",
+              out: "docs · rules · skills · IDE configs · project-brief (optional)",
             },
             {
               cmd: "archi update",
@@ -311,7 +311,7 @@ export const t: Record<Locale, TranslationData> = {
             },
             {
               cmd: "/archi.inherit",
-              desc: "Reverse-engineer existing codebase; register features as LEG-xx tasks",
+              desc: "Reverse-engineer existing codebase; optionally provide project-brief.md to supplement vision/roadmap (for skeleton repos)",
               out: "roadmap (LEG-xx) · map.json · stub specs",
             },
           ],
@@ -561,8 +561,8 @@ export const t: Record<Locale, TranslationData> = {
           rows: [
             {
               cmd: "archi init",
-              desc: "将框架文件（文档、规则、技能、IDE 配置）部署到项目中，每个项目执行一次。",
-              out: "文档 · 规则 · 技能 · IDE 配置",
+              desc: "将框架文件（文档、规则、技能、IDE 配置）部署到项目中。可选生成 project-brief.md（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）。每个项目执行一次。",
+              out: "文档 · 规则 · 技能 · IDE 配置 · project-brief（可选）",
             },
             {
               cmd: "archi update",
@@ -596,7 +596,7 @@ export const t: Record<Locale, TranslationData> = {
             },
             {
               cmd: "/archi.inherit",
-              desc: "逆向分析已有代码库，将现有功能注册为 LEG-xx 任务",
+              desc: "逆向分析已有代码库；可选传 project-brief.md 补充愿景/路线图（适用于骨架仓库）",
               out: "roadmap (LEG-xx) · map.json · Stub spec",
             },
           ],

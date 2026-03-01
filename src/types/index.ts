@@ -107,6 +107,8 @@ export interface InitConfig {
   editors: SupportedEditor[];
   docDir: string;
   features: ProjectFeature[];
+  /** 是否生成 project-brief.md；生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用 */
+  generateBrief?: boolean;
 }
 
 /**

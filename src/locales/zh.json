@@ -72,6 +72,7 @@
       "select_editor": "请选择您的目标编辑器",
       "select_lang": "请选择项目文档语言",
       "select_features": "请选择项目特征（可多选）",
+      "select_generate_brief": "是否生成 project-brief.md？（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）",
       "select_doc_dir": "请输入文档目录",
       "config_exists": "检测到现有配置文件 (architext.json)。是否覆盖？",
       "config_saved": "配置已保存到 architext.json",
@@ -276,8 +277,9 @@
           "example": "例: /archi.start 我要做一个 Todo CLI 工具，用 Rust 写"
         },
         "inherit": {
-          "desc": "接管旧项目。全量扫描代码，逆向推导架构，填充全局文档。",
-          "detail": "适用于已有代码库但缺少 Architext 文档的项目"
+          "desc": "接管旧项目。全量扫描代码，逆向推导架构，填充全局文档。可选提供 Brief 补充愿景/路线图。",
+          "detail": "适用于已有代码库但缺少 Architext 文档的项目；代码库尚空时可传 project-brief.md",
+          "example": "例: /archi.inherit project-brief.md"
         },
         "scope": {
           "desc": "需求分解。读取 Scope Brief，将大需求拆解为多个 Roadmap 任务并建立依赖关系。",
@@ -334,7 +336,7 @@
       },
       "cli": {
         "init": {
-          "desc": "初始化 Architext 框架。生成规则文件、文档目录、Prompt 模板、Project Brief。",
+          "desc": "初始化 Architext 框架。生成规则文件、文档目录、Prompt 模板。可选生成 project-brief.md（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）。",
           "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "指定语言 (zh / en)",
           "doc": "自定义文档目录名 (默认 .architext)",

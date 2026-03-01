@@ -240,7 +240,9 @@ export class Scaffolder {
       await TemplateManager.execute(otherOps);
     }
 
-    await this.generateBrief(sourceDir, features, replacements);
+    if (options.generateBrief !== false) {
+      await this.generateBrief(sourceDir, features, replacements);
+    }
     const opencodeInstructionsAdded =
       await this.generateOpenCodeConfig(editors);
 

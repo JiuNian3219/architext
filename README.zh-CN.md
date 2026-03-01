@@ -68,6 +68,7 @@ npx archi init
 ✔ 选择语言      › 简体中文
 ✔ 选择 IDE      › Cursor   (多选 — Cursor / Windsurf / Trae / VS Code / Claude Code / OpenCode)
 ✔ 选择项目类型  › Web SPA / PWA
+✔ 是否生成 project-brief.md？ › 是（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）
 
 ● 正在部署 Architext...
 ✔ 文档已部署       → .architext/
@@ -86,7 +87,7 @@ npx archi init
 
 **第二步 · AI 对话：初始化项目**
 
-`archi init` 会在项目根目录自动生成一份 `project-brief.md`。填写完毕后，在 AI 编辑器中运行：
+选择生成时，`archi init` 会在项目根目录生成 `project-brief.md`。填写完毕后，在 AI 编辑器中运行：
 
 ```
 /archi.start project-brief.md
@@ -94,7 +95,7 @@ npx archi init
 
 AI 读取 Brief，就关键决策向你提问，生成项目的基础文档（`vision.md`、`roadmap.json`、`tech_stack` 等）。
 
-> **已有代码？** 跳过 `/archi.start`，改用 `/archi.inherit` —— 逆向分析项目，将已有功能注册为 `LEG-xx` 任务，同时生成 `map.json`。
+> **已有代码？** 跳过 `/archi.start`，改用 `/archi.inherit` —— 逆向分析项目，将已有功能注册为 `LEG-xx` 任务，同时生成 `map.json`。可选：代码库尚空时传 `project-brief.md` 补充愿景与路线图。
 
 ---
 
@@ -217,7 +218,7 @@ AI:   [正在读取 代码 + spec + plan + vision + tech_stack...]
 | 命令 | 说明 |
 |:---|:---|
 | `/archi.start [brief]` | 读取需求 Brief，生成项目基础文档（vision / roadmap / tech_stack 等） |
-| `/archi.inherit` | 逆向分析已有代码库，生成文档骨架并注册为 `LEG-xx` 任务 |
+| `/archi.inherit [brief]` | 逆向分析已有代码库；可选传 project-brief.md 补充愿景/路线图（骨架仓库） |
 | `/archi.scope [file_path]` | 将额外需求拆解为 Roadmap 任务；无文件则自动发起访谈 |
 | `/archi.plan <ID> [context]` | 深度架构访谈 → 生成 spec / plan（[?UI] 附 ui.md + ui_concept.html）；可附加已知上下文减少提问 |
 | `/archi.code <ID>` | 按 plan 分阶段实现代码；仅 `active` 任务可进入 |

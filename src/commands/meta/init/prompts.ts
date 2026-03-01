@@ -105,6 +105,24 @@ async function askEditors(
 }
 
 /**
+ * 询问是否生成 project-brief.md。
+ * 生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用。
+ * @returns true/false，或 null（用户取消时）
+ */
+async function askGenerateBrief(): Promise<boolean | null> {
+  const response = await confirm({
+    message: t("select_generate_brief"),
+    initialValue: true,
+  });
+
+  if (isCancel(response)) {
+    return null;
+  }
+
+  return response;
+}
+
+/**
  * 询问项目特征（多选），用户直接勾选适用的特征标签。
  * @param preselected 命令行预设的特征标签（逗号分隔）
  * @returns 特征标签列表，或 null（用户取消时）
@@ -163,8 +181,11 @@ export async function collectInitConfig(options: {
   const features = await askFeatures(options.type);
   if (!features) return null;
 
+  const generateBrief = await askGenerateBrief();
+  if (generateBrief === null) return null;
+
   const docDir =
     options.doc || (existingConfig?.docDir as string) || ".architext";
 
-  return { language, editors, docDir, features };
+  return { language, editors, docDir, features, generateBrief };
 }

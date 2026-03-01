@@ -1,7 +1,7 @@
 <protocol_inherit>
-  **Trigger**: `/archi.inherit`
+  **Trigger**: `/archi.inherit [brief_path]`
   **Phase**: Legacy Adoption
-  **Goal**: Reverse-engineer an existing codebase to generate the Architext document skeleton, bringing the project under framework governance.
+  **Goal**: Reverse-engineer an existing codebase to generate the Architext document skeleton, bringing the project under framework governance. Optionally provide a Brief to supplement vision/roadmap (for skeleton repos with minimal code).
 
 <meta>
     <style>Analytical, Systematic, Evidence-Based</style>
@@ -14,6 +14,17 @@
       5.  **Option Z Everywhere**: Supplementary questions must include `[Z] Custom`.
     </principles>
 </meta>
+
+<step_0_ingest>
+    **Role**: Intelligence Analyst
+    **Trigger**: Only when user provides `[brief_path]`. Skip if no argument or path invalid.
+    **Action**:
+    1. Parse `[brief_path]`: if path provided → read that file; if not → look for `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
+    2. If file exists and non-empty: parse Brief sections, extract project identity, core tasks, tech preferences, constraints, supplementary notes (same as start step_0_ingest)
+    3. If file missing or empty: skip this step; subsequent steps use code only as input
+
+    **Output**: Internal Brief summary (not shown to user), proceed to step_0_recon.
+</step_0_ingest>
 
 <step_0_recon>
     **Role**: Intelligence Analyst
@@ -118,13 +129,23 @@
 
 <step_3_constitution>
     **Role**: Chief Architect
-    **Input**: Step 1 analysis report + Step 2 supplements (if any).
-    **Action**: Generate project document skeleton in one pass.
+    **Input**: Step 0 Brief parse (if any) + Step 1 analysis report + Step 2 supplements (if any).
+    **Action**: Generate project document skeleton in one pass. **When Brief provided**: Brief takes precedence for vision/roadmap/tech_stack; code still used for map, LEG-xx, directory structure. **When no Brief**: Code only as input (original logic).
 
     ### Information Routing Rules
 
     > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by the IDE — the AI knows their paths; write directly.
 
+    **When Brief provided** (Brief content → target file, same as start):
+    | Brief content | Target file |
+    |:---|:---|
+    | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
+    | Tech stack, deployment target, third-party libs/services | rule file `02_tech_stack` |
+    | Core task list | `[[__DOCS_DIR__]]/global/roadmap.json` (phase-1/2, call archi-decompose-roadmap) |
+    | Rules/conventions from supplementary notes | rule file `90_custom_rules` |
+    | Style/tone (UI only) | `design_tokens.json` aestheticDirection etc. |
+
+    **Information from Code** (always applies):
     | Information from Code | Target File |
     |:---|:---|
     | README project description, target users, task list | `[[__DOCS_DIR__]]/global/vision.md` |
@@ -137,20 +158,23 @@
     | [?Data] Schema/Migration files | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
-    - Derive from README + project config
-    - Items that cannot be derived: mark `(AI Inferred — user review recommended)`
+    - **With Brief**: Fill from Brief (same as start); code/README as supplement only
+    - **Without Brief**: Derive from README + project config; mark un-inferrable items `(AI Inferred — user review recommended)`
     - Do not retain template placeholders
 
     ### 3.2 Tech Stack (rule file `02_tech_stack`)
-    - Existing dependencies/config → write directly
-    - Visible code conventions (naming, structure) → write to Coding Standards
+    - **With Brief**: Brief-confirmed items → write directly; Brief blank/"recommend" → AI recommends by project features; code deps/config as supplement
+    - **Without Brief**: Existing dependencies/config → write directly; visible code conventions → Coding Standards
     - Must populate complete Section 1-8
 
     ### 3.3 Custom Rules (rule file `90_custom_rules`)
-    - Extract rules from eslint/prettier/editorconfig
-    - Identify team conventions from code patterns (e.g., named export preference, async/await style)
+    - **With Brief**: Merge Brief supplementary notes + code eslint/prettier etc.
+    - **Without Brief**: Extract from eslint/prettier/editorconfig; identify team conventions from code patterns
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+
+    **With Brief**: [[SKILL: archi-decompose-roadmap|Generate phase-1/2 task chain from Brief task list]]; code functional modules → phase-0 LEG-xx (status=done). Merge both.
+    **Without Brief**: Code functional modules only → phase-0 LEG-xx; phase-1/2 remain empty skeletons.
 
     **Structure**:
     ```json

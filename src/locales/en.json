@@ -72,6 +72,7 @@
       "select_editor": "Select target editors",
       "select_lang": "Select documentation language",
       "select_features": "Select project features (multi-select)",
+      "select_generate_brief": "Generate project-brief.md at project root? (Fill in project requirements for /archi.start or /archi.inherit)",
       "select_doc_dir": "Enter documentation directory",
       "config_exists": "Existing config (architext.json) detected. Overwrite?",
       "config_saved": "Config saved to architext.json",
@@ -276,8 +277,9 @@
           "example": "e.g. /archi.start I want to build a Todo CLI tool in Rust"
         },
         "inherit": {
-          "desc": "Take over a legacy project. Full code scan, reverse-engineer architecture, fill docs.",
-          "detail": "For existing codebases lacking Architext documentation"
+          "desc": "Take over a legacy project. Full code scan, reverse-engineer architecture, fill docs. Optionally provide Brief to supplement vision/roadmap.",
+          "detail": "For existing codebases lacking Architext docs; pass project-brief.md when codebase is minimal",
+          "example": "e.g. /archi.inherit project-brief.md"
         },
         "scope": {
           "desc": "Requirement decomposition. Read Scope Brief, break large requirements into Roadmap tasks with dependencies.",
@@ -334,7 +336,7 @@
       },
       "cli": {
         "init": {
-          "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates, Project Brief.",
+          "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates. Optionally generates project-brief.md (fill in for /archi.start or /archi.inherit).",
           "editor": "Target IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "Language (zh / en)",
           "doc": "Custom doc directory name (default: .architext)",

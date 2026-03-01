@@ -1,7 +1,7 @@
 <protocol_inherit>
-  **Trigger**: `/archi.inherit`
+  **Trigger**: `/archi.inherit [brief_path]`
   **Phase**: Legacy Adoption
-  **Goal**: 逆向分析已有代码仓库，生成 Architext 文档骨架，将项目纳入框架管理。
+  **Goal**: 逆向分析已有代码仓库，生成 Architext 文档骨架，将项目纳入框架管理。可选提供 Brief 以补充愿景/路线图（适用于代码库尚空、骨架刚搭的场景）。
 
 <meta>
     <style>Analytical, Systematic, Evidence-Based</style>
@@ -14,6 +14,17 @@
       5.  **Option Z Everywhere**: 补充提问须包含 `[Z] 自定义`。
     </principles>
 </meta>
+
+<step_0_ingest>
+    **Role**: 情报分析官
+    **Trigger**: 仅当用户提供 `[brief_path]` 时执行。无参数或路径无效则跳过。
+    **Action**:
+    1. 解析 `[brief_path]`：提供了路径 → 读取该文件；未提供 → 依次查找 `project-brief.md`（项目根）、`[[__DOCS_DIR__]]/project-brief.md`
+    2. 若文件存在且非空：解析 Brief 各 Section，提取项目身份、核心任务、技术偏好、边界约束、补充说明（与 start 的 step_0_ingest 一致）
+    3. 若文件不存在或为空：跳过本 step，后续仅以代码为输入源
+
+    **Output**: 内部 Brief 摘要（不输出给用户），进入 step_0_recon。
+</step_0_ingest>
 
 <step_0_recon>
     **Role**: 情报分析官
@@ -118,13 +129,23 @@
 
 <step_3_constitution>
     **Role**: 首席架构师
-    **Input**: Step 1 分析报告 + Step 2 补充（如有）。
-    **Action**: 一次性生成项目文档骨架。
+    **Input**: Step 0 Brief 解析（如有）+ Step 1 分析报告 + Step 2 补充（如有）。
+    **Action**: 一次性生成项目文档骨架。**有 Brief 时**：Brief 优先于代码（vision/roadmap/tech_stack）；代码仍用于 map、LEG-xx、目录结构。**无 Brief 时**：仅以代码为输入源（保持原逻辑）。
 
     ### 信息路由规则
 
     > 规则文件（`02_tech_stack`、`90_custom_rules` 等）已由 IDE 注入当前上下文，AI 已知其路径，直接写入即可。
 
+    **有 Brief 时**（Brief 内容 → 目标文件，与 start 一致）:
+    | Brief 内容 | 目标文件 |
+    |:---|:---|
+    | 项目身份、目标用户、成功指标、参考灵感 | `[[__DOCS_DIR__]]/global/vision.md` |
+    | 技术栈、部署目标、第三方库/服务 | 规则文件 `02_tech_stack` |
+    | 核心任务列表 | `[[__DOCS_DIR__]]/global/roadmap.json`（phase-1/2，调用 archi-decompose-roadmap） |
+    | 补充说明中的规则/约定 | 规则文件 `90_custom_rules` |
+    | 风格调性（仅ui） | `design_tokens.json` aestheticDirection 等 |
+
+    **代码中的信息**（始终适用）:
     | 代码中的信息 | 目标文件 |
     |:---|:---|
     | README 项目描述、目标用户、特性列表 | `[[__DOCS_DIR__]]/global/vision.md` |
@@ -137,20 +158,23 @@
     | （仅data项目） Schema/Migration 文件 | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
-    - 从 README + 项目配置推导
-    - 无法推导的项标注 `(AI 补全 — 建议用户审查)`
+    - **有 Brief**：从 Brief 填充（与 start 一致），代码/README 仅作补充
+    - **无 Brief**：从 README + 项目配置推导，无法推导的项标注 `(AI 补全 — 建议用户审查)`
     - 禁保留模板占位符
 
     ### 3.2 Tech Stack (规则文件 `02_tech_stack`)
-    - 已有依赖/配置 → 直接写入
-    - 代码中可见的规范（命名、结构） → 写入 Coding Standards
+    - **有 Brief**：Brief 中已确定的 → 直接写入；Brief 留空/推荐的 → AI 基于项目特征推荐；代码中的依赖/配置作补充
+    - **无 Brief**：已有依赖/配置 → 直接写入；代码中可见的规范 → 写入 Coding Standards
     - 须填充完整 Section 1-8
 
     ### 3.3 Custom Rules (规则文件 `90_custom_rules`)
-    - 从 eslint/prettier/editorconfig 等提取规则
-    - 从代码模式中识别团队约定（如 named export 偏好、async/await 风格）
+    - **有 Brief**：从 Brief 补充说明 + 代码中 eslint/prettier 等合并
+    - **无 Brief**：从 eslint/prettier/editorconfig 等提取，从代码模式识别团队约定
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+
+    **有 Brief 时**：[[SKILL: archi-decompose-roadmap|基于 Brief 任务列表生成 phase-1/2 任务链]]；代码中的功能模块 → phase-0 LEG-xx（status=done）。合并两者。
+    **无 Brief 时**：仅代码中的功能模块 → phase-0 LEG-xx；phase-1/2 保留空骨架。
 
     **结构**:
     ```json
