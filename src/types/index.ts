@@ -64,6 +64,8 @@ export interface EditorRuleConfig {
   commands?: EditorCommandsConfig;
   /** Agent Skills 配置（可选，仅支持 Agent Skills 标准的编辑器） */
   skills?: EditorSkillsConfig;
+  /** 是否支持子代理（独立上下文的 Agent 实例） */
+  subagents?: boolean;
 }
 
 /**

@@ -119,7 +119,7 @@
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    | 1 | `npx archi render` | `.md` 视图生成完成 |
+    [[INCLUDE: shared/terminal-gate-base.md]]
 
     **Output**: 更新摘要：
     - **移除**: N 条过期条目

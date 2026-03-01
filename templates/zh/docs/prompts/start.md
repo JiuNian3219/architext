@@ -186,19 +186,12 @@
     **Output**: 写入所有文件，然后运行 `npx archi render` 生成可视化 `.md`。
 </step_3_constitution>
 
-<step_4_audit>
-    **Role**: 首席审计官
-    **Checklist**:
-    1.  **Vision 完整性**: `vision.md` 含北极星指标和设计哲学？
-    2.  **Tech Stack 一致性**: 规则文件 `02_tech_stack` 与 Brief 技术偏好一致？含完整技术栈声明？
-    3.  **Custom Rules**: Brief 补充说明/技术红线中的规则是否已写入规则文件 `90_custom_rules`？
-    4.  **Roadmap 合规**: 运行 `npx archi task --check` 验证一致性。
-    5.  （仅ui项目） **Design Tokens**: `design_tokens.json` 含基础颜色/字体/间距定义？
-    6.  **Brief 对齐**: 所有 Brief 中声明的核心任务均已映射到 Roadmap 任务？
-    7.  **信息零遗漏**: Brief 中所有用户填写的内容均已路由到对应文件？
+<step_4_verify>
+    **Role**: 独立审查官
+    [[SUBAGENT: archi-silent-audit|mode: init, context: 审查 step_3 生成的全局文件（vision, tech_stack, roadmap, dictionary 等）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: init 的审查维度表逐项检查）]]
 
-    如有问题则静默修正；严重问题标记 `Risk Warning`。
-</step_4_audit>
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_4_verify>
 
 <step_4_5_ui_wireframe>
     **Trigger**: 仅当项目 features 含 `ui` 时执行。
@@ -215,8 +208,7 @@
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    [[INCLUDE: shared/terminal-gate-base.md]]
 
     **Action** (Gate 通过后):
     1.  运行 `npx archi task` 输出任务进度概览。

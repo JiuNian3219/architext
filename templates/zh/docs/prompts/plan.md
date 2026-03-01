@@ -144,7 +144,7 @@
 
     展开 Q-table 时，格式遵循 [[SKILL: archi-interview-protocol|skill 的标准输出格式]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则执行）]]。
 
-    #### Part 1.5: Mechanism Preview (机制预览) （仅Complex任务）
+    #### Part 1.5: Mechanism Preview (机制预览) 仅Complex任务:
 
     仅当 step_1_5 判定为 **Standard + Design** 时输出。列出需要技术方案设计的核心机制及拟用模式：
 
@@ -219,19 +219,8 @@
 
     **Action Checklist**:
     1.  **`map.json`**: 在 `directoryMapping` 注册 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>`；在 `logicalTopology` 定义模块职责与依赖。
-    2.  **`dictionary.json`**: 提取提案中的**项目业务**新术语填入 `entities`/`verbs`；注册新共享工具到 `utilities`；注册新公共组件到 `components`。
-    3.  （本任务涉及data时） **`data_snapshot.json`**: 根据架构建议中核心结构的选择新增/修改 Schema。禁写"待定"，须写出字段名和类型。
-    4.  **`error_codes.json`**: 根据架构建议中错误处理的选择注册新**业务**错误码。框架脚本错误由 exit code + stderr 处理，禁注册。
-    5.  **`map.json` featureRelations**: 判断本 Task 是否属于「聚合型 Task」——即其核心职责是**列举、汇总或动态反映**其他一类 Task（如「列出所有命令」「汇总所有页面入口」「注册所有路由」）。若是，在 `featureRelations` 中追加一条记录：
-        ```json
-        {
-          "aggregator": "<本 Task ID 或文件路径>",
-          "sources": "<一句话描述聚合来源范围，如'所有 CLI 命令类 Task'>",
-          "evidence": "<依据，如'spec.md §X 描述本 Task 会动态列出所有 Y 类 Task'>",
-          "checkNote": "此类 Task 新增或删除时，检查 <aggregator> 是否需要同步"
-        }
-        ```
-        若非聚合型 Task，跳过此步。
+    2.  **数据治理同步** (`dictionary.json` / `error_codes.json` / `data_snapshot.json` 等): 按 `03_data_governance.md` 规则，将提案中涉及的新业务术语、错误码、Schema 增量同步至对应全局文件。
+    3.  **`map.json` featureRelations**: [[SUBAGENT: archi-feature-relations|mode: register, context: 判断本 Task 是否为聚合型，若是则注册 featureRelations 条目]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: register 的逻辑执行）]]
 
     **Output**: 上述文件的变更 Diff (简要)。
 </step_3_global_sync>
@@ -276,7 +265,7 @@
       2. 完成偏差处理后，按 `ui.template.md` 填写屏幕范围声明和差异组件。
     - **无 `ui_context.md`（降级路径）**: 按完整 ITP v3.0 描述组件树，引用 `design_tokens.json` Token 定义。
 
-    **3. `design.md`** （仅Complex任务）:
+    **3. 仅Complex任务: `design.md`**:
     - 模板: `templates/design.template.md`。
     - 仅在 step_1_5 判定为 **Standard + Design** 时生成。
     - § 2 Core Mechanisms: 按 step_2 确认的机制预览，调用 [[SKILL: archi-design-patterns|skill 的模式选择指南和标准格式生成机制描述并执行自检]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 并遵循其模式格式和自检清单执行）]]。
@@ -328,33 +317,19 @@
     - 生成后运行 `npx archi render` 生成可读的 `.md` 视图。
 </step_4_generate>
 
-<step_5_audit>
-    **Role**: 首席审计官
-    **Checklist**:
-    1.  **Design Fidelity**: Spec § 2 的 Acceptance Criteria 是否完整覆盖确认的功能设计？
-    2.  **Dimension Match**: Spec § 2 的维度格式是否与 Task Type 匹配（INF→Structural, FEAT→Behavioral, POLISH→Quantitative）？
-    3.  **Tech Consistency**: 是否用了未声明技术？
-    4.  **Data Integrity**: Spec 中的实体和字段是否与确认的核心实体一致？
-    5.  **Error Handling**: 是否覆盖架构建议中错误处理的选择？
-    6.  **Interface Exports**: INF 任务的 § 4 是否填写？有下游 deps 的任务是否声明了接口？
-    7.  **Constraints**: § 5 是否包含来自 vision.md + tech_stack 的相关红线？
-    8.  **WBS Coverage**: plan.json 是否 100% 覆盖 spec 的每个 Acceptance Criteria 条目？
-    9.  **Notes Quality**: plan.json 每个 task 的 notes 是否含具体产出物 + 约束 + 可执行验证？
-    10. **AX Compliance**: 是否遵守 Anti-Clobbering 和 Interface Stability？
-    11. （仅Complex任务） **Design Trace**: design.md § 6 Trace Verification 是否所有 AC 均为 ✓（无 Gap）？
-    12. （仅Complex任务） **Parameter Specificity**: design.md § 3 是否所有参数都有具体值（无"适当"/"合理"等模糊词）？
-    13. （仅Complex任务） **Self-Check Pass**: design.md § 2 每个机制的自检清单是否全部通过？
+<step_5_verify>
+    **Role**: 独立审查官
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_4 生成的文档（spec.md, ui.md, plan.json, design.md）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 的审查维度表逐项检查）]]
 
-    如有问题则静默修正；严重问题标记 `⚠️ Risk Warning`。
-</step_5_audit>
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_5_verify>
 
 <step_6_signoff>
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 2 | `npx archi task <ID> --status active` | 任务已标记为进行中 |
-    | 3 | `npx archi render` | `.md` 视图生成完成 |
+    [[INCLUDE: shared/terminal-gate-base.md]]
+    | `npx archi task <ID> --status active` | 任务已标记为进行中 |
 
     **Action** (Gate 通过后):
     1.  输出总结。

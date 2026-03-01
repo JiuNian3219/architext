@@ -77,7 +77,11 @@ function buildCapabilityResolver(
   config: ArchitextConfig,
 ): (content: string) => string {
   const hasSkills = config.editors.some((e) => !!EDITOR_CONFIGS[e]?.skills);
-  return (content: string) => resolveCapabilityRefs(content, { hasSkills });
+  const hasSubagents = config.editors.some(
+    (e) => !!EDITOR_CONFIGS[e]?.subagents,
+  );
+  return (content: string) =>
+    resolveCapabilityRefs(content, { hasSkills, hasSubagents });
 }
 
 /**

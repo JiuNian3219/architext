@@ -62,18 +62,18 @@ export class Scaffolder {
       [GLOBAL_RULES.PLACEHOLDERS.PROJECT_TYPE]: featuresLabel,
     };
 
-    // 判断所选编辑器中是否有任何一个支持 Agent Skills（如 Cursor）
-    // 用于解析 prompts/commands 中的 [[SKILL: desc]] / [[NO-SKILL: desc]] 能力标记：
-    //   有 Skill → [[SKILL: desc]] 展开为 desc，[[NO-SKILL: desc]] 移除
-    //   无 Skill → [[NO-SKILL: desc]] 展开为 desc，[[SKILL: desc]] 移除
+    // 编辑器能力检测：
+    //   hasSkills: 是否有任一编辑器支持 Agent Skills（Skill 文件读取）
+    //   hasSubagents: 是否有任一编辑器支持子代理（独立上下文 Agent 实例）
     const hasSkills = editors.some((e) => !!EDITOR_CONFIGS[e]?.skills);
+    const hasSubagents = editors.some((e) => !!EDITOR_CONFIGS[e]?.subagents);
+    const docsSource = path.join(sourceDir, GLOBAL_RULES.PATHS.DOCS_SOURCE);
     const capabilityResolver = (content: string) =>
-      resolveCapabilityRefs(content, { hasSkills });
+      resolveCapabilityRefs(content, { hasSkills, hasSubagents }, docsSource);
 
     // 用于记录所有文件操作
     const operations: FileOperation[] = [];
 
-    const docsSource = path.join(sourceDir, GLOBAL_RULES.PATHS.DOCS_SOURCE);
     if (await fs.pathExists(docsSource)) {
       const docOps = await TemplateManager.plan(
         docsSource,
@@ -83,6 +83,13 @@ export class Scaffolder {
 
       const featureSet = new Set<string>(features);
       const filteredDocOps = docOps.filter((op) => {
+        // shared/ 目录仅用于 [[INCLUDE:]] 展开，不部署到用户项目
+        const relPath = path.relative(targetDir, op.dest);
+        if (
+          relPath.startsWith(`shared${path.sep}`) ||
+          relPath.startsWith("shared/")
+        )
+          return false;
         const fileName = path.basename(op.dest);
         const requiredFeature = CONDITIONAL_GLOBAL_FILES[fileName];
         if (requiredFeature && !featureSet.has(requiredFeature)) return false;

@@ -58,7 +58,7 @@
     2. **任务清单完整性**: Brief 任务清单是否足以支撑需求目标？
     3. **影响评估**: Brief 中"受影响的已有任务" → 对照 roadmap/tasks 验证是否存在、状态如何。
     4. **缺口识别**: 检查 Brief 是否有关键信息缺失。
-    5. **联动检查**: 读取 `map.json.featureRelations`，将新任务的描述与各条 `sources` 字段做语义对比，判断新任务是否属于某聚合方的覆盖范围。命中时在摘要中输出联动提示。
+    5. **联动检查**: [[SUBAGENT: archi-feature-relations|mode: check, context: 将新任务描述与 featureRelations sources 做语义对比，命中时在摘要中输出联动提示]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: check 的逻辑执行）]]
 
     **缺口分级**:
     - **必须**: 缺失则无法合理分解（如任务清单为空）
@@ -152,8 +152,7 @@
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    [[INCLUDE: shared/terminal-gate-base.md]]
 
     **Output**: 写入确认。
 </step_4_roadmap_update>

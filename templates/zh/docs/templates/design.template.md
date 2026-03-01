@@ -1,5 +1,5 @@
 ---
-description: "（仅Complex任务）技术方案设计 — 定义核心机制的实现策略、状态流转、参数与不变量。仅当任务含非平凡技术决策时生成。"
+description: "仅Complex任务: 技术方案设计 — 定义核心机制的实现策略、状态流转、参数与不变量。仅当任务含非平凡技术决策时生成。"
 glue: 衔接 spec.md(WHAT) 与 plan.json(DO)，定义 HOW。plan.json tasks 须覆盖本文档所有机制；spec.md § 2 AC 须可在本设计中追踪出完整路径。
 ---
 

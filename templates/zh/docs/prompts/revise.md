@@ -126,6 +126,14 @@
     **Output**: 每个文件的变更摘要（全局 + Task）。
 </step_4_execute>
 
+<step_4_5_verify>
+    **Role**: 独立审查官
+
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_4 Phase 2 级联更新的 Task 文档（spec.md、ui.md、plan.json 新 Phase），确保与修改后的全局资产一致，Plan tasks 可验证]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 的审查维度表逐项检查）]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_4_5_verify>
+
 <step_5_summary>
     **Role**: 审计官
     **Checklist**:
@@ -136,8 +144,7 @@
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    [[INCLUDE: shared/terminal-gate-base.md]]
 
     **Action** (Gate 通过后):
     1.  输出变更总结。

@@ -74,9 +74,9 @@ alwaysApply: true
 ### 2.3 未纳管代码
 
 修改对象未在 `map.json` 中注册、无对应 Task:
-- 告知用户该模块未纳管
-- 建议 `/archi.inherit` 或 `/archi.scope` 纳入
-- 用户确认"临时调整"后可直接修改
+- **STOP & ASK** — 告知用户该模块未纳管
+- 建议 `/archi.inherit` 或 `/archi.scope` 纳入管理
+- 禁直接修改未纳管代码，须等待用户提供文档路径或完成纳管后再操作
 
 ### 2.4 基底规则
 

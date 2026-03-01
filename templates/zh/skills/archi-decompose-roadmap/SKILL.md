@@ -13,10 +13,10 @@ Brief → [本 Skill] → roadmap.json 任务
                    /archi.plan <task-id>
                    读: vision.md + map.json + tech_stack.md
                    写: spec.md（行为规格/验收标准）
-                       ui.md（任务 UI 范围声明）（仅ui项目）
+                       仅ui项目: ui.md（任务 UI 范围声明）
                        plan.json（可执行步骤 + 测试用例 checkbox）
                    也更新: map.json / dictionary.json / data_snapshot.json
-                   视觉参考: [[__DOCS_DIR__]]/global/ui_context.md （仅ui项目）
+                   仅ui项目: 视觉参考: [[__DOCS_DIR__]]/global/ui_context.md
                             ↓
                    /archi.code → 读 spec.md + ui.md + plan.json → 写代码
 ```
@@ -45,7 +45,7 @@ Brief → [本 Skill] → roadmap.json 任务
 | 项目类型 | 脚手架须包含（除通用构建工具链外） |
 |:---|:---|
 | Web SPA / PWA | 路由骨架（如 React Router）+ 全局 App Shell（布局 / Provider / 主题注入） |
-| 全栈 Web（SSR/SSG）| 路由约定（loader/action/页面）+ API Routes 层 + 全局布局 + Auth Session 管理（Cookie/JWT）；（仅ui项目） 主题注入 |
+| 全栈 Web（SSR/SSG）| 路由约定（loader/action/页面）+ API Routes 层 + 全局布局 + Auth Session 管理（Cookie/JWT）；仅ui项目: 主题注入 |
 | CLI 工具 | logger 模块 + AppError 处理层 + 命令注册入口 |
 | API 服务（REST / GraphQL）| 路由层 + 中间件层 + DB 连接层 + 全局错误处理；仅GraphQL项目 Schema 定义层 + DataLoader |
 | 移动端 App（原生/跨平台）| 导航骨架（React Navigation / Go Router）+ 平台适配层（iOS/Android 权限、原生模块）+ 环境配置（dev/staging/prod）|

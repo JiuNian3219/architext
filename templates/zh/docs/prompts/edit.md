@@ -70,14 +70,22 @@
     - 列出具体 Tasks (API update, UI tweak, Test update)；每项须可验证。
     - **状态转换**: 若当前任务 status=`done`，追加 Phase 后须将状态重置为 `active`（否则后续 `/archi.code` 将被 Status Gate 拒绝）。
 
-    **Terminal Gate** (禁止跳过，须在 step_4 输出前全部完成):
+    **Terminal Gate** (禁止跳过，须在 step_3_5 开始前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    | 1 | `npx archi render` | `.md` 视图生成完成 |
-    | 2 | [当前 status=done] `npx archi task <ID> --status active` | 任务状态已重置为 active |
+    [[INCLUDE: shared/terminal-gate-base.md]]
+    | [当前 status=done] `npx archi task <ID> --status active` | 任务状态已重置为 active |
 
     **Output**: 追加了新任务的 plan.json；若执行了状态转换，输出 `MODIFIED: roadmap.json <ID>.status done→active`。
 </step_3_update_plan>
+
+<step_3_5_verify>
+    **Role**: 独立审查官
+
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_2 更新的 spec.md/ui.md 与 step_3 追加的 plan.json 新 Phase，确保文档逻辑自洽、新 Phase tasks 可验证]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 的审查维度表逐项检查）]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_3_5_verify>
 
 <step_4_summary>
     **Action** (Gate 须在 step_3 完成):

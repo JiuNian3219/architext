@@ -22,12 +22,7 @@
     1.  **Resolve ID**: 从 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Task Name、Slug、阶段/状态。
     2.  **Status Gate** — 仅 `active` 可进入 code 流程:
 
-        | 状态 | 处理 |
-        |:---|:---|
-        | `active` 🟢 | 通过，继续 |
-        | `pending` ⏳ | 拒绝 — 提示先运行 `/archi.plan <ID>` |
-        | `blocked` 🧱 | 拒绝 — 前置依赖未完成 |
-        | `done` ✅ | 拒绝 — 已完成，如需修改用 `/archi.edit <ID>` |
+        [[INCLUDE: shared/status-gate.md]]
 
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 逻辑与场景
@@ -114,33 +109,20 @@
     **Output**: 每项检查 ✅/❌ 状态与原因；Task Verification 证据。
 </step_4_validate>
 
-<step_5_audit>
-    **Role**: 首席审计官
-    **Checklist**:
-    1.  **Tech Consistency**: 与 `02_tech_stack.md` 一致（库/模式/API 风格）。
-    2.  （本任务涉及ui时） **Design Compliance**: 样式仅用 Token/Preset 视觉模式；无硬编码魔法值。
-    3.  （本任务涉及data时） **Data Integrity**: 符合 `data_snapshot.json`；字段名/类型一致。
-    4.  **SOTA**: 拒绝过时模式；采用 tech_stack 最佳实践。
-    5.  （本任务涉及ui时） **Accessibility**: 含必要无障碍属性。
-    6.  （仅i18n项目） **I18n**: 无硬编码字符串；须用 Key/字典引用。
-    7.  **Performance**: 避免不必要大依赖/全量导入/无用计算/内存泄漏。
-    8.  **Security**: 无敏感信息泄露；输入有校验。
-    9.  **Static Check Zero**: 所有静态检查问题已解决。
-    10. **step_4 Gate**: 确认 step_4 所有检查（Static + Test + Task Verification）已通过。
-    11. **联动检查**: 读取 `[[__DOCS_DIR__]]/global/map.json` 中的 `featureRelations` 数组，将本次实现的功能与各条 `sources` 字段做语义对比。命中时输出提示：`⚠️ 联动: [aggregator] — [checkNote]`，提醒在当前实现完成后确认聚合方是否需要同步。`featureRelations` 为空则跳过。
-    12. 仅Complex任务: **Design Compliance**: 代码的状态转移、处理流程、消息协议是否与 `design.md` § 2 一致？[[SKILL: archi-design-patterns|引用 skill 的自检清单逐项对比实现与设计]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 并用其自检清单验证）]]。
-    13. 仅Complex任务: **Invariant Enforcement**: `design.md` § 4 的不变量是否在代码中有对应的 assert/运行时检查？
-    14. 仅Complex任务: **Parameter Alignment**: 代码中的超时、重试间隔等数值是否与 `design.md` § 3 参数表一致（禁硬编码偏离值）？
-    15. **数据治理**: 本次实现引入新内容时，须直接写入对应全局索引：
+<step_5_verify>
+    **Role**: 独立审查官
 
-        | 触发条件 | 文件 | 动作 |
-        |:---|:---|:---|
-        | 新业务实体 · 动作 · 共享工具 | `dictionary.json` | 直接追加写入 |
-        | 新错误场景 | `error_codes.json` | 直接追加写入 |
-        | （本任务涉及data时） Schema 实际变更 | `data_snapshot.json` | 直接同步 |
+    **5A. 代码质量审查**:
+    [[SUBAGENT: archi-silent-audit|mode: code-impl, context: 审查 step_3 实现的代码（Tech/SOTA/Security/Performance + 条件维度）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: code-impl 的审查维度表逐项检查）]]
 
-    细节问题可 Auto-Fix 并说明；重大风险标注 `⚠️ Risk` 并提出替代方案。
-</step_5_audit>
+    **5B. 联动检查**:
+    [[SUBAGENT: archi-feature-relations|mode: check, context: 将本次实现的功能与 featureRelations sources 做语义对比]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: check 的逻辑执行）]]
+
+    **5C. 数据治理同步**:
+    [[SUBAGENT: archi-data-sync|context: 扫描本次实现引入的新业务实体/错误码/Schema，按 03_data_governance.md 规则增量同步]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`，按其执行协议操作）]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_5_verify>
 
 <step_6_signoff>
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
@@ -148,8 +130,7 @@
     |:---|:---|:---|
     | 1 | `npx archi plan <ID>` | 全部完成或仅豁免项；未通过禁签收，回到 step_3 |
     | 2 | `npx archi task <ID> --status done` | 任务状态已更新 |
-    | 3 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 4 | `npx archi render` | `.md` 视图生成完成 |
+    [[INCLUDE: shared/terminal-gate-base.md]]
 
     **Action** (Gate 通过后):
     1.  确认 `plan.json` 各 task `done` 标记已全部更新（应在 step_3 实时完成，此处做最终校验）。

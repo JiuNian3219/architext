@@ -140,11 +140,7 @@ alwaysApply: true
     - ⚠️ 超出 spec 范围（新接口 · 改签名 · 新行为 · 新场景）→ 输出 `⚠️ Spec 漂移`，建议 `/archi.edit <ID>`
 
     **B. 数据治理**:
-    | 触发条件 | 文件 | 动作 |
-    |:---|:---|:---|
-    | 引入未登记的业务实体 · 动作 · 共享工具 | `dictionary.json` | 直接追加写入 |
-    | 引入未注册的错误场景 | `error_codes.json` | 直接追加写入 |
-    | （仅data项目） Schema 有变更 | `data_snapshot.json` | 直接同步 |
+    [[SUBAGENT: archi-data-sync|context: 扫描本次变更引入的新业务实体/错误码/Schema，按 03_data_governance.md 规则增量同步]][[NO-SKILL: 本次变更引入新业务实体/错误码/Schema 时，按 `03_data_governance.md` 增量同步规则执行。]]
   </step>
 </thinking_process>
 
