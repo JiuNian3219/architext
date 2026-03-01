@@ -6,7 +6,7 @@
   <style>Precise, Efficient, Non-interactive</style>
   <language>简体中文</language>
   <principles>
-    1. **User Data Only**: pack 文件仅含用户数据（`global/`、`tasks/`、`scripts/`、自定义规则），无框架文件，全部写入，无需过滤。
+    1. **User Data Only**: pack 文件仅含用户数据（`global/`、`tasks/`、`scripts/`、`refs/`、自定义规则），无框架文件，全部写入，无需过滤。
     2. **Overwrite Always**: 目标路径已存在文件时直接覆盖，无需询问（框架升级场景下旧数据即为空模板，可安全替换）。
     3. **Delta Notation**: 输出须以 `ADDED` / `MODIFIED` 标注每个写入文件。
     4. **No Partial Write**: 若任一文件写入失败，立即停止并报告；已写入文件不回滚（幂等，重跑安全）。

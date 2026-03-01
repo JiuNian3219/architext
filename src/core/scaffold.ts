@@ -51,9 +51,10 @@ export class Scaffolder {
     const sourceDir = path.join(templateRoot, templateLang);
     const targetDir = path.resolve(process.cwd(), docDir);
 
-    // 确保 [[__DOCS_DIR__]] 下的 scripts 和 tasks 空目录存在（用于存放未来计划和脚本）
+    // 确保 [[__DOCS_DIR__]] 下的骨架目录存在（scripts/tasks 存放计划和脚本，refs 存放外部知识引用）
     await fs.ensureDir(path.join(targetDir, "scripts"));
     await fs.ensureDir(path.join(targetDir, "tasks"));
+    await fs.ensureDir(path.join(targetDir, "refs"));
 
     const featuresLabel = features.length > 0 ? features.join(", ") : "未指定";
 

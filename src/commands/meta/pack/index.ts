@@ -121,6 +121,18 @@ async function collectUserData(
     }
   }
 
+  // refs/ 目录（用户存储的外部知识引用：API 文档摘要、公司内部 SDK 等）
+  const refsDir = path.join(docDir, "refs");
+  if (await fs.pathExists(refsDir)) {
+    for (const { fullPath, relPath } of await listFilesRecursive(refsDir)) {
+      const content = await fs.readFile(fullPath, "utf-8");
+      entries.push({
+        path: posix(path.join(config.docDir, "refs", relPath)),
+        content,
+      });
+    }
+  }
+
   // 用户专属规则文件（各编辑器的 90_custom_rules + 02_tech_stack）
   for (const editor of config.editors) {
     const ec = EDITOR_CONFIGS[editor];

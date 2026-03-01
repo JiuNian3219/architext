@@ -39,6 +39,7 @@
         - `02_tech_stack.md` — 技术红线
         - 仅ui项目: `[[__DOCS_DIR__]]/global/design_tokens.json`
         - 仅data项目: `[[__DOCS_DIR__]]/global/data_snapshot.json`
+        - **Read Refs** (如有): 读取 `[[__DOCS_DIR__]]/refs/index.json`（如存在），根据 tags 与 spec.md 中涉及的技术域语义匹配，仅读取命中的 ref 文件作为补充上下文；`refs/` 不存在或为空时跳过。
 
     **Output**: 待实施任务的原子清单，标注依赖与顺序。
 </step_1_resolve>

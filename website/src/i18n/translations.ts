@@ -570,6 +570,11 @@ export const t: Record<Locale, TranslationData> = {
               out: "更新后的 map.json",
             },
             {
+              cmd: "/archi.ref",
+              desc: "管理外部知识引用（第三方 API、公司 SDK、业务规则）：add 摘要存储 | list 查看 | update 刷新 | remove 删除；plan/code 按 tags 自动注入",
+              out: "refs/{id}.md|yaml|json · refs/index.json",
+            },
+            {
               cmd: "/archi.remove",
               desc: "全链路下线：删除文档和代码，清理 roadmap/map/dict/error_codes 引用",
               out: "代码删除 · 引用清理",

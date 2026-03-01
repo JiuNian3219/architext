@@ -39,6 +39,10 @@
         - 仅当当前 spec/plan 出现 `ref: tasks/<dep_id>/spec.md#X` 引用时执行；无引用时跳过。
         - **Stub 兼容**: 如依赖任务的 Spec-Status 为 Stub，从 stub"关联文件"提取源码，读入口文件提取公共接口/导出类型，作为上游接口参考。
         - 避免重复定义上游接口，确保对接点精确对齐。
+    7.  **Read Refs** (如有): 读取 `[[__DOCS_DIR__]]/refs/index.json`（如存在）。
+        - 根据 tags 与当前任务描述语义匹配相关 ref 条目。
+        - 仅读取命中的 ref 文件（`[[__DOCS_DIR__]]/refs/{id}.{ext}`），忽略无关条目。
+        - 若 `refs/index.json` 不存在或 refs 为空 → 跳过。
 
     **Output**: 向用户输出 **Task Context Brief**：
     ```
@@ -51,6 +55,7 @@
     **技术约束**: [来自 02_tech_stack.md 的关键红线]
     **设计哲学**: [来自 vision.md 的北极星指标和设计原则]
     **项目约定**: [来自 02_tech_stack.md §9 — Error Handling: X | Data Flow: X | Auth: X，无则写"未设置"]
+    **外部知识引用**: [命中的 ref id 列表，如 `wechat-pay`, `company-sdk`；无则写"无"]
     ```
     内部保留完整上下文素材，进入 step_2。
 </step_1_load>
