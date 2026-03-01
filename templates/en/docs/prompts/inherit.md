@@ -252,18 +252,13 @@
     **Output**: Write all files, then run `npx archi render`.
 </step_3_constitution>
 
-<step_4_audit>
-    **Role**: Chief Auditor
-    **Checklist**:
-    1.  **Vision Alignment**: Does vision.md match actual code functionality?
-    2.  **Tech Stack Consistency**: Does rule file `02_tech_stack` match package.json/config?
-    3.  **Map Coverage**: Does map.json cover all core directories?
-    4.  **Roadmap Completeness**: Does phase-0 cover all identified functional modules?
-    5.  **Stub Completeness**: Does every LEG-xx have a corresponding tasks/ directory and spec.md?
-    6.  **Dictionary Consistency**: No ambiguous or duplicate terms?
+<step_4_verify>
+    **Role**: Independent Reviewer
 
-    Silently fix issues; mark severe problems as `Risk Warning`.
-</step_4_audit>
+    [[SUBAGENT: archi-silent-audit|mode: init, context: Review step_3 generated global files (vision, tech_stack, roadmap, map, dictionary, stub specs, etc.)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: init review dimension table item by item)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_4_verify>
 
 <step_5_signoff>
     **Terminal Gate** (Do not skip; must complete before output summary):

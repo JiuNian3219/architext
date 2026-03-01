@@ -39,6 +39,10 @@
         - Execute only when a `ref: tasks/<dep_id>/spec.md#X` reference appears in the current spec/plan; skip if no reference found.
         - **Stub Compatibility**: If a dependency's Spec-Status is Stub, extract source files from the stub's "Associated Files", read entry files to extract public interfaces/exported types as upstream interface reference.
         - Avoid re-defining upstream interfaces; ensure integration points are precisely aligned.
+    7.  **Read Refs** (if any): Read `[[__DOCS_DIR__]]/refs/index.json` (if exists).
+        - Match relevant ref entries by tags and current task description semantics.
+        - Load only matched ref files (`[[__DOCS_DIR__]]/refs/{id}.{ext}`); skip unrelated entries.
+        - If `refs/index.json` does not exist or refs is empty → skip.
 
     **Output**: Present a **Task Context Brief** to the user:
     ```
@@ -51,6 +55,7 @@
     **Technical Constraints**: [key red lines from 02_tech_stack.md]
     **Design Philosophy**: [North Star Metric and design principles from vision.md]
     **Project Conventions**: [from 02_tech_stack.md §9 — Error Handling: X | Data Flow: X | Auth: X, or "Not set" if absent]
+    **External knowledge refs**: [matched ref ids, e.g. `wechat-pay`, `company-sdk`; or "None"]
     ```
     Retain full context materials internally, proceed to step_2.
 </step_1_load>
@@ -218,19 +223,8 @@
 
     **Action Checklist**:
     1.  **`map.json`**: Register `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>` in `directoryMapping`; define module responsibility and dependencies in `logicalTopology`.
-    2.  **`dictionary.json`**: Extract **project business** new terms from the proposal to fill `entities`/`verbs`; register new shared tools to `utilities`; register new public components to `components`.
-    3.  [?Data] **`data_snapshot.json`**: Add/modify Schema based on Core Structure recommendation. Prohibited from writing "TBD"; must write field names and types.
-    4.  **`error_codes.json`**: Register new **business** error codes based on Error Handling recommendation. Framework script errors are handled by exit code + stderr; prohibited from registration.
-    5.  **`map.json` featureRelations**: Determine if this task is an "aggregator" — i.e., its core responsibility is to **list, summarize, or dynamically reflect** a class of other tasks (e.g., "list all commands", "aggregate all page entries", "register all routes"). If yes, append one record to `featureRelations`:
-        ```json
-        {
-          "aggregator": "<this task ID or file path>",
-          "sources": "<one-sentence description of what is aggregated, e.g. 'all CLI command tasks'>",
-          "evidence": "<basis, e.g. 'spec.md §X states this task dynamically lists all Y-type tasks'>",
-          "checkNote": "When tasks of this type are added or removed, check whether <aggregator> needs to be updated"
-        }
-        ```
-        If not an aggregator, skip this step.
+    2.  **Data governance sync** (`dictionary.json` / `error_codes.json` / `data_snapshot.json` etc.): Per `03_data_governance.md` rules, incrementally sync new business terms, error codes, Schema from the proposal to corresponding global files.
+    3.  **`map.json` featureRelations**: [[SUBAGENT: archi-feature-relations|mode: register, context: Determine if this Task is aggregator; if yes, register featureRelations entry]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`, follow mode: register logic)]]
 
     **Output**: Change diffs of above files (brief).
 </step_3_global_sync>
@@ -327,33 +321,21 @@
     - Run `npx archi render` after generation to produce readable `.md` view.
 </step_4_generate>
 
-<step_5_audit>
-    **Role**: Chief Auditor
-    **Checklist**:
-    1.  **Design Fidelity**: Do spec § 2 Acceptance Criteria fully cover confirmed task design?
-    2.  **Dimension Match**: Does spec § 2 dimension format match Task Type (INF→Structural, FEAT→Behavioral, POLISH→Quantitative)?
-    3.  **Tech Consistency**: Any undeclared tech used?
-    4.  **Data Integrity**: Do spec entities match confirmed core entities?
-    5.  **Error Handling**: Is Error Handling recommendation covered?
-    6.  **Interface Exports**: Is INF task § 4 filled? Do tasks with downstream deps declare interfaces?
-    7.  **Constraints**: Does § 5 include relevant red lines from vision.md + tech_stack?
-    8.  **WBS Coverage**: Does plan.json 100% cover each spec Acceptance Criteria item?
-    9.  **Notes Quality**: Does each plan.json task notes include concrete deliverable + constraints + executable verification?
-    10. **AX Compliance**: Are Anti-Clobbering and Interface Stability rules followed?
-    11. [?Complex] **Design Trace**: Are all ACs in design.md § 6 Trace Verification ✓ (no Gap)?
-    12. [?Complex] **Parameter Specificity**: Does design.md § 3 have concrete values for all parameters (no "appropriate"/"reasonable" etc.)?
-    13. [?Complex] **Self-Check Pass**: Are all self-check lists for each mechanism in design.md § 2 passed?
+<step_5_verify>
+    **Role**: Independent Reviewer
 
-    Silently fix issues; mark critical issues with `⚠️ Risk Warning`.
-</step_5_audit>
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: Review step_4 generated docs (spec.md, ui.md, plan.json, design.md)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: plan-docs review dimension table item by item)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_5_verify>
 
 <step_6_signoff>
     **Terminal Gate** (Do not skip; must complete before output summary):
     | Step | Command | Pass Condition |
     |:---|:---|:---|
     | 1 | `npx archi task --check` | No ERROR-level issues |
-    | 2 | `npx archi task <ID> --status active` | Task marked as in-progress |
-    | 3 | `npx archi render` | `.md` views generated |
+    | 2 | `npx archi render` | `.md` views generated |
+    | 3 | `npx archi task <ID> --status active` | Task marked as in-progress |
 
     **Action** (After Gate passes):
     1.  Output summary.

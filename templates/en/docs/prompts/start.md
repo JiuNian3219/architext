@@ -186,19 +186,13 @@
     **Output**: Write all files, then run `npx archi render` to generate visual `.md`.
 </step_3_constitution>
 
-<step_4_audit>
-    **Role**: Chief Auditor
-    **Checklist**:
-    1.  **Vision completeness**: Does `vision.md` include North Star metric and design philosophy?
-    2.  **Tech Stack consistency**: Is rule file `02_tech_stack` aligned with Brief preferences? Contains full stack?
-    3.  **Custom Rules**: Did Brief supplementary notes/tech red lines get written to rule file `90_custom_rules`?
-    4.  **Roadmap compliance**: Run `npx archi task --check` to verify.
-    5.  [?UI] **Design Tokens**: Does `design_tokens.json` have base color/font/spacing definitions?
-    6.  **Brief alignment**: All Brief core features mapped to Roadmap tasks?
-    7.  **Zero omission**: All user-provided content routed to correct files?
+<step_4_verify>
+    **Role**: Independent Reviewer
 
-    Silently fix issues; mark critical ones with `Risk Warning`.
-</step_4_audit>
+    [[SUBAGENT: archi-silent-audit|mode: init, context: Review step_3 generated global files (vision, tech_stack, roadmap, dictionary, etc.)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: init review dimension table item by item)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_4_verify>
 
 <step_4_5_ui_wireframe>
     **Trigger**: Only when project features include [?UI].

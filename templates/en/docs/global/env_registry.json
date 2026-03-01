@@ -1,0 +1,12 @@
+{
+  "variables": [
+    {
+      "name": "[ENV_VAR_NAME]",
+      "required": true,
+      "default": null,
+      "description": "[Purpose]",
+      "example": "[Example value]",
+      "owner": "[FEAT-xxx | INF-xxx]"
+    }
+  ]
+}

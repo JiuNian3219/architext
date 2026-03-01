@@ -1,0 +1,24 @@
+{
+  "endpoints": [
+    {
+      "method": "[GET | POST | PUT | DELETE | PATCH]",
+      "path": "[/resource/:id]",
+      "description": "[One-sentence endpoint responsibility]",
+      "auth": "[required | public | optional]",
+      "requestBody": "[Schema description or N/A]",
+      "responses": {
+        "200": "[Success response structure]",
+        "[4xx]": "[ref: error_codes.json#ERR_CODE]"
+      },
+      "owner": "[FEAT-xxx | INF-xxx]"
+    }
+  ],
+  "protocolMapping": [
+    {
+      "statusCode": "[400 | 401 | 403 | 404 | 500 | ...]",
+      "code": "[ERR_CODE]",
+      "meaning": "[Meaning]",
+      "action": "[Caller behavior: Toast / Redirect / Retry / ...]"
+    }
+  ]
+}

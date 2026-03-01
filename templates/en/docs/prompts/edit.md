@@ -66,18 +66,27 @@
 <step_3_update_plan>
     **Role**: Tech Lead
     **Action**:
-    - Append new phase to `plan.json` phases array: `Phase X: Change Request (<Date>)`.
+    - Append new Phase object to `plan.json` phases array.
     - List specific Tasks (API update, UI tweak, Test update); each must be verifiable.
     - **Status Transition**: If current task status=`done`, reset to `active` after appending the Phase (otherwise `/archi.code` will be rejected by the Status Gate).
 
-    **Terminal Gate** (Do not skip; must complete before step_4 output):
+    **Terminal Gate** (Do not skip; must complete before step_3_5 starts):
     | Step | Command | Pass Condition |
     |:---|:---|:---|
-    | 1 | `npx archi render` | `.md` views generated |
-    | 2 | [if current status=done] `npx archi task <ID> --status active` | Task status reset to active |
+    | 1 | `npx archi task --check` | No ERROR-level issues |
+    | 2 | `npx archi render` | `.md` views generated |
+    | 3 | [if current status=done] `npx archi task <ID> --status active` | Task status reset to active |
 
     **Output**: plan.json with new tasks appended; if status transition was performed, output `MODIFIED: roadmap.json <ID>.status done→active`.
 </step_3_update_plan>
+
+<step_3_5_verify>
+    **Role**: Independent Reviewer
+
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: Review step_2 updated spec.md/ui.md and step_3 appended plan.json new Phase; ensure doc logic is consistent and new Phase tasks are verifiable]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: plan-docs review dimension table item by item)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_3_5_verify>
 
 <step_4_summary>
     **Action** (Gate must complete in step_3):
