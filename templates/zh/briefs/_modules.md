@@ -116,7 +116,7 @@
 **实时传输方案**: [例：Socket.io / 原生 WebSocket / SSE / WebRTC]
 **实时框架/托管**: [例：Ably / Pusher / Liveblocks / 自建]
 **房间/频道模型**: [例：按用户 ID 订阅 / 按文档 ID 房间 / 广播]
-**[?CRDT] 协作冲突解决**: [例：Yjs / Automerge / 不需要（仅广播）]
+**（仅CRDT项目） 协作冲突解决**: [例：Yjs / Automerge / 不需要（仅广播）]
 **离线支持**: [例：离线队列 + 重连同步 / 不需要]
 <!-- @end -->
 
@@ -125,7 +125,7 @@
 **AI 框架**: [例：Vercel AI SDK / LangChain / LlamaIndex / 无框架直调 API]
 **Tool/Function Calling**: [例：需要（列出工具名称）/ 不需要]
 **Memory 方案**: [例：向量数据库（pgvector/Pinecone）/ 滑动窗口历史 / 无]
-**[?MCP] MCP 协议**: [例：@modelcontextprotocol/sdk / 不需要]
+**（仅MCP项目） MCP 协议**: [例：@modelcontextprotocol/sdk / 不需要]
 **流式输出**: [例：SSE 流式 / 批量返回]
 <!-- @end -->
 

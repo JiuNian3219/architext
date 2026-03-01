@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>`
-  **Goal**: 基于 `tasks/<id>_<Slug>/plan.json` 任务清单，完成功能开发；遵循 `02_tech_stack.md`（[?UI] 同时遵循 `design_tokens.json`）；通过构建、类型、Lint、格式化、测试与审计。
+  **Goal**: 基于 `tasks/<id>_<Slug>/plan.json` 任务清单，完成功能开发；遵循 `02_tech_stack.md`（仅ui项目: 同时遵循 `design_tokens.json`）；通过构建、类型、Lint、格式化、测试与审计。
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -32,13 +32,13 @@
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 逻辑与场景
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — 本任务 UI 范围声明(如存在)
-        - [?Complex] `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/design.md` — 技术方案设计(如存在)：状态机/流水线/协议定义、参数表、不变量
-        - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI 屏幕索引（屏幕 ID/路由/状态/导航关系/共享组件）
-        - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — 只读视觉参考（实现时以此校准布局结构，禁基于此重新设计，设计已在 ui.md 确定）
+        - 仅Complex任务: `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/design.md` — 技术方案设计(如存在)：状态机/流水线/协议定义、参数表、不变量
+        - 仅ui项目: `[[__DOCS_DIR__]]/global/ui_context.md` — AI 屏幕索引（屏幕 ID/路由/状态/导航关系/共享组件）
+        - 仅ui项目: `[[__DOCS_DIR__]]/global/ui_concept.html` — 只读视觉参考（实现时以此校准布局结构，禁基于此重新设计，设计已在 ui.md 确定）
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — 任务拆解（含 `notes` 速记，执行时须参照）
         - `02_tech_stack.md` — 技术红线
-        - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
-        - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
+        - 仅ui项目: `[[__DOCS_DIR__]]/global/design_tokens.json`
+        - 仅data项目: `[[__DOCS_DIR__]]/global/data_snapshot.json`
 
     **Output**: 待实施任务的原子清单，标注依赖与顺序。
 </step_1_resolve>
@@ -61,12 +61,12 @@
     **Protocol**:
     - **Read First**: 修改前须读取目标文件；遵循项目现有代码风格。
     - **Use Existing Stack**: 仅用 `02_tech_stack.md` 声明的技术与库。
-    - [?UI] **Design Tokens Only**: 样式严格使用 Token/Preset 定义的视觉模式；禁硬编码魔法值（颜色、尺寸、间距等）。
+    - （本任务涉及ui时） **Design Tokens Only**: 样式严格使用 Token/Preset 定义的视觉模式；禁硬编码魔法值（颜色、尺寸、间距等）。
     - **Type-Safe**: 补齐类型定义；用项目技术栈的类型系统守护边界。
     - **Code Organization**: 遵循 `02_tech_stack.md` 中定义的架构模式与文件归位策略。
     - **Comments**: 解释 Why 而非 What；拒绝废话注释。
     - **Naming**: 自解释命名；拒绝 `a`, `b`, `tmp` 等无意义名（循环变量 `i` 除外）。
-    - [?Complex] **Design Adherence**: 存在 `design.md` 时，实现须严格遵循其定义的状态机/流水线/协议；参数须引用 design.md § 3 的值（禁硬编码其他值）；须满足 § 4 所有 Invariants（可用 assert 或运行时检查守护）。
+    - 仅Complex任务: **Design Adherence**: 存在 `design.md` 时，实现须严格遵循其定义的状态机/流水线/协议；参数须引用 design.md § 3 的值（禁硬编码其他值）；须满足 § 4 所有 Invariants（可用 assert 或运行时检查守护）。
     - **Error Handling**: 禁吞错/禁静默失败；须正确传播错误并给调用方可观测反馈（UI: Toast；CLI: Exit Code；API: Status Code + Body）。
     - **Robustness**: 显式处理边界(Loading/Error/Empty/Timeout)；禁只写 Happy Path。
     - **SOTA**: 遵循 tech_stack 定义的最佳实践；拒绝明确禁止的过时模式。
@@ -101,12 +101,12 @@
 
     | 项目类型 | 验证动作 | 通过标准 |
     |:---|:---|:---|
-    | [?Web] | 浏览器操作目标功能路径 | 渲染正常，交互无报错，控制台无异常 |
-    | [?API] | 调用新增/修改的 endpoint | 状态码与 Body 符合 spec |
-    | [?CLI] | 执行目标命令（含正常参数 + 边界参数） | stdout 符合预期，exit code 正确 |
-    | [?Lib] | 运行示例代码或 playground 验证导出 API | 无运行时错误，返回值正确 |
-    | [?Mobile] | 模拟器/真机操作目标功能 | 界面正常，交互响应 |
-    | [?Desktop] | 启动应用操作目标功能 | 窗口正常，功能可用 |
+    | 本任务涉及ui时 | 浏览器操作目标功能路径 | 渲染正常，交互无报错，控制台无异常 |
+    | 本任务涉及api时 | 调用新增/修改的 endpoint | 状态码与 Body 符合 spec |
+    | 本任务涉及cli时 | 执行目标命令（含正常参数 + 边界参数） | stdout 符合预期，exit code 正确 |
+    | 本任务涉及lib时 | 运行示例代码或 playground 验证导出 API | 无运行时错误，返回值正确 |
+    | 本任务涉及mobile时 | 模拟器/真机操作目标功能 | 界面正常，交互响应 |
+    | 本任务涉及desktop时 | 启动应用操作目标功能 | 窗口正常，功能可用 |
 
     **Evidence**: Output 须附验证结果（命令输出摘要 / 截图 / 错误日志）。
     **Fallback**: 验证持续失败且怀疑环境问题 → `[[__DOCS_DIR__]]/scripts/dev-reset` → `[[__DOCS_DIR__]]/scripts/dev-up` → 重试。
@@ -118,26 +118,26 @@
     **Role**: 首席审计官
     **Checklist**:
     1.  **Tech Consistency**: 与 `02_tech_stack.md` 一致（库/模式/API 风格）。
-    2.  [?UI] **Design Compliance**: 样式仅用 Token/Preset 视觉模式；无硬编码魔法值。
-    3.  [?Data] **Data Integrity**: 符合 `data_snapshot.json`；字段名/类型一致。
+    2.  （本任务涉及ui时） **Design Compliance**: 样式仅用 Token/Preset 视觉模式；无硬编码魔法值。
+    3.  （本任务涉及data时） **Data Integrity**: 符合 `data_snapshot.json`；字段名/类型一致。
     4.  **SOTA**: 拒绝过时模式；采用 tech_stack 最佳实践。
-    5.  [?UI] **Accessibility**: 含必要无障碍属性。
-    6.  [?I18n] **I18n**: 无硬编码字符串；须用 Key/字典引用。
+    5.  （本任务涉及ui时） **Accessibility**: 含必要无障碍属性。
+    6.  （仅i18n项目） **I18n**: 无硬编码字符串；须用 Key/字典引用。
     7.  **Performance**: 避免不必要大依赖/全量导入/无用计算/内存泄漏。
     8.  **Security**: 无敏感信息泄露；输入有校验。
     9.  **Static Check Zero**: 所有静态检查问题已解决。
     10. **step_4 Gate**: 确认 step_4 所有检查（Static + Test + Task Verification）已通过。
     11. **联动检查**: 读取 `[[__DOCS_DIR__]]/global/map.json` 中的 `featureRelations` 数组，将本次实现的功能与各条 `sources` 字段做语义对比。命中时输出提示：`⚠️ 联动: [aggregator] — [checkNote]`，提醒在当前实现完成后确认聚合方是否需要同步。`featureRelations` 为空则跳过。
-    12. [?Complex] **Design Compliance**: 代码的状态转移、处理流程、消息协议是否与 `design.md` § 2 一致？[[SKILL: archi-design-patterns|引用 skill 的自检清单逐项对比实现与设计]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 并用其自检清单验证）]]。
-    13. [?Complex] **Invariant Enforcement**: `design.md` § 4 的不变量是否在代码中有对应的 assert/运行时检查？
-    14. [?Complex] **Parameter Alignment**: 代码中的超时、重试间隔等数值是否与 `design.md` § 3 参数表一致（禁硬编码偏离值）？
+    12. 仅Complex任务: **Design Compliance**: 代码的状态转移、处理流程、消息协议是否与 `design.md` § 2 一致？[[SKILL: archi-design-patterns|引用 skill 的自检清单逐项对比实现与设计]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 并用其自检清单验证）]]。
+    13. 仅Complex任务: **Invariant Enforcement**: `design.md` § 4 的不变量是否在代码中有对应的 assert/运行时检查？
+    14. 仅Complex任务: **Parameter Alignment**: 代码中的超时、重试间隔等数值是否与 `design.md` § 3 参数表一致（禁硬编码偏离值）？
     15. **数据治理**: 本次实现引入新内容时，须直接写入对应全局索引：
 
         | 触发条件 | 文件 | 动作 |
         |:---|:---|:---|
         | 新业务实体 · 动作 · 共享工具 | `dictionary.json` | 直接追加写入 |
         | 新错误场景 | `error_codes.json` | 直接追加写入 |
-        | [?Data] Schema 实际变更 | `data_snapshot.json` | 直接同步 |
+        | （本任务涉及data时） Schema 实际变更 | `data_snapshot.json` | 直接同步 |
 
     细节问题可 Auto-Fix 并说明；重大风险标注 `⚠️ Risk` 并提出替代方案。
 </step_5_audit>

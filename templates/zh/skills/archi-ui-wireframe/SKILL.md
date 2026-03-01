@@ -54,7 +54,7 @@ description: UI 概念设计专家。两阶段生成 ui_concept.html：第一阶
 
 1. **读取上下文**:
    - `[[__DOCS_DIR__]]/global/vision.md` → 提取：目标平台、用户角色、北极星指标
-   - `[[__DOCS_DIR__]]/global/roadmap.json` → 提取：所有 [?UI] 任务，映射为屏幕/状态列表
+   - `[[__DOCS_DIR__]]/global/roadmap.json` → 提取：所有含 UI 的任务，映射为屏幕/状态列表
    - `[[__DOCS_DIR__]]/global/design_tokens.json` → 提取：`mode.default`、`illustration.iconLibrary`
    - 规则文件 `02_tech_stack` → 提取：目标平台（Web/Mobile/Desktop）、导航框架
 

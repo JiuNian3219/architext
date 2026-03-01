@@ -2,7 +2,6 @@
 import type {
   EditorRuleConfig,
   ProjectFeature,
-  ProjectType,
   SupportedEditor,
 } from "../types/index.ts";
 
@@ -116,48 +115,43 @@ export const SUPPORTED_EDITORS = Object.keys(
   EDITOR_CONFIGS,
 ) as SupportedEditor[];
 
-export interface ProjectTypePreset {
+/**
+ * 条件性全局文件映射：文件名 → 要求的 feature。
+ * 仅当 features 包含对应项时才部署该文件；不在此表的文件始终部署。
+ */
+export const CONDITIONAL_GLOBAL_FILES: Partial<Record<string, ProjectFeature>> =
+  {
+    "api_snapshot.json": "api",
+    "env_registry.json": "api",
+    "command_api.json": "cli",
+    "public_api.json": "lib",
+    "design_tokens.json": "ui",
+    "data_snapshot.json": "data",
+  };
+
+export interface FeatureOption {
+  value: ProjectFeature;
   label: string;
-  features: ProjectFeature[];
+  hint: string;
 }
 
-export const PROJECT_TYPE_PRESETS: Record<ProjectType, ProjectTypePreset> = {
-  web: { label: "Web SPA / PWA", features: ["ui", "data"] },
-  fullstack: { label: "全栈 Web (SSR/SSG)", features: ["ui", "data", "api"] },
-  api: { label: "API 服务 (REST/GraphQL)", features: ["api", "data"] },
-  cli: { label: "CLI 工具", features: ["cli"] },
-  lib: { label: "库 / SDK / NPM 包", features: ["lib"] },
-  mobile: {
-    label: "移动端 App (RN/Flutter/Expo)",
-    features: ["data", "mobile"],
+export const FEATURE_OPTIONS: FeatureOption[] = [
+  { value: "ui", label: "ui", hint: "有用户界面（Web/移动端/桌面端/小程序）" },
+  { value: "data", label: "data", hint: "有数据层（数据库/ORM/本地存储）" },
+  { value: "api", label: "api", hint: "有 HTTP/RPC/GraphQL 接口" },
+  { value: "cli", label: "cli", hint: "有命令行入口" },
+  { value: "lib", label: "lib", hint: "作为库/SDK/NPM 包发布" },
+  { value: "mobile", label: "mobile", hint: "移动端（RN/Flutter/Expo）" },
+  { value: "desktop", label: "desktop", hint: "桌面端（Electron/Tauri）" },
+  { value: "miniapp", label: "miniapp", hint: "小程序（微信/支付宝/uni-app）" },
+  {
+    value: "extension",
+    label: "extension",
+    hint: "浏览器扩展（Chrome/Firefox）",
   },
-  miniapp: {
-    label: "小程序 (微信/支付宝/uni-app)",
-    features: ["data", "miniapp"],
-  },
-  desktop: {
-    label: "桌面端 App (Electron/Tauri)",
-    features: ["ui", "data", "desktop"],
-  },
-  "web-desktop": {
-    label: "Web + 桌面端 (Hybrid)",
-    features: ["ui", "data", "api", "desktop"],
-  },
-  extension: { label: "浏览器扩展 (Chrome/Firefox)", features: ["extension"] },
-  realtime: {
-    label: "实时/协作型 App",
-    features: ["ui", "data", "api", "realtime"],
-  },
-  "ai-agent": { label: "AI Agent / MCP 工具", features: ["api", "ai"] },
-  hybrid: {
-    label: "全通用特征 (其他类型不符时选此项)",
-    features: ["ui", "data", "cli", "lib", "api"],
-  },
-};
-
-export const SUPPORTED_PROJECT_TYPES = Object.keys(
-  PROJECT_TYPE_PRESETS,
-) as ProjectType[];
+  { value: "realtime", label: "realtime", hint: "实时/WebSocket/协作" },
+  { value: "ai", label: "ai", hint: "AI Agent / MCP" },
+];
 
 /**
  * 文档模板注册表：供 `npx archi template <name>` 使用。

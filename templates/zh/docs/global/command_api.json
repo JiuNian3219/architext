@@ -1,0 +1,26 @@
+{
+  "commands": [
+    {
+      "name": "[command-name]",
+      "aliases": ["[alias]"],
+      "description": "[一句话描述命令职责]",
+      "args": [
+        {
+          "name": "[arg-name]",
+          "required": true,
+          "description": "[参数说明]"
+        }
+      ],
+      "flags": [
+        {
+          "name": "--[flag-name]",
+          "short": "-[f]",
+          "type": "[string | boolean | number]",
+          "default": "[默认值或 null]",
+          "description": "[标志说明]"
+        }
+      ],
+      "owner": "[FEAT-xxx | INF-xxx]"
+    }
+  ]
+}

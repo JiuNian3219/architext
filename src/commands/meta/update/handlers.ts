@@ -4,6 +4,7 @@ import { confirm, isCancel } from "@clack/prompts";
 import fs from "fs-extra";
 import path from "path";
 import {
+  CONDITIONAL_GLOBAL_FILES,
   EDITOR_CONFIGS,
   GLOBAL_RULES,
   resolveCapabilityRefs,
@@ -152,6 +153,25 @@ export async function updateSilentFiles(
         replacements,
         capabilityResolver,
       );
+      count++;
+    }
+  }
+
+  // 补充新增的全局文档模板（仅当文件不存在且 features 匹配时写入，保护用户已有数据）
+  const globalSource = path.join(sourceDir, "docs", "global");
+  const globalTarget = path.join(targetDir, "global");
+  if (await fs.pathExists(globalSource)) {
+    const featureSet = new Set<string>(config.features ?? []);
+    const globalFiles = await fs
+      .readdir(globalSource)
+      .catch(() => [] as string[]);
+    for (const file of globalFiles) {
+      const requiredFeature = CONDITIONAL_GLOBAL_FILES[file];
+      if (requiredFeature && !featureSet.has(requiredFeature)) continue;
+      const destPath = path.join(globalTarget, file);
+      if (await fs.pathExists(destPath)) continue;
+      const srcPath = path.join(globalSource, file);
+      await fs.copy(srcPath, destPath);
       count++;
     }
   }

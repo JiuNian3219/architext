@@ -58,7 +58,7 @@ description: Task Specification for {FEATURE_NAME}.
 
 ## 3. Data Requirements
 
-<!-- [AI]: [?Data] 声明数据变更，引用 data_snapshot.json 中的表结构。
+<!-- [AI]: （仅data项目） 声明数据变更，引用 data_snapshot.json 中的表结构。
   无数据变更时写 "N/A"。
 
   * Schema: [Table Name] -> [Field] (Add/Modify)
@@ -68,7 +68,7 @@ description: Task Specification for {FEATURE_NAME}.
 
 ## 4. Interface Exports
 
-<!-- [AI]: [?Upstream] 本任务暴露给下游任务的公共接口、约定、导入路径。
+<!-- [AI]: （有下游消费者时） 本任务暴露给下游任务的公共接口、约定、导入路径。
   下游任务依赖此处声明而非猜测。无下游消费者时省略本节。
 
   格式:

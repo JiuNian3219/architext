@@ -13,7 +13,7 @@
     "editor": "Target IDE, multiple selection is supported, separated by commas (cursor/windsurf/trae/vscode/claude/opencode)",
     "lang": "Rules and document skeleton language",
     "doc": "Custom document path, default is .architext",
-    "type": "Project type (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
+    "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
     "failed": "Initialization failed"
   },
   "update": {
@@ -68,6 +68,7 @@
       "select_editor": "Select target editors",
       "select_lang": "Select documentation language",
       "select_type": "Select project type",
+      "select_features": "Select project features (multi-select)",
       "select_doc_dir": "Enter documentation directory",
       "config_exists": "Existing config (architext.json) detected. Overwrite?",
       "config_saved": "Config saved to architext.json",
@@ -323,7 +324,7 @@
           "editor": "Target IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "Language (zh / en / zh-Hant)",
           "doc": "Custom doc directory name (default: .architext)",
-          "type": "Project type (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"
+          "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)"
         },
         "update": {
           "desc": "Sync latest rule templates to project, keep rules aligned with framework version.",

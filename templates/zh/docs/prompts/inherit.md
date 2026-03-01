@@ -133,8 +133,8 @@
     | 领域术语、缩写、命名约定 | `[[__DOCS_DIR__]]/global/dictionary.json` |
     | eslint/prettier 等已有规范 | 规则文件 `90_custom_rules` |
     | 代码中的错误码定义 | `[[__DOCS_DIR__]]/global/error_codes.json` |
-    | [?UI] CSS 变量/主题配置 | `[[__DOCS_DIR__]]/global/design_tokens.json` |
-    | [?Data] Schema/Migration 文件 | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
+    | （仅ui项目） CSS 变量/主题配置 | `[[__DOCS_DIR__]]/global/design_tokens.json` |
+    | （仅data项目） Schema/Migration 文件 | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
     - 从 README + 项目配置推导
@@ -220,9 +220,9 @@
 
     ### 3.7 其他全局文档（按需）
     - `dictionary.json`: 从代码提取领域术语
-    - [?UI] `design_tokens.json`: 从 CSS 变量/主题提取
-    - [?UI] `ui_concept.html` + `ui_context.md`: **不由本命令生成**。继承完成后，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]] 生成全局 UI 线框图（Skill 同时生成两个文件）。
-    - [?Data] `data_snapshot.json`: 从 schema/migration 提取
+    - （仅ui项目） `design_tokens.json`: 从 CSS 变量/主题提取
+    - （仅ui项目） `ui_concept.html` + `ui_context.md`: **不由本命令生成**。继承完成后，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]] 生成全局 UI 线框图（Skill 同时生成两个文件）。
+    - （仅data项目） `data_snapshot.json`: 从 schema/migration 提取
     - `error_codes.json`: 从代码中的错误定义提取
 
     **Output**: 写入所有文件，运行 `npx archi render`。

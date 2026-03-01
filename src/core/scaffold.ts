@@ -14,9 +14,9 @@ import {
   BRIEF_BASE_NAME,
   BRIEF_MODULES_NAME,
   BRIEF_OUTPUT_NAME,
+  CONDITIONAL_GLOBAL_FILES,
   EDITOR_CONFIGS,
   GLOBAL_RULES,
-  PROJECT_TYPE_PRESETS,
   resolveCapabilityRefs,
 } from "./rules.ts";
 import { TemplateManager } from "./template.ts";
@@ -38,7 +38,7 @@ export class Scaffolder {
    * @param runOptions 运行时可选项（如 resolveConflicts，由 init 命令注入）
    */
   static async run(options: ScaffoldOptions, runOptions?: ScaffoldRunOptions) {
-    const { language, docDir, editors, features = [], projectType } = options;
+    const { language, docDir, editors, features = [] } = options;
     const templateRoot = await TemplateManager.getRoot();
 
     // 如果请求的语言模板不存在（例如 zh-Hant 尚未完善），则回退到默认的中文模板，确保初始化流程不中断
@@ -55,13 +55,11 @@ export class Scaffolder {
     await fs.ensureDir(path.join(targetDir, "scripts"));
     await fs.ensureDir(path.join(targetDir, "tasks"));
 
-    const projectTypeLabel = projectType
-      ? `${PROJECT_TYPE_PRESETS[projectType]?.label ?? projectType} (${projectType})`
-      : "未指定";
+    const featuresLabel = features.length > 0 ? features.join(", ") : "未指定";
 
     const replacements = {
       [GLOBAL_RULES.PLACEHOLDERS.DOCS_DIR]: docDir,
-      [GLOBAL_RULES.PLACEHOLDERS.PROJECT_TYPE]: projectTypeLabel,
+      [GLOBAL_RULES.PLACEHOLDERS.PROJECT_TYPE]: featuresLabel,
     };
 
     // 判断所选编辑器中是否有任何一个支持 Agent Skills（如 Cursor）
@@ -82,11 +80,20 @@ export class Scaffolder {
         targetDir,
         replacements,
       );
-      docOps.forEach((op) => {
+
+      const featureSet = new Set<string>(features);
+      const filteredDocOps = docOps.filter((op) => {
+        const fileName = path.basename(op.dest);
+        const requiredFeature = CONDITIONAL_GLOBAL_FILES[fileName];
+        if (requiredFeature && !featureSet.has(requiredFeature)) return false;
+        return true;
+      });
+
+      filteredDocOps.forEach((op) => {
         op.group = "docs";
         if (op.type === FileOpType.Template) op.resolver = capabilityResolver;
       });
-      operations.push(...docOps);
+      operations.push(...filteredDocOps);
     }
 
     const rulesSource = path.join(sourceDir, GLOBAL_RULES.PATHS.RULES_SOURCE);

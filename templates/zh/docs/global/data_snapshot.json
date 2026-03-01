@@ -1,5 +1,4 @@
 {
-  "scope": "[?Data]",
   "models": [
     {
       "name": "[ModelName]",

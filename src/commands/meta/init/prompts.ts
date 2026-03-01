@@ -4,16 +4,15 @@ import { confirm, isCancel, multiselect, select } from "@clack/prompts";
 import { loadConfig } from "../../../core/config.ts";
 import {
   EDITOR_CONFIGS,
+  FEATURE_OPTIONS,
   LANGUAGE_CONFIGS,
-  PROJECT_TYPE_PRESETS,
   SUPPORTED_EDITORS,
-  SUPPORTED_PROJECT_TYPES,
 } from "../../../core/rules.ts";
 import type {
   ArchitextConfig,
   InitConfig,
   LocaleLang,
-  ProjectType,
+  ProjectFeature,
   SupportedEditor,
 } from "../../../types/index.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
@@ -106,31 +105,37 @@ async function askEditors(
 }
 
 /**
- * 询问项目类型（单选），内部映射到一组特征标签。
- * @param preselected 命令行预设的项目类型
- * @returns 项目类型，或 null（用户取消时）
+ * 询问项目特征（多选），用户直接勾选适用的特征标签。
+ * @param preselected 命令行预设的特征标签（逗号分隔）
+ * @returns 特征标签列表，或 null（用户取消时）
  */
-async function askProjectType(
+async function askFeatures(
   preselected?: string,
-): Promise<ProjectType | null> {
+): Promise<ProjectFeature[] | null> {
   if (preselected) {
-    const trimmed = preselected.trim() as ProjectType;
-    if (SUPPORTED_PROJECT_TYPES.includes(trimmed)) return trimmed;
+    const selected = preselected
+      .split(",")
+      .map((f) => f.trim()) as ProjectFeature[];
+    const validValues = FEATURE_OPTIONS.map((o) => o.value);
+    const valid = selected.filter((f) => validValues.includes(f));
+    if (valid.length > 0) return valid;
   }
 
-  const response = await select({
-    message: t("select_type"),
-    options: SUPPORTED_PROJECT_TYPES.map((key) => ({
-      value: key,
-      label: `${PROJECT_TYPE_PRESETS[key].label}  (${PROJECT_TYPE_PRESETS[key].features.join(", ")})`,
+  const response = await multiselect({
+    message: t("select_features"),
+    options: FEATURE_OPTIONS.map((opt) => ({
+      value: opt.value,
+      label: opt.label,
+      hint: opt.hint,
     })),
+    required: true,
   });
 
   if (isCancel(response)) {
     return null;
   }
 
-  return response as ProjectType;
+  return response as ProjectFeature[];
 }
 
 /**
@@ -155,13 +160,11 @@ export async function collectInitConfig(options: {
   const editors = await askEditors(options.editor);
   if (!editors) return null;
 
-  const projectType = await askProjectType(options.type);
-  if (!projectType) return null;
-
-  const features = PROJECT_TYPE_PRESETS[projectType].features;
+  const features = await askFeatures(options.type);
+  if (!features) return null;
 
   const docDir =
     options.doc || (existingConfig?.docDir as string) || ".architext";
 
-  return { language, editors, docDir, features, projectType };
+  return { language, editors, docDir, features };
 }

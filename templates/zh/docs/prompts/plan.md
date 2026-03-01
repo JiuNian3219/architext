@@ -28,12 +28,12 @@
     2.  **Read Vision**: 读取 `[[__DOCS_DIR__]]/global/vision.md` — 仅提取北极星指标和设计哲学段落；其余章节跳过。
     3.  **Read Tech Stack**: `02_tech_stack.md` (技术红线 + **Section 9 项目约定**)。
         - 提取 Section 9 中的全局架构约定（Error Handling / Data Flow / Auth & Access），供 step_2 约定继承使用。
-    4.  [?UI] **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`。
-    4.5 [?UI] **Read UI Context**: `[[__DOCS_DIR__]]/global/ui_context.md`（如存在）。
+    4.  （仅ui项目） **Read Design Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`。
+    4.5 （仅ui项目） **Read UI Context**: `[[__DOCS_DIR__]]/global/ui_context.md`（如存在）。
         - 从屏幕索引中定位本功能对应的屏幕 ID（如 S-03）及其负责的状态。
         - 锁定屏幕范围，供 step_4 生成 `ui.md §1` 时直接填入，禁自行发明新屏幕 ID。
         - 若 `ui_context.md` 不存在 → 跳过，`ui.md` 按完整 ITP 格式填写。
-    5.  [?Data] **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
+    5.  （仅data项目） **Read Data Model**: `[[__DOCS_DIR__]]/global/data_snapshot.json`。
     6.  **Read Dependency Context** (如有依赖任务):
         - 仅读依赖任务 `spec.md` 的 Interface/Type 定义段（`## Interface` 或 `## Types` 章节）；不读 Scenarios 等其余内容。
         - 仅当当前 spec/plan 出现 `ref: tasks/<dep_id>/spec.md#X` 引用时执行；无引用时跳过。
@@ -144,7 +144,7 @@
 
     展开 Q-table 时，格式遵循 [[SKILL: archi-interview-protocol|skill 的标准输出格式]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则执行）]]。
 
-    #### Part 1.5: Mechanism Preview (机制预览) [?Complex]
+    #### Part 1.5: Mechanism Preview (机制预览) （仅Complex任务）
 
     仅当 step_1_5 判定为 **Standard + Design** 时输出。列出需要技术方案设计的核心机制及拟用模式：
 
@@ -220,7 +220,7 @@
     **Action Checklist**:
     1.  **`map.json`**: 在 `directoryMapping` 注册 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>`；在 `logicalTopology` 定义模块职责与依赖。
     2.  **`dictionary.json`**: 提取提案中的**项目业务**新术语填入 `entities`/`verbs`；注册新共享工具到 `utilities`；注册新公共组件到 `components`。
-    3.  [?Data] **`data_snapshot.json`**: 根据架构建议中核心结构的选择新增/修改 Schema。禁写"待定"，须写出字段名和类型。
+    3.  （本任务涉及data时） **`data_snapshot.json`**: 根据架构建议中核心结构的选择新增/修改 Schema。禁写"待定"，须写出字段名和类型。
     4.  **`error_codes.json`**: 根据架构建议中错误处理的选择注册新**业务**错误码。框架脚本错误由 exit code + stderr 处理，禁注册。
     5.  **`map.json` featureRelations**: 判断本 Task 是否属于「聚合型 Task」——即其核心职责是**列举、汇总或动态反映**其他一类 Task（如「列出所有命令」「汇总所有页面入口」「注册所有路由」）。若是，在 `featureRelations` 中追加一条记录：
         ```json
@@ -262,7 +262,7 @@
     - 禁凭空编造 Acceptance Criteria 条目，须对应功能设计中的具体内容。
     - 若为上游任务，须在 § 4 包含明确的 Interface/Type 定义。
 
-    **2. `ui.md`** [?UI]:
+    **2. `ui.md`** （本任务涉及UI时）:
     - 模板 `templates/ui.template.md`。
     - **有 `ui_context.md`（主路径）**:
       1. **UI 偏差检查**（写 `ui.md` 前必须执行）：对比 step_2 确认的功能设计与 `ui_context.md` 中的屏幕索引，识别偏差。[[SKILL: archi-ui-wireframe|按 skill 的协议处理 UI 偏差]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]。判定标准与处理方式：
@@ -276,7 +276,7 @@
       2. 完成偏差处理后，按 `ui.template.md` 填写屏幕范围声明和差异组件。
     - **无 `ui_context.md`（降级路径）**: 按完整 ITP v3.0 描述组件树，引用 `design_tokens.json` Token 定义。
 
-    **3. `design.md`** [?Complex]:
+    **3. `design.md`** （仅Complex任务）:
     - 模板: `templates/design.template.md`。
     - 仅在 step_1_5 判定为 **Standard + Design** 时生成。
     - § 2 Core Mechanisms: 按 step_2 确认的机制预览，调用 [[SKILL: archi-design-patterns|skill 的模式选择指南和标准格式生成机制描述并执行自检]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-design-patterns/SKILL.md` 并遵循其模式格式和自检清单执行）]]。
@@ -341,9 +341,9 @@
     8.  **WBS Coverage**: plan.json 是否 100% 覆盖 spec 的每个 Acceptance Criteria 条目？
     9.  **Notes Quality**: plan.json 每个 task 的 notes 是否含具体产出物 + 约束 + 可执行验证？
     10. **AX Compliance**: 是否遵守 Anti-Clobbering 和 Interface Stability？
-    11. [?Complex] **Design Trace**: design.md § 6 Trace Verification 是否所有 AC 均为 ✓（无 Gap）？
-    12. [?Complex] **Parameter Specificity**: design.md § 3 是否所有参数都有具体值（无"适当"/"合理"等模糊词）？
-    13. [?Complex] **Self-Check Pass**: design.md § 2 每个机制的自检清单是否全部通过？
+    11. （仅Complex任务） **Design Trace**: design.md § 6 Trace Verification 是否所有 AC 均为 ✓（无 Gap）？
+    12. （仅Complex任务） **Parameter Specificity**: design.md § 3 是否所有参数都有具体值（无"适当"/"合理"等模糊词）？
+    13. （仅Complex任务） **Self-Check Pass**: design.md § 2 每个机制的自检清单是否全部通过？
 
     如有问题则静默修正；严重问题标记 `⚠️ Risk Warning`。
 </step_5_audit>

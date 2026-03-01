@@ -17,11 +17,11 @@
     **Role**: 产品经理
     **Action**:
     - 读取 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/` 下的 spec.md、ui.md、plan.json。
-    - [?UI] 读取 `[[__DOCS_DIR__]]/global/ui_context.md`（定位本功能对应的屏幕范围及导航关系）。
+    - （仅ui项目） 读取 `[[__DOCS_DIR__]]/global/ui_context.md`（定位本功能对应的屏幕范围及导航关系）。
     - 检测 spec.md 中的 `Spec-Status` 字段：
       - `Full` → 正常流程，进入 step_2。
       - `Stub` → 进入 step_1_5_enrich。
-    - [?重大 UX 变更] 快速搜索同类产品最佳实践。
+    - （重大UX变更） 快速搜索同类产品最佳实践。
 </step_1_load>
 
 <step_1_5_enrich>
@@ -37,7 +37,7 @@
        - 补充 Gherkin Scenarios（覆盖正常流程 + 异常路径）
        - 补充接口/类型定义（如该功能是其他功能的上游）
     5. 更新 `Spec-Status: Stub → Full`。
-    6. [?UI] 如模块有 UI → 同步生成或更新 `ui.md`（范围声明）；如须新增屏幕，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]]（Skill 会同步更新 `ui_concept.html` + `ui_context.md`）。
+    6. （仅ui项目） 如模块有 UI → 同步生成或更新 `ui.md`（范围声明）；如须新增屏幕，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]]（Skill 会同步更新 `ui_concept.html` + `ui_context.md`）。
     7. 生成 `plan.json`（全部 task 为 done，记录已实现内容）。
     8. 向用户输出补全后的 spec 摘要。
 
@@ -49,7 +49,7 @@
     **Role**: 需求分析师 & 设计师
     **Action**:
     - 根据 `[context]` 修改 spec.md（逻辑/规则变更）和 ui.md（结构/交互变更）。
-    - [?UI 修改] [[SKILL: archi-ui-wireframe|按 skill 的协议，按以下规则同步更新 `ui_concept.html` + `ui_context.md`（Skill 作为唯一写者）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]：
+    - （ui有修改） [[SKILL: archi-ui-wireframe|按 skill 的协议，按以下规则同步更新 `ui_concept.html` + `ui_context.md`（Skill 作为唯一写者）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]：
 
       | 变更类型 | 判定标准 | 处理方式 |
       |:---|:---|:---|

@@ -84,7 +84,7 @@
     |:---|:---|:---|
     | [ID: 名称] | [done/active/stub] | [需修改/需扩展/无影响] |
 
-    **[?有命中] 联动提示**:
+    **（有命中） 联动提示**:
     | 聚合方 | checkNote |
     |:---|:---|
     | [aggregator ID/路径] | [checkNote 内容] |
@@ -147,7 +147,7 @@
     1.  将新任务追加到 `[[__DOCS_DIR__]]/global/roadmap.json` 对应 Phase 的 `tasks` 数组中。
     2.  如需新增 Phase → 追加到 `phases` 数组。
     3.  更新 `lastUpdated` 字段。
-    4.  [?新模块] 更新 `[[__DOCS_DIR__]]/global/map.json` 的 `directoryMapping`：为新增任务预注册推断的模块路径（基于 tech_stack 架构模式和任务描述推断，仅目录级别；详细内容在 `/archi.plan` 时完善）。
+    4.  （新模块） 更新 `[[__DOCS_DIR__]]/global/map.json` 的 `directoryMapping`：为新增任务预注册推断的模块路径（基于 tech_stack 架构模式和任务描述推断，仅目录级别；详细内容在 `/archi.plan` 时完善）。
 
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
@@ -171,7 +171,7 @@
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
-    | [?UI] 推荐 | [[SKILL: archi-ui-wireframe|运行 skill（追加模式）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]] | 为新增任务追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
+    | （仅ui项目） 推荐 | [[SKILL: archi-ui-wireframe|运行 skill（追加模式）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]] | 为新增任务追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
     | 1 | `/archi.plan <第一个 pending 任务 ID>` | 对首个可执行任务做深度规划 |
     | 2 | 审查 roadmap | 确认依赖关系和优先级 |
 </step_5_signoff>

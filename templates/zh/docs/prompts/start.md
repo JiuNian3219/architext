@@ -68,7 +68,7 @@
     | 技术栈-选填 | 数据库/ORM/CSS方案/部署等留空项 | 可补 |
     | 项目起点 | 全新 or 已有代码（影响架构决策） | 必须 |
     | 已有资源 | 设计稿/品牌/已有API/第三方服务是否明确 | 可补 |
-    | 风格调性 | [?UI] 视觉关键词 / [?CLI] 输出风格 / [?API] 文档方案 | 可补 |
+    | 风格调性 | （仅ui项目） 视觉关键词 / （仅cli项目） 输出风格 / （仅api项目） 文档方案 | 可补 |
     | 边界 | 至少声明了 1 个反目标或硬性约束 | 建议 |
     | 成功指标 | 已填写具体可量化指标 | 建议 |
     | 参考项目 | 至少列出 1 个参照 | 建议 |
@@ -122,8 +122,8 @@
     | 项目身份、目标用户、成功指标、参考灵感 | `[[__DOCS_DIR__]]/global/vision.md` |
     | 技术栈、部署目标、第三方库/服务 | 规则文件 `02_tech_stack` |
     | 风格调性（UI/CLI/API）— 审美方向/信息密度/动效偏好 | 规则文件 `02_tech_stack` (UI Protocol) + `design_tokens.json` aestheticDirection + motion.preference + illustration |
-    | [?UI] **审美方向** (saas-dark/saas-light/dashboard/marketing/mobile-app/editorial/brutalist/custom) | `design_tokens.json` `aestheticDirection.preset` + `aestheticDirection.customDescription` |
-    | [?UI] **视觉参考**（品牌色板/字体/图标库/竞品截图/禁用风格） | `design_tokens.json` primitivePalette.brand + illustration + motion; 截图/URL 存入 `vision.md` Visual Reference |
+    | （仅ui项目） **审美方向** (saas-dark/saas-light/dashboard/marketing/mobile-app/editorial/brutalist/custom) | `design_tokens.json` `aestheticDirection.preset` + `aestheticDirection.customDescription` |
+    | （仅ui项目） **视觉参考**（品牌色板/字体/图标库/竞品截图/禁用风格） | `design_tokens.json` primitivePalette.brand + illustration + motion; 截图/URL 存入 `vision.md` Visual Reference |
     | 核心任务列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
     | **已有设计决策** | Roadmap 对应任务的 `goal` 字段中注入，并在 `/archi.plan` 时作为硬约束 |
     | 边界与反目标 | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
@@ -147,12 +147,12 @@
     - Brief 中留空/写"推荐"的 → AI 基于项目特征推荐，须在输出中标注 `(AI 推荐)` 并简述理由
     - Brief 中已有的第三方服务/API → 写入对应 Section
     - **AX Optimization**: 推荐时优先 AI 友好型技术 (Static Typing, Popular Frameworks, Convention-over-Configuration)
-    - 须填充完整的 Section 1-9（Global Mandates、Technology Selection、Coding Standards、UI Protocol[?UI]、Testing、Deployment、Architecture、Anti-Patterns、**Project Conventions**）
+    - 须填充完整的 Section 1-9（Global Mandates、Technology Selection、Coding Standards、UI Protocol（仅ui项目）、Testing、Deployment、Architecture、Anti-Patterns、**Project Conventions**）
     - `Section 5 Testing` 中的 Environment Scripts 定义须完整
     - **Section 9 Project Conventions**: 基于 Brief 和项目特征确立全局架构约定，`/archi.plan` 将自动继承这些约定而非逐任务重复提问：
-      - **Error Handling**: 根据项目类型推断 — [?UI] Fail Fast + Form Validation; [?CLI] Fail Fast (stderr); [?API] Schema Validation + Fail Fast; 多选时空格分隔
-      - [?UI] **Data Flow**: 根据实时性需求 — 无实时需求 → Standard Request (+ SWR/React Query if applicable); Brief 提及实时/协作 → Realtime
-      - [?Web/API] **Auth & Access**: 根据 Brief 用户角色 — 单角色 → Authenticated; 多角色 → RBAC; 无权限描述 → 留空待 Plan 阶段逐任务确认
+      - **Error Handling**: 根据项目类型推断 — （仅ui项目） Fail Fast + Form Validation; （仅cli项目） Fail Fast (stderr); （仅api项目） Schema Validation + Fail Fast; 多选时空格分隔
+      - （仅ui项目） **Data Flow**: 根据实时性需求 — 无实时需求 → Standard Request (+ SWR/React Query if applicable); Brief 提及实时/协作 → Realtime
+      - （仅ui或api项目） **Auth & Access**: 根据 Brief 用户角色 — 单角色 → Authenticated; 多角色 → RBAC; 无权限描述 → 留空待 Plan 阶段逐任务确认
       - 每项须填写 Strategy/Default + Rationale（理由须结合此项目的具体场景）
 
     ### 3.3 Custom Rules (规则文件 `90_custom_rules`)
@@ -165,8 +165,8 @@
 
     ### 3.5 其他全局文档 (按需)
     - `dictionary.json`: 从 Brief 提取领域术语
-    - [?Data] `data_snapshot.json`: 基于 Brief 中的数据描述，初始化核心实体骨架（实体名 + 主键字段）；无数据描述时写入空模板
-    - [?UI] `design_tokens.json`: 基于 Brief「风格与调性」和「视觉参考」填充：
+    - （仅data项目） `data_snapshot.json`: 基于 Brief 中的数据描述，初始化核心实体骨架（实体名 + 主键字段）；无数据描述时写入空模板
+    - （仅ui项目） `design_tokens.json`: 基于 Brief「风格与调性」和「视觉参考」填充：
       - `aestheticDirection.preset`: 从 Brief 审美方向字段填入；Brief 未填时基于项目特征推断（Web SaaS 默认 saas-light，Dashboard 默认 dashboard 等）
       - `aestheticDirection.customDescription`: 仅 custom 时填入用户描述
       - `primitivePalette.brand`: 从品牌色板提取 Hex 值；无则留空
@@ -193,7 +193,7 @@
     2.  **Tech Stack 一致性**: 规则文件 `02_tech_stack` 与 Brief 技术偏好一致？含完整技术栈声明？
     3.  **Custom Rules**: Brief 补充说明/技术红线中的规则是否已写入规则文件 `90_custom_rules`？
     4.  **Roadmap 合规**: 运行 `npx archi task --check` 验证一致性。
-    5.  [?UI] **Design Tokens**: `design_tokens.json` 含基础颜色/字体/间距定义？
+    5.  （仅ui项目） **Design Tokens**: `design_tokens.json` 含基础颜色/字体/间距定义？
     6.  **Brief 对齐**: 所有 Brief 中声明的核心任务均已映射到 Roadmap 任务？
     7.  **信息零遗漏**: Brief 中所有用户填写的内容均已路由到对应文件？
 
@@ -201,7 +201,7 @@
 </step_4_audit>
 
 <step_4_5_ui_wireframe>
-    **Trigger**: 仅当项目特征含 [?UI] 时执行。
+    **Trigger**: 仅当项目 features 含 `ui` 时执行。
     **Action**: [[SKILL: archi-ui-wireframe|按 skill 的协议，自动调用 Phase 1 线框图生成。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]
     - 无需用户确认即开始生成
     - 读取刚写入的 vision.md + roadmap.json + design_tokens.json + 02_tech_stack
@@ -230,7 +230,7 @@
 
     | 优先级 | 行动 | 说明 |
     |:---|:---|:---|
-    | [?UI] 推荐 | 回复 **OK** 进入 Phase 2 着色 | Phase 1 线框图已自动生成；确认布局后着色 |
+    | （仅ui项目） 推荐 | 回复 **OK** 进入 Phase 2 着色 | Phase 1 线框图已自动生成；确认布局后着色 |
     | 推荐 | `/archi.plan INF-01` | 规划第一个基础设施任务 |
     | 可选 | `/archi.scope <scope-brief.md>` | 如有更多需求待分解，追加到 Roadmap |
 </step_5_signoff>

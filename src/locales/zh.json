@@ -13,7 +13,7 @@
     "editor": "框架目标IDE，可多选，逗号分隔 (cursor/windsurf/trae/vscode/claude/opencode)",
     "lang": "规则与文档骨架语言",
     "doc": "自定义文档路径，默认使用.architext",
-    "type": "项目类型 (web|fullstack|api|cli|lib|mobile|miniapp|desktop|web-desktop|extension|realtime|ai-agent|hybrid)",
+    "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
     "failed": "初始化失败"
   },
   "update": {
@@ -68,6 +68,7 @@
       "select_editor": "请选择您的目标编辑器",
       "select_lang": "请选择项目文档语言",
       "select_type": "请选择项目类型",
+      "select_features": "请选择项目特征（可多选）",
       "select_doc_dir": "请输入文档目录",
       "config_exists": "检测到现有配置文件 (architext.json)。是否覆盖？",
       "config_saved": "配置已保存到 architext.json",
@@ -323,7 +324,7 @@
           "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "指定语言 (zh / en / zh-Hant)",
           "doc": "自定义文档目录名 (默认 .architext)",
-          "type": "项目类型 (web / fullstack / api / cli / lib / mobile / miniapp / desktop / web-desktop / extension / realtime / ai-agent / hybrid)"
+          "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)"
         },
         "update": {
           "desc": "同步最新规则模板到项目，保持规则文件与框架版本一致。",

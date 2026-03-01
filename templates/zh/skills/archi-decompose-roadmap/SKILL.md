@@ -13,10 +13,10 @@ Brief → [本 Skill] → roadmap.json 任务
                    /archi.plan <task-id>
                    读: vision.md + map.json + tech_stack.md
                    写: spec.md（行为规格/验收标准）
-                       ui.md（任务 UI 范围声明）[?UI]
+                       ui.md（任务 UI 范围声明）（仅ui项目）
                        plan.json（可执行步骤 + 测试用例 checkbox）
                    也更新: map.json / dictionary.json / data_snapshot.json
-                   视觉参考: [[__DOCS_DIR__]]/global/ui_context.md [?UI]
+                   视觉参考: [[__DOCS_DIR__]]/global/ui_context.md （仅ui项目）
                             ↓
                    /archi.code → 读 spec.md + ui.md + plan.json → 写代码
 ```
@@ -45,17 +45,17 @@ Brief → [本 Skill] → roadmap.json 任务
 | 项目类型 | 脚手架须包含（除通用构建工具链外） |
 |:---|:---|
 | Web SPA / PWA | 路由骨架（如 React Router）+ 全局 App Shell（布局 / Provider / 主题注入） |
-| 全栈 Web（SSR/SSG）| 路由约定（loader/action/页面）+ API Routes 层 + 全局布局 + Auth Session 管理（Cookie/JWT）；[?UI] 主题注入 |
+| 全栈 Web（SSR/SSG）| 路由约定（loader/action/页面）+ API Routes 层 + 全局布局 + Auth Session 管理（Cookie/JWT）；（仅ui项目） 主题注入 |
 | CLI 工具 | logger 模块 + AppError 处理层 + 命令注册入口 |
-| API 服务（REST / GraphQL）| 路由层 + 中间件层 + DB 连接层 + 全局错误处理；[?GraphQL] Schema 定义层 + DataLoader |
+| API 服务（REST / GraphQL）| 路由层 + 中间件层 + DB 连接层 + 全局错误处理；仅GraphQL项目 Schema 定义层 + DataLoader |
 | 移动端 App（原生/跨平台）| 导航骨架（React Navigation / Go Router）+ 平台适配层（iOS/Android 权限、原生模块）+ 环境配置（dev/staging/prod）|
 | 小程序 | 页面路由配置 + 全局 app.js/ts + 请求封装层 |
 | 浏览器扩展 | manifest.json（V2/V3）+ Background Service Worker + Content Script 注入层 + 消息总线（background ↔ content ↔ popup）+ Popup/Options 页入口 |
 | 桌面端 App（单机）| 主进程入口（Electron main / Tauri main.rs）+ IPC 通信桥 + 系统级能力（托盘、热键）+ 原生文件系统封装 |
 | Web + 桌面端（Hybrid）| Web 脚手架基础 + 桌面运行时集成（Tauri/Electron）+ 系统级能力（托盘、全局热键、系统通知）；**桌面集成须独立拆分为 INF 子任务**（OS 差异大、与 Web 技术栈完全不同，不适用 Step 2 的"同期执行合并"规则） |
 | 库 / SDK / NPM 包 | 双产物配置（CJS + ESM）+ 公共 API 入口（barrel index.ts）+ 类型声明生成（.d.ts）+ Changelog / 版本工具链；**禁建业务 Task，仅 INF 层** |
-| 实时 / 协作型 App | WebSocket 服务层 + 事件 Schema 定义（共享类型）+ 房间/会话管理基础；[?CRDT] 冲突解决层 |
-| AI Agent / MCP 工具 | LLM 客户端抽象层（provider 无关）+ Prompt 模板管理 + Tool/Function Calling Schema + 对话状态 / Memory 管理；[?MCP] MCP 协议适配器 |
+| 实时 / 协作型 App | WebSocket 服务层 + 事件 Schema 定义（共享类型）+ 房间/会话管理基础；仅CRDT项目） 冲突解决层 |
+| AI Agent / MCP 工具 | LLM 客户端抽象层（provider 无关）+ Prompt 模板管理 + Tool/Function Calling Schema + 对话状态 / Memory 管理；仅MCP项目） MCP 协议适配器 |
 
 **操作（两个输出）**：
 1. **注入 Step 2 INF-01**：将对应类型的脚手架清单写入 INF-01 描述。

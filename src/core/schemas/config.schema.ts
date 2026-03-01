@@ -32,7 +32,6 @@ const InitConfigSchema = z.object({
   editors: z.array(SupportedEditorSchema).min(1),
   docDir: z.string().min(1),
   features: z.array(ProjectFeatureSchema),
-  projectType: z.string().optional(),
 });
 
 /** 支持的语言（与 LocaleLang 保持一致） */

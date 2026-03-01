@@ -33,8 +33,8 @@ alwaysApply: true
 | 代码类型 | 必读上下文 | 真理来源 |
 |:---|:---|:---|
 | **Business Logic** (Tasks/Entities) | Spec Document | `[[__DOCS_DIR__]]/global/map.json` → Module Entry |
-| **UI Components** (Pages/Widgets) [?UI] | UI Document + `[[__DOCS_DIR__]]/global/design_tokens.json` | `[[__DOCS_DIR__]]/global/map.json` + Global Rules |
-| **Data Schema** (ORM/SQL/Models) [?Data] | Data Snapshot | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
+| **UI Components** (Pages/Widgets)（仅ui项目） | UI Document + `[[__DOCS_DIR__]]/global/design_tokens.json` | `[[__DOCS_DIR__]]/global/map.json` + Global Rules |
+| **Data Schema** (ORM/SQL/Models)（仅data项目） | Data Snapshot | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
 | **Config / Infra** (Package.json...) | Tech Stack | `02_tech_stack.md` |
 
 ---

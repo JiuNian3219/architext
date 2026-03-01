@@ -33,24 +33,6 @@ export type ProjectFeature =
   | "ai";
 
 /**
- * 项目类型（用户面向的预设，每种类型映射到一组 features）
- */
-export type ProjectType =
-  | "web"
-  | "fullstack"
-  | "api"
-  | "cli"
-  | "lib"
-  | "mobile"
-  | "miniapp"
-  | "desktop"
-  | "web-desktop"
-  | "extension"
-  | "realtime"
-  | "ai-agent"
-  | "hybrid";
-
-/**
  * Commands 配置（用于支持编辑器的自定义命令功能）
  */
 export interface EditorCommandsConfig {
@@ -123,7 +105,6 @@ export interface InitConfig {
   editors: SupportedEditor[];
   docDir: string;
   features: ProjectFeature[];
-  projectType?: ProjectType;
 }
 
 /**

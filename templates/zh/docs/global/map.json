@@ -55,18 +55,38 @@
       },
       {
         "file": "design_tokens.json",
-        "role": "Visuals [?UI]",
+        "role": "Visuals （仅ui项目）",
         "content": "颜色、字体、间距变量"
       },
       {
         "file": "data_snapshot.json",
-        "role": "Data [?Data]",
+        "role": "Data （仅data项目）",
         "content": "数据库 Schema 镜像"
       },
       {
         "file": "error_codes.json",
         "role": "Errors",
-        "content": "错误码与协议契约"
+        "content": "业务错误码注册表"
+      },
+      {
+        "file": "api_snapshot.json",
+        "role": "API （仅api项目）",
+        "content": "HTTP 端点注册表与协议映射"
+      },
+      {
+        "file": "env_registry.json",
+        "role": "Env （仅api项目）",
+        "content": "运行时环境变量清单"
+      },
+      {
+        "file": "command_api.json",
+        "role": "Commands （仅cli项目）",
+        "content": "CLI 命令签名注册表"
+      },
+      {
+        "file": "public_api.json",
+        "role": "Exports （仅lib项目）",
+        "content": "库 / SDK 公共导出 API 注册表"
       }
     ]
   },
@@ -84,7 +104,7 @@
     {
       "file": "design.md",
       "category": "Technical Design",
-      "purpose": "[?Complex] 技术方案设计 — 核心机制的状态机/流水线/协议定义、参数表与不变量"
+      "purpose": "仅Complex任务: 技术方案设计 — 核心机制的状态机/流水线/协议定义、参数表与不变量"
     },
     {
       "file": "plan.json",

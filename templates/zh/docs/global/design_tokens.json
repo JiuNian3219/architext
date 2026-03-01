@@ -1,6 +1,5 @@
 {
   "_comment": "由 /archi.start 基于 Brief「风格与调性」和「视觉参考」生成。所有值须从 Brief 推导，禁直接复用任何模板默认值。",
-  "scope": "[?UI]",
   "status": "drafting",
 
   "aestheticDirection": {

@@ -45,6 +45,31 @@ alwaysApply: true
 </protocol>
 </critical_protocols>
 
+<project_features>
+协议与模板中以 `仅xx项目:` 开头或 `（仅xx项目）` 标注的内容表示条件执行——仅当项目 features 包含对应值时才执行/读取，否则跳过。
+
+读取 `architext.json` → `features` 数组判定项目特征。条件性全局文件（如 `api_snapshot.json`）由 CLI init 时按 features 筛选部署，文件存在即表示该 feature 已激活。
+
+| feature | 含义 |
+|:---|:---|
+| ui | 有用户界面（Web/移动端/桌面端/小程序） |
+| data | 有数据层（数据库/ORM/本地存储） |
+| api | 有 HTTP/RPC/GraphQL 接口 |
+| cli | 有命令行入口 |
+| lib | 作为库/SDK/NPM 包发布 |
+| mobile | 移动端（RN/Flutter/Expo） |
+| desktop | 桌面端（Electron/Tauri） |
+| miniapp | 小程序（微信/支付宝/uni-app） |
+| extension | 浏览器扩展（Chrome/Firefox） |
+| realtime | 实时/WebSocket/协作 |
+| ai | AI Agent / MCP |
+
+**其他条件**按字面含义判定：
+- `仅Complex任务:` — `/archi.plan` step_1_5 判定，任务含复杂机制（状态机/流水线/协议）时成立
+- `仅GraphQL/CRDT/MCP/i18n项目:` — 读 `02_tech_stack.md` 判断技术选型是否匹配
+- 其余中文条件（如 `如有下游消费者:`）— 按字面理解
+</project_features>
+
 <architecture_governance>
   <style>Defined in `02_tech_stack.md` (Dynamic)</style>
 
@@ -110,7 +135,7 @@ alwaysApply: true
     |:---|:---|:---|
     | 引入未登记的业务实体 · 动作 · 共享工具 | `dictionary.json` | 直接追加写入 |
     | 引入未注册的错误场景 | `error_codes.json` | 直接追加写入 |
-    | [?Data] Schema 有变更 | `data_snapshot.json` | 直接同步 |
+    | （仅data项目） Schema 有变更 | `data_snapshot.json` | 直接同步 |
   </step>
 </thinking_process>
 
