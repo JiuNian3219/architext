@@ -28,7 +28,7 @@ CLI 层负责将 AI 命令层所需的 prompt 文件、规则文件、Skills 等
 
 ## 0. AI 命令全景图
 
-**12 个 AI 命令的完整逻辑关系**: 包含所有正向流转、Gate 重定向、审查分流回路、级联链路。
+**14 个 AI 命令的完整逻辑关系**: 包含所有正向流转、Gate 重定向、审查分流回路、级联链路。
 独立命令（无前后依赖）放在右侧单独成线。
 
 ```mermaid
@@ -113,6 +113,10 @@ graph TD
 
     HELP["<b>/archi.help [question]</b><br/>项目导航与上下文问答<br/>──────<br/>IN: roadmap · tasks/ 扫描<br/>OUT: 无文件输出(仅输出建议)"]
 
+    RECOVER["<b>/archi.recover &lt;pack-file&gt;</b><br/>从 pack XML 还原用户数据<br/>──────<br/>IN: archi pack 产出的 XML<br/>OUT: 写入 global/tasks/scripts/规则"]
+
+    REF["<b>/archi.ref add|list|update|remove</b><br/>外部知识引用管理<br/>──────<br/>IN: 文件/URL/粘贴内容<br/>OUT: refs/ 目录 + index.json"]
+
     %% remove 的 gate
     REMOVE -.->|"❌ 有 active/done 下游依赖<br/>阻塞: 须先 /archi.edit 解耦"| EDIT
 ```
@@ -159,11 +163,16 @@ project-brief → start → scope → plan → code → audit
 | 输出 | `dictionary.json` | 统一术语表，消除项目内同一概念多种叫法 |
 | 输出 | `error_codes.json` | 错误码契约，预定义核心业务错误码 |
 | 输出 [?UI] | `design_tokens.json` | 视觉物理量：色板、语义色、字体、动效、图示风格 |
+| 输出 [?API] | `api_snapshot.json` | API 端点快照（REST/GraphQL 路由） |
+| 输出 [?API] | `env_registry.json` | 环境变量注册表 |
+| 输出 [?CLI] | `command_api.json` | CLI 命令注册表 |
+| 输出 [?LIB] | `public_api.json` | 库导出（exports）注册表 |
 
-#### /archi.inherit — 逆向分析已有代码仓库，纳入框架管理
+#### /archi.inherit [brief_path] — 逆向分析已有代码仓库，纳入框架管理
 
 | 方向 | 资产 | 作用 |
 |:---|:---|:---|
+| 输入（可选） | `project-brief.md` 或 `[brief_path]` | 补充愿景/路线图/技术栈；适用于代码库尚空、骨架刚搭的场景 |
 | 输入 | 已有代码仓库 | package.json/README/目录结构/核心模块源码 |
 | 输出 | `vision.md` | 从 README 和代码推导的项目愿景（AI 补全项标注置信度） |
 | 输出 | `roadmap.json` | LEG-xx 任务（status=done），映射已有功能模块 |
@@ -175,6 +184,10 @@ project-brief → start → scope → plan → code → audit
 | 输出 | `error_codes.json` | 从代码中的错误定义提取的错误码 |
 | 输出 [?UI] | `design_tokens.json` | 从 CSS 变量/主题配置提取的视觉 Token |
 | 输出 [?Data] | `data_snapshot.json` | 从 Schema/Migration 提取的数据模型快照 |
+| 输出 [?API] | `api_snapshot.json` | 从路由/Handler 提取的 API 端点 |
+| 输出 [?API] | `env_registry.json` | 从 .env 示例/配置提取的环境变量 |
+| 输出 [?CLI] | `command_api.json` | 从 CLI 入口提取的命令注册 |
+| 输出 [?LIB] | `public_api.json` | 从 package.json exports 提取的库导出 |
 
 ### 定义阶段
 
@@ -300,6 +313,23 @@ project-brief → start → scope → plan → code → audit
 | IN: 扫描 | `tasks/` 目录 | Task 文档完整度（有无 spec/plan） |
 | IN: 按需 | 相关文件 | 有 question 时按语义定位并读取 |
 | 输出 | 无文件输出 | 仅输出项目状态判断和下一步命令建议 |
+
+#### /archi.recover \<pack-file\> — 从 pack XML 还原用户数据
+
+| 方向 | 资产 | 作用 |
+|:---|:---|:---|
+| 输入 | pack XML 文件 | `npx archi pack` 产出的用户数据快照 |
+| 输出 | `global/`、`tasks/`、`scripts/`、自定义规则 | 按 path 属性写入，覆盖已存在文件 |
+| 输出 | 无 | 升级后还原场景，不修改框架文件 |
+
+#### /archi.ref \<sub\> [args] — 外部知识引用管理
+
+| 方向 | 资产 | 作用 |
+|:---|:---|:---|
+| 子命令 | `add` / `list` / `update` / `remove` | 增删改查外部知识（API 文档、SDK、业务规则） |
+| 输出 | `refs/` 目录 | 结构化摘要（.md/.json/.yaml），按内容类型选择格式 |
+| 输出 | `refs/index.json` | 索引，供 plan/code 按 tag 按需注入 |
+| 读取 | plan/code 按需 | 通过 index 匹配 tag 加载相关 ref |
 
 ---
 
@@ -456,49 +486,53 @@ Architext CLI 工具本身是一个 **TypeScript ESM CLI**，基于 `cac` + `@cl
 
 | 命令 | 语法 | 职责 |
 |:---|:---|:---|
-| `init` | `npx archi init [-e editor] [-l lang] [-d path] [-t type]` | 初始化 Architext 框架，生成文档骨架、IDE 规则、Skills、project-brief.md |
+| `init` | `npx archi init [-e editor] [-l lang] [-d path] [-t type]` | 初始化 Architext 框架，生成文档骨架、IDE 规则、Skills；可选生成 project-brief.md（init 时询问；生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用） |
 | `update` | `npx archi update [--dry-run]` | 版本检查 → 静默更新 prompts/templates → Rules 更新 → Schema 审计 |
 | `doctor` | `npx archi doctor` | 健康检查（4 组：config / 文档结构 / 全局文件 / IDE 规则） |
 | `task` | `npx archi task [id] [--status <s>] [--check]` | 查看/变更 roadmap.json 任务状态；`--check` 做一致性校验 |
 | `plan` | `npx archi plan <id>` | 检查指定 Task 的 plan.json 完成度 |
 | `render` | `npx archi render` | roadmap.json → roadmap.md；tasks/*/plan.json → plan.md |
 | `template` | `npx archi template [name]` | 提取模板文件到项目根目录（如 `scope-brief.md`） |
+| `pack` | `npx archi pack [-o file]` | 打包用户数据（global/tasks/scripts/自定义规则）为 XML，供升级前备份或 `/archi.recover` 还原 |
 | `uninstall` | `npx archi uninstall` | 移除 Architext 所有部署文件 |
 | `help` | `npx archi help` | 输出格式化的终端参考手册 |
 
 ### 编辑器支持矩阵
 
-`npx archi init` 支持 4 种 AI 编辑器，各编辑器的文件落地目录不同：
+`npx archi init` 支持 6 种 AI 编辑器，各编辑器的文件落地目录不同：
 
-| 编辑器 | 规则目录 | 规则扩展名 | Commands 目录 | Skills 目录 |
-|:---|:---|:---|:---|:---|
-| **Cursor** | `.cursor/rules/` | `.mdc` | `.cursor/commands/` | `.cursor/skills/` |
-| **Windsurf** | `.windsurf/rules/` | `.md` | — | `.windsurf/skills/` |
-| **Trae** | `.trae/rules/` | `.md` | — | `.trae/skills/` |
-| **VS Code** | `.github/instructions/` | `.instructions.md` | — | `.github/skills/` |
+| 编辑器 | 规则目录 | 规则扩展名 | Commands 目录 | Skills 目录 | Subagents |
+|:---|:---|:---|:---|:---|:---|
+| **Cursor** | `.cursor/rules/` | `.mdc` | `.cursor/commands/` | `.cursor/skills/` | ✓ |
+| **Windsurf** | `.windsurf/rules/` | `.md` | — | `.windsurf/skills/` | — |
+| **Trae** | `.trae/rules/` | `.md` | — | `.trae/skills/` | ✓ |
+| **VS Code** | `.github/instructions/` | `.instructions.md` | — | `.github/skills/` | ✓ |
+| **Claude Code** | `.claude/rules/` | `.md` | `.claude/commands/` | `.claude/skills/` | ✓ |
+| **OpenCode** | `.opencode/rules/` | `.md` | `.opencode/commands/` | `.opencode/skills/` | ✓ |
 
-> **Commands**：仅 Cursor 支持。prompt 文件以 `archi.<name>.md` 命名部署到 `.cursor/commands/`，用户可通过斜杠命令直接触发。
+> **Commands**：Cursor、Claude Code、OpenCode 支持。prompt 文件以 `archi.<name>.md` 命名部署到对应 commands 目录，用户可通过斜杠命令直接触发。
 > **Skills**：所有编辑器均支持（标准不同）。`archi-` 前缀与用户自有 Skills 物理隔离。
+> **Subagents**：支持子代理的编辑器在 `[[SUBAGENT:]]` 标记处展开为独立子代理调用（认知隔离）；不支持时降级为同上下文 Skill 调用。
 
-### 项目类型预设（13 种）
+### 项目特征（12 种，多选）
 
-`npx archi init -t <type>` 支持的项目类型，每种类型映射到一组 Features 标签：
+`npx archi init -t <features>` 使用**多选特征**（`-t ui,data,api` 可预设，否则交互多选）：
 
-| 类型 ID | 描述 | Features |
-|:---|:---|:---|
-| `web` | Web SPA / PWA | ui, data |
-| `fullstack` | 全栈 Web (SSR/SSG) | ui, data, api |
-| `api` | API 服务 (REST/GraphQL) | api, data |
-| `cli` | CLI 工具 | cli |
-| `lib` | 库 / SDK / NPM 包 | lib |
-| `mobile` | 移动端 App (RN/Flutter/Expo) | data, mobile |
-| `miniapp` | 小程序 (微信/支付宝/uni-app) | data, miniapp |
-| `desktop` | 桌面端 App (Electron/Tauri) | ui, data, desktop |
-| `web-desktop` | Web + 桌面端 (Hybrid) | ui, data, api, desktop |
-| `extension` | 浏览器扩展 (Chrome/Firefox) | extension |
-| `realtime` | 实时/协作型 App | ui, data, api, realtime |
-| `ai-agent` | AI Agent / MCP 工具 | api, ai |
-| `hybrid` | 全通用特征（其他类型不符时选此项） | ui, data, cli, lib, api |
+| 特征 | 说明 |
+|:---|:---|
+| `ui` | 有用户界面（Web/移动端/桌面端/小程序） |
+| `data` | 有数据层（数据库/ORM/本地存储） |
+| `api` | 有 HTTP/RPC/GraphQL 接口 |
+| `cli` | 有命令行入口 |
+| `lib` | 作为库/SDK/NPM 包发布 |
+| `mobile` | 移动端（RN/Flutter/Expo） |
+| `desktop` | 桌面端（Electron/Tauri） |
+| `miniapp` | 小程序（微信/支付宝/uni-app） |
+| `extension` | 浏览器扩展（Chrome/Firefox） |
+| `realtime` | 实时/WebSocket/协作 |
+| `ai` | AI Agent / MCP |
+
+特征决定 `CONDITIONAL_GLOBAL_FILES` 的部署：`ui`→design_tokens，`data`→data_snapshot，`api`→api_snapshot+env_registry，`cli`→command_api，`lib`→public_api。
 
 ---
 
@@ -517,12 +551,13 @@ Architext CLI 工具本身是一个 **TypeScript ESM CLI**，基于 `cac` + `@cl
 │   │   └── templates/               # 模板文件（spec/ui/plan/scope-brief）
 │   ├── tasks/                       # Task 文档存放目录（空，由 AI 命令填充）
 │   ├── scripts/                     # 脚本存放目录（空）
+│   ├── refs/                        # 外部知识引用（/archi.ref 管理，含 index.json）
 │   └── skills/                      # [非 Skill 编辑器] Skill 文件本地副本
 │
 ├── <IDE 规则目录>/                   # 视编辑器而定（见 0.4 编辑器支持矩阵）
 │   └── *.mdc / *.md / *.instructions.md
 │
-├── <IDE Commands 目录>/              # [仅 Cursor] .cursor/commands/
+├── <IDE Commands 目录>/              # [Cursor/Claude Code/OpenCode] .cursor/commands/ 等
 │   └── archi.start.md / archi.plan.md / ...
 │
 ├── <IDE Skills 目录>/                # [支持 Skill 的编辑器] .cursor/skills/ 等
@@ -531,12 +566,12 @@ Architext CLI 工具本身是一个 **TypeScript ESM CLI**，基于 `cac` + `@cl
 │   └── archi-plan-options/SKILL.md
 │   └── archi-ui-wireframe/SKILL.md
 │
-└── project-brief.md                  # 用户填写的项目简介模板（由 Brief 生成器产出）
+└── project-brief.md                  # 用户填写的项目简介模板（init 选择生成时由 Brief 生成器产出）
 ```
 
 ### Brief 生成器
 
-`init` 完成后会在项目根目录生成 `project-brief.md`，供用户填写后传给 `/archi.start`。
+`init` 时会询问是否生成 `project-brief.md`（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）。选择生成时，在项目根目录产出该文件，供用户填写后传给 `/archi.start` 或 `/archi.inherit`。
 生成逻辑：`_base.md`（骨架）+ `_modules.md`（功能片段）→ 按 Features 标签拼装 → 写入。
 
 ```
@@ -549,15 +584,19 @@ project-brief.md     仅含与所选类型相关的模块（无关模块不生�
 
 ### 能力标记（Capability Markers）
 
-prompt 和规则文件中可嵌入以下标记，`init` 时按实际编辑器能力展开：
+prompt 和规则文件中可嵌入以下标记，`init` 时由 `resolveCapabilityRefs` 按实际编辑器能力展开。
+处理顺序：`[[INCLUDE:]]` → `[[SUBAGENT:]]` → `[[SKILL:]]` → `[[NO-SKILL:]]`。
 
-| 标记 | 有 Skill 支持（如 Cursor） | 无 Skill 支持 |
+| 标记 | 有对应能力 | 无对应能力 |
 |:---|:---|:---|
-| `[[SKILL: desc]]` | 展开为 `desc` | 移除 |
+| `[[INCLUDE: path]]` | 展开为 `docs/<path>` 文件内容 | 同左（始终展开） |
+| `[[SUBAGENT: name\|args]]` | 展开为子代理启动指令（独立上下文） | 降级为同上下文 Skill 调用，或移除 |
+| `[[SKILL: name\|args]]` | 展开为 Skill 调用指令 | 移除 |
 | `[[NO-SKILL: desc]]` | 移除 | 展开为 `desc` |
 
 通过此机制，同一套 prompt 模板可针对不同 AI 编辑器生成最优版本：
-有 Skill 的编辑器调用 `archi-decompose-roadmap` Skill，无 Skill 的编辑器则展开文件路径引用。
+有 Skill 的编辑器调用 `archi-decompose-roadmap` Skill，无 Skill 的编辑器则移除或降级。
+`[[INCLUDE:]]` 引用的 `docs/shared/` 片段在部署时展开为内联内容，`shared/` 目录本身不部署到用户项目。
 
 ---
 
@@ -1031,29 +1070,35 @@ graph TD
 
 ## 7. Skills 注册表
 
-Architext 内置 4 个 Agent Skills，随 `init` 部署到编辑器 Skills 目录（有 Skill 支持时）或 `docDir/skills/`（无 Skill 支持时）。
+Architext 内置 8 个 Agent Skills，随 `init` 部署到编辑器 Skills 目录（有 Skill 支持时）或 `docDir/skills/`（无 Skill 支持时）。
+分为 **Specialist（协作型）** 与 **Reviewer（审查型）** 两类。
 
-| Skill 名称 | 目录名 | 职责 | 典型触发命令 |
+| Skill 名称 | 类型 | 职责 | 典型触发命令 |
 |:---|:---|:---|:---|
-| **archi-decompose-roadmap** | `archi-decompose-roadmap/` | 将 Vision 和 Brief 分解为结构化 Roadmap 任务链（含依赖 DAG） | `/archi.start`, `/archi.scope` |
-| **archi-interview-protocol** | `archi-interview-protocol/` | 结构化访谈协议，引导 AI 收集缺失的架构信息 | `/archi.plan`, `/archi.start` |
-| **archi-plan-options** | `archi-plan-options/` | 生成多方案技术选型对比，辅助架构决策 | `/archi.plan` |
-| **archi-ui-wireframe** | `archi-ui-wireframe/` | 两阶段 UI 生成：Phase 1 灰度线框 → Phase 2 视觉着色（需 design_tokens） | `/archi.start` 后手动触发 |
+| **archi-decompose-roadmap** | specialist | 将 Vision 和 Brief 分解为结构化 Roadmap 任务链（含依赖 DAG） | `/archi.start`, `/archi.scope` |
+| **archi-interview-protocol** | specialist | 结构化访谈协议，引导 AI 收集缺失的架构信息 | `/archi.plan`, `/archi.start` |
+| **archi-plan-options** | specialist | 生成多方案技术选型对比，辅助架构决策 | `/archi.plan` |
+| **archi-ui-wireframe** | specialist | 两阶段 UI 生成：Phase 1 灰度线框 → Phase 2 视觉着色（需 design_tokens） | `/archi.start` 后手动触发 |
+| **archi-design-patterns** | specialist | 设计模式选择与适配建议 | `/archi.plan` |
+| **archi-silent-audit** | reviewer | 独立审查（init/plan-docs/code-impl），按 CRITICAL/WARNING/INFO 分级 | Verify 阶段调用 |
+| **archi-data-sync** | reviewer | 数据治理同步（dictionary/error_codes/data_snapshot/api_snapshot/env_registry） | Verify 阶段调用 |
+| **archi-feature-relations** | reviewer | featureRelations 注册/检查/清理 | plan/scope/code/remove |
 
 ### Skills 部署路径
 
 ```
-有 Skill 支持的编辑器（Cursor / Windsurf / Trae / VS Code）:
+有 Skill 支持的编辑器（Cursor / Windsurf / Trae / VS Code / Claude Code / OpenCode）:
   <IDE Skills 目录>/archi-decompose-roadmap/SKILL.md
   <IDE Skills 目录>/archi-interview-protocol/SKILL.md
   <IDE Skills 目录>/archi-plan-options/SKILL.md
   <IDE Skills 目录>/archi-ui-wireframe/SKILL.md
+  <IDE Skills 目录>/archi-design-patterns/SKILL.md
+  <IDE Skills 目录>/archi-silent-audit/SKILL.md
+  <IDE Skills 目录>/archi-data-sync/SKILL.md
+  <IDE Skills 目录>/archi-feature-relations/SKILL.md
 
 无 Skill 支持的编辑器（或用户手动引用时）:
-  <docDir>/skills/archi-decompose-roadmap/SKILL.md
-  <docDir>/skills/archi-interview-protocol/SKILL.md
-  <docDir>/skills/archi-plan-options/SKILL.md
-  <docDir>/skills/archi-ui-wireframe/SKILL.md
+  <docDir>/skills/ 下对应 SKILL.md
 ```
 
 prompt 文件中通过 `[[SKILL: 调用 archi-decompose-roadmap Skill]]` 标记引用 Skills，
@@ -1065,24 +1110,29 @@ init 时按编辑器能力自动展开为正确的调用方式。
 
 ### 8.1 全局资产
 
-| 命令 | vision | roadmap | map | dictionary | design_tokens | data_snapshot | error_codes | ui_concept |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `start` | **W** | **W** | **-** | **W** | **W** [?UI] | **-** | **W** | - |
-| `inherit` | **W** | **W** | **W** | **W** | **W** [?UI] | **W** [?Data] | **W** | - |
-| `scope` | R | **R/W** | R | - | - | - | - | - |
-| `plan` | R | R | **R/W** | **R/W** | R [?UI] | **R/W** [?Data] | **R/W** | R [?UI] |
-| `edit` | - | - | - | - | - | - | - | R/W [?UI] |
-| `revise` | **R/W** | **R/W** | **R/W** | **R/W** | **R/W** [?UI] | **R/W** [?Data] | **R/W** | R/W [?UI] |
-| `code` | - | R | R | - | R [?UI] | R [?Data] | - | R [?UI] |
-| `audit` | R | R | R | - | R [?UI] | R [?Data] | - | R [?UI] |
-| `fix` | - | - | - | - | - | - | - | - |
-| `map` | - | - | **R/W** | - | - | - | - | - |
-| `remove` | - | **R/W** | **R/W** | 标记 | - | - | 标记 | - |
-| `help` | - | R | - | - | - | - | - | - |
-| Skill: `ui-wireframe` | R | R | - | - | R | - | - | **W** |
-| **Chat Mode** | - | - | R(寻址) | R(建议) | R(建议) | R(建议) | R(建议) | - |
-| `npx archi render` | - | R→渲染 | - | - | - | - | - | - |
-| `npx archi task` | - | **R/W** | - | - | - | - | - | - |
+| 命令 | vision | roadmap | map | dictionary | design_tokens | data_snapshot | error_codes | ui_concept | api_snapshot | env_registry | command_api | public_api | refs/ |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| `start` | **W** | **W** | **-** | **W** | **W** [?UI] | **-** | **W** | - | **W** [?API] | **W** [?API] | **W** [?CLI] | **W** [?LIB] | - |
+| `inherit` | **W** | **W** | **W** | **W** | **W** [?UI] | **W** [?Data] | **W** | - | **W** [?API] | **W** [?API] | **W** [?CLI] | **W** [?LIB] | - |
+| `scope` | R | **R/W** | R | - | - | - | - | - | - | - | - | - | - |
+| `plan` | R | R | **R/W** | **R/W** | R [?UI] | **R/W** [?Data] | **R/W** | R [?UI] | **R/W** [?API] | **R/W** [?API] | - | - | R |
+| `edit` | - | - | - | - | - | - | - | R/W [?UI] | - | - | - | - | - |
+| `revise` | **R/W** | **R/W** | **R/W** | **R/W** | **R/W** [?UI] | **R/W** [?Data] | **R/W** | R/W [?UI] | **R/W** [?API] | **R/W** [?API] | **R/W** [?CLI] | **R/W** [?LIB] | - |
+| `code` | - | R | R | - | R [?UI] | R [?Data] | - | R [?UI] | R [?API] | R [?API] | R [?CLI] | - | R |
+| `audit` | R | R | R | - | R [?UI] | R [?Data] | - | R [?UI] | R [?API] | R [?API] | - | - | - |
+| `fix` | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| `map` | - | - | **R/W** | - | - | - | - | - | - | - | - | - | - |
+| `remove` | - | **R/W** | **R/W** | 标记 | - | - | 标记 | - | - | - | - | - | - |
+| `help` | - | R | - | - | - | - | - | - | - | - | - | - | - |
+| `recover` | W* | W* | W* | W* | W* | W* | W* | W* | W* | W* | W* | W* | - |
+| `ref` | - | - | - | - | - | - | - | - | - | - | - | - | **R/W** |
+| Skill: `ui-wireframe` | R | R | - | - | R | - | - | **W** | - | - | - | - | - |
+| **Chat Mode** | - | - | R(寻址) | R(建议) | R(建议) | R(建议) | R(建议) | - | R(建议) | R(建议) | - | - | R |
+| `npx archi render` | - | R→渲染 | - | - | - | - | - | - | - | - | - | - | - |
+| `npx archi task` | - | **R/W** | - | - | - | - | - | - | - | - | - | - | - |
+| `npx archi pack` | R | R | R | R | R | R | R | R | R | R | R | R | R |
+
+> `recover` 的 W* 表示从 pack XML 批量写入，实际写入哪些文件由 pack 内容决定。
 
 ### 8.2 规则文件 + Feature 文档
 
@@ -1099,6 +1149,8 @@ init 时按编辑器能力自动展开为正确的调用方式。
 | `fix` | **-** | — | - | - | R | R | **R/W** | - |
 | `map` | R | — | - | - | - | - | - | - |
 | `remove` | - | — | - | 清理 | 删除 | 删除 | 删除 | 删除 |
+| `recover` | - | — | W* | W* | - | - | - | - |
+| `ref` | - | — | - | - | - | - | - | - |
 | **Chat Mode** | R(AuditLoop) | IDE隐式 | R(AuditLoop) | R(寻址) | R(DDAD)/⚠️ | - | - | - |
 | `npx archi plan` | - | — | - | - | - | - | R | - |
 
