@@ -68,7 +68,6 @@ src/
 
 templates/            # Prompt and rule templates (core product asset)
 ├── zh/               # Simplified Chinese templates
-├── zh-Hant/          # Traditional Chinese templates
 └── en/               # English templates
 ```
 
@@ -109,7 +108,7 @@ Commits that don't follow this format will be **rejected by the pre-commit hook*
 
 Templates in `templates/` are the **core product asset** — they directly affect what users generate in their projects. Please follow these rules:
 
-- **Tri-language sync**: If you modify any file under `templates/zh/`, you **must** also update the corresponding files in `templates/zh-Hant/` and `templates/en/`. The structure (XML tags, table columns, step count) must be identical across all three.
+- **Bilingual sync**: If you modify any file under `templates/zh/`, you **must** also update the corresponding file in `templates/en/`. The structure (XML tags, table columns, step count) must be identical across both.
 - **No breaking changes to protocol structure** without discussion in an issue first.
 - Keep the `<meta>`, `<step_1_load>`, and `<step_N_signoff>` blocks in every protocol file — they are mandatory.
 
@@ -189,7 +188,6 @@ src/
 
 templates/            # Prompt 与规则模板（核心产品资产）
 ├── zh/               # 简体中文模板
-├── zh-Hant/          # 繁体中文模板
 └── en/               # 英文模板
 ```
 
@@ -230,7 +228,7 @@ chore(deps): 升级 vitest 至 v4
 
 `templates/` 目录下的文件是**核心产品资产**，会直接影响用户项目的生成结果。请遵循以下规则：
 
-- **三语同步**：修改 `templates/zh/` 下的任何文件时，**必须**同步更新 `templates/zh-Hant/` 和 `templates/en/` 中的对应文件。三个版本的结构（XML 标签、表格列数、步骤数量）必须完全一致，仅内容语言不同。
+- **双语同步**：修改 `templates/zh/` 下的任何文件时，**必须**同步更新 `templates/en/` 中的对应文件。两个版本的结构（XML 标签、表格列数、步骤数量）必须完全一致，仅内容语言不同。
 - **禁止在未经讨论的情况下破坏性修改协议结构**，请先在 Issue 中讨论。
 - 每个协议文件中的 `<meta>`、`<step_1_load>`、`<step_N_signoff>` 三个区块为**强制项**，不可删除。
 

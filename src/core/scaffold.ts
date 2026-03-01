@@ -41,7 +41,7 @@ export class Scaffolder {
     const { language, docDir, editors, features = [] } = options;
     const templateRoot = await TemplateManager.getRoot();
 
-    // 如果请求的语言模板不存在（例如 zh-Hant 尚未完善），则回退到默认的中文模板，确保初始化流程不中断
+    // 如果请求的语言模板不存在，则回退到默认的中文模板，确保初始化流程不中断
     let templateLang = language;
     if (!(await fs.pathExists(path.join(templateRoot, templateLang)))) {
       logger.warn(t("fallback", { lang: language }));

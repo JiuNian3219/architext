@@ -28,14 +28,14 @@ const ProjectFeatureSchema = z.enum([
 
 /** Init 命令配置快照（lastScaffold 字段） */
 const InitConfigSchema = z.object({
-  language: z.enum(["zh", "zh-Hant", "en"]),
+  language: z.enum(["zh", "en"]),
   editors: z.array(SupportedEditorSchema).min(1),
   docDir: z.string().min(1),
   features: z.array(ProjectFeatureSchema),
 });
 
 /** 支持的语言（与 LocaleLang 保持一致） */
-const LocaleLangSchema = z.enum(["zh", "zh-Hant", "en"]);
+const LocaleLangSchema = z.enum(["zh", "en"]);
 
 /** architext.json 完整结构 */
 export const ArchitextConfigSchema = z.object({

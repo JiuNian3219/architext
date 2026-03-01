@@ -3,7 +3,7 @@
 /**
  * 支持的语言类型
  */
-export type LocaleLang = "zh" | "zh-Hant" | "en";
+export type LocaleLang = "zh" | "en";
 
 /**
  * 支持的编辑器类型

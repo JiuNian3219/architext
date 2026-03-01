@@ -322,7 +322,7 @@
         "init": {
           "desc": "Initialize Architext framework. Generate rules, doc directory, prompt templates, Project Brief.",
           "editor": "Target IDE (cursor / trae / windsurf / vscode / claude / opencode)",
-          "lang": "Language (zh / en / zh-Hant)",
+          "lang": "Language (zh / en)",
           "doc": "Custom doc directory name (default: .architext)",
           "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)"
         },

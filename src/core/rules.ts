@@ -44,9 +44,6 @@ export const LANGUAGE_CONFIGS = {
   zh: {
     label: "中文",
   },
-  "zh-Hant": {
-    label: "中文（繁体）",
-  },
   en: {
     label: "English",
   },

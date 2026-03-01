@@ -322,7 +322,7 @@
         "init": {
           "desc": "初始化 Architext 框架。生成规则文件、文档目录、Prompt 模板、Project Brief。",
           "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude / opencode)",
-          "lang": "指定语言 (zh / en / zh-Hant)",
+          "lang": "指定语言 (zh / en)",
           "doc": "自定义文档目录名 (默认 .architext)",
           "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)"
         },

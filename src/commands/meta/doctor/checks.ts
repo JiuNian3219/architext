@@ -78,7 +78,7 @@ export async function runConfigChecks(
     });
   }
 
-  const validLangs = ["zh", "zh-Hant", "en"];
+  const validLangs = ["zh", "en"];
   if (!validLangs.includes(config.language)) {
     results.push({
       label: t("check.config.lang_label"),

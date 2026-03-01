@@ -1,12 +1,11 @@
 /** @fileoverview 提供类型安全的国际化 (i18n) 工具函数，支持嵌套路径访问和参数插值，确保 CLI 输出的多语言一致性。 */
 
 import en from "../locales/en.json" with { type: "json" };
-import zhHant from "../locales/zh-Hant.json" with { type: "json" };
 import zh from "../locales/zh.json" with { type: "json" };
 import type { LocaleLang } from "../types/index.ts";
 import type { ObjectPath, Path, PathValue } from "../types/utils.ts";
 
-const locales = { zh, "zh-Hant": zhHant, en };
+const locales = { zh, en };
 type Schema = typeof zh; // 以中文文件为结构标准
 
 /**
@@ -28,29 +27,19 @@ function get(obj: unknown, path: string): unknown {
 /**
  * 获取系统语言
  * 优先读取环境变量 ARCHITEXT_LANG (便于测试)，其次读取系统语言
- * @returns 'zh' | 'zh-Hant' | 'en'
+ * @returns 'zh' | 'en'
  */
 export function getSystemLocale(): LocaleLang {
   // 优先读取环境变量
   const envLang = process.env.ARCHITEXT_LANG;
   if (envLang) {
-    if (envLang === "zh-Hant" || envLang === "zh" || envLang === "en") {
+    if (envLang === "zh" || envLang === "en") {
       return envLang;
     }
   }
 
-  // 读取系统语言
+  // 读取系统语言，所有中文变体（zh-TW/zh-HK/zh-MO 等）统一映射到 zh
   const systemLocale = new Intl.DateTimeFormat().resolvedOptions().locale;
-
-  // 显式匹配常见的繁体中文 Locale
-  if (
-    ["zh-Hant", "zh-TW", "zh-HK", "zh-MO"].some((l) =>
-      systemLocale.startsWith(l),
-    )
-  ) {
-    return "zh-Hant";
-  }
-
   return systemLocale.startsWith("zh") ? "zh" : "en";
 }
 
