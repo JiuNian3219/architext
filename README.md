@@ -28,6 +28,8 @@ Before a single line of code is written, Architext forces you and your AI to ali
 
 > **No Docs, No Code.** Code is just a downstream artifact of documents.
 
+Architext targets **small-to-medium applications**, designed for **solo developers** or **solo + AI assistant** workflows. Whether you use chat-based AI today or a future JARVIS-like persistent assistant, the document-driven approach gives AI stable context, clear execution boundaries, and keeps you in control of every decision.
+
 Architext operates in two layers:
 
 | Layer | How to trigger | Responsibility |

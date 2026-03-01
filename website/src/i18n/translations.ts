@@ -127,7 +127,7 @@ export const t: Record<Locale, TranslationData> = {
     meta: {
       title: "Architext — The AI Architecture Protocol",
       description:
-        "A document-driven AI development protocol. Define first, build right. Upgrades your AI coding assistant from random code generator to rigorous architect.",
+        "A document-driven AI development protocol for small-to-medium apps. Built for solo developers and AI-assisted workflows. Define first, build right.",
       keywords:
         "AI architecture, document-driven development, AI coding workflow, Cursor IDE, software architecture protocol, spec-first development, AI development framework, DDAD",
       ogLocale: "en_US",
@@ -191,6 +191,10 @@ export const t: Record<Locale, TranslationData> = {
         {
           title: "Session-persistent",
           desc: "Context survives across sessions, team members, and AI tool switches. Specs live in your repo forever.",
+        },
+        {
+          title: "Built for solo + AI",
+          desc: "Targets small-to-medium applications. Whether you use chat-based AI today or a future JARVIS-like assistant, documents give AI stable context and keep you in control.",
         },
       ],
     },
@@ -408,7 +412,7 @@ export const t: Record<Locale, TranslationData> = {
     meta: {
       title: "Architext — AI 架构协议",
       description:
-        "文档驱动的 AI 开发协议。先定义，再构建。让你的 AI 编程助手从随机代码生成器升级为严格的架构师。",
+        "面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。",
       keywords:
         "AI 架构协议, 文档驱动开发, AI 编程工作流, Cursor IDE, 软件架构规范, 规格优先开发, AI 开发框架, DDAD",
       ogLocale: "zh_CN",
@@ -472,6 +476,10 @@ export const t: Record<Locale, TranslationData> = {
         {
           title: "会话持久",
           desc: "上下文在会话、团队成员和 AI 工具切换之间保持不变。规格文档永久存储在仓库中。",
+        },
+        {
+          title: "为 1 人 + AI 设计",
+          desc: "面向中小型应用。无论你用的是对话式 AI 还是未来的「贾维斯式」持续助手，文档都能让 AI 有稳定上下文，而你始终掌握决策权。",
         },
       ],
     },
