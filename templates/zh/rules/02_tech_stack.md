@@ -50,6 +50,7 @@ alwaysApply: true
 
 ---
 
+<!-- ═══════ 以下为固定协议（禁修改） ═══════ -->
 ## 4. UI Protocol: ITP v3.0 (Dual-Artifact) [可选 - 仅适用于有 UI 的项目]
 <!-- 核心 UI 描述协议 -->
 > **Note:** 如果项目没有 UI（如 CLI、Backend API、Library），可以删除此章节。
