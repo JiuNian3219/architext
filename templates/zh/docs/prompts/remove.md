@@ -131,14 +131,9 @@
     **Terminal Gate** (禁止跳过，须在 step_5 输出前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    [[INCLUDE: shared/terminal-gate-base.md]]
-    | 运行项目构建命令 | 零编译错误 |
-
-    | 检查项 | 通过标准 |
-    |:---|:---|
-    | Roadmap 一致性 | `--check` 通过，无悬空依赖 |
-    | 构建 | 零编译错误 |
-    | 残留引用 | 代码中无对已删模块的 import/require |
+    | 1 | `npx archi task --check` | 无 ERROR 级问题，无悬空依赖 |
+    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    | 3 | 运行项目构建命令 | 零编译错误；代码中无对已删模块的 import/require |
 
     构建失败或发现残留引用 → 定位并修复后重检。
 </step_4_verify>

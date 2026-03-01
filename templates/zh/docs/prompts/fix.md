@@ -38,7 +38,8 @@
     **Terminal Gate** (禁止跳过，须在 step_3 开始前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    [[INCLUDE: shared/terminal-gate-base.md]]
+    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
+    | 2 | `npx archi render` | `.md` 视图生成完成 |
 
     **Output**: 追加了修复任务的 plan.json。
 </step_2_plan_fix>

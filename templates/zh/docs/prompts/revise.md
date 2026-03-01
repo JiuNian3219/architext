@@ -144,7 +144,8 @@
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    [[INCLUDE: shared/terminal-gate-base.md]]
+    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
+    | 2 | `npx archi render` | `.md` 视图生成完成 |
 
     **Action** (Gate 通过后):
     1.  输出变更总结。

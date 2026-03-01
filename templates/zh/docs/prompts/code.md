@@ -22,7 +22,12 @@
     1.  **Resolve ID**: 从 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Task Name、Slug、阶段/状态。
     2.  **Status Gate** — 仅 `active` 可进入 code 流程:
 
-        [[INCLUDE: shared/status-gate.md]]
+        | 状态 | 处理 |
+        |:---|:---|
+        | `active` | 通过，继续 |
+        | `pending` | 拒绝 — 提示先运行 `/archi.plan <ID>` |
+        | `blocked` | 拒绝 — 前置依赖未完成 |
+        | `done` | 拒绝 — 已完成，如需修改用 `/archi.edit <ID>` |
 
     3.  **Load Context** (用 Roadmap `📁 Slug` 定位):
         - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 逻辑与场景
@@ -130,7 +135,8 @@
     |:---|:---|:---|
     | 1 | `npx archi plan <ID>` | 全部完成或仅豁免项；未通过禁签收，回到 step_3 |
     | 2 | `npx archi task <ID> --status done` | 任务状态已更新 |
-    [[INCLUDE: shared/terminal-gate-base.md]]
+    | 3 | `npx archi task --check` | 无 ERROR 级问题 |
+    | 4 | `npx archi render` | `.md` 视图生成完成 |
 
     **Action** (Gate 通过后):
     1.  确认 `plan.json` 各 task `done` 标记已全部更新（应在 step_3 实时完成，此处做最终校验）。

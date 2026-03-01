@@ -73,8 +73,9 @@
     **Terminal Gate** (禁止跳过，须在 step_3_5 开始前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    [[INCLUDE: shared/terminal-gate-base.md]]
-    | [当前 status=done] `npx archi task <ID> --status active` | 任务状态已重置为 active |
+    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
+    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    | 3 | [当前 status=done] `npx archi task <ID> --status active` | 任务状态已重置为 active |
 
     **Output**: 追加了新任务的 plan.json；若执行了状态转换，输出 `MODIFIED: roadmap.json <ID>.status done→active`。
 </step_3_update_plan>

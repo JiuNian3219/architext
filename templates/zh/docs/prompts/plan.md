@@ -328,8 +328,9 @@
     **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
-    [[INCLUDE: shared/terminal-gate-base.md]]
-    | `npx archi task <ID> --status active` | 任务已标记为进行中 |
+    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
+    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    | 3 | `npx archi task <ID> --status active` | 任务已标记为进行中 |
 
     **Action** (Gate 通过后):
     1.  输出总结。
