@@ -37,7 +37,8 @@ alwaysApply: true
 
 > **Protocol Load Gate** (禁跳过，三步须按序完成):
 > 1. **Read** 目标 `.md` 全文 → 文件不存在时停止，输出: `协议文件未找到，中止执行`
-> 2. **Override** `00_system` 部分设定
+> 2. **Override** — 可覆盖: `<system_role>`, `<thinking_process>`, `<communication_style>`。
+>    不可覆盖: `<core_philosophy>`, `<critical_protocols>`, `<architecture_governance>`。
 > 3. **Execute** `<step_1>` — 禁在步骤 1 完成前执行任何协议内容
 
 ---
