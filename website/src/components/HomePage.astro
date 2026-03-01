@@ -436,6 +436,27 @@ const jsonLd = JSON.stringify({
       padding: 0.08em 0.35em; color: var(--amber);
     }
 
+    /* ── Iterate cards ──────────────────────────────── */
+    .iter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1px; margin-top: 3rem;
+      background: var(--line);
+      border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+    }
+    .iter-card {
+      background: var(--bg); padding: 1.6rem 1.4rem;
+      transition: background 0.15s;
+    }
+    .iter-card:hover { background: var(--surface); }
+    .iter-card-cmd {
+      font-size: 0.8rem; font-family: var(--font-mono);
+      color: var(--amber); margin-bottom: 0.65rem;
+      letter-spacing: -0.01em;
+    }
+    .iter-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .iter-card p  { font-size: 0.835rem; color: var(--text-2); line-height: 1.7; }
+
     /* ── Quick Start ────────────────────────────────── */
     .qs-block {
       margin-top: 3rem; background: var(--surface);
@@ -540,6 +561,7 @@ const jsonLd = JSON.stringify({
   </a>
   <div class="nav-right">
     <a href="#workflow">{T.nav.workflow}</a>
+    <a href="#iterate">{T.nav.iterate}</a>
     <a href="#why">{T.nav.why}</a>
     <a href="#start">{T.nav.quickstart}</a>
     <a href={T.otherLangHref} class="lang-switch" aria-label="Switch language">
@@ -722,85 +744,69 @@ const jsonLd = JSON.stringify({
     <h2 class="section-title" set:html={T.workflow.title} />
     <p class="section-desc">{T.workflow.desc}</p>
 
-    <!-- Workflow diagram SVG: architectural section-cut style -->
+    <!-- Workflow diagram SVG: 4-stage linear flow -->
     <div class="workflow-diagram">
       <svg
-        viewBox="0 -60 860 230"
+        viewBox="0 0 800 170"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        style="width:100%; min-width:700px; display:block;"
+        style="width:100%; min-width:580px; display:block;"
         role="img"
         aria-label="Architext workflow diagram"
       >
         <!-- Section-cut reference line -->
-        <line x1="20" y1="14" x2="840" y2="14" stroke="rgba(184,138,63,0.1)" stroke-width="0.5" stroke-dasharray="3 3"/>
+        <line x1="20" y1="14" x2="780" y2="14" stroke="rgba(184,138,63,0.1)" stroke-width="0.5" stroke-dasharray="3 3"/>
         <circle cx="20"  cy="14" r="2.5" stroke="rgba(184,138,63,0.28)" stroke-width="0.8" fill="none"/>
-        <circle cx="840" cy="14" r="2.5" stroke="rgba(184,138,63,0.28)" stroke-width="0.8" fill="none"/>
+        <circle cx="780" cy="14" r="2.5" stroke="rgba(184,138,63,0.28)" stroke-width="0.8" fill="none"/>
 
         <!-- Node 1: /archi.start -->
-        <rect x="20" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.55)" stroke-width="1" fill="rgba(184,138,63,0.04)"/>
-        <line x1="20" y1="30" x2="27" y2="30" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
-        <line x1="20" y1="30" x2="20" y2="37" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
-        <line x1="140" y1="82" x2="133" y2="82" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
-        <line x1="140" y1="82" x2="140" y2="75" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
-        <text x="80" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
-        <text x="80" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.start</text>
-        <text x="80" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">vision.md</text>
-        <text x="80" y="117" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">roadmap.json</text>
+        <rect x="35" y="30" width="130" height="52" rx="3" stroke="rgba(184,138,63,0.55)" stroke-width="1" fill="rgba(184,138,63,0.04)"/>
+        <line x1="35"  y1="30" x2="42"  y2="30" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
+        <line x1="35"  y1="30" x2="35"  y2="37" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
+        <line x1="165" y1="82" x2="158" y2="82" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
+        <line x1="165" y1="82" x2="165" y2="75" stroke="rgba(184,138,63,0.6)" stroke-width="0.8"/>
+        <text x="100" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
+        <text x="100" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.start</text>
+        <text x="100" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">vision.md</text>
+        <text x="100" y="117" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">roadmap.json</text>
 
-        <!-- Bypass arrow: start → plan (main path, skip scope) -->
-        <line x1="142" y1="56" x2="378" y2="56" stroke="rgba(184,138,63,0.18)" stroke-width="1"/>
-        <path d="M 374 52 L 379 56 L 374 60" stroke="rgba(184,138,63,0.26)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Arrow 1→2 -->
+        <line x1="166" y1="56" x2="234" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
+        <path d="M 230 52 L 235 56 L 230 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 
-        <!-- Node 2: /archi.scope (optional — floats above main line) -->
-        <rect x="200" y="-44" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.22)" stroke-width="1" stroke-dasharray="4 3"/>
-        <text x="260" y="-22" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">/archi</text>
-        <text x="260" y="-6"  text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">.scope</text>
-        <text x="260" y="31"  text-anchor="middle" fill="#625c55" font-size="9"  font-family="monospace">roadmap tasks</text>
-        <text x="260" y="-52" text-anchor="middle" fill="#4a4540" font-size="8.5" font-family="monospace">{T.workflow.svgOptional}</text>
+        <!-- Node 2: /archi.plan -->
+        <rect x="235" y="30" width="130" height="52" rx="3" stroke="rgba(184,138,63,0.48)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
+        <text x="300" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
+        <text x="300" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.plan</text>
+        <text x="300" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">spec.md</text>
+        <text x="300" y="117" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">plan.json</text>
 
-        <!-- Arrow: start → scope (branch up, dashed) -->
-        <path d="M 155 56 C 160 56 160 -18 200 -18" stroke="rgba(184,138,63,0.38)" stroke-width="1" fill="none" stroke-dasharray="4 3"/>
-        <path d="M 196 -22 L 201 -18 L 196 -14" stroke="rgba(184,138,63,0.48)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <!-- Arrow 2→3 -->
+        <line x1="366" y1="56" x2="434" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
+        <path d="M 430 52 L 435 56 L 430 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 
-        <!-- Arrow: scope → plan (merge down, dashed) -->
-        <path d="M 320 -18 C 360 -18 360 56 380 56" stroke="rgba(184,138,63,0.38)" stroke-width="1" fill="none" stroke-dasharray="4 3"/>
-        <path d="M 376 52 L 381 56 L 376 60" stroke="rgba(184,138,63,0.48)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-
-        <!-- Node 3: /archi.plan -->
-        <rect x="380" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.48)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
-        <text x="440" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
-        <text x="440" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.plan</text>
-        <text x="440" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">spec.md</text>
-        <text x="440" y="117" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">plan.json</text>
+        <!-- Node 3: /archi.code -->
+        <rect x="435" y="30" width="130" height="52" rx="3" stroke="rgba(184,138,63,0.48)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
+        <text x="500" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
+        <text x="500" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.code</text>
+        <text x="500" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">source code</text>
 
         <!-- Arrow 3→4 -->
-        <line x1="502" y1="56" x2="555" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
-        <path d="M 551 52 L 556 56 L 551 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="566" y1="56" x2="634" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
+        <path d="M 630 52 L 635 56 L 630 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 
-        <!-- Node 4: /archi.code -->
-        <rect x="560" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.48)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
-        <text x="620" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
-        <text x="620" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.code</text>
-        <text x="620" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">source code</text>
-
-        <!-- Arrow 4→5 -->
-        <line x1="682" y1="56" x2="735" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
-        <path d="M 731 52 L 736 56 L 731 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-
-        <!-- Node 5: /archi.audit (optional, dashed) -->
-        <rect x="740" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.22)" stroke-width="1" stroke-dasharray="4 3"/>
-        <text x="800" y="52" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">/archi</text>
-        <text x="800" y="68" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">.audit</text>
-        <text x="800" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">audit.md</text>
-        <text x="800" y="22" text-anchor="middle" fill="#4a4540" font-size="8.5" font-family="monospace">{T.workflow.svgOptional}</text>
+        <!-- Node 4: /archi.audit (optional, dashed) -->
+        <rect x="635" y="30" width="130" height="52" rx="3" stroke="rgba(184,138,63,0.22)" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="700" y="52" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">/archi</text>
+        <text x="700" y="68" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">.audit</text>
+        <text x="700" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">audit.md</text>
+        <text x="700" y="22" text-anchor="middle" fill="#4a4540" font-size="8.5" font-family="monospace">{T.workflow.svgOptional}</text>
 
         <!-- Stage labels -->
-        <text x="80"  y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[0]}</text>
-        <text x="260" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[1]}</text>
-        <text x="440" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[2]}</text>
-        <text x="620" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[3]}</text>
-        <text x="800" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[4]}</text>
+        <text x="100" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[0]}</text>
+        <text x="300" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[1]}</text>
+        <text x="500" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[2]}</text>
+        <text x="700" y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[3]}</text>
       </svg>
     </div>
 
@@ -809,6 +815,27 @@ const jsonLd = JSON.stringify({
         <div>
           <p class="wd-cmd">{d.cmd}</p>
           <p class="wd-desc" set:html={d.desc} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ITERATE -->
+<section id="iterate" class="z1">
+  <div class="section">
+    <span class="eyebrow">{T.iterate.eyebrow}</span>
+    <h2 class="section-title" set:html={T.iterate.title} />
+    <p class="section-desc">{T.iterate.desc}</p>
+
+    <div class="iter-grid">
+      {T.iterate.items.map(item => (
+        <div class="iter-card">
+          <p class="iter-card-cmd">{item.cmd}</p>
+          <h3>{item.title}</h3>
+          <p>{item.desc}</p>
         </div>
       ))}
     </div>

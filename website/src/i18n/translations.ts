@@ -35,6 +35,12 @@ interface WorkflowDetail {
   desc: string;
 }
 
+interface IterateItem {
+  cmd: string;
+  title: string;
+  desc: string;
+}
+
 export interface TranslationData {
   htmlLang: string;
   otherLang: string;
@@ -48,6 +54,7 @@ export interface TranslationData {
   };
   nav: {
     workflow: string;
+    iterate: string;
     why: string;
     quickstart: string;
   };
@@ -76,8 +83,14 @@ export interface TranslationData {
     title: string;
     desc: string;
     svgOptional: string;
-    stageLabels: [string, string, string, string, string];
+    stageLabels: [string, string, string, string];
     details: WorkflowDetail[];
+  };
+  iterate: {
+    eyebrow: string;
+    title: string;
+    desc: string;
+    items: IterateItem[];
   };
   quickstart: {
     eyebrow: string;
@@ -122,6 +135,7 @@ export const t: Record<Locale, TranslationData> = {
     },
     nav: {
       workflow: "Workflow",
+      iterate: "Iterate",
       why: "Why",
       quickstart: "Quick Start",
     },
@@ -182,10 +196,10 @@ export const t: Record<Locale, TranslationData> = {
     },
     workflow: {
       eyebrow: "Workflow",
-      title: "Five stages.<br>No ambiguity.",
+      title: "Four stages.<br>No ambiguity.",
       desc: "Every AI command maps to a distinct lifecycle stage. No mixing concerns, no guesswork about what the AI is doing.",
       svgOptional: "optional",
-      stageLabels: ["INIT", "DECOMPOSE", "PLAN", "BUILD", "REVIEW"],
+      stageLabels: ["INIT", "PLAN", "BUILD", "REVIEW"],
       details: [
         {
           cmd: "/archi.start",
@@ -198,6 +212,37 @@ export const t: Record<Locale, TranslationData> = {
         {
           cmd: "/archi.code <ID>",
           desc: "Read the doc trio (spec + plan + ui). Validate Status Gate — <code>active</code> only. Implement phase by phase, marking each step <code>done</code> in <code>plan.json</code>.",
+        },
+        {
+          cmd: "/archi.audit [ID]",
+          desc: "Read-only deep review against spec. Produces a structured findings report with CRITICAL / WARNING / INFO tiers — no code is touched. Use <code>/archi.fix</code> to act on findings.",
+        },
+      ],
+    },
+    iterate: {
+      eyebrow: "Day 2+",
+      title: "Project live.<br>Stay in control.",
+      desc: "Every ongoing change — new requirements, spec updates, bug fixes, architectural pivots — has a dedicated command that keeps your document chain intact.",
+      items: [
+        {
+          cmd: "/archi.scope",
+          title: "Add requirements",
+          desc: "Decompose new requirements into roadmap tasks at any point. Incremental by design — never overwrites existing tasks.",
+        },
+        {
+          cmd: "/archi.edit",
+          title: "Change a spec",
+          desc: "Update a feature's spec or UI definition. A new Phase is appended to plan.json; the original decision history is always preserved.",
+        },
+        {
+          cmd: "/archi.fix",
+          title: "Fix a bug",
+          desc: "Root-cause diagnosis against spec. Appends a Bugfix Phase to plan.json, then surgically fixes only what broke.",
+        },
+        {
+          cmd: "/archi.revise",
+          title: "Revise architecture",
+          desc: "Project-wide change: impact analysis first, you confirm, then cascade update of all affected feature docs.",
         },
       ],
     },
@@ -371,6 +416,7 @@ export const t: Record<Locale, TranslationData> = {
     },
     nav: {
       workflow: "工作流",
+      iterate: "迭代",
       why: "为什么",
       quickstart: "快速开始",
     },
@@ -431,10 +477,10 @@ export const t: Record<Locale, TranslationData> = {
     },
     workflow: {
       eyebrow: "工作流",
-      title: "五个阶段。<br>零模糊地带。",
+      title: "四个阶段。<br>零模糊地带。",
       desc: "每个 AI 命令对应一个明确的生命周期阶段。不混淆关注点，不猜测 AI 在做什么。",
       svgOptional: "可选",
-      stageLabels: ["初始化", "需求拆解", "规划", "构建", "审查"],
+      stageLabels: ["初始化", "规划", "构建", "审查"],
       details: [
         {
           cmd: "/archi.start",
@@ -447,6 +493,37 @@ export const t: Record<Locale, TranslationData> = {
         {
           cmd: "/archi.code <ID>",
           desc: "读取文档三件套（spec + plan + ui），验证状态门控（仅 <code>active</code> 通过），按阶段逐步实现，并在 <code>plan.json</code> 中标记每步 <code>done</code>。",
+        },
+        {
+          cmd: "/archi.audit [ID]",
+          desc: "只读深度审查，对照规格生成 CRITICAL / WARNING / INFO 三级发现报告，不修改任何代码。用 <code>/archi.fix</code> 处理发现的问题。",
+        },
+      ],
+    },
+    iterate: {
+      eyebrow: "持续迭代",
+      title: "项目上线后，<br>保持掌控。",
+      desc: "无论是追加需求、变更规格、修复缺陷还是调整架构，每种场景都有专属命令，始终维护文档链的完整性。",
+      items: [
+        {
+          cmd: "/archi.scope",
+          title: "追加需求",
+          desc: "在项目任何阶段将新需求增量分解为 roadmap 任务，设计上不会重写任何已有任务。",
+        },
+        {
+          cmd: "/archi.edit",
+          title: "变更规格",
+          desc: "更新功能 spec 或 UI 定义，向 plan.json 追加新 Phase，原始决策历史永久保留。",
+        },
+        {
+          cmd: "/archi.fix",
+          title: "修复缺陷",
+          desc: "对照 spec 进行根因诊断，向 plan.json 追加 Bugfix Phase，然后外科手术式精准修复。",
+        },
+        {
+          cmd: "/archi.revise",
+          title: "调整架构",
+          desc: "项目级变更：先输出影响分析，用户确认后，级联更新所有受影响的功能文档。",
         },
       ],
     },
