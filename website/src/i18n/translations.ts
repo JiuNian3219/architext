@@ -223,6 +223,36 @@ export const t: Record<Locale, TranslationData> = {
       tableHead: ["Command", "Purpose", "Outputs"],
       tableGroups: [
         {
+          label: "CLI — Framework",
+          rows: [
+            {
+              cmd: "archi init",
+              desc: "Deploy framework files (docs, rules, skills, IDE configs) into the project. Run once per project.",
+              out: "docs · rules · skills · IDE configs",
+            },
+            {
+              cmd: "archi update",
+              desc: "Sync prompts and rules to the latest version. User-owned docs (vision, roadmap, specs) are never touched.",
+              out: "updated prompts + rules",
+            },
+            {
+              cmd: "archi pack",
+              desc: "Bundle user-owned data (vision, roadmap, specs, plans, rules) into a single XML for backup before upgrade or migration.",
+              out: "architext-pack.xml",
+            },
+            {
+              cmd: "archi uninstall",
+              desc: "Remove all framework-managed files from the project. User-owned docs are preserved.",
+              out: "framework files removed",
+            },
+            {
+              cmd: "archi doctor",
+              desc: "Inspect environment and project config — checks Node version, config file integrity, and deployed file health.",
+              out: "diagnostic report",
+            },
+          ],
+        },
+        {
           label: "Initialize",
           rows: [
             {
@@ -441,6 +471,36 @@ export const t: Record<Locale, TranslationData> = {
       },
       tableHead: ["命令", "用途", "产物"],
       tableGroups: [
+        {
+          label: "CLI — 框架管理",
+          rows: [
+            {
+              cmd: "archi init",
+              desc: "将框架文件（文档、规则、技能、IDE 配置）部署到项目中，每个项目执行一次。",
+              out: "文档 · 规则 · 技能 · IDE 配置",
+            },
+            {
+              cmd: "archi update",
+              desc: "将 prompts 和规则同步到最新版本，不会触碰用户自有文档（vision、roadmap、spec 等）。",
+              out: "更新后的 prompts + 规则",
+            },
+            {
+              cmd: "archi pack",
+              desc: "将用户自有数据（vision、roadmap、spec、plan、规则）打包为单个 XML 文件，供升级或迁移前备份。",
+              out: "architext-pack.xml",
+            },
+            {
+              cmd: "archi uninstall",
+              desc: "从项目中移除所有框架管理的文件，用户自有文档不受影响。",
+              out: "框架文件已移除",
+            },
+            {
+              cmd: "archi doctor",
+              desc: "检查运行环境和项目配置 — 验证 Node 版本、配置文件完整性及已部署文件的健康状态。",
+              out: "诊断报告",
+            },
+          ],
+        },
         {
           label: "初始化",
           rows: [
