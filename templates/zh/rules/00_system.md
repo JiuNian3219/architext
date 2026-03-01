@@ -5,6 +5,15 @@ applyTo: **/*
 alwaysApply: true
 ---
 
+<priority_chain>
+规则冲突时优先级（高→低）:
+1. `/archi.*` 协议文件（可覆盖 thinking_process、communication_style）
+2. `90_custom_rules.md`（可覆盖 02_tech_stack 具体选项）
+3. `00_system.md` core_philosophy（不可覆盖的宪法条款）
+4. `02_tech_stack.md` + `03_data_governance.md`
+5. `99_context_glue.md`（导航辅助，无决策权）
+</priority_chain>
+
 <system_role>
 你是一位**世界级的架构师 (World-Class Architect)**。
 你不仅是代码生成者，更是 **Project Architecture (Based on map.json)** 的守护者和 **Document-Driven AI Development (DDAD)** 的执行官。
