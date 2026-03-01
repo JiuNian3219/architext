@@ -601,7 +601,7 @@ const jsonLd = JSON.stringify({
       <div class="tc-dim">——————————————————————————————————</div>
       <div><span class="tc-amber">◆</span> <span class="tc-text">Select language</span>  <span class="tc-dim">› English</span></div>
       <div><span class="tc-amber">◆</span> <span class="tc-text">Select IDE(s)</span>     <span class="tc-dim">› Cursor</span></div>
-      <div><span class="tc-amber">◆</span> <span class="tc-text">Select project type</span> <span class="tc-dim">› Web SPA / PWA</span></div>
+      <div><span class="tc-amber">◆</span> <span class="tc-text">Select project features</span> <span class="tc-dim">› ui, api</span></div>
       <div>&nbsp;</div>
       <div><span class="tc-green">✔</span> <span class="tc-text">Docs deployed</span>     <span class="tc-dim">→ .architext/</span></div>
       <div><span class="tc-green">✔</span> <span class="tc-text">Rules deployed</span>    <span class="tc-dim">→ .cursor/rules/</span></div>
@@ -725,7 +725,7 @@ const jsonLd = JSON.stringify({
     <!-- Workflow diagram SVG: architectural section-cut style -->
     <div class="workflow-diagram">
       <svg
-        viewBox="0 0 860 170"
+        viewBox="0 -60 860 230"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style="width:100%; min-width:700px; display:block;"
@@ -748,20 +748,24 @@ const jsonLd = JSON.stringify({
         <text x="80" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">vision.md</text>
         <text x="80" y="117" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">roadmap.json</text>
 
-        <!-- Arrow 1→2 -->
-        <line x1="142" y1="56" x2="195" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
-        <path d="M 191 52 L 196 56 L 191 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Bypass arrow: start → plan (main path, skip scope) -->
+        <line x1="142" y1="56" x2="378" y2="56" stroke="rgba(184,138,63,0.18)" stroke-width="1"/>
+        <path d="M 374 52 L 379 56 L 374 60" stroke="rgba(184,138,63,0.26)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 
-        <!-- Node 2: /archi.scope (optional, dashed) -->
-        <rect x="200" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.22)" stroke-width="1" stroke-dasharray="4 3"/>
-        <text x="260" y="52" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">/archi</text>
-        <text x="260" y="68" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">.scope</text>
-        <text x="260" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">roadmap tasks</text>
-        <text x="260" y="22" text-anchor="middle" fill="#4a4540" font-size="8.5" font-family="monospace">{T.workflow.svgOptional}</text>
+        <!-- Node 2: /archi.scope (optional — floats above main line) -->
+        <rect x="200" y="-44" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.22)" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="260" y="-22" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">/archi</text>
+        <text x="260" y="-6"  text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">.scope</text>
+        <text x="260" y="31"  text-anchor="middle" fill="#625c55" font-size="9"  font-family="monospace">roadmap tasks</text>
+        <text x="260" y="-52" text-anchor="middle" fill="#4a4540" font-size="8.5" font-family="monospace">{T.workflow.svgOptional}</text>
 
-        <!-- Arrow 2→3 -->
-        <line x1="322" y1="56" x2="375" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
-        <path d="M 371 52 L 376 56 L 371 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Arrow: start → scope (branch up, dashed) -->
+        <path d="M 155 56 C 160 56 160 -18 200 -18" stroke="rgba(184,138,63,0.38)" stroke-width="1" fill="none" stroke-dasharray="4 3"/>
+        <path d="M 196 -22 L 201 -18 L 196 -14" stroke="rgba(184,138,63,0.48)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+        <!-- Arrow: scope → plan (merge down, dashed) -->
+        <path d="M 320 -18 C 360 -18 360 56 380 56" stroke="rgba(184,138,63,0.38)" stroke-width="1" fill="none" stroke-dasharray="4 3"/>
+        <path d="M 376 52 L 381 56 L 376 60" stroke="rgba(184,138,63,0.48)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 
         <!-- Node 3: /archi.plan -->
         <rect x="380" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.48)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
@@ -784,11 +788,12 @@ const jsonLd = JSON.stringify({
         <line x1="682" y1="56" x2="735" y2="56" stroke="rgba(184,138,63,0.28)" stroke-width="1"/>
         <path d="M 731 52 L 736 56 L 731 60" stroke="rgba(184,138,63,0.45)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 
-        <!-- Node 5: /archi.audit -->
-        <rect x="740" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.42)" stroke-width="1" fill="rgba(184,138,63,0.03)"/>
-        <text x="800" y="52" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">/archi</text>
-        <text x="800" y="68" text-anchor="middle" fill="#b88a3f" font-size="11" font-family="monospace">.audit</text>
+        <!-- Node 5: /archi.audit (optional, dashed) -->
+        <rect x="740" y="30" width="120" height="52" rx="3" stroke="rgba(184,138,63,0.22)" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="800" y="52" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">/archi</text>
+        <text x="800" y="68" text-anchor="middle" fill="rgba(184,138,63,0.5)" font-size="11" font-family="monospace">.audit</text>
         <text x="800" y="105" text-anchor="middle" fill="#625c55" font-size="9" font-family="monospace">audit.md</text>
+        <text x="800" y="22" text-anchor="middle" fill="#4a4540" font-size="8.5" font-family="monospace">{T.workflow.svgOptional}</text>
 
         <!-- Stage labels -->
         <text x="80"  y="147" text-anchor="middle" fill="#4a4540" font-size="8" font-family="monospace" letter-spacing="0.04em">{T.workflow.stageLabels[0]}</text>

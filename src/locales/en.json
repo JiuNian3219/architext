@@ -49,6 +49,10 @@
   "help": {
     "desc": "Display Architext command help information"
   },
+  "pack": {
+    "desc": "Pack user data (docs, tasks, custom rules) for backup before upgrade or migration",
+    "output": "Output file path (default: architext-pack.xml)"
+  },
   "scaffold": {
     "fallback": "Template for {lang} not found, falling back to 'zh'",
     "step_docs": "Scaffolding documentation structure...",
@@ -67,7 +71,6 @@
       "title": "Initialize Architext Framework for deploying standardized AI context protocols & IDE rules.",
       "select_editor": "Select target editors",
       "select_lang": "Select documentation language",
-      "select_type": "Select project type",
       "select_features": "Select project features (multi-select)",
       "select_doc_dir": "Enter documentation directory",
       "config_exists": "Existing config (architext.json) detected. Overwrite?",
@@ -246,6 +249,17 @@
           "file_hint": "Run npx archi update to restore"
         }
       }
+    },
+    "pack": {
+      "title": "Architext Pack",
+      "no_config": "No .architext.json found — please run archi init first",
+      "packing": "Collecting user data...",
+      "empty": "No user data found, skipping pack",
+      "empty_hint": "Running pack before filling in any docs has no effect",
+      "done": "Packed {count} files → {file}",
+      "hint_recover": "After upgrade, restore with: /archi.recover {file}",
+      "success": "Pack complete",
+      "failed": "Pack failed"
     },
     "help": {
       "tagline": "No Docs, No Code. — AI-Native Architecture Protocol",

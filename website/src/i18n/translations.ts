@@ -296,6 +296,11 @@ export const t: Record<Locale, TranslationData> = {
               out: "code deleted · refs cleaned",
             },
             {
+              cmd: "/archi.recover",
+              desc: "Restore user data from an architext-pack.xml after upgrade or migration (run archi pack first, then archi uninstall + archi init)",
+              out: "restored docs + tasks + rules",
+            },
+            {
               cmd: "/archi.help",
               desc: "No arg: recommend next action based on project state. With arg: locate relevant files and answer",
               out: "guidance only (no write)",
@@ -508,6 +513,11 @@ export const t: Record<Locale, TranslationData> = {
               cmd: "/archi.remove",
               desc: "全链路下线：删除文档和代码，清理 roadmap/map/dict/error_codes 引用",
               out: "代码删除 · 引用清理",
+            },
+            {
+              cmd: "/archi.recover",
+              desc: "从 architext-pack.xml 还原用户数据，用于框架升级或迁移（先运行 archi pack 备份，再 archi uninstall + archi init）",
+              out: "还原后的文档 · 任务 · 规则",
             },
             {
               cmd: "/archi.help",

@@ -11,6 +11,7 @@ import { renderCommand } from "./commands/meta/render/index.ts";
 import { taskCommand } from "./commands/meta/task/index.ts";
 import { helpCommand } from "./commands/meta/help/index.ts";
 import { templateCommand } from "./commands/meta/template/index.ts";
+import { packCommand } from "./commands/meta/pack/index.ts";
 import { handleError } from "./core/error-handler.ts";
 import { createT, getSystemLocale } from "./utils/t.ts";
 
@@ -77,6 +78,12 @@ cli.command("render", t("render.desc")).action(run(renderCommand));
 
 // Template 获取模板文件
 cli.command("template [name]", t("template.desc")).action(run(templateCommand));
+
+// Pack 打包用户数据（升级前备份）
+cli
+  .command("pack", t("pack.desc"))
+  .option("-o, --output <file>", t("pack.output"))
+  .action(run(packCommand));
 
 // Help 参考手册
 cli.command("help", t("help.desc")).action(run(helpCommand));
