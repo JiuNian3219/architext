@@ -14,6 +14,8 @@
     "lang": "规则与文档骨架语言",
     "doc": "自定义文档路径，默认使用.architext",
     "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
+    "yes": "跳过所有确认提示（覆盖已有配置时自动确认）",
+    "brief": "生成 project-brief.md（与 -y 配合使用可跳过交互）",
     "failed": "初始化失败"
   },
   "update": {

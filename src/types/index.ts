@@ -96,6 +96,8 @@ export interface InitOptions {
   language?: LocaleLang;
   doc?: string;
   type?: string;
+  yes?: boolean;
+  brief?: boolean;
 }
 
 /**

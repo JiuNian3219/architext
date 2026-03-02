@@ -166,11 +166,17 @@ export async function collectInitConfig(options: {
   language?: LocaleLang;
   doc?: string;
   type?: string;
+  yes?: boolean;
+  brief?: boolean;
 }): Promise<InitConfig | null> {
   const existingConfig = await loadConfig();
 
-  const canContinue = await checkOverwrite(existingConfig);
-  if (!canContinue) return null;
+  if (options.yes) {
+    // --yes: skip overwrite confirmation
+  } else {
+    const canContinue = await checkOverwrite(existingConfig);
+    if (!canContinue) return null;
+  }
 
   const language = await askLanguage(options.language, existingConfig);
   if (!language) return null;
@@ -181,8 +187,14 @@ export async function collectInitConfig(options: {
   const features = await askFeatures(options.type);
   if (!features) return null;
 
-  const generateBrief = await askGenerateBrief();
-  if (generateBrief === null) return null;
+  let generateBrief: boolean;
+  if (options.brief !== undefined) {
+    generateBrief = options.brief;
+  } else {
+    const response = await askGenerateBrief();
+    if (response === null) return null;
+    generateBrief = response;
+  }
 
   const docDir =
     options.doc || (existingConfig?.docDir as string) || ".architext";
