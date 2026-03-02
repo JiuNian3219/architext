@@ -39,6 +39,8 @@ cli
   .option("-l, --language <lang>", t("init.lang"))
   .option("-d, --doc <path>", t("init.doc"))
   .option("-t, --type <type>", t("init.type"))
+  .option("-y, --yes", t("init.yes"))
+  .option("-b, --brief", t("init.brief"))
   .action(run(initCommand));
 
 // Update 同步最新规则

@@ -14,6 +14,8 @@
     "lang": "Rules and document skeleton language",
     "doc": "Custom document path, default is .architext",
     "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
+    "yes": "Skip all confirmation prompts (auto-confirm overwrite)",
+    "brief": "Generate project-brief.md (use with -y to skip interaction)",
     "failed": "Initialization failed"
   },
   "update": {
