@@ -1,160 +1,113 @@
 <protocol_revise>
   **Trigger**: `/archi.revise [context]`
-  **Goal**: Execute project-wide global changes (tech stack, architecture, vision, etc.), analyze impact scope, modify global assets after user confirmation, and cascade updates to affected Task documents.
+  **Goal**: Execute project-wide global changes (tech stack, architecture, vision, etc.); analyze impact scope; modify global assets after user confirmation and cascade update affected Task docs.
 
 <constraints_cursor>
-    **Mode Lock**: This protocol must run in **Agent Mode (Normal Mode)**. Prohibited from switching to Plan Mode or other read-only modes.
+    **Mode Lock**: This protocol must run in **Agent Mode (Normal Mode)**. Do not switch to Plan Mode or other read-only modes.
 </constraints_cursor>
 
 <meta>
     <style>Strategic, Analytical, Cautious, Traceable</style>
     <language>English</language>
     <principles>
-      1.  **User Gate**: Global changes require item-by-item user confirmation before execution. Prohibited from modifying without approval.
-      2.  **Impact First**: Output complete impact analysis before making any changes.
-      3.  **Doc Cascade**: After global asset changes, must update affected Task docs following edit protocol standards.
+      1.  **User Gate**: Global changes require item-by-item user confirmation before execution. Do not modify without approval.
+      2.  **Impact First**: Output complete impact analysis before making changes.
+      3.  **Doc Cascade**: After global asset changes, must sync affected Task docs per edit standards.
       4.  **Traceability**: Every change must be traceable — state rationale and impact scope.
     </principles>
 </meta>
 
 <step_1_load>
-    **Role**: Systems Analyst
     **Action**:
-    1.  **Read Global Assets**:
-        - `[[__DOCS_DIR__]]/global/vision.md`
-        - `[[__DOCS_DIR__]]/global/roadmap.json`
-        - `[[__DOCS_DIR__]]/global/map.json`
-        - `[[__DOCS_DIR__]]/global/dictionary.json`
-        - `[[__DOCS_DIR__]]/global/error_codes.json`
-        - `02_tech_stack.md`
-        - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
-        - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
-    2.  **Scan Task Index**: Scan `[[__DOCS_DIR__]]/tasks/` directory, build Task index (ID, name, status).
-    3.  **Intent Analysis**: Based on user `[context]`, identify which global asset categories are affected.
+    1.  **Load**: All global assets (vision/roadmap/map/dictionary/error_codes/02_tech_stack + conditional: design_tokens/data_snapshot).
+    2.  **Scan Task Index**: Scan tasks/ directory; build Task index (ID, name, status).
+    3.  **Intent Analysis**: From `[context]`, identify affected global asset categories.
 
-    **Output**: Change intent summary — list of initially identified global files. Proceed to step_2.
+    **Output**: Change intent summary — list initially identified global files; proceed to step_2.
 </step_1_load>
 
 <step_2_interview>
     **Role**: Chief Architect
     **Action**:
-    Clarify change boundaries based on user description and loaded context:
+    Clarify change boundaries from user description and loaded context:
 
     | Dimension | Description |
     |:---|:---|
-    | Change Scope | Precisely identify which global files and rules are affected |
-    | Change Motivation | Why this change is needed, what outcome is expected |
-    | Exclusion List | Any Tasks that should not be affected |
+    | Change scope | Precisely identify which global files and rules are affected |
+    | Change motivation | Why this change; expected outcome |
+    | Exclusion list | Any Tasks that should not be affected |
 
-    - Context is clear enough → merge into step_3 and output impact analysis directly.
-    - Ambiguity or multiple viable directions → ask user to confirm (A/B/C/D options).
+    - When context is clear enough → merge into step_3 and output impact analysis directly.
+    - When ambiguity or multiple viable directions → ask user to confirm (A/B/C/D options).
 </step_2_interview>
 
 <step_3_impact>
-    **Role**: Impact Analyst
-    **Constraint**: **Output only, prohibited from modifying any files**. This step produces the "Change Impact Assessment".
+    **Constraint**: **Output only; do not modify any files**. This step produces the "Change Impact Assessment".
 
-    **Output Format**:
-    ```
-    ## Change Impact Assessment: [Change Topic]
+    **Output**: Change impact assessment — global asset change list table (file/change content/type), affected Task list table (ID/name/impact points/severity), user decision items (if any). End with confirmation: OK to confirm all; or annotate adjustments.
 
-    ### 1. Global Asset Change List
-    | File | Change Content | Type |
-    |:---|:---|:---|
-    | vision.md | [what specifically changes, or "no change needed"] | modify/no change |
-    | 02_tech_stack.md | [...] | ... |
-    | roadmap.json | [...] | ... |
-    | map.json | [...] | ... |
-    | dictionary.json | [...] | ... |
-    | data_snapshot.json | [...] | ... |
-    | design_tokens.json | [...] | ... |
-    | error_codes.json | [...] | ... |
-
-    ### 2. Affected Tasks List
-    | Task ID | Name | Impact Points | Severity |
-    |:---|:---|:---|:---|
-    | INF-001 | [name] | [which parts of spec/ui/plan are affected] | High/Med/Low |
-
-    ### 3. Items Requiring User Decision (if any)
-    - [?] [uncertain item description + options]
-    - [?] ...
-
-    ---
-    > Reply **OK** to confirm all; or annotate items that need adjustment.
-    ```
-
-    **Gate**: Wait for user confirmation. Prohibited from entering step_4 without confirmation.
+    **Gate**: Wait for user confirmation. Do not enter step_4 without confirmation.
 </step_3_impact>
 
 <step_3_5_refinement>
-    **Role**: Consultant
-    **Trigger**: User replies non-OK, contains corrections, rejections, or additional input.
-    **Action**: Do not execute changes. Incorporate user feedback, refresh and re-output the impact assessment. Wait for re-confirmation.
+    **Trigger**: User reply is not OK — contains corrections, rejections, or additional input.
+    **Action**: Do not execute changes. Incorporate feedback, refresh impact assessment and re-output; await re-confirmation.
 </step_3_5_refinement>
 
 <step_4_execute>
-    **Role**: Execution Engineer
     **Action**:
 
-    **Safety Checkpoint** (required before execution):
+    **Safety Checkpoint** (must complete before execution):
     1. Check Git working directory status (run `git status`).
-    2. If uncommitted changes exist → prompt user to commit or stash first, then continue.
-    3. Once working directory is clean, inform user: to roll back, run `git checkout -- .` to restore pre-change state.
+    2. If uncommitted changes exist → prompt user to commit or stash first.
+    3. Once working directory clean, inform user: to rollback, run `git checkout -- .`.
 
-    **Phase 1 — Modify Global Assets**:
-    Modify global files per the user-confirmed list. Output change summary for each file.
+    **Phase 1 — Modify global assets**:
+    Modify global files per user-confirmed list. Output change summary for each file.
 
-    **[?UI] Phase 1.5 — Design System Change Check**:
-    If `design_tokens.json` has any of the following changes, notify the user after Phase 2:
+    **(UI projects only) Phase 1.5 — Design system change check**:
+    If `design_tokens.json` has the following changes, notify user to re-run `archi-ui-wireframe` Phase 2:
 
-    | Change scope | Impact | Action |
-    |:---|:---|:---|
-    | `primitivePalette.brand` / `semanticTokens.colors` | Brand/semantic color change | Notify user: re-run `archi-ui-wireframe` Phase 2 (full re-coloring) |
-    | `semanticTokens.typography` | Font change | Notify user: re-run Phase 2 |
-    | `motion.preference` / `motion.patterns` | Motion change | Notify user: re-run Phase 2 |
-    | `illustration.iconLibrary` | Icon library change | Notify user: re-run Phase 2 |
-    | `layout` (radius/spacing/shadow) | Component size/radius change | Notify user: re-run Phase 2 |
+    | Change scope | Impact |
+    |:---|:---|
+    | `primitivePalette.brand` / `semanticTokens.colors` | Brand/semantic color change |
+    | `semanticTokens.typography` | Font change |
+    | `motion.preference` / `motion.patterns` | Motion change |
+    | `illustration.iconLibrary` | Icon library change |
+    | `layout` (radius/spacing/shadow) | Component size/radius change |
 
-    > If none of the above fields changed (e.g., only `mode.default` changed), Phase 2 re-run is not needed.
+    > If above fields unchanged (e.g. only `mode.default` changed), no need to re-run Phase 2.
 
-    **Phase 2 — Cascade Update Task Docs**:
+    **Phase 2 — Cascade update Task docs**:
     For each affected Task, follow `/archi.edit` standards:
-    1.  Update `spec.md` (logic/rules that need adjustment due to global changes).
-    2.  [?UI] Update `ui.md` (scope/interaction adjustments due to global changes); if screen structure is affected, [[SKILL: archi-ui-wireframe|run skill (incremental update mode) to sync both `ui_concept.html` + `ui_context.md`]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]].
-    3.  Append new Phase to `plan.json` `phases`: `Phase X: Global Revision — [Change Topic] (<Date>)`, listing implementation tasks.
+    1.  Update `spec.md`.
+    2.  (UI projects only) Update `ui.md`; if screen structure affected, [[SKILL: archi-ui-wireframe|run skill (local update mode) to sync]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]].
+    3.  Append new Phase to `plan.json`: `Phase X: Global Revision — [Change Topic] (<Date>)`.
 
     **Output**: Change summary for each file (global + Task).
 </step_4_execute>
 
+<step_4_5_verify>
+    **Role**: Independent Reviewer
+
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: Review step_4 Phase 2 cascade-updated Task docs for alignment with modified global assets]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: plan-docs review dimension table)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
+</step_4_5_verify>
+
 <step_5_summary>
-    **Role**: Auditor
+    **Role**: Chief Auditor
     **Checklist**:
     1.  Cross-consistency between global assets (vision ↔ tech_stack ↔ roadmap ↔ map).
     2.  Task docs aligned with updated global assets.
-    3.  No orphaned references (stale terms/paths in dictionary/map cleaned up).
+    3.  No orphan refs (stale terms/paths in dictionary/map cleaned).
 
-    **Terminal Gate** (Do not skip; must complete before output summary):
-    | Step | Command | Pass Condition |
-    |:---|:---|:---|
-    | 1 | `npx archi task --check` | No ERROR-level issues |
-    | 2 | `npx archi render` | `.md` views generated |
+    **Terminal Gate** (do not skip): Standard check (task --check + render).
 
-    **Action** (After Gate passes):
+    **Action** (after Gate passes):
     1.  Output change summary.
 
-    **Output**:
-    ```
-    ## Global Revision Summary: [Change Topic]
-
-    **Global Assets Modified**: [list of modified files]
-    **Tasks Updated**: [list of updated Tasks + impact summary each]
-    **Audit Result**: [pass/risk items]
-
-    ### Next Steps
-    | Priority | Action | Description |
-    |:---|:---|:---|
-    | ... | ... | ... |
-    ```
+    **Output**: Global Revision Summary — global asset changed files list, Task update list and impact summary, audit result, Next Steps table.
 </step_5_summary>
 
 </protocol_revise>

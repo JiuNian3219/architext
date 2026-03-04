@@ -1,69 +1,61 @@
 <protocol_help>
   **Trigger**: `/archi.help [question]`
-  **Goal**: Project navigation and contextual Q&A. Analyze current project state to recommend next actions; or answer user questions based on project context.
+  **Goal**: Project navigation and context Q&A. Analyze project current state, recommend next actions; or answer user questions based on project context.
 
 <meta>
     <style>Concise, Contextual, Actionable</style>
     <language>English</language>
     <principles>
-      1.  **Context-Aware**: Answer based on real project state. No guessing.
-      2.  **Actionable Output**: Every output must include an executable next step (specific command + args).
-      3.  **Minimal Token**: Keep output concise. Don't repeat what the user already knows. Only present conclusions and recommendations.
-      4.  **No Audit**: No deep auditing (that's `/archi.audit`'s job). Focus on navigation and Q&A.
+      1.  **Context-Aware**: Answer based on actual project state; no guessing.
+      2.  **Actionable Output**: Every output must include executable next-step suggestions (concrete command + params).
+      3.  **Minimal Token**: Concise output; don't restate known info. Present reasoning and suggestions only.
+      4.  **No Audit**: Do not do deep audit (that's `/archi.audit`). Focus on navigation and Q&A.
     </principles>
 </meta>
 
 <step_1_load_context>
-    **Role**: Project Observer
     **Action**:
-    1.  Read `[[__DOCS_DIR__]]/global/roadmap.json` — extract only `id/title/status/deps/tag` fields per task; skip `goal/notes` (navigation and status aggregation do not need these details).
-    2.  Scan `[[__DOCS_DIR__]]/tasks/` directory — get existing Tasks and their doc completeness (spec.md / ui.md / plan.json).
-    3.  [?question] If user provided a question, locate relevant files by semantic match (spec / plan / vision / tech_stack / data_snapshot, etc.), read as needed.
+    1.  **Load**: roadmap.json (id/title/status/deps/tag only; skip goal/notes).
+    2.  **Scan Tasks**: Scan tasks/ — get existing Tasks and doc completeness (has spec.md / ui.md / plan.json).
+    3.  [?question] If user provided a question, locate and read relevant files by semantics.
 
     **Output**: Internal context (not shown to user).
 </step_1_load_context>
 
 <step_2_route>
-    **Role**: Router
-    **Action**: Branch based on input:
+    **Action**: Branch by input:
 
     | Input | Branch |
     |:---|:---|
     | No args | → step_3_navigate (project navigation) |
-    | Has `[question]` | → step_4_answer (contextual Q&A) |
+    | Has `[question]` | → step_4_answer (context Q&A) |
 
 </step_2_route>
 
 <step_3_navigate>
-    **Role**: Project Navigator
     **Action**:
     1.  **Determine project phase**:
 
-        | Signal | Phase | Recommendation |
+        | Signal | Phase | Suggestion |
         |:---|:---|:---|
         | roadmap.json missing | Not initialized | New project → `/archi.start`; existing code → `/archi.inherit` |
-        | Has roadmap but no Task dirs | Started, not planned | Run `/archi.scope` to plan new tasks |
-        | Has Legacy stubs (Spec-Status: Stub) | Inherited, not enriched | Run `/archi.edit LEG-xx` to enrich spec |
-        | Has active tasks with complete plan.json | Ready to code | Run `/archi.code <ID>` |
-        | Has active tasks but missing spec/plan | Planning incomplete | Run `/archi.plan <ID>` to complete |
-        | All tasks done | Complete | Run `/archi.scope` to plan new tasks or release |
-        | Has blocked tasks | Blocked | Show blocking reason and prerequisites |
+        | Has roadmap but no tasks/ | Started, not planned | `/archi.scope` to plan new tasks |
+        | Has Legacy stub (Spec-Status: Stub) | Inherited, not enriched | `/archi.edit LEG-xx` to enrich spec |
+        | Has active task and plan.json complete | Ready to code | `/archi.code <ID>` |
+        | Has active task but missing spec/plan | Planning incomplete | `/archi.plan <ID>` to complete |
+        | All tasks done | Completed | `/archi.scope` to plan new or release |
+        | Has blocked task | Blocked | Show block reason and upstream deps |
 
-    2.  **Output format**:
-        - One-line summary of current state
-        - Recommended next action (with specific command)
-        - If multiple paths available, list by priority (max 3)
+    2.  **Output**: One-line state summary + recommended next step (with command) + optional paths (≤3, by priority).
 </step_3_navigate>
 
 <step_4_answer>
-    **Role**: Project Advisor
     **Action**:
-    1.  Parse `[question]` semantics, locate relevant project files.
-    2.  Read relevant files, synthesize answer.
-    3.  If question involves an action (e.g. "how to do X"), include specific command suggestions.
-    4.  If insufficient info to answer, state what's missing instead of fabricating.
+    1.  Parse `[question]` semantics; locate and read relevant project files.
+    2.  Answer comprehensively; operational questions must include concrete command suggestions.
+    3.  When info insufficient, state what's missing; do not fabricate.
 
-    **Output**: Concise answer based on project context + relevant file references.
+    **Output**: Concise answer based on project context + relevant file refs.
 </step_4_answer>
 
 </protocol_help>

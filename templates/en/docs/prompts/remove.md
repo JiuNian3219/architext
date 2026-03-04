@@ -1,161 +1,100 @@
 <protocol_remove>
   **Trigger**: `/archi.remove <id>`
-  **Goal**: Fully decommission the specified Task — delete docs, code, and global references with zero residue.
+  **Goal**: Decommission the specified Task from the project — delete docs, code, global refs; ensure zero residue.
 
 <meta>
     <style>Surgical, Cautious, Thorough</style>
     <language>English</language>
     <principles>
-      1.  **Dependency Safety**: If other tasks depend on this Task, dependencies must be resolved before proceeding.
-      2.  **Confirmation Gate**: Deletion is irreversible; must present full impact and obtain explicit confirmation.
-      3.  **Zero Residue**: Cleanup must cover all associated layers (docs/code/global data/glue entries).
-      4.  **No Side Effects**: Only remove content related to the target Task; forbidden to touch unrelated files.
+      1.  **Dependency Safety**: When other tasks depend on this Task, must decouple first to continue.
+      2.  **Confirmation Gate**: Delete is irreversible; must show full impact and get explicit user confirmation.
+      3.  **Zero Residue**: Cleanup must cover all layers (docs/code/global data/addressing entries).
+      4.  **No Side Effects**: Only delete target Task content; do not touch unrelated files.
     </principles>
 </meta>
 
 <step_1_resolve>
-    **Role**: System Analyst
     **Action**:
-    1.  **Resolve ID**: Parse `<id>` from `[[__DOCS_DIR__]]/global/roadmap.json` → Task Name, Slug, status.
-    2.  **ID Not Found** → Error with list of available task IDs.
-    3.  **Load Context**:
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/` — All docs (spec.md, ui.md, plan.json, etc.)
-        - `[[__DOCS_DIR__]]/global/roadmap.json` — Task dependency graph
-        - `[[__DOCS_DIR__]]/global/map.json` — Architecture registry
-        - `99_context_glue.md` — Code↔doc associations
+    1.  **Resolve ID**: Parse `<id>` from roadmap.json → Task Name, Slug, status.
+    2.  **ID Not Found** → Error and list available task IDs.
+    3.  **Load**: task docs directory, roadmap.json (deps), map.json (architecture reg), 99_context_glue.md (associations).
 
     **Output**: Target Task info (ID, name, status, associated file count).
 </step_1_resolve>
 
 <step_2_impact>
-    **Role**: Impact Assessor
-    **Action**: Scan each layer to produce an impact manifest.
+    **Action**: Scan layer by layer; generate impact list.
 
-    ### 2.1 Dependency Check (Blocking)
+    ### 2.1 Dependency check (blocking)
 
-    Scan all tasks' `deps` in `roadmap.json` for references to `<id>`.
+    Scan roadmap.json all tasks `deps`; find tasks depending on `<id>`.
 
-    | Situation | Handling |
+    | Condition | Handling |
     |:---|:---|
-    | No downstream deps | Pass, continue |
-    | Has downstream deps with `pending`/`blocked` status | List affected tasks; ask user: remove dependency and continue, or abort |
-    | Has downstream deps with `active`/`done` status | **Block** — these tasks may use this Task's interfaces/components. Must `/archi.edit` to decouple first |
+    | No downstream deps | Pass |
+    | Has downstream deps and `pending`/`blocked` | List; ask: remove dep and continue or abort |
+    | Has downstream deps and `active`/`done` | **Block** — must `/archi.edit` to decouple first |
 
-    ### 2.2 Code File Identification
+    ### 2.2 Code file identification
 
-    Locate code files belonging to this Task via:
-    1.  `99_context_glue.md` code paths associated with `<id>`.
-    2.  `map.json` modules/directories registered for this Task.
-    3.  `plan.json` file paths mentioned in tasks.
-    4.  Scan code directories for files named with Slug or clearly scoped to this Task.
+    Locate code files via: context_glue paths, map.json registered modules, plan.json mentioned files, Slug-named or clearly owned files.
 
-    ### 2.3 Global Reference Scan
+    ### 2.3 Global ref scan
 
-    | File | Scan Target |
+    | File | Scan content |
     |:---|:---|
-    | `roadmap.json` | Task entry + `deps` references in other tasks |
-    | `map.json` | Module registry entries + `featureRelations` entries where the deleted Task is the aggregator |
+    | `roadmap.json` | Task entry + deps refs |
+    | `map.json` | Module entry + featureRelations where deleted Task is aggregator |
     | `99_context_glue.md` | Association entries |
-    | `dictionary.json` | Terms exclusive to this Task (flag only, no auto-delete) |
-    | `error_codes.json` | Error codes exclusive to this Task (flag only, no auto-delete) |
+    | `dictionary.json` | Exclusive terms (mark only) |
+    | `error_codes.json` | Exclusive error codes (mark only) |
 
-    ### 2.4 Aggregation Linkage Check
+    ### 2.4 Aggregator linkage check
 
-    Read `map.json.featureRelations`; determine whether the deleted Task falls within any aggregator's `sources` coverage.
+    [[SUBAGENT: archi-feature-relations|mode: cleanup, context: Check deleted Task refs in featureRelations; output impact report]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`, follow mode: cleanup logic)]]
 
-    | Situation | Handling |
-    |:---|:---|
-    | Not in any aggregator's sources range | No special handling |
-    | In an aggregator's sources range | List in impact report; prompt to check if aggregator content needs to be cleaned up after deletion |
-    | Deleted Task is itself an aggregator | Also remove its entry from `featureRelations` |
+    ### 2.5 Cross-Task refs
 
-    ### 2.5 Cross-Task References
+    Scan other Tasks' `spec.md`; check refs to deleted Task's interface/components/data. Mark refs as `[Breaking]`.
 
-    Scan other Tasks' `spec.md` for references to the target Task's interfaces, components, or data. Flag as `[Breaking]`.
+    **Output**: Output decommission impact report to user — include Task status, docs and code to delete (file/source table), global ref cleanup items (roadmap/map/context_glue), (if any) term/error code residue (manual confirm needed), (if any) aggregator linkage table, (if any) cross-Task ref [Breaking] table. End: OK to execute / Abort to cancel.
 
-    **Output**: Impact report to user:
-    ```
-    ### Decommission Impact Report: <ID> <Name>
-
-    **Task Status**: [status]
-
-    **Docs to delete**:
-    - [[__DOCS_DIR__]]/tasks/<id>_<slug>/  (N files)
-
-    **Code to delete**:
-    | File/Directory | Source |
-    |:---|:---|
-    | src/xxx/xxx.ts | context_glue |
-    | src/xxx/ | map.json |
-
-    **Global reference cleanup**:
-    - roadmap.json: remove task <id>, clean N deps references
-    - map.json: remove N module entries
-    - context_glue: remove N associations
-
-    **[?present] Terms/error codes residue** (manual confirmation needed):
-    - dictionary.json: [term1], [term2]
-    - error_codes.json: [ERR_XXX]
-
-    **[?present] Aggregation linkage** (check needed):
-    | Aggregator | checkNote |
-    |:---|:---|
-    | [aggregator ID/path] | [checkNote content] |
-
-    **[?present] Cross-Task references [Breaking]**:
-    | Referencing Task | Reference Content | Suggestion |
-    |:---|:---|:---|
-    | FEAT-005 spec.md | Calls <id>'s UserAPI | /archi.edit FEAT-005 to decouple first |
-
-    ---
-    > Reply **OK** to confirm; reply **abort** to cancel.
-    ```
-
-    **Gate**: Proceed to step_3 after user replies OK. Re-warn if `[Breaking]` cross-Task refs exist.
+    **Gate**: Proceed to step_3 only after user replies OK. Re-warn when `[Breaking]` refs exist.
 </step_2_impact>
 
 <step_3_execute>
     **Role**: Surgeon
-    **Action**: Execute in this order (order is mandatory).
+    **Action**: Execute in this order (order immutable).
 
-    | # | Operation | Target |
+    | # | Action | Target |
     |:---|:---|:---|
-    | 1 | Delete code files/directories | Code paths from step_2 |
-    | 2 | Delete Task doc directory | `[[__DOCS_DIR__]]/tasks/<id>_<slug>/` |
-    | 3 | Update `roadmap.json` | Remove task entry; clean `deps` refs to `<id>` in other tasks |
-    | 4 | Update `map.json` | Remove module entries; if this Task is an aggregator, also remove its `featureRelations` entry |
-    | 5 | Update `99_context_glue.md` | Remove association entries for this Task |
+    | 1 | Delete code files/dirs | Code paths from step_2 |
+    | 2 | Delete Task docs dir | `[[__DOCS_DIR__]]/tasks/<id>_<slug>/` |
+    | 3 | Update `roadmap.json` | Remove task entry; clean deps refs |
+    | 4 | Update `map.json` | Remove module entry + featureRelations entry |
+    | 5 | Update `99_context_glue.md` | Remove association entries |
     | 6 | [?exclusive terms] Update `dictionary.json` | Remove or mark deprecated |
-    | 7 | [?exclusive codes] Update `error_codes.json` | Remove or mark deprecated |
-    | 8 | [?aggregation linkage] Check aggregator code | Verify aggregator no longer references the deleted Task |
+    | 7 | [?exclusive error codes] Update `error_codes.json` | Remove or mark deprecated |
+    | 8 | [?aggregator linkage] Check aggregator code | Confirm refs cleaned |
 
-    Log each operation (file path + operation type) as it completes.
+    Record operation log after each step.
 </step_3_execute>
 
 <step_4_verify>
-    **Role**: Verification Engineer
-    **Terminal Gate** (Do not skip; must complete before step_5 output):
+    **Terminal Gate** (do not skip): Standard check (task --check + render).
     | Step | Command | Pass Condition |
     |:---|:---|:---|
-    | 1 | `npx archi task --check` | No ERROR-level issues, no dangling deps |
-    | 2 | `npx archi render` | `.md` views generated |
-    | 3 | Run project build command | Zero compilation errors |
+    | 3 | Run project build command | Zero compile errors; no import/require to deleted module |
 
-    | Check | Pass Criteria |
-    |:---|:---|
-    | Roadmap consistency | `--check` passes, no dangling deps |
-    | Build | Zero compilation errors |
-    | Residual refs | No import/require of deleted modules in codebase |
-
-    Build failure or residual refs found → locate, fix, and recheck.
+    If build fails or residual refs found → locate, fix, re-check.
 </step_4_verify>
 
 <step_5_summary>
-    **Output**: Decommission summary:
+    **Output**: Decommission completion summary:
     - **Deleted**: N doc files, N code files
-    - **Cleaned**: roadmap / map / context_glue references
-    - **Build status**: pass/fail
-    - **[?present] Manual follow-up needed**: terms/error codes/cross-Task ref residue
+    - **Cleaned**: refs in roadmap / map / context_glue
+    - **Build status**: Pass/Fail
+    - **[?if any] Manual follow-up**: Term/error code/cross-Task ref residue
     - **Git Commit Suggestion**: `feat(remove): decommission <ID> <Name>`
 </step_5_summary>
 

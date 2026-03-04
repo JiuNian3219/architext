@@ -1,7 +1,7 @@
 <protocol_kickoff>
   **Trigger**: `/archi.start [file_path]`
   **Phase**: Strategic Initialization
-  **Goal**: Establish Project Constitution (Vision/Tech/Roadmap) from Project Brief.
+  **Goal**: Establish project constitution (Vision/Tech/Roadmap) from Project Brief.
 
 <meta>
     <style>Strict, Professional, CLI-Like</style>
@@ -20,42 +20,32 @@
     **Action**:
     1. Parse `[file_path]` from trigger:
        - If path provided → read that file
-       - If not → search `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
+       - If not provided → search `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
        - If neither exists or empty → goto `<fallback_interview>`
 
     2. **Resource Accessibility Check** (must complete before parsing):
-       Scan Brief for all external references (URLs, file paths, images). Try to access each; classify:
+       Scan Brief for all external references (URLs, file paths, images). Try to access each:
 
        | Status | Handling |
        |:---|:---|
        | Accessible | Read content, include in analysis |
        | Inaccessible (auth required/404/private) | Mark `[unreadable]`, report to user later |
-       | Non-link references (e.g. "reference Linear's interaction") | Process normally, no fetch |
+       | Non-link descriptive references | Process normally, no fetch |
 
-       > Purpose: Avoid AI pretending it read resources it cannot access, leading to mismatched output.
-
-    3. Parse Brief sections, extract:
-       - Project feature tags (UI/Data/CLI/Lib/API — inferred from tech fields and paragraphs)
-       - Core feature list
-       - Pre-defined design decisions (user's preset design for specific features/pages/flows)
-       - Tech preferences (distinguish "confirmed" vs "blank/recommend")
-       - Existing resources and context
-       - Boundaries and constraints
-       - Reference projects
-       - Supplementary notes (rules/terminology/background)
+    3. Parse Brief sections, extract: project feature tags, core task list, pre-defined design decisions, tech preferences (distinguish "confirmed" vs "blank/recommend"), existing resources, boundaries and constraints, reference projects, supplementary notes.
 
     > Brief is a one-time input file; user may delete after processing.
 
     **Output**:
-    - If any resources inaccessible → **Immediately output Resource Accessibility Report** to user, list unreadable links, ask for alternatives (screenshot, paste content, text description). Wait for user reply before continuing.
-    - If all accessible or no external refs → Internal summary (no user output), proceed to `<step_1_gap_analysis>`.
+    - If any resources inaccessible → **Immediately output Resource Accessibility Report**, wait for user reply before continuing.
+    - If all accessible or no external refs → Internal summary, proceed to `<step_1_gap_analysis>`.
 </step_0_ingest>
 
 <step_1_gap_analysis>
-    **Role**: Chief Product Officer (CPO)
+    **Role**: Chief Product Strategist (CPO)
     **Input**: Step 0 parsing result.
 
-    **Action**: Check Brief completeness, identify information gaps.
+    **Action**: Check Brief completeness item by item, identify information gaps.
 
     **Checklist**:
 
@@ -63,190 +53,142 @@
     |:---|:---|:---|
     | Project identity | Name + one-line description + problem statement all filled | Required |
     | Target users | At least core user role described | Required |
-    | Core features | At least 2 concrete features, each with description | Required |
+    | Core tasks | At least 2 concrete tasks listed, each with description | Required |
     | Tech stack – core | Language/runtime + core framework filled (non-empty) | Required |
     | Tech stack – optional | DB/ORM/CSS/deploy etc. blanks | Can supplement |
-    | Project starting point | New project or existing codebase (affects architecture) | Required |
+    | Project starting point | New or existing codebase (affects architecture) | Required |
     | Existing resources | Design/brand/existing API/3rd-party services explicit? | Can supplement |
-    | Style/tone | [?UI] Visual keywords / [?CLI] Output style / [?API] Doc approach | Can supplement |
+    | Style/tone | (UI projects only) Visual keywords / (CLI projects only) Output style / (API projects only) Doc approach | Can supplement |
     | Boundaries | At least 1 anti-goal or hard constraint declared | Suggested |
     | Success metrics | Concrete quantifiable metrics filled | Suggested |
     | Reference projects | At least 1 reference listed | Suggested |
 
-    **Gap levels**:
-    - **Required**: Must ask in Step 2
-    - **Can supplement**: AI can recommend but better to confirm
-    - **Suggested**: AI can infer, does not block flow
+    **Gap levels**: Required → must ask in Step 2 | Can supplement → AI can recommend, suggest confirm | Suggested → AI can infer
 
-    **Decision**:
-    - No "Required" gaps + no "Can supplement" gaps → skip Step 2, go to Step 3
-    - Otherwise → go to Step 2
+    **Decision**: No "Required" + "Can supplement" gaps → skip Step 2 | Has gaps → proceed to Step 2
 
-    **Output**: Brief analysis summary:
-    ```
-    ### BRIEF Analysis Report
-    > **Project**: [name] | **Features**: [activated UI/Data/CLI/Lib/API tags]
-
-    **Confirmed**:
-    - [list of filled items]
-
-    **Gaps (require supplement)**:
-    - [gap 1]
-    - [gap 2]
-
-    **AI will auto-complete** (no action):
-    - [items AI can infer]
-    ```
+    **Output**: Output BRIEF analysis report to user — include project name/feature tags, confirmed items list, information gap list (require supplement), AI auto-complete items.
 </step_1_gap_analysis>
 
 <step_2_supplementary>
-    **Role**: Product Advisor
     **Trigger**: Only when Step 1 finds "Required" or "Can supplement" gaps.
     **Input**: Step 1 gap list. Max 3–6 questions.
 
-    [[SKILL: archi-interview-protocol|Follow the skill's core rules and standard output format.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
+    [[SKILL: archi-interview-protocol|Follow the skill's core rules and standard output format for questioning.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
 </step_2_supplementary>
 
 <step_3_constitution>
     **Role**: Chief Architect
-    **Input**: Full Brief text + Step 2 answers (if any).
+    **Input**: Full Brief + Step 2 supplement answers (if any).
 
     **Action**: Generate project constitution files in one pass. All Brief content must be consumed and routed; nothing omitted.
 
     ### Information Routing Rules
 
-    > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by the IDE — the AI knows their paths; write directly.
+    > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by IDE; AI knows their paths, write directly.
 
     | Brief content | Target file |
     |:---|:---|
     | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
     | Tech stack, deploy target, 3rd-party libs/services | rule file `02_tech_stack` |
-    | Style/tone (UI/CLI/API) — aesthetic direction / density / motion | rule file `02_tech_stack` (UI Protocol) + `design_tokens.json` aestheticDirection + motion.preference + illustration |
-    | [?UI] **Aesthetic direction** (saas-dark/saas-light/dashboard/marketing/mobile-app/editorial/brutalist/custom) | `design_tokens.json` `aestheticDirection.preset` + `aestheticDirection.customDescription` |
-    | [?UI] **Visual Reference** (brand palette / font / icon library / competitor screenshots / forbidden styles) | `design_tokens.json` primitivePalette.brand + illustration + motion; screenshots/URLs → `vision.md` Visual Reference |
-    | Core feature list | `[[__DOCS_DIR__]]/global/roadmap.json` |
-    | **Pre-defined design decisions** | Inject into related tasks' `goal` in Roadmap; treat as hard constraint in `/archi.plan` |
-    | Boundaries and anti-goals | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
-    | Existing resources (design/brand/existing API) | `[[__DOCS_DIR__]]/global/vision.md` + rule file `02_tech_stack` by content |
-    | **Rules/conventions/preferences** from supplementary notes | rule file `90_custom_rules` |
-    | **Domain terminology** from supplementary notes | `[[__DOCS_DIR__]]/global/dictionary.json` |
-    | **Other background info** from supplementary notes | `[[__DOCS_DIR__]]/global/vision.md` Context |
+    | Style/tone — aesthetic direction / density / motion preference | `02_tech_stack` (UI Protocol) + `design_tokens.json` |
+    | (UI projects only) Aesthetic preset + visual reference (brand palette / font / icon / competitor screenshots) | `design_tokens.json` corresponding fields + `vision.md` Visual Reference |
+    | Core task list | `[[__DOCS_DIR__]]/global/roadmap.json` |
+    | Pre-defined design decisions | Inject into Roadmap task `goal`; hard constraint in `/archi.plan` |
+    | Boundaries and anti-goals | `vision.md` Boundaries |
+    | Existing resources | `vision.md` + `02_tech_stack` by content |
+    | Rules/conventions/preferences from supplementary notes | rule file `90_custom_rules` |
+    | Domain terminology from supplementary notes | `dictionary.json` |
+    | Other background from supplementary notes | `vision.md` Context |
 
-    > Key: Any rule-like content (e.g. "comments in English", "no any") in supplementary notes must go to rule file `90_custom_rules`, not discarded.
+    > Key: Rule-like content in supplementary notes must go to `90_custom_rules`; do not discard.
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
-    - Fill from Brief project overview: Core Vision, Target Audience
-    - Fill from Brief boundaries: Boundaries
-    - Fill from Brief style/tone (if any): Design & Experience
-    - Derive Product Principles from Brief references
-    - Extract background context from Brief existing resources + supplementary notes
-    - Fill all `[ ]` placeholders; do not retain template example text
+    - Fill from Brief: Core Vision / Target Audience / Boundaries / Design & Experience / Product Principles / background context
+    - Fill all placeholders; do not retain template example text
 
     ### 3.2 Tech Stack (rule file `02_tech_stack`)
-    - Confirmed tech in Brief → write directly
-    - Blank/"recommend" in Brief → AI recommends by project features; mark `(AI Recommended)` and brief rationale
-    - Brief 3rd-party services/API → write in corresponding Section
-    - **AX Optimization**: Prefer AI-friendly tech (Static Typing, Popular Frameworks, Convention-over-Configuration)
-    - Fill all Section 1-9 (Global Mandates, Technology Selection, Coding Standards, UI Protocol[?UI], Testing, Deployment, Architecture, Anti-Patterns, **Project Conventions**)
-    - Section 5 Testing: Environment Scripts must be complete
-    - **Section 9 Project Conventions**: Establish global architecture conventions based on Brief and project features. `/archi.plan` will auto-inherit these instead of re-asking per feature:
-      - **Error Handling**: Infer from project type — [?UI] Fail Fast + Form Validation; [?CLI] Fail Fast (stderr); [?API] Schema Validation + Fail Fast; space-separated for multi-select
-      - [?UI] **Data Flow**: Based on realtime needs — no realtime → Standard Request (+ SWR/React Query if applicable); Brief mentions realtime/collab → Realtime
-      - [?Web/API] **Auth & Access**: Based on Brief user roles — single role → Authenticated; multi-role → RBAC; no auth mentioned → leave empty for per-feature decision in Plan
-      - Each item must have Strategy/Default + Rationale (rationale must be specific to this project)
+    - Brief confirmed → write directly | Blank/"recommend" → AI recommends and mark `(AI Recommended)` + rationale
+    - **AX Optimization**: Prefer AI-friendly tech when recommending
+    - Fill complete Section 1-9
+    - **Section 9 Project Conventions**: Establish global conventions by project features (Error Handling / Data Flow / Auth & Access); `/archi.plan` will auto-inherit
+      - Error Handling: (UI projects only) Fail Fast + Form Validation / (CLI projects only) Fail Fast (stderr) / (API projects only) Schema Validation + Fail Fast
+      - (UI projects only) Data Flow: No realtime need → Standard Request / Brief mentions realtime → Realtime
+      - (UI or API projects only) Auth & Access: Single role → Authenticated / Multi-role → RBAC / No description → leave empty for Plan
+      - Each item must have Strategy/Default + Rationale
 
     ### 3.3 Custom Rules (rule file `90_custom_rules`)
-    - Extract rule-like content from Brief supplementary notes
-    - Convert Brief tech red lines into concrete prohibitions
-    - If user provided nothing, keep template default
+    - Extract rule-like content from Brief supplementary notes + convert tech red lines to prohibitions
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    [[SKILL: archi-decompose-roadmap|Follow the skill protocol to generate the task chain from the Brief feature list and write to roadmap.json, then proceed to the next step immediately without user confirmation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
+    [[SKILL: archi-decompose-roadmap|Follow the skill protocol to generate task chain from Brief task list, write to roadmap.json; proceed to next step immediately without user confirmation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
 
     ### 3.5 Other global docs (as needed)
     - `dictionary.json`: Extract domain terms from Brief
-    - [?Data] `data_snapshot.json`: Initialize core entity skeleton (entity names + primary key fields) from Brief data descriptions; write empty template if no data descriptions provided
-    - [?UI] `design_tokens.json`: Populate from Brief "Style & Tone" and "Visual Reference":
-      - `aestheticDirection.preset`: From Brief aesthetic direction field; if blank, infer from project features (Web SaaS → saas-light, Dashboard → dashboard, etc.)
-      - `aestheticDirection.customDescription`: Only fill when preset is "custom"
-      - `primitivePalette.brand`: Extract Hex values from brand palette; leave empty if none
-      - `mode`: Infer default + support array from aesthetic direction (saas-dark → default:"dark", saas-light → default:"light", etc.)
-      - `motion.preference` / `motion.patterns`: Set from motion preference (subtle / rich / none); expand patterns for rich
-      - `illustration.style` / `illustration.iconLibrary`: Set from illustration style and icon library fields
-      - `semanticTokens.colors`: If brand color present, fill Primary using Brand-600/Brand-500 keys
-    - `error_codes.json`: Predefine core error codes from feature list
+    - (Data projects only) `data_snapshot.json`: Initialize core entity skeleton; write empty template if no data description
+    - (UI projects only) `design_tokens.json`: Fill aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens from "Style & Tone" and "Visual Reference"
+    - `error_codes.json`: Predefine core error codes from task list
 
     ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
-    - `directoryMapping`: Pre-register core directory skeleton based on architecture pattern declared in tech_stack
-      (e.g. `src/commands/`, `src/core/`, `src/utils/`); each directory with a one-line purpose description
-    - `logicalTopology`: Empty array for now; populate during `/archi.plan`
-    - `criticalUserJourneys`: Empty array
-    - `featureRelations`: Empty array
+    - `directoryMapping`: Pre-register core directory skeleton from tech_stack architecture pattern
+    - `logicalTopology` / `criticalUserJourneys` / `featureRelations`: Empty array for now
 
-    **Output**: Write all files, then run `npx archi render` to generate visual `.md`.
+    **Output**: Write all files, then run `npx archi render`.
 </step_3_constitution>
 
 <step_4_verify>
     **Role**: Independent Reviewer
-
     [[SUBAGENT: archi-silent-audit|mode: init, context: Review step_3 generated global files (vision, tech_stack, roadmap, dictionary, etc.)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: init review dimension table item by item)]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
 <step_4_5_ui_wireframe>
-    **Trigger**: Only when project features include [?UI].
+    **Trigger**: Only when project features include `ui`.
     **Action**: [[SKILL: archi-ui-wireframe|Follow the skill protocol to auto-invoke Phase 1 wireframe generation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]
     - Start generation without user confirmation
     - Read the just-written vision.md + roadmap.json + design_tokens.json + 02_tech_stack
     - Write `ui_concept.html` + `ui_context.md`
-    - Output Phase 1 wireframe summary; await user confirmation before entering Phase 2 styling
-
-    > This step promotes UI wireframe generation from "recommended next step" to "auto-completed by start", reducing manual user actions.
+    - Output Phase 1 wireframe summary; await user confirmation before Phase 2 styling
 </step_4_5_ui_wireframe>
 
 <step_5_signoff>
-    **Terminal Gate** (Do not skip; must complete before output summary):
-    | Step | Command | Pass Condition |
-    |:---|:---|:---|
-    | 1 | `npx archi task --check` | No ERROR-level issues |
-    | 2 | `npx archi render` | `.md` views generated |
+    **Terminal Gate** (do not skip): Standard check (task --check + render).
 
-    **Action** (After Gate passes):
-    1.  Run `npx archi task` to output task progress.
+    **Action** (after Gate passes):
+    1.  Run `npx archi task` to output task progress overview.
     2.  Output summary.
 
-    **Output**: Project init summary including:
-    - **Brief adoption**: Key decisions adopted from Brief
+    **Output**: Project init summary, including:
+    - **Brief source confirmation**: Key decisions adopted from Brief
     - **AI completions**: Tech/decisions AI recommended and rationale
     - **Roadmap overview**: Task count and phase distribution
     - **Next Steps table**:
 
     | Priority | Action | Notes |
     |:---|:---|:---|
-    | [?UI] Recommended | Reply **OK** to enter Phase 2 styling | Phase 1 wireframe auto-generated; confirm layout then style |
+    | (UI projects only) Recommended | Reply **OK** to enter Phase 2 styling | Phase 1 wireframe auto-generated; confirm layout then style |
     | Recommended | `/archi.plan INF-01` | Plan the first infrastructure task |
-    | Optional | `/archi.scope <scope-brief.md>` | Append more requirements to Roadmap if needed |
+    | Optional | `/archi.scope <scope-brief.md>` | If more requirements to decompose, append to Roadmap |
 </step_5_signoff>
 
 <fallback_interview>
     **Trigger**: Brief file not found or empty.
-    **Role**: Product Advisor
 
     **Action**:
-    1. Tell user `project-brief.md` not found. Suggest:
+    1. Inform user `project-brief.md` not found. Suggest:
        - Check project root for the file (should have been generated by `npx archi init`)
        - If lost, re-run `npx archi init` to regenerate
        - Or continue conversation and provide info via interview
-    2. If user continues via conversation, guide in this order:
+    2. If user chooses to continue conversation, guide in this order:
        a. What is the project? (name, one-line description, problem solved)
        b. Who is it for? (target users)
-       c. Core features? (at least 2–3)
+       c. What are the core tasks? (at least 2–3)
        d. Tech stack? (language/framework, confirmed parts)
-       e. Constraints? (anti-goals, timeline, compatibility)
+       e. What constraints? (anti-goals, timeline, compatibility)
     3. After collection, write to `project-brief.md` (project root), then goto `<step_1_gap_analysis>`.
 
-    > Fallback for backward compatibility; Brief remains the primary flow.
+    > This mode is for backward compatibility; core flow remains Brief-driven.
 </fallback_interview>
 
 </protocol_kickoff>
