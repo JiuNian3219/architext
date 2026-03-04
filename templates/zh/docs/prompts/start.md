@@ -24,31 +24,21 @@
        - 如均不存在或为空 → 跳转 `<fallback_interview>`
 
     2. **资源可达性检查**（须在解析前完成）：
-       扫描 Brief 全文，识别所有外部引用（URL、文件路径、图片）。逐一尝试访问，将结果分为三类：
+       扫描 Brief 全文，识别所有外部引用（URL、文件路径、图片）。逐一尝试访问：
 
        | 状态 | 处理 |
        |:---|:---|
        | 可访问 | 读取内容，纳入后续分析 |
        | 不可访问（需认证/404/私有链接） | 标记为 `[不可读]`，后续向用户报告 |
-       | 非链接的描述性引用（如"参考 Linear 的交互"） | 正常处理，无需访问 |
+       | 非链接的描述性引用 | 正常处理，无需访问 |
 
-       > 此步骤的目的：避免 AI 假装已读取实际未能访问的资源，导致后续产出与用户预期脱节。
-
-    3. 解析 Brief 各 Section，提取：
-       - 项目特征标签 (UI/Data/CLI/Lib/API — 由 Brief 中存在的技术偏好字段和段落推断)
-       - 核心任务列表
-       - 已有设计决策（用户对特定任务/页面/流程的预定设计）
-       - 技术偏好（区分"已确定"与"留空/推荐"）
-       - 已有资源与上下文
-       - 边界与约束
-       - 参考项目
-       - 补充说明（规则/术语/背景信息）
+    3. 解析 Brief 各 Section，提取：项目特征标签、核心任务列表、已有设计决策、技术偏好（区分"已确定"与"留空/推荐"）、已有资源、边界与约束、参考项目、补充说明。
 
     > Brief 是一次性输入文件，处理完成后用户可自行删除。
 
     **Output**:
-    - 如有不可访问的资源 → **立即向用户输出资源可达性报告**，列出无法读取的链接，请用户提供替代方式（如截图、粘贴内容、文字描述）。等待用户回复后再继续。
-    - 如所有资源可达或无外部引用 → 内部摘要（不输出给用户），进入 `<step_1_gap_analysis>`。
+    - 如有不可访问的资源 → **立即输出资源可达性报告**，等待用户回复后再继续。
+    - 如所有资源可达或无外部引用 → 内部摘要，进入 `<step_1_gap_analysis>`。
 </step_0_ingest>
 
 <step_1_gap_analysis>
@@ -73,34 +63,14 @@
     | 成功指标 | 已填写具体可量化指标 | 建议 |
     | 参考项目 | 至少列出 1 个参照 | 建议 |
 
-    **缺口分级**:
-    - **必须**: 缺失则无法生成产物，须在 Step 2 提问
-    - **可补**: AI 可基于上下文推荐，但最好确认
-    - **建议**: AI 可自行推导，不阻塞流程
+    **缺口分级**: 必须 → 须在 Step 2 提问 | 可补 → AI 可推荐，建议确认 | 建议 → AI 可自行推导
 
-    **Decision**:
-    - 无"必须"级缺口 + 无"可补"级缺口 → 跳过 Step 2，直接进入 Step 3
-    - 有缺口 → 进入 Step 2
+    **Decision**: 无"必须"+"可补"缺口 → 跳 Step 2 | 有缺口 → 进入 Step 2
 
-    **Output**: 向用户输出 Brief 分析摘要：
-    ```
-    ### BRIEF 分析报告
-    > **项目**: [名称] | **特征**: [UI/Data/CLI/Lib/API 中已激活的标签]
-
-    **已确认信息**:
-    - [已填写的关键信息列表]
-
-    **信息缺口** (须补充):
-    - [缺口 1]
-    - [缺口 2]
-
-    **AI 将自动补全** (无需操作):
-    - [AI 可自行推导的项]
-    ```
+    **Output**: 向用户输出 BRIEF 分析报告 — 含项目名/特征标签、已确认信息列表、信息缺口列表（须补充）、AI 将自动补全项。
 </step_1_gap_analysis>
 
 <step_2_supplementary>
-    **Role**: 产品顾问
     **Trigger**: 仅当 Step 1 发现"必须"或"可补"级缺口时执行。
     **Input**: Step 1 的缺口列表。问题数上限 3-6 题。
 
@@ -121,69 +91,49 @@
     |:---|:---|
     | 项目身份、目标用户、成功指标、参考灵感 | `[[__DOCS_DIR__]]/global/vision.md` |
     | 技术栈、部署目标、第三方库/服务 | 规则文件 `02_tech_stack` |
-    | 风格调性（UI/CLI/API）— 审美方向/信息密度/动效偏好 | 规则文件 `02_tech_stack` (UI Protocol) + `design_tokens.json` aestheticDirection + motion.preference + illustration |
-    | （仅ui项目） **审美方向** (saas-dark/saas-light/dashboard/marketing/mobile-app/editorial/brutalist/custom) | `design_tokens.json` `aestheticDirection.preset` + `aestheticDirection.customDescription` |
-    | （仅ui项目） **视觉参考**（品牌色板/字体/图标库/竞品截图/禁用风格） | `design_tokens.json` primitivePalette.brand + illustration + motion; 截图/URL 存入 `vision.md` Visual Reference |
+    | 风格调性 — 审美方向/信息密度/动效偏好 | `02_tech_stack` (UI Protocol) + `design_tokens.json` |
+    | （仅ui项目）审美方向 preset + 视觉参考（品牌色/字体/图标/竞品截图） | `design_tokens.json` 对应字段 + `vision.md` Visual Reference |
     | 核心任务列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
-    | **已有设计决策** | Roadmap 对应任务的 `goal` 字段中注入，并在 `/archi.plan` 时作为硬约束 |
-    | 边界与反目标 | `[[__DOCS_DIR__]]/global/vision.md` Boundaries |
-    | 已有资源（设计稿/品牌/已有API） | `[[__DOCS_DIR__]]/global/vision.md` + 规则文件 `02_tech_stack` 按内容归属 |
-    | 补充说明中的**规则/约定/偏好** | 规则文件 `90_custom_rules` |
-    | 补充说明中的**领域术语** | `[[__DOCS_DIR__]]/global/dictionary.json` |
-    | 补充说明中的**其他背景信息** | `[[__DOCS_DIR__]]/global/vision.md` Context |
+    | 已有设计决策 | Roadmap 任务 `goal` 字段注入，`/archi.plan` 时作硬约束 |
+    | 边界与反目标 | `vision.md` Boundaries |
+    | 已有资源 | `vision.md` + `02_tech_stack` 按归属 |
+    | 补充说明中的规则/约定/偏好 | 规则文件 `90_custom_rules` |
+    | 补充说明中的领域术语 | `dictionary.json` |
+    | 补充说明中的其他背景 | `vision.md` Context |
 
-    > 关键: 用户在"补充说明"中写的任何规则性内容（如"代码注释用英文"、"禁止使用 any"）须写入规则文件 `90_custom_rules`，而非丢弃。
+    > 关键: 用户"补充说明"中的规则性内容须写入 `90_custom_rules`，禁丢弃。
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
-    - 从 Brief 项目概述填充 Core Vision 和 Target Audience
-    - 从 Brief 边界与约束填充 Boundaries
-    - 从 Brief 风格调性（如有）填充 Design & Experience
-    - 从 Brief 参考与灵感推导 Product Principles
-    - 从 Brief 已有资源、补充说明提取背景上下文
-    - 须填满所有 `[ ]` 占位符，禁保留模板示例文字
+    - 从 Brief 填充 Core Vision / Target Audience / Boundaries / Design & Experience / Product Principles / 背景上下文
+    - 须填满所有占位符，禁保留模板示例文字
 
     ### 3.2 Tech Stack (规则文件 `02_tech_stack`)
-    - Brief 中已确定的技术选择 → 直接写入
-    - Brief 中留空/写"推荐"的 → AI 基于项目特征推荐，须在输出中标注 `(AI 推荐)` 并简述理由
-    - Brief 中已有的第三方服务/API → 写入对应 Section
-    - **AX Optimization**: 推荐时优先 AI 友好型技术 (Static Typing, Popular Frameworks, Convention-over-Configuration)
-    - 须填充完整的 Section 1-9（Global Mandates、Technology Selection、Coding Standards、UI Protocol（仅ui项目）、Testing、Deployment、Architecture、Anti-Patterns、**Project Conventions**）
-    - `Section 5 Testing` 中的 Environment Scripts 定义须完整
-    - **Section 9 Project Conventions**: 基于 Brief 和项目特征确立全局架构约定，`/archi.plan` 将自动继承这些约定而非逐任务重复提问：
-      - **Error Handling**: 根据项目类型推断 — （仅ui项目） Fail Fast + Form Validation; （仅cli项目） Fail Fast (stderr); （仅api项目） Schema Validation + Fail Fast; 多选时空格分隔
-      - （仅ui项目） **Data Flow**: 根据实时性需求 — 无实时需求 → Standard Request (+ SWR/React Query if applicable); Brief 提及实时/协作 → Realtime
-      - （仅ui或api项目） **Auth & Access**: 根据 Brief 用户角色 — 单角色 → Authenticated; 多角色 → RBAC; 无权限描述 → 留空待 Plan 阶段逐任务确认
-      - 每项须填写 Strategy/Default + Rationale（理由须结合此项目的具体场景）
+    - Brief 已确定 → 直接写入 | 留空/写"推荐" → AI 推荐并标注 `(AI 推荐)` + 理由
+    - **AX Optimization**: 推荐时优先 AI 友好型技术
+    - 须填充完整 Section 1-9
+    - **Section 9 Project Conventions**: 基于项目特征确立全局约定（Error Handling / Data Flow / Auth & Access），`/archi.plan` 将自动继承
+      - Error Handling: （仅ui项目）Fail Fast + Form Validation / （仅cli项目）Fail Fast (stderr) / （仅api项目）Schema Validation + Fail Fast
+      - （仅ui项目）Data Flow: 无实时需求 → Standard Request / Brief 提及实时 → Realtime
+      - （仅ui或api项目）Auth & Access: 单角色 → Authenticated / 多角色 → RBAC / 无描述 → 留空待 Plan
+      - 每项须填 Strategy/Default + Rationale
 
     ### 3.3 Custom Rules (规则文件 `90_custom_rules`)
-    - 从 Brief 补充说明中提取规则性内容写入
-    - 从 Brief 技术红线转化为具体禁止规则
-    - 如用户未提供任何自定义规则，保持模板默认内容
+    - 从 Brief 补充说明提取规则性内容 + 技术红线转化禁止规则
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
     [[SKILL: archi-decompose-roadmap|按 skill 的协议，基于 Brief 任务列表生成任务链，写入 roadmap.json，生成后直接进入下一步，无需用户确认。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
 
     ### 3.5 其他全局文档 (按需)
     - `dictionary.json`: 从 Brief 提取领域术语
-    - （仅data项目） `data_snapshot.json`: 基于 Brief 中的数据描述，初始化核心实体骨架（实体名 + 主键字段）；无数据描述时写入空模板
-    - （仅ui项目） `design_tokens.json`: 基于 Brief「风格与调性」和「视觉参考」填充：
-      - `aestheticDirection.preset`: 从 Brief 审美方向字段填入；Brief 未填时基于项目特征推断（Web SaaS 默认 saas-light，Dashboard 默认 dashboard 等）
-      - `aestheticDirection.customDescription`: 仅 custom 时填入用户描述
-      - `primitivePalette.brand`: 从品牌色板提取 Hex 值；无则留空
-      - `mode`: 从审美方向推断 default + support 数组（saas-dark → default:"dark"，saas-light → default:"light" 等）
-      - `motion.preference` / `motion.patterns`: 从动效偏好填写 (subtle / rich / none)；rich 时扩充 patterns
-      - `illustration.style` / `illustration.iconLibrary`: 从图示风格和图标库填写
-      - `semanticTokens.colors`: 如有品牌色则以 Brand-600/Brand-500 等 key 填充 Primary
+    - （仅data项目） `data_snapshot.json`: 初始化核心实体骨架；无数据描述时写入空模板
+    - （仅ui项目） `design_tokens.json`: 基于「风格与调性」和「视觉参考」填充 aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens
     - `error_codes.json`: 基于任务列表预定义核心错误码
 
     ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
-    - `directoryMapping`: 基于 tech_stack 中声明的架构模式，预注册核心目录骨架
-      （如 `src/commands/`, `src/core/`, `src/utils/` 等）；各目录附一句话用途说明
-    - `logicalTopology`: 暂为空数组，待 `/archi.plan` 时按需补充
-    - `criticalUserJourneys`: 暂为空数组
-    - `featureRelations`: 暂为空数组
+    - `directoryMapping`: 基于 tech_stack 架构模式预注册核心目录骨架
+    - `logicalTopology` / `criticalUserJourneys` / `featureRelations`: 暂为空数组
 
-    **Output**: 写入所有文件，然后运行 `npx archi render` 生成可视化 `.md`。
+    **Output**: 写入所有文件，然后运行 `npx archi render`。
 </step_3_constitution>
 
 <step_4_verify>
@@ -200,16 +150,10 @@
     - 读取刚写入的 vision.md + roadmap.json + design_tokens.json + 02_tech_stack
     - 写入 `ui_concept.html` + `ui_context.md`
     - 输出 Phase 1 线框图摘要，等待用户确认后再进入 Phase 2 着色
-
-    > 此步骤将 UI 线框图生成从"建议的下一步"变为"start 自动完成"，减少用户手动操作。
 </step_4_5_ui_wireframe>
 
 <step_5_signoff>
-    **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
-    | 步骤 | 命令 | 通过条件 |
-    |:---|:---|:---|
-    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 
     **Action** (Gate 通过后):
     1.  运行 `npx archi task` 输出任务进度概览。
@@ -230,7 +174,6 @@
 
 <fallback_interview>
     **Trigger**: Brief 文件不存在或为空。
-    **Role**: 产品顾问
 
     **Action**:
     1. 告知用户 `project-brief.md` 未找到。建议：
