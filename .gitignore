@@ -25,6 +25,10 @@ pnpm-debug.log*
 .vscode/*
 .trae/*
 .cursor/*
+.claude/*
+.windsurf/*
+.opencode/*
+.architext/*
 !.vscode/extensions.json
 !.vscode/settings.json
 *.suo
