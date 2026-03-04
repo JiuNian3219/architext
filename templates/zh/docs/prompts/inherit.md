@@ -49,7 +49,7 @@
 </step_0_recon>
 
 <step_1_analysis>
-    **Role**: 系统分析师
+    **Role**: 首席产品战略官 (CPO)
     **扫描策略**: 中度扫描 — 读每个模块的入口文件和核心业务文件，提取主要流程链路。禁逐文件遍历。
 
     **Action**:
@@ -61,43 +61,12 @@
        - 仅记录目录和职责，不作为功能模块
     3. 从代码中提取领域术语和命名约定。
 
-    **Output**: 向用户输出结构化分析报告：
-    ```
-    ### 代码分析报告
-    > **项目**: [名称] | **类型**: [UI/Data/CLI/Lib/API] | **规模**: ~[文件数] 文件, [目录数] 目录
-
-    **技术栈**:
-    | 类别 | 选型 |
-    |:---|:---|
-    | 语言 | ... |
-    | 框架 | ... |
-    | 构建 | ... |
-    | 测试 | ... |
-    | 部署 | ... |
-
-    **架构模式**: [推断] — [依据]
-
-    **功能模块清单**:
-    | # | 模块 | 源码位置 | 职责 | 关键流程 |
-    |:---|:---|:---|:---|:---|
-    | 1 | [名称] | [路径] | [一句话] | [流程1], [流程2] |
-
-    **共享基建**:
-    | 目录 | 职责 |
-    |:---|:---|
-    | [路径] | [描述] |
-
-    **领域术语**: [术语列表]
-
-    **AI 不确定项** (如有):
-    - [歧义项]
-    ```
+    **Output**: 向用户输出结构化分析报告 — 含项目概况（名称/类型/规模）、技术栈表（语言/框架/构建/测试/部署）、架构模式及依据、功能模块清单（模块/源码位置/职责/关键流程）、共享基建（目录/职责）、领域术语、AI 不确定项（如有）。
 
     **Gate**: 用户确认或修正。未确认禁进入 step_2。
 </step_1_analysis>
 
 <step_2_supplementary>
-    **Role**: 产品顾问
     **Trigger**: 仅当 step_1 有 AI 无法确定的项时执行。无歧义则跳过。
 
     **Action**: 以选择题形式询问歧义项。
@@ -136,26 +105,26 @@
 
     > 规则文件（`02_tech_stack`、`90_custom_rules` 等）已由 IDE 注入当前上下文，AI 已知其路径，直接写入即可。
 
-    **有 Brief 时**（Brief 内容 → 目标文件，与 start 一致）:
+    **有 Brief 时**（Brief → 目标文件）:
     | Brief 内容 | 目标文件 |
     |:---|:---|
     | 项目身份、目标用户、成功指标、参考灵感 | `[[__DOCS_DIR__]]/global/vision.md` |
     | 技术栈、部署目标、第三方库/服务 | 规则文件 `02_tech_stack` |
     | 核心任务列表 | `[[__DOCS_DIR__]]/global/roadmap.json`（phase-1/2，调用 archi-decompose-roadmap） |
-    | 补充说明中的规则/约定 | 规则文件 `90_custom_rules` |
+    | 补充说明中的规则/约定/偏好 | 规则文件 `90_custom_rules` |
     | 风格调性（仅ui） | `design_tokens.json` aestheticDirection 等 |
 
     **代码中的信息**（始终适用）:
-    | 代码中的信息 | 目标文件 |
+    | 信息来源 | 目标文件 |
     |:---|:---|
-    | README 项目描述、目标用户、特性列表 | `[[__DOCS_DIR__]]/global/vision.md` |
-    | 依赖清单、配置文件、代码模式 | 规则文件 `02_tech_stack` |
-    | 目录结构、模块依赖、用户旅程 | `[[__DOCS_DIR__]]/global/map.json` |
-    | 领域术语、缩写、命名约定 | `[[__DOCS_DIR__]]/global/dictionary.json` |
-    | eslint/prettier 等已有规范 | 规则文件 `90_custom_rules` |
-    | 代码中的错误码定义 | `[[__DOCS_DIR__]]/global/error_codes.json` |
-    | （仅ui项目） CSS 变量/主题配置 | `[[__DOCS_DIR__]]/global/design_tokens.json` |
-    | （仅data项目） Schema/Migration 文件 | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
+    | README 描述/特性 | vision.md |
+    | 依赖/配置/代码模式 | 02_tech_stack |
+    | 目录结构/模块依赖/用户旅程 | map.json |
+    | 领域术语/命名约定 | dictionary.json |
+    | eslint/prettier 等规范 | 90_custom_rules |
+    | 代码中的错误码 | error_codes.json |
+    | （仅ui项目）CSS 变量/主题 | design_tokens.json |
+    | （仅data项目）Schema/Migration | data_snapshot.json |
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
     - **有 Brief**：从 Brief 填充（与 start 一致），代码/README 仅作补充
@@ -163,18 +132,18 @@
     - 禁保留模板占位符
 
     ### 3.2 Tech Stack (规则文件 `02_tech_stack`)
-    - **有 Brief**：Brief 中已确定的 → 直接写入；Brief 留空/推荐的 → AI 基于项目特征推荐；代码中的依赖/配置作补充
-    - **无 Brief**：已有依赖/配置 → 直接写入；代码中可见的规范 → 写入 Coding Standards
+    - **有 Brief**：Brief 确定的 → 直接写入；留空/推荐的 → AI 推荐；代码依赖作补充
+    - **无 Brief**：已有依赖/配置 → 直接写入；可见规范 → 写入 Coding Standards
     - 须填充完整 Section 1-8
 
     ### 3.3 Custom Rules (规则文件 `90_custom_rules`)
-    - **有 Brief**：从 Brief 补充说明 + 代码中 eslint/prettier 等合并
-    - **无 Brief**：从 eslint/prettier/editorconfig 等提取，从代码模式识别团队约定
+    - **有 Brief**：从补充说明 + 代码 eslint/prettier 合并
+    - **无 Brief**：从 eslint/prettier/editorconfig 提取，从代码模式识别团队约定
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
 
-    **有 Brief 时**：[[SKILL: archi-decompose-roadmap|基于 Brief 任务列表生成 phase-1/2 任务链]]；代码中的功能模块 → phase-0 LEG-xx（status=done）。合并两者。
-    **无 Brief 时**：仅代码中的功能模块 → phase-0 LEG-xx；phase-1/2 保留空骨架。
+    **有 Brief 时**：[[SKILL: archi-decompose-roadmap|基于 Brief 任务列表生成 phase-1/2 任务链]]；代码功能模块 → phase-0 LEG-xx（status=done）。合并两者。
+    **无 Brief 时**：仅代码功能模块 → phase-0 LEG-xx；phase-1/2 保留空骨架。
 
     **结构**:
     ```json
@@ -207,7 +176,6 @@
     **规则**:
     - 功能模块 → `phase-0: Legacy`，status `done`，tag `Legacy`，ID 前缀 `LEG-`
     - 共享/基建代码不进 roadmap，仅进 map.json directoryMapping
-    - phase-1/2 保留空骨架
     - LEG 间如有依赖关系须在 deps 中体现
 
     ### 3.5 Task Stub Specs
@@ -225,10 +193,8 @@
 
     ## 关键流程
     1. **[流程名]**: [A] → [B] → [C]
-    2. **[流程名]**: [A] → [B] → [C]
 
     ## 关联文件
-    - [角色]: `[路径]`
     - [角色]: `[路径]`
     ```
 
@@ -239,13 +205,13 @@
     - `logicalTopology`: 模块间依赖 → `{ "from", "to", "type" }` (imports / calls / extends)
     - `criticalUserJourneys`: 核心流程 → `{ "name", "steps": ["module → module → ..."] }`
     - `featureRelations`: 扫描代码，识别「聚合型模块」并记录。
-      **识别特征**: 某模块遍历/枚举/动态加载同类模块（如 `for (const cmd of allCommands)`、`Object.values(registry)`、读取目录后动态 import），或其描述为「汇总/列举/注册所有 X」。
-      每条记录格式: `{ "aggregator": "<ID 或文件路径>", "sources": "<来源范围描述>", "evidence": "<代码依据>", "checkNote": "此类功能新增或删除时，检查 <aggregator> 是否需要同步" }`
+      **识别特征**: 某模块遍历/枚举/动态加载同类模块，或其描述为「汇总/列举/注册所有 X」。
+      每条记录格式: `{ "aggregator", "sources", "evidence", "checkNote" }`
 
     ### 3.7 其他全局文档（按需）
     - `dictionary.json`: 从代码提取领域术语
     - （仅ui项目） `design_tokens.json`: 从 CSS 变量/主题提取
-    - （仅ui项目） `ui_concept.html` + `ui_context.md`: **不由本命令生成**。继承完成后，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]] 生成全局 UI 线框图（Skill 同时生成两个文件）。
+    - （仅ui项目） `ui_concept.html` + `ui_context.md`: **不由本命令生成**。继承完成后，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]] 生成全局 UI 线框图。
     - （仅data项目） `data_snapshot.json`: 从 schema/migration 提取
     - `error_codes.json`: 从代码中的错误定义提取
 
@@ -260,11 +226,7 @@
 </step_4_verify>
 
 <step_5_signoff>
-    **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
-    | 步骤 | 命令 | 通过条件 |
-    |:---|:---|:---|
-    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 
     **Action** (Gate 通过后):
     1.  运行 `npx archi task` 输出任务概览。

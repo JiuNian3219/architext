@@ -21,8 +21,8 @@
         - 有 `<id>`: 锁定 `tasks/<ID>_<Slug>/`。
         - 无 `<id>`: 分析 `[context]` 搜索最相关模块。
           唯一匹配 → 自动锁定 | 多个匹配 → 列出候选询问 | 无法定位 → 报错请求指定 ID。
-    2.  读取目标目录下所有文档 (`spec.md`, `ui.md`, `plan.json`) 与相关代码。
-    3.  读取 `02_tech_stack.md`（确保修复方式不违反技术红线）和 `[[__DOCS_DIR__]]/global/vision.md`（确保修复方向不偏离项目愿景）。
+    2.  读取目标目录下所有文档与相关代码。
+    3.  读取 02_tech_stack.md（技术红线）和 vision.md（方向基准）。
     4.  分析 `[context]`，结合代码逻辑定位潜在故障点。
     5.  **Hypothesis**: 提出 1-3 个根因假设。
 
@@ -30,31 +30,23 @@
 </step_1_diagnose>
 
 <step_2_plan_fix>
-    **Role**: Tech Lead
     **Action**:
-    - 更新 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/plan.json`，在 `phases` 数组中追加 phase 对象，`name` 为 `Bugfix: <Bug Title>`。
+    - 更新 plan.json，追加 phase `Bugfix: <Bug Title>`。
     - Tasks: 1) 创建复现测试(Red) 2) 修复(Green) 3) 回归测试。
 
-    **Terminal Gate** (禁止跳过，须在 step_3 开始前全部完成):
-    | 步骤 | 命令 | 通过条件 |
-    |:---|:---|:---|
-    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 
     **Output**: 追加了修复任务的 plan.json。
 </step_2_plan_fix>
 
 <step_3_execute_fix>
-    **Role**: 资深工程师 (Surgical Fix — 仅改 Bug，禁扩散)
     **Action**:
-    - 根据 Plan 直接修改代码。
-    - 仅修复 Bug，禁借机重构或改无关代码。
-    - 错误处理遵循 `code.md` 规范（禁吞错/禁静默失败）。
+    - 根据 Plan 直接修改代码。仅修复 Bug，禁借机重构。
+    - 错误处理遵循 `code.md` 规范。
 </step_3_execute_fix>
 
 <step_4_verify>
-    **Role**: QA 工程师
-    **Terminal Gate** (禁止跳过，须在 step_5 输出前全部完成):
+    **Terminal Gate** (禁止跳过):
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
     | 1 | 运行构建命令 | 构建成功 |
@@ -65,19 +57,18 @@
     任何失败须修复至通过。
 
     **代码质量审查**:
-    [[SUBAGENT: archi-silent-audit|mode: code-impl, context: 审查 step_3 修复的代码，重点检查 Tech/Security/Performance 维度及 Spec Immutable 原则（禁改 spec/ui）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: code-impl 的审查维度表逐项检查）]]
+    [[SUBAGENT: archi-silent-audit|mode: code-impl, context: 审查修复代码，重点 Tech/Security/Performance + Spec Immutable]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: code-impl 检查）]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
 <step_4_5_plan_update>
-    **Role**: Tech Lead
     **Action**:
-    1. 更新 `plan.json`：将 Bugfix Phase 中已完成的 tasks 的 `done` 设为 `true`。
-    2. [当前 status=`done` 且 Bugfix Phase 全部通过] → 保持 `done` 不变。
-    3. [Bugfix Phase 有未通过项] → 运行 `npx archi task <ID> --status active`；signoff 输出中标注须重新 `/archi.code` 完成剩余修复。
+    1. 更新 plan.json Bugfix Phase 中已完成 tasks 的 `done: true`。
+    2. [status=`done` 且 Bugfix 全通过] → 保持 `done`。
+    3. [Bugfix 有未通过项] → `npx archi task <ID> --status active`；signoff 标注须重新 `/archi.code`。
 
-    **Output**: `MODIFIED: plan.json Bugfix Phase done 标记`（如状态变更，附 `MODIFIED: roadmap.json <ID>.status`）。
+    **Output**: `MODIFIED: plan.json Bugfix Phase done 标记`。
 </step_4_5_plan_update>
 
 <step_5_summary>
@@ -85,8 +76,8 @@
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
-    | 推荐 | `/archi.audit <ID>` | 重新审查，确认修复完整且无新引入问题 |
-    | 可选 | `/archi.code <ID>` | 如有 Bugfix Phase 未完成项，继续实现 |
+    | 推荐 | `/archi.audit <ID>` | 重新审查，确认修复完整 |
+    | 可选 | `/archi.code <ID>` | 如有未完成项，继续实现 |
 </step_5_summary>
 
 </protocol_fix>

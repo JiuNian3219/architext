@@ -10,12 +10,11 @@
       2.  **Evidence-Based**: 每个发现须附文件路径、行号、代码片段。
       3.  **Actionable Output**: 每个问题须附推荐修复命令（`/archi.fix`, `/archi.edit` 等）。
       4.  **Vision Anchored**: 始终以 `vision.md` 为方向基准，检测偏离。
-      5.  **Report Persistence**: 审查结果须写入文件 — 任务级 → `tasks/<id>_*/audit.md`（覆盖），项目级 → `audits/YYYY-MM-DD.md`（按日期存档，同日覆盖）。
+      5.  **Report Persistence**: 审查结果须写入文件 — 任务级 → `tasks/<id>_*/audit.md`（覆盖），项目级 → `audits/YYYY-MM-DD.md`（按日期存档）。
     </principles>
 </meta>
 
 <step_1_resolve>
-    **Role**: 系统分析师
     **Mode Gate**:
 
     | 输入 | 模式 | 后续步骤 |
@@ -24,33 +23,21 @@
     | `/archi.audit` | 项目级体检 | step_2_project → step_3_report |
 
     **任务级 — Resolve ID**:
-    1.  从 `[[__DOCS_DIR__]]/global/roadmap.json` 解析 `<id>` → Task Name、Slug、状态。
+    1.  从 roadmap.json 解析 `<id>` → Task Name、Slug、状态。
     2.  **Status Gate** — 仅 `active` 或 `done` 可审查:
 
         | 状态 | 处理 |
         |:---|:---|
         | `active` / `done` | 通过 |
-        | `pending` | 拒绝 — 无代码可审查，先运行 `/archi.plan` + `/archi.code` |
+        | `pending` | 拒绝 — 无代码可审查 |
         | `blocked` | 拒绝 — 前置依赖未完成 |
 
-    3.  **Load Context**:
-        - `[[__DOCS_DIR__]]/global/vision.md` — 项目方向基准
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — 功能逻辑
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — 任务清单
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — 任务 UI 范围声明(如存在)
-        - （仅ui项目） `[[__DOCS_DIR__]]/global/ui_context.md` — AI 屏幕索引（定位对应屏幕 ID）
-        - （仅ui项目） `[[__DOCS_DIR__]]/global/ui_concept.html` — 只读视觉参考（#10 合规对比的视觉标准源）
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/audit.md` — 上次审计报告(如存在，用于对比)
-        - `02_tech_stack.md` — 技术红线
-        - （仅ui项目） `[[__DOCS_DIR__]]/global/design_tokens.json`
-        - （仅data项目） `[[__DOCS_DIR__]]/global/data_snapshot.json`
-    4.  读取该任务对应的所有代码文件。
+    3.  **Load**: vision.md（方向基准）+ task docs (spec/plan/ui) + 前次 audit.md（对比用）+ project context (tech_stack/design_tokens/data_snapshot/ui_context/ui_concept)。读取该任务对应的所有代码文件。
 
     **项目级 — Load Overview**:
-    1.  读取 `[[__DOCS_DIR__]]/global/vision.md`、`roadmap.json`、`map.json`。
-    2.  读取 `02_tech_stack.md`。
-    3.  扫描 `[[__DOCS_DIR__]]/tasks/` 目录结构。
-    4.  读取项目代码入口文件与关键模块。
+    1.  读取 vision.md、roadmap.json、map.json、02_tech_stack.md。
+    2.  扫描 tasks/ 目录结构。
+    3.  读取项目代码入口文件与关键模块。
 
     **Output**: 审查范围与上下文清单。
 </step_1_resolve>
@@ -72,12 +59,12 @@
     | 7 | **Tech Stack 合规** | 对照 `02_tech_stack.md`：违禁模式、过时 API、硬编码 |
     | 8 | **安全性** | 敏感信息泄露、输入未校验、注入风险、权限检查 |
     | 9 | **性能** | 不必要全量导入/大循环/无用计算/内存泄漏/N+1 查询 |
-    | 10 | （本任务涉及ui时） **Design 合规** | 样式是否用 Token 定义的视觉模式；无硬编码魔法值；实现与 `ui_concept.html` 对应屏幕视觉一致 |
-    | 11 | （本任务涉及data时） **数据一致性** | 字段名/类型与 `data_snapshot.json` 是否一致 |
+    | 10 | （本任务涉及ui时） **Design 合规** | Token 使用；无硬编码魔法值；与 `ui_concept.html` 视觉一致 |
+    | 11 | （本任务涉及data时） **数据一致性** | 字段名/类型与 `data_snapshot.json` 一致 |
     | 12 | （仅i18n项目） **I18n 合规** | 无硬编码字符串；须用 Key/字典引用 |
     | 13 | **Orphan .gitkeep** | 目录已有其他文件时仍存在 `.gitkeep` — 须删除 |
-    | 14 | **Spec-Code 漂移** | 代码中的接口/类型/行为是否与 `spec.md` 一致；手动变更是否已同步到文档 |
-    | 15 | （本任务涉及ui时） **UI 引用完整性** | `ui.md` 中的 `ref: ui_concept.html#S-XX` 指针是否仍然有效；被引用的屏幕/组件是否因 edit/revise 后已改名或删除 |
+    | 14 | **Spec-Code 漂移** | 接口/类型/行为与 `spec.md` 一致；手动变更已同步文档 |
+    | 15 | （本任务涉及ui时） **UI 引用完整性** | `ui.md` 中 `ref: ui_concept.html#S-XX` 指针是否仍有效 |
 
     **Output**: 按维度分组的发现列表，每项含级别、位置、描述。
 </step_2_task>
@@ -90,22 +77,18 @@
     |:---|:---|:---|
     | 1 | **Vision 漂移** | `roadmap.json` 任务方向与 `vision.md` 是否一致 |
     | 2 | **架构一致性** | `map.json` vs 实际目录结构，有无漂移或未注册模块 |
-    | 3 | **Roadmap 健康度** | 一致性 + 进度统计 + 长期 blocked 任务 + 依赖环检测 |
+    | 3 | **Roadmap 健康度** | 一致性 + 进度统计 + 长期 blocked + 依赖环检测 |
     | 4 | **文档完整度** | 各 Task 是否有 spec.md + plan.json；有无孤儿目录 |
-    | 5 | **Tech Stack 全局合规** | 抽查关键入口与模块，检测全局性违规 |
+    | 5 | **Tech Stack 全局合规** | 抽查关键入口与模块 |
     | 6 | **跨 Task 一致性** | 重复逻辑、命名冲突、接口不一致 |
-    | 7 | **Orphan .gitkeep** | 目录已有其他文件时仍存在 `.gitkeep` — 须删除 |
+    | 7 | **Orphan .gitkeep** | 目录已有其他文件时仍存在 `.gitkeep` |
 
-    扫描后标注优先级，推荐需深度审查的 Task：
-    - `done` 但 plan 未全部完成的
-    - 代码量大但无测试的
-    - 长期 `active` 未推进的
+    扫描后推荐需深度审查的 Task（`done` 但 plan 未全完成 / 代码量大无测试 / 长期 `active`）。
 
     **Output**: 项目健康概览 + 深度审查推荐列表。
 </step_2_project>
 
 <step_3_report>
-    **Role**: 报告撰写员
     **Action**:
 
     **Issue Classification**:
@@ -123,26 +106,21 @@
       -> 推荐修复：/archi.fix <ID> <描述> 或 /archi.edit <ID> <描述>
     ```
 
-    **Action Routing** (根据问题类型推荐命令):
+    **Action Routing**:
 
     | 问题类型 | 推荐命令 |
     |:---|:---|
-    | Bug（逻辑错误、边界遗漏） | `/archi.fix <ID> <描述>` |
-    | Spec 缺漏（功能未完整实现） | `/archi.edit <ID> <补充描述>` |
-    | 架构级问题（全局违规） | `/archi.revise <描述>` |
-    | 功能未完成（plan 虚标 done） | `/archi.code <ID>` |
-    | 小问题（命名、注释、简化） | 下次 `/archi.code` 时一并处理 |
+    | Bug | `/archi.fix <ID> <描述>` |
+    | Spec 缺漏 | `/archi.edit <ID> <补充描述>` |
+    | 架构级问题 | `/archi.revise <描述>` |
+    | 功能未完成 | `/archi.code <ID>` |
+    | 小问题 | 下次 `/archi.code` 时一并处理 |
 
-    **Report Structure**:
-    1.  审查概要（模式、范围、日期）
-    2.  发现列表（按级别排序：CRITICAL → WARNING → INFO）
-    3.  统计摘要（各级别数量）
-    4.  修复工单汇总（可直接执行的命令列表）
-    5.  Next Steps 表格
+    **Report Structure**: 审查概要 → 发现列表（CRITICAL → WARNING → INFO）→ 统计摘要 → 修复工单汇总 → Next Steps。
 
     **Write Report File**:
     - 任务级 → `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/audit.md`（覆盖式）
-    - 项目级 → `[[__DOCS_DIR__]]/audits/YYYY-MM-DD.md`（按日期存档，同日覆盖）
+    - 项目级 → `[[__DOCS_DIR__]]/audits/YYYY-MM-DD.md`（按日期存档）
 
     **Output**: 完整审查报告（同时输出到对话和写入文件）。
 </step_3_report>

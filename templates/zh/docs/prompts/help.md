@@ -14,17 +14,15 @@
 </meta>
 
 <step_1_load_context>
-    **Role**: 项目观察员
     **Action**:
-    1.  读取 `[[__DOCS_DIR__]]/global/roadmap.json` — 仅提取每个 task 的 `id/title/status/deps/tag` 字段；`goal/notes` 字段跳过（导航和状态聚合不需要这些详情）。
-    2.  扫描 `[[__DOCS_DIR__]]/tasks/` 目录 — 获取已有 Task 及其文档完整度（有无 spec.md / ui.md / plan.json）。
-    3.  [?question] 若用户带了问题，根据问题语义定位相关文件（spec / plan / vision / tech_stack / data_snapshot 等），按需读取。
+    1.  **Load**: roadmap.json（仅 id/title/status/deps/tag，跳过 goal/notes）。
+    2.  **Scan Tasks**: 扫描 tasks/ 目录 — 获取已有 Task 及其文档完整度（有无 spec.md / ui.md / plan.json）。
+    3.  [?question] 若用户带了问题，根据语义定位相关文件按需读取。
 
-    **Output**: 内部上下文（不直接输出给用户）。
+    **Output**: 内部上下文（不输出给用户）。
 </step_1_load_context>
 
 <step_2_route>
-    **Role**: 路由器
     **Action**: 根据输入分支：
 
     | 输入 | 分支 |
@@ -35,33 +33,27 @@
 </step_2_route>
 
 <step_3_navigate>
-    **Role**: 项目导航员
     **Action**:
     1.  **判断项目阶段**:
 
         | 信号 | 阶段 | 建议 |
         |:---|:---|:---|
         | roadmap.json 不存在 | 未初始化 | 新项目 → `/archi.start`；已有代码 → `/archi.inherit` |
-        | 有 roadmap 但无 Task 目录 | 已启动，未规划 | 运行 `/archi.scope` 规划新任务 |
-        | 有 Legacy stub (Spec-Status: Stub) | 已继承，未补全 | 运行 `/archi.edit LEG-xx` 补全 spec |
-        | 有 active 任务且 plan.json 完整 | 可编码 | 运行 `/archi.code <ID>` |
-        | 有 active 任务但缺 spec/plan | 规划未完成 | 运行 `/archi.plan <ID>` 补全 |
-        | 所有任务 done | 已完成 | 运行 `/archi.scope` 规划新任务或发布 |
+        | 有 roadmap 但无 Task 目录 | 已启动，未规划 | `/archi.scope` 规划新任务 |
+        | 有 Legacy stub (Spec-Status: Stub) | 已继承，未补全 | `/archi.edit LEG-xx` 补全 spec |
+        | 有 active 任务且 plan.json 完整 | 可编码 | `/archi.code <ID>` |
+        | 有 active 任务但缺 spec/plan | 规划未完成 | `/archi.plan <ID>` 补全 |
+        | 所有任务 done | 已完成 | `/archi.scope` 规划新任务或发布 |
         | 有 blocked 任务 | 存在阻塞 | 提示阻塞原因与前置依赖 |
 
-    2.  **输出格式**:
-        - 一句话总结当前状态
-        - 推荐的下一步操作（含具体命令）
-        - 如有多个可选路径，列出优先级排序（最多 3 个）
+    2.  **Output**: 一句话总结状态 + 推荐下一步（含命令）+ 可选路径（≤3 个，按优先级）。
 </step_3_navigate>
 
 <step_4_answer>
-    **Role**: 项目顾问
     **Action**:
-    1.  解析 `[question]` 语义，定位相关项目文件。
-    2.  读取相关文件，综合回答。
-    3.  若问题涉及操作（如"怎么做 X"），回答须包含具体命令建议。
-    4.  若信息不足以回答，明确告知缺少什么，而非编造。
+    1.  解析 `[question]` 语义，定位相关项目文件并读取。
+    2.  综合回答；涉及操作的问题须包含具体命令建议。
+    3.  信息不足以回答时，明确告知缺少什么，禁编造。
 
     **Output**: 基于项目上下文的简洁回答 + 相关文件引用。
 </step_4_answer>

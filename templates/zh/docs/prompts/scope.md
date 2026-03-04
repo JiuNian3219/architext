@@ -23,13 +23,7 @@
        - 如未提供路径 → 依次查找 `scope-brief.md`（项目根）、`[[__DOCS_DIR__]]/scope-brief.md`
        - 如均不存在或为空 → 跳转 `<fallback_interview>`
 
-    2. 解析 Brief 各 Section，提取：
-       - 需求名称和描述
-       - 任务清单
-       - 已有设计决策
-       - 边界与约束（不做的事、时间、依赖、技术限制）
-       - 受影响的已有任务
-       - 参考资料
+    2. 解析 Brief 各 Section，提取：需求名称和描述、任务清单、已有设计决策、边界与约束、受影响的已有任务、参考资料。
 
     > Brief 是一次性输入文件，处理完成后用户可自行删除。
 
@@ -37,13 +31,9 @@
 </step_0_ingest>
 
 <step_1_load>
-    **Role**: 系统分析师
     **Action**:
-    1.  **Read Vision**: `[[__DOCS_DIR__]]/global/vision.md` — 仅读北极星指标和 Boundaries 段落；其余章节跳过。
-    2.  **Read Roadmap**: `[[__DOCS_DIR__]]/global/roadmap.json` — 仅提取每个 task 的 `id/title/status/deps/tag` 字段（跳过 `goal/notes`，需求分解不需要这些详情）；读取当前最大 ID 水位用于新任务编号。
-    3.  **Read Tech Stack**: `02_tech_stack.md` — 技术约束。
-    4.  **Read Map**: `[[__DOCS_DIR__]]/global/map.json` — 仅读 `directoryMapping` 和 `featureRelations`；`logicalTopology` 和 `criticalUserJourneys` 跳过。
-    5.  **Scan Tasks**: 扫描 `[[__DOCS_DIR__]]/tasks/` 目录 — 了解已有 Task 概要（标题 + 关键流程，无需全文）。
+    1.  **Load**: vision.md（仅北极星+Boundaries）、roadmap.json（仅 id/title/status/deps/tag + 当前最大 ID 水位）、02_tech_stack.md、map.json（仅 directoryMapping + featureRelations）。
+    2.  **Scan Tasks**: 扫描 tasks/ 目录 — 了解已有 Task 概要（标题+关键流程，无需全文）。
 
     **Output**: 内部上下文摘要，进入 `<step_2_analysis>`。
 </step_1_load>
@@ -54,51 +44,20 @@
 
     **Action**:
 
-    1. **Vision 对齐检查**: Brief 需求是否与 vision.md 的北极星指标一致？如有偏离 → 在输出中标注 `[Vision 偏离警告]`。
-    2. **任务清单完整性**: Brief 任务清单是否足以支撑需求目标？
-    3. **影响评估**: Brief 中"受影响的已有任务" → 对照 roadmap/tasks 验证是否存在、状态如何。
-    4. **缺口识别**: 检查 Brief 是否有关键信息缺失。
-    5. **联动检查**: [[SUBAGENT: archi-feature-relations|mode: check, context: 将新任务描述与 featureRelations sources 做语义对比，命中时在摘要中输出联动提示]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: check 的逻辑执行）]]
+    1. **Vision 对齐检查**: Brief 需求是否与 vision.md 北极星一致？偏离 → 标注 `[Vision 偏离警告]`。
+    2. **任务清单完整性**: 是否足以支撑需求目标？
+    3. **影响评估**: Brief 中"受影响的已有任务" → 对照 roadmap/tasks 验证。
+    4. **缺口识别**: Brief 是否有关键信息缺失。
+    5. **联动检查**: [[SUBAGENT: archi-feature-relations|mode: check, context: 将新任务描述与 featureRelations sources 做语义对比，命中时输出联动提示]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: check 的逻辑执行）]]
 
-    **缺口分级**:
-    - **必须**: 缺失则无法合理分解（如任务清单为空）
-    - **可补**: AI 可推导但建议确认（如依赖关系不明确）
-    - **建议**: AI 可自行决定（如任务分组方式）
+    **缺口分级**: 必须 → 无法分解 | 可补 → AI 可推导建议确认 | 建议 → AI 自决
 
-    **Decision**:
-    - 无"必须"级缺口 + 无"可补"级缺口 → 跳过 Step 2.5，直接进入 Step 3
-    - 有缺口 → 进入 Step 2.5
+    **Decision**: 无"必须"+"可补"缺口 → 跳 Step 2.5 | 有缺口 → 进入 Step 2.5
 
-    **Output**: 向用户输出 Brief 分析摘要：
-    ```
-    ### SCOPE BRIEF 分析报告
-    > **需求**: [名称] | **规模**: 预估 [N] 个任务
-
-    **Vision 对齐**: [一致 / ⚠️ 偏离 — 原因]
-
-    **已确认信息**:
-    - [列表]
-
-    **受影响的已有任务**:
-    | 任务 | 状态 | 预估影响 |
-    |:---|:---|:---|
-    | [ID: 名称] | [done/active/stub] | [需修改/需扩展/无影响] |
-
-    **（有命中） 联动提示**:
-    | 聚合方 | checkNote |
-    |:---|:---|
-    | [aggregator ID/路径] | [checkNote 内容] |
-
-    **信息缺口** (须补充):
-    - [缺口列表]
-
-    **AI 将自动决定** (无需操作):
-    - [列表]
-    ```
+    **Output**: 向用户输出 SCOPE BRIEF 分析报告 — 含需求名/预估规模、Vision 对齐状态、已确认信息、受影响已有任务表（任务/状态/预估影响）、（有命中）联动提示表、信息缺口、AI 自动决定项。
 </step_2_analysis>
 
 <step_2_5_supplementary>
-    **Role**: 产品顾问
     **Trigger**: 仅当 Step 2 发现"必须"或"可补"级缺口时执行。
     **Input**: Step 2 的缺口列表。问题数上限 3 题。
 
@@ -111,7 +70,7 @@
 
     **Action**: [[SKILL: archi-decompose-roadmap|按 skill 的协议，基于 Scope Brief 任务清单生成增量任务数据。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
 
-    **展示格式**（将 Skill 产出的任务数据转换为以下格式，向用户呈现后等待确认）：
+    **展示格式**（将 Skill 产出转换为以下格式，向用户呈现后等待确认）：
 
     ```
     #### Phase 1: Infrastructure
@@ -121,39 +80,31 @@
     | ID | 标题 | 描述摘要 | 依赖 | 标签 |
 
     #### Execution Batches（并行执行批次）
-    （从 deps 拓扑排序推导，列出每批可同时开工的任务）
     Batch 1（立即可开工）: ...
     Batch 2（等 Batch 1 全完）: ...
 
     #### NFR 横切关注点（已归并，不入 Roadmap）
-    （来自 Skill 的 NFR 归并清单）
     - [NFR 名称] → 注入 [任务 ID] | 影响：[其他任务 ID]
     ```
 
-    **Gate**: 用户回复 **OK** 后进入 step_4；未确认禁写入 Roadmap。用户可在确认前修正方案（合并/拆分/调整依赖）。
+    **Gate**: 用户回复 **OK** 后进入 step_4；未确认禁写入 Roadmap。
 </step_3_decompose>
 
 <step_3_5_refinement>
-    **Role**: 咨询顾问
     **Trigger**: 用户回复非 OK，含合并/拆分/增删/依赖调整等修正。
     **Action**: 融入用户反馈，刷新分解方案重新输出，等待再次确认。
 </step_3_5_refinement>
 
 <step_4_roadmap_update>
-    **Role**: 系统管理员
     **Input**: 用户确认的分解方案。
 
     **Action**:
-    1.  将新任务追加到 `[[__DOCS_DIR__]]/global/roadmap.json` 对应 Phase 的 `tasks` 数组中。
+    1.  将新任务追加到 roadmap.json 对应 Phase 的 `tasks` 数组中。
     2.  如需新增 Phase → 追加到 `phases` 数组。
-    3.  更新 `lastUpdated` 字段。
-    4.  （新模块） 更新 `[[__DOCS_DIR__]]/global/map.json` 的 `directoryMapping`：为新增任务预注册推断的模块路径（基于 tech_stack 架构模式和任务描述推断，仅目录级别；详细内容在 `/archi.plan` 时完善）。
+    3.  更新 `lastUpdated`。
+    4.  （新模块）更新 map.json `directoryMapping`：为新增任务预注册推断的模块路径。
 
-    **Terminal Gate** (禁止跳过，须在输出总结前全部完成):
-    | 步骤 | 命令 | 通过条件 |
-    |:---|:---|:---|
-    | 1 | `npx archi task --check` | 无 ERROR 级问题 |
-    | 2 | `npx archi render` | `.md` 视图生成完成 |
+    **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 
     **Output**: 写入确认。
 </step_4_roadmap_update>
@@ -171,14 +122,13 @@
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
-    | （仅ui项目） 推荐 | [[SKILL: archi-ui-wireframe|运行 skill（追加模式）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]] | 为新增任务追加屏幕到 `ui_concept.html`，同步更新 `ui_context.md` |
+    | （仅ui项目） 推荐 | [[SKILL: archi-ui-wireframe|运行 skill（追加模式）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]] | 为新增任务追加屏幕到 `ui_concept.html` |
     | 1 | `/archi.plan <第一个 pending 任务 ID>` | 对首个可执行任务做深度规划 |
     | 2 | 审查 roadmap | 确认依赖关系和优先级 |
 </step_5_signoff>
 
 <fallback_interview>
     **Trigger**: Brief 文件不存在或为空。
-    **Role**: 产品顾问
 
     **Action**:
     1. 告知用户 `scope-brief.md` 未找到。建议：
@@ -191,8 +141,6 @@
        c. 有什么约束？（不做的事、依赖、技术限制）
        d. 会影响哪些已有任务？
     3. 收集完毕后，将信息写入 `scope-brief.md`（项目根目录），然后跳转 `<step_1_load>`。
-
-    > 此模式为向后兼容，核心流程仍以 Brief 为准。
 </fallback_interview>
 
 </protocol_scope>
