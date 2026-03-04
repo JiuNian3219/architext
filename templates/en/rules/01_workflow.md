@@ -33,6 +33,8 @@ alwaysApply: true
 | `/archi.fix` | `[[__DOCS_DIR__]]/prompts/fix.md` | Load Debugger → Diagnosis |
 | `/archi.map` | `[[__DOCS_DIR__]]/prompts/map.md` | Load Surveyor → Map Refresh |
 | `/archi.remove` | `[[__DOCS_DIR__]]/prompts/remove.md` | Load Surgeon → Task Decommission |
+| `/archi.ref` | `[[__DOCS_DIR__]]/prompts/ref.md` | Load Curator → External Ref Management |
+| `/archi.recover` | `[[__DOCS_DIR__]]/prompts/recover.md` | Load Recovery → Data Restore |
 | `/archi.help` | `[[__DOCS_DIR__]]/prompts/help.md` | Load Manual → Display Guide |
 
 > **Protocol Load Gate** (forbidden to skip; three steps must complete in order):
