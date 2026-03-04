@@ -1,77 +1,74 @@
 <protocol_fix>
   **Trigger**: `/archi.fix [id] <context>`
-  **Goal**: Diagnose Bug and execute fix directly. If `[id]` not provided, auto-locate relevant task module.
+  **Goal**: Diagnose and fix bugs. If `[id]` not provided, auto-locate related feature module by context.
 
 <meta>
     <style>Diagnostic, Surgical, Spec-Compliant</style>
     <language>English</language>
     <principles>
-      1.  **Spec Immutable**: Prohibited from modifying `spec.md` / `ui.md` (unless Bug itself is a documentation error).
-      2.  **Reproduction**: Must conceive reproduction steps or test cases first.
-      3.  **Root Cause**: Must analyze root cause, not patch the surface.
+      1.  **Spec Immutable**: Do not modify `spec.md` / `ui.md` (unless the bug is a doc error).
+      2.  **Reproduction**: Must have reproduction steps or test case first.
+      3.  **Root Cause**: Must analyze root cause, not patch surface.
       4.  **Test-Driven**: Fix plan must include new test cases.
-      5.  **Auto-Discovery**: If ID not specified, locate Task via Context semantic search.
+      5.  **Auto-Discovery**: If ID not specified, locate Task via context semantic search.
     </principles>
 </meta>
 
 <step_1_diagnose>
-    **Role**: Fault Analyst
+    **Role**: Failure Analyst
     **Action**:
     1.  **Resolve Target**:
-        - Has `<id>`: Lock target `tasks/<ID>_<Slug>/`.
-        - No `<id>`: Analyze `[context]` to search most relevant module.
-          Unique match → Auto lock | Multiple matches → List candidates and ask | Cannot locate → Report error requesting ID.
-    2.  Read all docs under target directory (`spec.md`, `ui.md`, `plan.json`) and related code.
-    3.  Read `02_tech_stack.md` (ensure fix does not violate tech red lines) and `[[__DOCS_DIR__]]/global/vision.md` (ensure fix direction stays aligned with project vision).
-    4.  Analyze `[context]`, combine with code logic to locate potential failure points.
-    5.  **Hypothesis**: Propose 1-3 root cause hypotheses.
+        - With `<id>`: Lock `tasks/<ID>_<Slug>/`.
+        - Without `<id>`: Analyze `[context]` to find most relevant module.
+          Single match → auto lock | Multiple matches → list candidates and ask | Cannot locate → error, request ID.
+    2.  Read all docs and related code in target directory.
+    3.  Read 02_tech_stack.md (tech red lines) and vision.md (direction anchor).
+    4.  Analyze `[context]` with code logic to locate potential fault points.
+    5.  **Hypothesis**: Propose 1–3 root cause hypotheses.
 
-    **Output**: Root Cause Analysis report.
+    **Output**: Fault diagnosis report (Root Cause Analysis).
 </step_1_diagnose>
 
 <step_2_plan_fix>
-    **Role**: Tech Lead
     **Action**:
-    - Update `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/plan.json`, append to `phases` array a phase object with `name`: `Bugfix: <Bug Title>`.
-    - Tasks: 1) Create reproduction test (Red) 2) Apply fix (Green) 3) Regression test.
+    - Update plan.json; append phase `Bugfix: <Bug Title>`.
+    - Tasks: 1) Create reproduction test (Red) 2) Fix (Green) 3) Regression test.
 
-    **Terminal Gate** (Do not skip; must complete before step_5 output):
-    | Step | Command | Pass Condition |
-    |:---|:---|:---|
-    | 1 | `npx archi render` | `.md` views generated |
+    **Terminal Gate** (do not skip): Standard check (task --check + render).
 
     **Output**: plan.json with fix tasks appended.
 </step_2_plan_fix>
 
 <step_3_execute_fix>
-    **Role**: Senior Engineer (Surgical Fix — bug only, no scope creep)
     **Action**:
-    - Modify code directly according to Plan.
-    - Fix Bug only; prohibited from opportunistic refactoring or modifying unrelated code.
-    - Error handling follows `code.md` specs (no swallowing errors/no silent failures).
+    - Modify code per Plan. Fix bug only; do not refactor.
+    - Error handling follows `code.md` protocol.
 </step_3_execute_fix>
 
 <step_4_verify>
-    **Role**: QA Engineer
-    **Terminal Gate** (Do not skip; must complete before step_5 output):
+    **Terminal Gate** (do not skip):
     | Step | Command | Pass Condition |
     |:---|:---|:---|
-    | 1 | Run build command | Build succeeds |
+    | 1 | Run build command | Build success |
     | 2 | Run type check | Zero type errors |
     | 3 | Run Lint/Format | Pass |
-    | 4 | Run tests | Reproduction + regression tests pass |
+    | 4 | Run tests | Reproduction test + regression test pass |
 
-    Any failure must be fixed until passed.
+    Fix any failure until pass.
+
+    **Code quality review**:
+    [[SUBAGENT: archi-silent-audit|mode: code-impl, context: Review fix code; focus Tech/Security/Performance + Spec Immutable]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: code-impl check)]]
+
+    [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
 <step_4_5_plan_update>
-    **Role**: Tech Lead
     **Action**:
-    1. Update `plan.json`: set `done: true` for completed tasks in the Bugfix Phase.
-    2. [current status=`done` and all Bugfix Phase tasks passed] → Keep status as `done`.
-    3. [Bugfix Phase has unresolved tasks] → Run `npx archi task <ID> --status active`; note in signoff that `/archi.code` is needed to complete remaining fixes.
+    1. Update plan.json Bugfix Phase completed tasks `done: true`.
+    2. [status=`done` and Bugfix all pass] → keep `done`.
+    3. [Bugfix has incomplete items] → `npx archi task <ID> --status active`; signoff note to re-run `/archi.code`.
 
-    **Output**: `MODIFIED: plan.json Bugfix Phase done marks` (if status changed, append `MODIFIED: roadmap.json <ID>.status`).
+    **Output**: `MODIFIED: plan.json Bugfix Phase done flags`.
 </step_4_5_plan_update>
 
 <step_5_summary>
@@ -79,8 +76,8 @@
 
     | Priority | Action | Notes |
     |:---|:---|:---|
-    | Recommended | `/archi.audit <ID>` | Re-audit to confirm fix is complete and no new issues introduced |
-    | Optional | `/archi.code <ID>` | If Bugfix Phase has remaining incomplete tasks |
+    | Recommended | `/archi.audit <ID>` | Re-audit to confirm fix complete |
+    | Optional | `/archi.code <ID>` | If incomplete items, continue implementation |
 </step_5_summary>
 
 </protocol_fix>

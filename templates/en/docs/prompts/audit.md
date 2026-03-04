@@ -1,150 +1,128 @@
 <protocol_audit>
   **Trigger**: `/archi.audit [id]`
-  **Goal**: Independent deep code audit. With `<id>`, audit the task's code implementation; without `<id>`, execute project-level health check. No code modifications — output audit report and fix tickets only.
+  **Goal**: Independent deep code review. With `<id>` review that task's code implementation; without `<id>` run project-wide health check. Do not modify code; output review report and fix work items only.
 
 <meta>
     <style>Investigative, Thorough, Evidence-Based</style>
     <language>English</language>
     <principles>
-      1.  **Read-Only**: Prohibited from modifying any code files. Audit ≠ Fix.
-      2.  **Evidence-Based**: Every finding must include file path, line number, and code snippet.
-      3.  **Actionable Output**: Every issue must include a recommended fix command (`/archi.fix`, `/archi.edit`, etc.).
-      4.  **Vision Anchored**: Always use `vision.md` as directional baseline to detect deviations.
-      5.  **Report Persistence**: Audit results must be written to file — task-level → `tasks/<id>_*/audit.md` (overwrite), project-level → `audits/YYYY-MM-DD.md` (date-archived, same-day overwrite).
+      1.  **Read-Only**: Do not modify any code files. Review ≠ Fix.
+      2.  **Evidence-Based**: Each finding must include file path, line number, code snippet.
+      3.  **Actionable Output**: Each issue must include recommended fix command (`/archi.fix`, `/archi.edit`, etc.).
+      4.  **Vision Anchored**: Always use `vision.md` as direction anchor; detect drift.
+      5.  **Report Persistence**: Review results must be written to file — task-level → `tasks/<id>_*/audit.md` (overwrite); project-level → `audits/YYYY-MM-DD.md` (date archive).
     </principles>
 </meta>
 
 <step_1_resolve>
-    **Role**: System Analyst
     **Mode Gate**:
 
     | Input | Mode | Next Steps |
     |:---|:---|:---|
-    | `/archi.audit <id>` | Task-level deep audit | step_2_task → step_3_report |
+    | `/archi.audit <id>` | Task-level deep review | step_2_task → step_3_report |
     | `/archi.audit` | Project-level health check | step_2_project → step_3_report |
 
     **Task-level — Resolve ID**:
-    1.  Parse `<id>` from `[[__DOCS_DIR__]]/global/roadmap.json` → Task Name, Slug, status.
-    2.  **Status Gate** — Only `active` or `done` can be audited:
+    1.  Parse `<id>` from roadmap.json → Task Name, Slug, status.
+    2.  **Status Gate** — only `active` or `done` may be reviewed:
 
         | Status | Handling |
         |:---|:---|
         | `active` / `done` | Pass |
-        | `pending` | Reject — no code to audit, run `/archi.plan` + `/archi.code` first |
-        | `blocked` | Reject — prerequisites not completed |
+        | `pending` | Reject — no code to review |
+        | `blocked` | Reject — upstream deps incomplete |
 
-    3.  **Load Context**:
-        - `[[__DOCS_DIR__]]/global/vision.md` — Project directional baseline
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/spec.md` — Task logic
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/plan.json` — Task checklist
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/ui.md` — Task UI scope declaration (if exists)
-        - [?UI] `[[__DOCS_DIR__]]/global/ui_context.md` — AI screen index (locate corresponding screen IDs)
-        - [?UI] `[[__DOCS_DIR__]]/global/ui_concept.html` — read-only visual reference (source of visual truth for #10 compliance comparison)
-        - `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/audit.md` — Previous audit report (if exists, for comparison)
-        - `02_tech_stack.md` — Technical red lines
-        - [?UI] `[[__DOCS_DIR__]]/global/design_tokens.json`
-        - [?Data] `[[__DOCS_DIR__]]/global/data_snapshot.json`
-    4.  Read all code files corresponding to this task.
+    3.  **Load**: vision.md (direction anchor) + task docs (spec/plan/ui) + prior audit.md (for comparison) + project context (tech_stack/design_tokens/data_snapshot/ui_context/ui_concept). Read all code files for this task.
 
     **Project-level — Load Overview**:
-    1.  Read `[[__DOCS_DIR__]]/global/vision.md`, `roadmap.json`, `map.json`.
-    2.  Read `02_tech_stack.md`.
-    3.  Scan `[[__DOCS_DIR__]]/tasks/` directory structure.
-    4.  Read project code entry points and key modules.
+    1.  Read vision.md, roadmap.json, map.json, 02_tech_stack.md.
+    2.  Scan tasks/ directory structure.
+    3.  Read project code entry points and key modules.
 
-    **Output**: Audit scope and context inventory.
+    **Output**: Review scope and context checklist.
 </step_1_resolve>
 
 <step_2_task>
     **Role**: Chief Auditor
-    **Scope**: Task-level deep code audit (execute only for `/archi.audit <id>`).
+    **Scope**: Task-level deep code review (only when `/archi.audit <id>`).
 
-    Audit dimension by dimension; every finding must include `file:line` + code snippet + severity:
+    Review dimension by dimension; each finding must include `file:line` + code snippet + severity:
 
-    | # | Dimension | Audit Focus |
+    | # | Dimension | Review focus |
     |:---|:---|:---|
-    | 1 | **Vision Alignment** | Does the implementation direction conflict with or deviate from `vision.md` |
-    | 2 | **Spec Completeness** | Does code cover all scenarios and edge cases in `spec.md` |
-    | 3 | **Plan Truthfulness** | Are tasks marked `done` actually implemented in code (detect false marks) |
-    | 4 | **Logic Correctness** | Business logic errors, contradictions, missing branches, state machine defects |
-    | 5 | **Bug Hunting** | Null/undefined, race conditions, resource leaks, infinite loops, off-by-one |
-    | 6 | **Error Handling** | Swallowed errors, silent failures, error propagation chain integrity, user-visible feedback |
-    | 7 | **Tech Stack Compliance** | Against `02_tech_stack.md`: forbidden patterns, outdated APIs, hardcoded values |
-    | 8 | **Security** | Sensitive info leakage, unvalidated input, injection risks, permission checks |
-    | 9 | **Performance** | Unnecessary full imports/large loops/useless computation/memory leaks/N+1 queries |
-    | 10 | [?UI] **Design Compliance** | Styles use visual patterns from Tokens; no hardcoded magic values; implementation visually consistent with corresponding screen in `ui_concept.html` |
-    | 11 | [?Data] **Data Integrity** | Field names/types consistent with `data_snapshot.json` |
-    | 12 | [?I18n] **I18n Compliance** | No hardcoded strings; must use Key/dictionary references |
-    | 13 | **Orphan .gitkeep** | Dir has other files but still contains `.gitkeep` — must remove |
-    | 14 | **Spec-Code Drift** | Do code interfaces/types/behaviors match `spec.md`; have manual changes been synced to docs |
-    | 15 | [?UI] **UI Reference Integrity** | Are `ref: ui_concept.html#S-XX` pointers in `ui.md` still valid; have referenced screens/components been renamed or removed after edit/revise |
+    | 1 | **Vision alignment** | Implementation direction conflicts or drift from `vision.md` |
+    | 2 | **Spec completeness** | Code covers all scenarios and boundaries in `spec.md` |
+    | 3 | **Plan truthfulness** | Tasks marked `done` actually implemented (prevent false completion) |
+    | 4 | **Logic correctness** | Business logic errors, contradictions, missing branches, state machine defects |
+    | 5 | **Bug hunting** | null/undefined, race conditions, resource leaks, infinite loops, off-by-one |
+    | 6 | **Error handling** | Swallowing, silent failure, error propagation chain, user-visible feedback |
+    | 7 | **Tech Stack compliance** | Per `02_tech_stack.md`: forbidden patterns, outdated API, hardcoding |
+    | 8 | **Security** | Sensitive info leak, unvalidated input, injection risk, permission checks |
+    | 9 | **Performance** | Unnecessary full imports, large loops, dead computation, memory leaks, N+1 queries |
+    | 10 | (When this task involves UI) **Design compliance** | Token usage; no hardcoded magic values; visual consistency with `ui_concept.html` |
+    | 11 | (When this task involves data) **Data consistency** | Field names/types match `data_snapshot.json` |
+    | 12 | (i18n projects only) **I18n compliance** | No hardcoded strings; must use Key/dictionary refs |
+    | 13 | **Orphan .gitkeep** | `.gitkeep` exists when dir has other files — remove |
+    | 14 | **Spec-Code drift** | Interface/type/behavior match `spec.md`; manual changes synced to docs |
+    | 15 | (When this task involves UI) **UI ref completeness** | `ui.md` `ref: ui_concept.html#S-XX` pointers still valid |
 
-    **Output**: Findings list grouped by dimension, each with severity, location, description.
+    **Output**: Finding list grouped by dimension; each with level, location, description.
 </step_2_task>
 
 <step_2_project>
     **Role**: Chief Auditor
-    **Scope**: Project-level health check (execute only for `/archi.audit` without arguments).
+    **Scope**: Project-level health check (only when `/archi.audit` no args).
 
-    | # | Check Item | Description |
+    | # | Check | Description |
     |:---|:---|:---|
-    | 1 | **Vision Drift** | Are `roadmap.json` task directions consistent with `vision.md` |
-    | 2 | **Architecture Consistency** | `map.json` vs actual directory structure — drift or unregistered modules |
-    | 3 | **Roadmap Health** | Consistency + progress stats + long-term blocked tasks + dependency cycle detection |
-    | 4 | **Documentation Completeness** | Each Task has spec.md + plan.json; detect orphan directories |
-    | 5 | **Tech Stack Global Compliance** | Spot-check key entry points and modules for global violations |
-    | 6 | **Cross-Task Consistency** | Duplicate logic, naming conflicts, interface inconsistencies |
-    | 7 | **Orphan .gitkeep** | Dir has other files but still contains `.gitkeep` — must remove |
+    | 1 | **Vision drift** | `roadmap.json` task directions align with `vision.md` |
+    | 2 | **Architecture consistency** | `map.json` vs actual dir structure; drift or unregistered modules |
+    | 3 | **Roadmap health** | Consistency + progress stats + long blocked + dep cycle detection |
+    | 4 | **Doc completeness** | Each Task has spec.md + plan.json; orphan directories |
+    | 5 | **Tech Stack global compliance** | Spot-check key entry points and modules |
+    | 6 | **Cross-Task consistency** | Duplicate logic, naming conflicts, interface inconsistency |
+    | 7 | **Orphan .gitkeep** | `.gitkeep` exists when dir has other files |
 
-    After scanning, prioritize and recommend Tasks needing deep audit:
-    - `done` but plan not fully completed
-    - Large codebase but no tests
-    - Long-term `active` with no progress
+    After scan, recommend tasks for deep review (`done` but plan incomplete / large codebase no tests / long `active`).
 
-    **Output**: Project health overview + deep audit recommendation list.
+    **Output**: Project health overview + deep review recommendation list.
 </step_2_project>
 
 <step_3_report>
-    **Role**: Report Writer
     **Action**:
 
     **Issue Classification**:
 
     | Level | Meaning | Example |
     |:---|:---|:---|
-    | `CRITICAL` | Must fix, blocks release | Logic errors, security vulnerabilities, data corruption risk |
-    | `WARNING` | Should fix, carries risk | Missing error handling, performance hazards, incomplete Spec coverage |
-    | `INFO` | Suggested improvement | Naming conventions, missing comments, simplifiable code |
+    | `CRITICAL` | Must fix, blocks release | Logic error, security hole, data corruption risk |
+    | `WARNING` | Should fix, risk exists | Missing error handling, performance hazard, Spec coverage gap |
+    | `INFO` | Suggested optimization | Non-standard naming, missing comments, simplifiable code |
 
     **Issue Format** (each must include):
     ```
-    [LEVEL] file/path:line — Dimension Name
-      Description: specific issue
+    [LEVEL] file:line — Dimension name
+      Description: specific problem
       -> Recommended fix: /archi.fix <ID> <description> or /archi.edit <ID> <description>
     ```
 
-    **Action Routing** (recommend command by issue type):
+    **Action Routing**:
 
     | Issue Type | Recommended Command |
     |:---|:---|
-    | Bug (logic error, edge case miss) | `/archi.fix <ID> <description>` |
-    | Spec gap (task not fully implemented) | `/archi.edit <ID> <supplement>` |
-    | Architecture-level issue (global violation) | `/archi.revise <description>` |
-    | Incomplete task (plan falsely marked done) | `/archi.code <ID>` |
-    | Minor issue (naming, comments, simplification) | Address in next `/archi.code` |
+    | Bug | `/archi.fix <ID> <description>` |
+    | Spec gap | `/archi.edit <ID> <supplement description>` |
+    | Architecture-level | `/archi.revise <description>` |
+    | Feature incomplete | `/archi.code <ID>` |
+    | Minor | Address in next `/archi.code` |
 
-    **Report Structure**:
-    1.  Audit summary (mode, scope, date)
-    2.  Findings list (sorted by severity: CRITICAL → WARNING → INFO)
-    3.  Statistics summary (count per severity level)
-    4.  Fix ticket summary (directly executable command list)
-    5.  Next Steps table
+    **Report Structure**: Review summary → Finding list (CRITICAL → WARNING → INFO) → Stats summary → Fix work items → Next Steps.
 
     **Write Report File**:
     - Task-level → `[[__DOCS_DIR__]]/tasks/<id>_<Slug>/audit.md` (overwrite)
-    - Project-level → `[[__DOCS_DIR__]]/audits/YYYY-MM-DD.md` (date-archived, same-day overwrite)
+    - Project-level → `[[__DOCS_DIR__]]/audits/YYYY-MM-DD.md` (date archive)
 
-    **Output**: Complete audit report (output to both conversation and file).
+    **Output**: Full review report (to conversation and file).
 </step_3_report>
 
 </protocol_audit>

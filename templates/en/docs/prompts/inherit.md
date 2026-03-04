@@ -1,16 +1,16 @@
 <protocol_inherit>
   **Trigger**: `/archi.inherit [brief_path]`
   **Phase**: Legacy Adoption
-  **Goal**: Reverse-engineer an existing codebase to generate the Architext document skeleton, bringing the project under framework governance. Optionally provide a Brief to supplement vision/roadmap (for skeleton repos with minimal code).
+  **Goal**: Reverse-engineer existing codebase to generate Architext document skeleton, bringing project under framework governance. Optionally provide Brief to supplement vision/roadmap (for skeleton repos with minimal code).
 
 <meta>
     <style>Analytical, Systematic, Evidence-Based</style>
     <language>English</language>
     <principles>
-      1.  **Code-Driven**: Code is the sole source of truth; do not speculate on tasks without evidence.
-      2.  **AI-Native Perspective**: All analysis from AI Agent perspective. Focus: Context Locality, Type Safety, Module Boundaries.
-      3.  **User Agency First**: AI analysis must be confirmed by the user. When code interpretation is ambiguous, ask the user; do not decide unilaterally.
-      4.  **Minimal Token**: Prioritize config files and entry points; avoid scanning every line of code.
+      1.  **Code-Driven**: Code is the sole source of truth; no speculation on features without evidence.
+      2.  **AI-Native Perspective**: Analysis from AI Agent perspective. Focus: Context Locality, Type Safety, Module Boundaries.
+      3.  **User Agency First**: AI analysis must be confirmed by user. When code interpretation is ambiguous, ask user; do not decide unilaterally.
+      4.  **Minimal Token**: Prioritize config and entry files; avoid line-by-line scan of all code.
       5.  **Option Z Everywhere**: Supplementary questions must include `[Z] Custom`.
     </principles>
 </meta>
@@ -19,8 +19,8 @@
     **Role**: Intelligence Analyst
     **Trigger**: Only when user provides `[brief_path]`. Skip if no argument or path invalid.
     **Action**:
-    1. Parse `[brief_path]`: if path provided → read that file; if not → look for `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
-    2. If file exists and non-empty: parse Brief sections, extract project identity, core tasks, tech preferences, constraints, supplementary notes (same as start step_0_ingest)
+    1. Parse `[brief_path]`: if path provided → read that file; if not → search `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
+    2. If file exists and non-empty: parse Brief sections, extract project identity, core tasks, tech preferences, boundaries, supplementary notes (same as start step_0_ingest)
     3. If file missing or empty: skip this step; subsequent steps use code only as input
 
     **Output**: Internal Brief summary (not shown to user), proceed to step_0_recon.
@@ -41,80 +41,49 @@
        | Other | Use root directory config files |
 
     2. Read README.md (if exists).
-    3. Scan directory structure (top-level + core source directories, two levels deep).
-    4. Infer project feature tags (UI / Data / CLI / Lib / API — from directory structure, dependencies, and config).
+    3. Scan directory structure (top-level + core source dirs, two levels deep).
+    4. Infer project feature tags (UI / Data / CLI / Lib / API — from directory structure, deps, and config).
     5. Identify entry points and core modules.
 
     **Output**: Internal summary (not shown to user), proceed to step_1.
 </step_0_recon>
 
 <step_1_analysis>
-    **Role**: System Analyst
-    **Scan Strategy**: Medium-depth scan — read each module's entry file and core business files, extract main flow chains. Do not traverse every file.
+    **Role**: Chief Product Strategist (CPO)
+    **Scan strategy**: Medium-depth scan — read each module's entry file and core business files, extract main flow chains. Do not traverse every file.
 
     **Action**:
     1. For each identified functional module:
-       - Read entry file + 1-2 core business files
+       - Read entry file + 1–2 core business files
        - Extract main flows (user action → system processing → result)
        - Record associated file paths
     2. For shared/infrastructure code (utils, middleware, config):
        - Record directory and responsibility only; do not treat as functional modules
     3. Extract domain terminology and naming conventions from code.
 
-    **Output**: Present structured analysis report to user:
-    ```
-    ### Codebase Analysis Report
-    > **Project**: [Name] | **Type**: [UI/Data/CLI/Lib/API] | **Scale**: ~[file count] files, [dir count] directories
-
-    **Tech Stack**:
-    | Category | Selection |
-    |:---|:---|
-    | Language | ... |
-    | Framework | ... |
-    | Build | ... |
-    | Testing | ... |
-    | Deployment | ... |
-
-    **Architecture Pattern**: [Inference] — [Evidence]
-
-    **Functional Module Inventory**:
-    | # | Module | Source Location | Responsibility | Key Flows |
-    |:---|:---|:---|:---|:---|
-    | 1 | [Name] | [Path] | [One sentence] | [Flow1], [Flow2] |
-
-    **Shared Infrastructure**:
-    | Directory | Responsibility |
-    |:---|:---|
-    | [Path] | [Description] |
-
-    **Domain Terminology**: [Term list]
-
-    **Uncertain Items** (if any):
-    - [Ambiguous item]
-    ```
+    **Output**: Output structured analysis report to user — include project overview (name/type/scale), tech stack table (language/framework/build/test/deploy), architecture pattern and evidence, functional module list (module/source location/responsibility/key flows), shared infrastructure (directory/responsibility), domain terminology, AI uncertain items (if any).
 
     **Gate**: User confirms or corrects. Do not proceed to step_2 without confirmation.
 </step_1_analysis>
 
 <step_2_supplementary>
-    **Role**: Product Consultant
     **Trigger**: Only when step_1 has items AI cannot determine. Skip if no ambiguity.
 
     **Action**: Ask ambiguous items in multiple-choice format.
-    - 3-5 options per question + `[Z] Custom`; AI recommendation marked `[Recommended]`.
+    - 3–5 options per question + `[Z] Custom`; AI recommendation marked `[Recommended]`.
     - Total questions capped at 3.
 
     Common ambiguities:
     - Architecture pattern cannot be confirmed
-    - Certain directory responsibilities unclear
-    - Vision info (North Star Metric, design philosophy) cannot be inferred from code
+    - Certain directory responsibility unclear
+    - Vision info (North Star metric, design philosophy) cannot be inferred from code
 
     **Output Format**:
     ```
     ### Supplementary Confirmation
 
-    **[Q1] Question Title**
-    > Why this information is needed
+    **[Q1] Question title**
+    > Why this info is needed
 
     | ID | Option | Description |
     |:---|:---|:---|
@@ -130,45 +99,45 @@
 <step_3_constitution>
     **Role**: Chief Architect
     **Input**: Step 0 Brief parse (if any) + Step 1 analysis report + Step 2 supplements (if any).
-    **Action**: Generate project document skeleton in one pass. **When Brief provided**: Brief takes precedence for vision/roadmap/tech_stack; code still used for map, LEG-xx, directory structure. **When no Brief**: Code only as input (original logic).
+    **Action**: Generate project document skeleton in one pass. **With Brief**: Brief takes precedence for vision/roadmap/tech_stack; code still used for map, LEG-xx, directory structure. **Without Brief**: Code only as input (original logic).
 
     ### Information Routing Rules
 
-    > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by the IDE — the AI knows their paths; write directly.
+    > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by IDE; AI knows their paths, write directly.
 
-    **When Brief provided** (Brief content → target file, same as start):
+    **With Brief** (Brief → target file):
     | Brief content | Target file |
     |:---|:---|
     | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
-    | Tech stack, deployment target, third-party libs/services | rule file `02_tech_stack` |
+    | Tech stack, deploy target, 3rd-party libs/services | rule file `02_tech_stack` |
     | Core task list | `[[__DOCS_DIR__]]/global/roadmap.json` (phase-1/2, call archi-decompose-roadmap) |
-    | Rules/conventions from supplementary notes | rule file `90_custom_rules` |
+    | Rules/conventions/preferences from supplementary notes | rule file `90_custom_rules` |
     | Style/tone (UI only) | `design_tokens.json` aestheticDirection etc. |
 
-    **Information from Code** (always applies):
-    | Information from Code | Target File |
+    **From code** (always applies):
+    | Source | Target file |
     |:---|:---|
-    | README project description, target users, task list | `[[__DOCS_DIR__]]/global/vision.md` |
-    | Dependency list, config files, code patterns | rule file `02_tech_stack` |
-    | Directory structure, module dependencies, user journeys | `[[__DOCS_DIR__]]/global/map.json` |
-    | Domain terminology, abbreviations, naming conventions | `[[__DOCS_DIR__]]/global/dictionary.json` |
-    | eslint/prettier and existing standards | rule file `90_custom_rules` |
-    | Error code definitions in code | `[[__DOCS_DIR__]]/global/error_codes.json` |
-    | [?UI] CSS variables/theme config | `[[__DOCS_DIR__]]/global/design_tokens.json` |
-    | [?Data] Schema/Migration files | `[[__DOCS_DIR__]]/global/data_snapshot.json` |
+    | README description/features | vision.md |
+    | Dependencies/config/code patterns | 02_tech_stack |
+    | Directory structure/module deps/user journeys | map.json |
+    | Domain terminology/naming conventions | dictionary.json |
+    | eslint/prettier etc. | 90_custom_rules |
+    | Error codes in code | error_codes.json |
+    | (UI projects only) CSS variables/theme | design_tokens.json |
+    | (Data projects only) Schema/Migration | data_snapshot.json |
 
     ### 3.1 Vision (`[[__DOCS_DIR__]]/global/vision.md`)
     - **With Brief**: Fill from Brief (same as start); code/README as supplement only
-    - **Without Brief**: Derive from README + project config; mark un-inferrable items `(AI Inferred — user review recommended)`
+    - **Without Brief**: Derive from README + project config; mark un-inferrable items `(AI completion — user review suggested)`
     - Do not retain template placeholders
 
     ### 3.2 Tech Stack (rule file `02_tech_stack`)
-    - **With Brief**: Brief-confirmed items → write directly; Brief blank/"recommend" → AI recommends by project features; code deps/config as supplement
-    - **Without Brief**: Existing dependencies/config → write directly; visible code conventions → Coding Standards
-    - Must populate complete Section 1-8
+    - **With Brief**: Brief confirmed → write directly; blank/recommend → AI recommends; code deps as supplement
+    - **Without Brief**: Existing deps/config → write directly; visible conventions → write to Coding Standards
+    - Fill complete Section 1-8
 
     ### 3.3 Custom Rules (rule file `90_custom_rules`)
-    - **With Brief**: Merge Brief supplementary notes + code eslint/prettier etc.
+    - **With Brief**: Merge supplementary notes + code eslint/prettier
     - **Without Brief**: Extract from eslint/prettier/editorconfig; identify team conventions from code patterns
 
     ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
@@ -189,7 +158,7 @@
           "tasks": [
             {
               "id": "LEG-01",
-              "title": "<Module Name>",
+              "title": "<Module name>",
               "status": "done",
               "goal": "<One-line summary>. See tasks/LEG-01_<Slug>/spec.md",
               "deps": [],
@@ -206,9 +175,8 @@
 
     **Rules**:
     - Functional modules → `phase-0: Legacy`, status `done`, tag `Legacy`, ID prefix `LEG-`
-    - Shared/infrastructure code does not enter roadmap; only goes to map.json directoryMapping
-    - phase-1/2 remain as empty skeletons
-    - Dependencies between LEG tasks must be reflected in deps
+    - Shared/infrastructure code does not enter roadmap; only map.json directoryMapping
+    - Dependencies between LEG tasks must be in deps
 
     ### 3.5 Task Stub Specs
 
@@ -224,66 +192,59 @@
     [One paragraph description]
 
     ## Key Flows
-    1. **[Flow Name]**: [A] → [B] → [C]
-    2. **[Flow Name]**: [A] → [B] → [C]
+    1. **[Flow name]**: [A] → [B] → [C]
 
     ## Associated Files
     - [Role]: `[Path]`
-    - [Role]: `[Path]`
     ```
 
-    > Stubs are a starting point, not the final state. Enrich later via `/archi.edit` (auto-triggers the `step_1_5_enrich` flow).
+    > Stub is starting point, not final state. Enrich later via `/archi.edit` (auto-triggers `step_1_5_enrich` flow).
 
-    ### 3.6 map.json Population
+    ### 3.6 map.json population
     - `directoryMapping`: Each core directory → `{ "path", "layer", "responsibility", "publicAPI" }`
     - `logicalTopology`: Inter-module dependencies → `{ "from", "to", "type" }` (imports / calls / extends)
     - `criticalUserJourneys`: Core flows → `{ "name", "steps": ["module → module → ..."] }`
-    - `featureRelations`: Scan code to identify "aggregator modules" and record them.
-      **Recognition patterns**: A module that iterates/enumerates/dynamically loads modules of the same type (e.g., `for (const cmd of allCommands)`, `Object.values(registry)`, reading a directory then dynamic import), or is described as "aggregating/listing/registering all X".
-      Record format: `{ "aggregator": "<ID or file path>", "sources": "<source range description>", "evidence": "<code basis>", "checkNote": "When tasks of this type are added or removed, check whether <aggregator> needs to be updated" }`
+    - `featureRelations`: Scan code to identify "aggregator modules" and record.
+      **Recognition pattern**: Module that iterates/enumerates/dynamic-loads same-type modules, or described as "aggregating/listing/registering all X".
+      Record format: `{ "aggregator", "sources", "evidence", "checkNote" }`
 
-    ### 3.7 Other Global Documents (as needed)
+    ### 3.7 Other global docs (as needed)
     - `dictionary.json`: Extract domain terminology from code
-    - [?UI] `design_tokens.json`: Extract from CSS variables/theme
-    - [?UI] `ui_concept.html` + `ui_context.md`: **Not generated by this command.** After inherit completes, [[SKILL: archi-ui-wireframe|invoke skill or prompt user to run]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and prompt user to follow the document)]] to generate the global UI wireframe (Skill generates both files simultaneously).
-    - [?Data] `data_snapshot.json`: Extract from schema/migration
+    - (UI projects only) `design_tokens.json`: Extract from CSS variables/theme
+    - (UI projects only) `ui_concept.html` + `ui_context.md`: **Not generated by this command.** After inherit completes, [[SKILL: archi-ui-wireframe|invoke skill or prompt user to run]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and prompt user to follow document)]] to generate global UI wireframe.
+    - (Data projects only) `data_snapshot.json`: Extract from schema/migration
     - `error_codes.json`: Extract from error definitions in code
 
-    **Output**: Write all files, then run `npx archi render`.
+    **Output**: Write all files, run `npx archi render`.
 </step_3_constitution>
 
 <step_4_verify>
     **Role**: Independent Reviewer
-
     [[SUBAGENT: archi-silent-audit|mode: init, context: Review step_3 generated global files (vision, tech_stack, roadmap, map, dictionary, stub specs, etc.)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: init review dimension table item by item)]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
 <step_5_signoff>
-    **Terminal Gate** (Do not skip; must complete before output summary):
-    | Step | Command | Pass Condition |
-    |:---|:---|:---|
-    | 1 | `npx archi task --check` | No ERROR-level issues |
-    | 2 | `npx archi render` | `.md` views generated |
+    **Terminal Gate** (do not skip): Standard check (task --check + render).
 
-    **Action** (After Gate passes):
-    1.  Run `npx archi task` to display task overview.
+    **Action** (after Gate passes):
+    1.  Run `npx archi task` to output task overview.
     2.  Output summary.
 
-    **Output**: Reverse-engineering summary containing:
-    - **Project Overview**: Type, scale, number of core modules
-    - **Legacy Tasks**: LEG-xx list (ID / Name / Source location)
-    - **Generated Documents**: File list
-    - **AI Inferred Items**: Mark confidence level (High/Medium/Low)
+    **Output**: Reverse-engineering summary, including:
+    - **Project overview**: Type, scale, core module count
+    - **Legacy tasks**: LEG-xx list (ID / name / source location)
+    - **Generated docs**: File list
+    - **AI completions**: Mark confidence (High/Medium/Low)
     - **Next Steps**:
 
-    | Priority | Action | Description |
+    | Priority | Action | Notes |
     |:---|:---|:---|
-    | 1 | Review vision.md | Confirm AI-inferred vision description is accurate |
-    | 2 | `/archi.edit LEG-xx` | Enrich core module stubs into full specs (auto-triggers Enrich flow) |
-    | 3 | `/archi.scope [file_path]` | Plan new tasks/major modules |
-    | 4 | `/archi.plan <task ID>` | Deep-plan individual tasks |
+    | 1 | Review vision.md | Confirm AI-completed vision description |
+    | 2 | `/archi.edit LEG-xx` | Enrich core module stubs into full spec (auto-triggers Enrich flow) |
+    | 3 | `/archi.scope [file_path]` | Plan new features/major modules |
+    | 4 | `/archi.plan <task ID>` | Deep-plan individual task |
 </step_5_signoff>
 
 </protocol_inherit>
