@@ -26,14 +26,6 @@ const ProjectFeatureSchema = z.enum([
   "ai",
 ]);
 
-/** Init 命令配置快照（lastScaffold 字段） */
-const InitConfigSchema = z.object({
-  language: z.enum(["zh", "en"]),
-  editors: z.array(SupportedEditorSchema).min(1),
-  docDir: z.string().min(1),
-  features: z.array(ProjectFeatureSchema),
-});
-
 /** 支持的语言（与 LocaleLang 保持一致） */
 const LocaleLangSchema = z.enum(["zh", "en"]);
 
@@ -45,8 +37,9 @@ export const ArchitextConfigSchema = z.object({
   roadmap: z.string().optional(),
   editors: z.array(SupportedEditorSchema).min(1),
   version: z.string().optional(),
+  /** 上次 init/update 时的框架结构版本（独立整数，仅文件布局变化时递增） */
+  structureVersion: z.number().int().positive().optional(),
   updatedAt: z.string().min(1),
-  lastScaffold: InitConfigSchema.optional(),
   /** 标记 .opencode/rules/*.md 是否为 Architext 添加，uninstall 时据此决定是否移除 */
   opencodeInstructionsAdded: z.boolean().optional(),
 });
