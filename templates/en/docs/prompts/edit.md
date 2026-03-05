@@ -1,5 +1,5 @@
 <protocol_edit>
-  **Trigger**: `/archi.edit <id> [context]`
+  **Trigger**: `/archi.edit <id> [context]` | Auto-loaded by Workflow Dispatch on natural language trigger
   **Goal**: Update managed module's Spec/UI docs per new requirements/feedback, and append development plan.
 
 <meta>
@@ -10,6 +10,7 @@
       2.  **Incremental**: Only append new Tasks to Plan; keep completed history (unless rollback needed).
       3.  **Conflict Check**: Check if new requirements conflict with tech_stack / design_tokens.
       4.  **Frontmatter Preservation**: Do not break existing document Metadata.
+      5.  **IDE-Native First**: Leverage IDE native capabilities to drive execution rhythm; this protocol defines quality standards and checkpoints, not fight IDE planning/execution mechanisms.
     </principles>
 </meta>
 

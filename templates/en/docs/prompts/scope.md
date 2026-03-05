@@ -1,5 +1,5 @@
 <protocol_scope>
-  **Trigger**: `/archi.scope [file_path]`
+  **Trigger**: `/archi.scope [file_path]` | Auto-loaded by Workflow Dispatch on natural language trigger
   **Phase**: Requirement Decomposition
   **Goal**: Read Scope Brief, decompose large requirements into Roadmap tasks with dependencies.
 
@@ -12,6 +12,7 @@
       3.  **User Agency First**: User-filled choices in Brief must be adopted directly; do not question or replace.
       4.  **Minimal Questions**: Ask only for information gaps; skip when Brief is sufficient.
       5.  **Option Z Everywhere**: Supplementary questions must include `[Z] Custom`.
+      6.  **IDE-Native First**: Leverage IDE native capabilities to drive execution rhythm; this protocol defines quality standards and checkpoints, not fight IDE planning/execution mechanisms.
     </principles>
 </meta>
 
@@ -21,6 +22,7 @@
     1. Parse `[file_path]` from trigger:
        - If path provided → read that file
        - If not provided → search `scope-brief.md` (project root), then `[[__DOCS_DIR__]]/scope-brief.md`
+       - If user entered via natural language description (no file_path param) and above files not found → goto `<fallback_interview>`
        - If neither exists or empty → goto `<fallback_interview>`
 
     2. Parse Brief sections, extract: initiative name and description, task list, pre-defined design decisions, boundaries and constraints, affected existing tasks, references.
@@ -128,19 +130,21 @@
 </step_5_signoff>
 
 <fallback_interview>
-    **Trigger**: Brief file not found or empty.
+    **Trigger**: Brief file not found or empty, or user entered via natural language description.
 
     **Action**:
-    1. Inform user `scope-brief.md` not found. Suggest:
+    1. Inform user that requirements will be gathered via conversation. Suggest:
        - Run `npx archi template scope-brief` to get template to project root
        - Fill in and re-run `/archi.scope scope-brief.md`
        - Or continue conversation and provide info via interview
-    2. If user chooses to continue conversation, guide in this order:
-       a. What to build? (Initiative name, one-line description, motivation)
-       b. What tasks? (Specific task list)
-       c. What constraints? (Anti-goals, dependencies, technical limits)
-       d. Which existing tasks will be affected?
-    3. After collection, write to `scope-brief.md` (project root), then goto `<step_1_load>`.
+    2. If user chooses to continue, guide by the following dimensions (skip if already known, 1-2 questions each):
+       a. **Motivation & Goals**: Why build this? What problem does it solve? What outcome is expected?
+       b. **Scope**: Which features/modules are included? What's excluded?
+       c. **Task Breakdown**: Do you have a rough task split in mind? (If not, AI will decompose in step_3)
+       d. **Constraints**: Technical limits, time constraints, dependencies?
+       e. **Impact**: Which existing features will be affected?
+    3. After collection, write to `scope-brief.md` (project root), following scope-brief template structure.
+    4. Inform user brief is generated, then goto `<step_1_load>` to continue.
 </fallback_interview>
 
 </protocol_scope>

@@ -1,5 +1,5 @@
 <protocol_map>
-  **Trigger**: `/archi.map`
+  **Trigger**: `/archi.map` | 自然语言触发时由 Workflow Dispatch 自动加载
   **Goal**: 扫描项目实际目录结构，与 `map.json` 比对，识别新增/过期/变动，经用户确认后更新架构地图。
 
 <meta>
@@ -10,6 +10,7 @@
       2.  **Smart Granularity**: 默认目录级；单文件承载多职责时须细化到文件级。
       3.  **Architecture Inference**: 新条目的层级归类须参考现有 map 模式 + `02_tech_stack.md`。
       4.  **Batch Confirm**: 所有变更一次性展示，用户批量确认。
+      5.  **IDE-Native First**: 利用 IDE 原生能力驱动执行节奏，本协议定义质量标准和检查点，不对抗 IDE 的规划/执行机制。
     </principles>
 </meta>
 

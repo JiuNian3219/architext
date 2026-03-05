@@ -44,22 +44,52 @@ alwaysApply: true
 
 ---
 
-## 2. Natural Language Passthrough
+## 2. Natural Language Dispatch
 
-**Trigger**: 用户输入非 `/archi.` 指令。
+**Trigger**: 用户输入非 `/archi.` 指令且涉及业务变更。
 
-**判定标准**: 该修改是否影响已文档化的行为（spec/ui/plan）？
+### §2.0 不触发协议的场景（直接回答）
 
 | 意图类型 | 处理 |
 |:---|:---|
 | 纯对话 / 代码阅读 / 架构讨论 | ✅ 直接回答 |
 | 琐碎修改（typo/注释/格式/日志） | ✅ 直接执行 |
-| 行为变更（逻辑/接口/类型/UI） | 🔀 引导 → `/archi.edit` + `/archi.code` |
-| Bug 修复 | 🔀 引导 → `/archi.fix` |
-| 新增功能 | 🔀 引导 → `/archi.scope` 或 `/archi.plan` |
-| 大规模重构 | 🔀 引导 → `/archi.revise` |
 
-🔀 引导时须: ① 一句话说明为什么需走命令 ② 推荐具体命令+参数 ③ 询问用户是否开始。
-> ⛔ **禁**: 先改代码再事后建议走命令。
+### §2.1 Pre-flight（涉及业务变更时触发）
+
+1. 扫描 `roadmap.json` + `tasks/<ID>_*/` 目录，匹配用户意图对应的任务。
+2. 按下表确定应加载的协议：
+
+| 检查结果 | 加载协议 | 确认方式 |
+|:---|:---|:---|
+| roadmap 无匹配任务 | `scope.md` | 告知"我来帮你梳理需求"后直接开始 |
+| 有任务·无 spec.md | `plan.md` | 告知"该任务还没规划，我来做"后直接开始 |
+| 有 spec+plan·status=active | `code.md` | 直接开始（IDE 原生 plan mode 接管节奏） |
+| status=done·用户要修改 | `edit.md` | 告知"我先更新文档再改代码"后开始 |
+| 用户描述了异常行为 | `fix.md` | 直接开始诊断 |
+| 影响 >1 个任务或全局资产 | `revise.md` | 先输出影响评估，等确认 |
+
+3. 加载协议后按 §1 的 **Protocol Load Gate** 执行（读全文 → override → step_1）。
+
+### §2.2 链条衔接
+
+各协议 Signoff 的 Next Steps 已指向下一个协议。AI 须：
+- 主动提示下一步（"spec 写好了，要开始实现吗？"）
+- 用户确认后，直接加载下一个协议继续
+
+| 衔接 | 串联方式 |
+|:---|:---|
+| scope → plan | 可连续执行（scope 完成后主动询问"要 plan 第一个任务吗？"） |
+| plan → code | **须等用户确认**（spec 是最重要的 checkpoint） |
+| code → audit | 协议内置（code.md step_5 已有 silent audit） |
+
+> ⛔ **禁**: 在用户未确认时自动从 plan 串联到 code。
+
+### §2.3 IDE 协作
+
+利用 IDE 原生能力（plan mode / agent mode / checkpoint）驱动执行节奏。
+协议定义"做什么、检查什么"，不对抗 IDE 的规划/执行能力。
+
+### §2.4 未纳管代码
 
 修改对象未在 `map.json` 中注册、无对应 Task → **STOP & ASK**，引导 `/archi.inherit` 或 `/archi.scope` 纳管。

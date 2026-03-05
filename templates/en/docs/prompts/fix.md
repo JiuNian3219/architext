@@ -1,5 +1,5 @@
 <protocol_fix>
-  **Trigger**: `/archi.fix [id] <context>`
+  **Trigger**: `/archi.fix [id] <context>` | Auto-loaded by Workflow Dispatch on natural language trigger
   **Goal**: Diagnose and fix bugs. If `[id]` not provided, auto-locate related feature module by context.
 
 <meta>
@@ -11,6 +11,7 @@
       3.  **Root Cause**: Must analyze root cause, not patch surface.
       4.  **Test-Driven**: Fix plan must include new test cases.
       5.  **Auto-Discovery**: If ID not specified, locate Task via context semantic search.
+      6.  **IDE-Native First**: Leverage IDE native capabilities to drive execution rhythm; this protocol defines quality standards and checkpoints, not fight IDE planning/execution mechanisms.
     </principles>
 </meta>
 

@@ -1,5 +1,5 @@
 <protocol_plan>
-  **Trigger**: `/archi.plan <ID> [context]`
+  **Trigger**: `/archi.plan <ID> [context]` | Auto-loaded by Workflow Dispatch on natural language trigger
   **Goal**: Define task Spec/UI/Plan through deep architecture interview.
   **Input**:
   - `<ID>` (required): Existing task ID in Roadmap. Must create via `/archi.scope` or `/archi.inherit` first.
@@ -17,6 +17,7 @@
       2.  **AI-Native Perspective**: All option Pros/Cons from AI Agent perspective. Focus: Context Locality, Type Safety, Boilerplate, Ambiguity.
       3.  **Flexible Interaction**: Options are heuristic suggestions; support multi-select, hybrid, or custom.
       4.  **Audit-Gated**: Only audited docs can be delivered.
+      5.  **IDE-Native First**: Leverage IDE native capabilities to drive execution rhythm; this protocol defines quality standards and checkpoints, not fight IDE planning/execution mechanisms.
     </principles>
 </meta>
 
@@ -175,6 +176,7 @@
 
     **4. `plan.json`** (required):
     - Template: `templates/plan.template.json`. Adjust Phases by project type; each Task context self-contained.
+    - Each Phase must include a `rationale` field recording key design decision rationale (user choice / AI recommendation reason).
 
     **WBS decomposition three principles**:
 
@@ -216,7 +218,12 @@
     **Action** (after Gate passes):
     1.  Output summary.
 
-    **Output**: Task definition summary with architecture confirmation table (each dimension final choice and rationale) and Next Steps table.
+    **Output**: Task definition summary with architecture confirmation table (each dimension final choice and rationale) and Next Steps:
+
+    | Priority | Action | Notes |
+    |:---|:---|:---|
+    | 1 | `/archi.code <ID>` | Spec and Plan are ready; start implementation (requires user confirmation) |
+    | Optional | Review spec.md / plan.json | Double-check docs before coding |
 </step_6_signoff>
 
 </protocol_plan>

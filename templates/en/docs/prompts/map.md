@@ -1,5 +1,5 @@
 <protocol_map>
-  **Trigger**: `/archi.map`
+  **Trigger**: `/archi.map` | Auto-loaded by Workflow Dispatch on natural language trigger
   **Goal**: Scan project actual directory structure, compare with `map.json`, identify additions/stale/changes; update architecture map after user confirmation.
 
 <meta>
@@ -10,6 +10,7 @@
       2.  **Smart Granularity**: Directory-level by default; when single file has multiple responsibilities, refine to file-level.
       3.  **Architecture Inference**: New entry layer/location must reference existing map pattern + `02_tech_stack.md`.
       4.  **Batch Confirm**: Show all changes at once; user confirms in batch.
+      5.  **IDE-Native First**: Leverage IDE native capabilities to drive execution rhythm; this protocol defines quality standards and checkpoints, not fight IDE planning/execution mechanisms.
     </principles>
 </meta>
 
