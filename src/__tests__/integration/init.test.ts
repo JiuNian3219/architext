@@ -1,7 +1,7 @@
 /** @fileoverview 集成测试 - init 命令 */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { Scaffolder } from "../../core/scaffold.ts";
+import { scaffold } from "../../core/scaffold.ts";
 import * as fs from "fs-extra";
 import path from "path";
 import { createTempDir, cleanupTempDir } from "../helpers/temp-dir.ts";
@@ -36,7 +36,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     const docDir = path.join(tempDir, config.docDir);
     expect(await fs.pathExists(docDir)).toBe(true);
@@ -45,9 +45,9 @@ describe("Scaffolder Integration", () => {
     const globalDir = path.join(docDir, "global");
     expect(await fs.pathExists(globalDir)).toBe(true);
 
-    // 检查 prompts 目录
-    const promptsDir = path.join(docDir, "prompts");
-    expect(await fs.pathExists(promptsDir)).toBe(true);
+    // cursor 有 commands，prompts 部署到 .cursor/commands/；docDir/prompts 仅对无 commands 的 editor 存在
+    const commandsDir = path.join(tempDir, ".cursor/commands");
+    expect(await fs.pathExists(commandsDir)).toBe(true);
 
     // 检查 scripts 和 tasks 空目录（用于存放未来计划和脚本）
     const scriptsDir = path.join(docDir, "scripts");
@@ -66,7 +66,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     const rulesDir = path.join(tempDir, ".cursor/rules");
     expect(await fs.pathExists(rulesDir)).toBe(true);
@@ -85,7 +85,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     const commandsDir = path.join(tempDir, ".cursor/commands");
     expect(await fs.pathExists(commandsDir)).toBe(true);
@@ -104,7 +104,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // 检查某个文件中的占位符是否被替换
     const rulesDir = path.join(tempDir, ".cursor/rules");
@@ -127,7 +127,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     const cursorRulesDir = path.join(tempDir, ".cursor/rules");
     const traeRulesDir = path.join(tempDir, ".trae/rules");
@@ -145,7 +145,7 @@ describe("Scaffolder Integration", () => {
     };
 
     // 应该不抛出错误，而是回退到默认语言
-    await expect(Scaffolder.run(config)).resolves.not.toThrow();
+    await expect(scaffold(config)).resolves.not.toThrow();
   });
 
   it("应该为 Cursor 创建 Agent Skills 文件", async () => {
@@ -156,7 +156,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // archi- 前缀的 Skill 目录应存在
     const skillDir = path.join(
@@ -182,7 +182,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     const skillFile = path.join(
       tempDir,
@@ -203,7 +203,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // trae 支持 Agent Skills 标准，应生成 skills 目录
     const traeSkillsDir = path.join(tempDir, ".trae/skills");
@@ -219,7 +219,7 @@ describe("Scaffolder Integration", () => {
     };
 
     // 第一次运行：生成 Skills 文件
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     const skillFile = path.join(
       tempDir,
@@ -229,7 +229,7 @@ describe("Scaffolder Integration", () => {
 
     // 第二次运行：使用 mock resolveConflicts，捕获传入的 operations
     const resolveConflicts = vi.fn(async (ops) => ops);
-    await Scaffolder.run(config, { resolveConflicts });
+    await scaffold(config, { resolveConflicts });
 
     // Skills 操作须被传入冲突检测函数（证明 SKILL.md 在冲突检测覆盖范围内）
     expect(resolveConflicts).toHaveBeenCalledOnce();

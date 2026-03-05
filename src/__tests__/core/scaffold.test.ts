@@ -1,7 +1,7 @@
 /** @fileoverview Scaffolder 集成测试，验证从配置到文件生成的完整流程 */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { Scaffolder } from "../../core/scaffold.ts";
+import { scaffold } from "../../core/scaffold.ts";
 import { InitConfig } from "../../types/index.ts";
 import { createTempDir, cleanupTempDir } from "../helpers/temp-dir.ts";
 import path from "path";
@@ -62,7 +62,7 @@ describe("Scaffolder Integration", () => {
     };
 
     // 执行生成
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // 验证：文档目录是否创建
     const docDir = path.join(tempDir, ".architext");
@@ -85,7 +85,7 @@ describe("Scaffolder Integration", () => {
       features: ["ui"],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // 验证：Cursor 规则目录
     const cursorRuleDir = path.join(tempDir, ".cursor/rules");
@@ -107,7 +107,7 @@ describe("Scaffolder Integration", () => {
       features: ["ui"],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // 验证：Claude Code 规则目录
     const claudeRuleDir = path.join(tempDir, ".claude/rules");
@@ -133,7 +133,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // 验证：OpenCode 规则目录
     const rulesDir = path.join(tempDir, ".opencode/rules");
@@ -169,7 +169,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // instructions 应合并：保留用户原有 + 追加 Architext 路径
     const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
@@ -189,7 +189,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    const result = await Scaffolder.run(config);
+    const result = await scaffold(config);
 
     const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
     const count = content.instructions.filter(
@@ -207,7 +207,7 @@ describe("Scaffolder Integration", () => {
       features: [],
     };
 
-    const result = await Scaffolder.run(config);
+    const result = await scaffold(config);
 
     expect(result?.opencodeInstructionsAdded).toBe(true);
   });
@@ -221,7 +221,7 @@ describe("Scaffolder Integration", () => {
       docDir: ".architext",
     } as unknown as InitConfig;
 
-    await Scaffolder.run(config);
+    await scaffold(config);
 
     // 验证是否回退到了 zh (默认)
     const docDir = path.join(tempDir, ".architext");
