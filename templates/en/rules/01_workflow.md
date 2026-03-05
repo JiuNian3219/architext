@@ -22,20 +22,20 @@ alwaysApply: true
 
 | Command | Target Template | Action |
 |:---|:---|:---|
-| `/archi.start` | `[[__DOCS_DIR__]]/prompts/start.md` | Load CPO → Project Initiation |
-| `/archi.inherit` | `[[__DOCS_DIR__]]/prompts/inherit.md` | Load Legacy Analyst → Reverse Engineering |
-| `/archi.scope` | `[[__DOCS_DIR__]]/prompts/scope.md` | Load Strategist → Requirement Decomposition |
-| `/archi.plan` | `[[__DOCS_DIR__]]/prompts/plan.md` | Load Planner → Deep Interview |
-| `/archi.edit` | `[[__DOCS_DIR__]]/prompts/edit.md` | Load Editor → Spec Modification |
-| `/archi.revise` | `[[__DOCS_DIR__]]/prompts/revise.md` | Load Chief Architect → Global Revision |
-| `/archi.code` | `[[__DOCS_DIR__]]/prompts/code.md` | Load Developer → Coding & Auditing |
-| `/archi.audit` | `[[__DOCS_DIR__]]/prompts/audit.md` | Load Chief Auditor → Deep Code Audit |
-| `/archi.fix` | `[[__DOCS_DIR__]]/prompts/fix.md` | Load Debugger → Diagnosis |
-| `/archi.map` | `[[__DOCS_DIR__]]/prompts/map.md` | Load Surveyor → Map Refresh |
-| `/archi.remove` | `[[__DOCS_DIR__]]/prompts/remove.md` | Load Surgeon → Task Decommission |
-| `/archi.ref` | `[[__DOCS_DIR__]]/prompts/ref.md` | Load Curator → External Ref Management |
-| `/archi.recover` | `[[__DOCS_DIR__]]/prompts/recover.md` | Load Recovery → Data Restore |
-| `/archi.help` | `[[__DOCS_DIR__]]/prompts/help.md` | Load Manual → Display Guide |
+| `/archi.start` | `[[__PROMPTS_PATH__]]/archi.start.md` | Load CPO → Project Initiation |
+| `/archi.inherit` | `[[__PROMPTS_PATH__]]/archi.inherit.md` | Load Legacy Analyst → Reverse Engineering |
+| `/archi.scope` | `[[__PROMPTS_PATH__]]/archi.scope.md` | Load Strategist → Requirement Decomposition |
+| `/archi.plan` | `[[__PROMPTS_PATH__]]/archi.plan.md` | Load Planner → Deep Interview |
+| `/archi.edit` | `[[__PROMPTS_PATH__]]/archi.edit.md` | Load Editor → Spec Modification |
+| `/archi.revise` | `[[__PROMPTS_PATH__]]/archi.revise.md` | Load Chief Architect → Global Revision |
+| `/archi.code` | `[[__PROMPTS_PATH__]]/archi.code.md` | Load Developer → Coding & Auditing |
+| `/archi.audit` | `[[__PROMPTS_PATH__]]/archi.audit.md` | Load Chief Auditor → Deep Code Audit |
+| `/archi.fix` | `[[__PROMPTS_PATH__]]/archi.fix.md` | Load Debugger → Diagnosis |
+| `/archi.map` | `[[__PROMPTS_PATH__]]/archi.map.md` | Load Surveyor → Map Refresh |
+| `/archi.remove` | `[[__PROMPTS_PATH__]]/archi.remove.md` | Load Surgeon → Task Decommission |
+| `/archi.ref` | `[[__PROMPTS_PATH__]]/archi.ref.md` | Load Curator → External Ref Management |
+| `/archi.recover` | `[[__PROMPTS_PATH__]]/archi.recover.md` | Load Recovery → Data Restore |
+| `/archi.help` | `[[__PROMPTS_PATH__]]/archi.help.md` | Load Manual → Display Guide |
 
 > **Protocol Load Gate** (forbidden to skip; three steps must complete in order):
 > 1. **Read** target `.md` full text → if file not found, stop and output: `Protocol file not found, execution aborted`

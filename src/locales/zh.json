@@ -20,8 +20,8 @@
   },
   "update": {
     "desc": "同步最新规则，更新编辑器规则和文档骨架",
-    "dry_run": "预演模式，不实际执行更新操作，仅显示更新内容",
     "failed": "升级失败",
+    "version_gap_warning": "项目结构版本 (v{project}) 与 CLI (v{current}) 差距较大，自动更新可能不完整。建议：1) 运行 npx archi pack 备份；2) 将 pack 输出交给 AI 辅助合并；3) 或重新 npx archi init（会丢失定制）",
     "dry_run_msg": "🔍 预演模式已启用。",
     "construction": "更新功能正在建设中..."
   },
@@ -100,7 +100,10 @@
       "error": "卸载过程中发生错误。",
       "cancel": "已取消卸载。",
       "not_found": "未找到配置文件 (architext.json)，无法自动卸载。",
-      "cleaning": "正在清理..."
+      "cleaning": "正在清理...",
+      "legacy_no_version": "当前项目使用旧版 Architext，无法自动卸载。",
+      "legacy_manual_hint": "请手动删除以下内容：",
+      "legacy_exit": "请手动清理后重试"
     },
     "task": {
       "check": {
@@ -176,15 +179,27 @@
       "version_outdated": "发现新版 v{latest}（当前 v{current}）",
       "version_upgrade_hint": "升级命令: {cmd}",
       "version_up_to_date": "已是最新版 v{version}",
-      "updating_silent": "更新提示词模板与文档模板...",
-      "updated_silent": "已更新 {count} 个模板文件",
-      "rules_overwrite_warning": "以下框架规则文件将被完全覆盖，如有自定义修改请先手动备份：",
-      "rules_confirm": "确认覆盖以上规则文件？",
+      "legacy_migration_blocked": "当前项目缺少结构版本信息，不支持自动更新，请按以下步骤手动迁移：",
+      "legacy_migration_step1": "  1. npx archi pack              备份文档数据",
+      "legacy_migration_step2": "  2. npx archi uninstall         移除旧框架文件（如有残余请手动删除）",
+      "legacy_migration_step3": "  3. npx archi init              重新初始化新结构",
+      "legacy_migration_step4": "  4. /archi.recover <pack文件>   在 AI 中还原文档数据",
+      "version_too_new": "项目结构版本 (v{project}) 高于当前 CLI 支持的版本 (v{cli})，请先升级 CLI: npm install -g architext@latest",
+      "update_warning": "将删除旧框架文件并重新部署最新版本：",
+      "update_skip_hint": "不触碰: {list}",
+      "update_global_hint": "全局文档（global/ 下的 roadmap.json、vision.md 等）只增不减，不会覆盖已有内容",
+      "update_confirm": "确认执行更新？",
+      "removing_old": "删除旧框架文件...",
+      "removed_old": "已删除 {count} 个旧文件",
+      "deploying_new": "部署新版框架文件...",
+      "deployed_new": "已部署 {framework} 个框架文件，补充 {seeds} 个种子文件",
       "schema_auditing": "Schema 兼容性审计...",
       "summary": "更新汇总",
-      "summary_updated": "已更新规则: {list}",
-      "summary_templated": "新版模板 → {docDir}/templates/02_tech_stack.template.md（请手动合并）",
+      "summary_framework": "已刷新 {count} 个框架文件（rules/prompts/skills/templates）",
+      "summary_seeds": "已补充 {count} 个种子文件",
+      "summary_templated": "02_tech_stack 含项目定制，未覆盖。新版模板已写入 {docDir}/templates/02_tech_stack.template.md，请对比并手动合并到你使用的 IDE rules 目录（如 .cursor/rules/、.windsurf/rules/）下对应文件",
       "summary_skipped": "已跳过: {list}",
+      "summary_global": "全局文档（global/）只增不减，如需清理过时文件请手动删除",
       "schema": {
         "parse_error": "JSON 解析失败，文件可能已损坏",
         "version_too_new": "文件版本 (v{current}) 高于 CLI 期望版本 (v{expected})，请先升级 CLI",
@@ -203,7 +218,7 @@
         "config": "项目配置",
         "doc_structure": "文档目录结构",
         "global_files": "全局文档",
-        "ide_rules": "IDE 规则"
+        "ide_rules": "IDE 框架文件"
       },
       "summary": {
         "result": "结果: {parts}",

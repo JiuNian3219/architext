@@ -7,16 +7,6 @@ import type {
   SupportedEditor,
 } from "../types/index.ts";
 
-export const FALLBACK_RULE_FILES = [
-  "00_system.md",
-  "01_workflow.md",
-  "02_tech_stack.md",
-  "03_data_governance.md",
-  "04_cli_tools.md",
-  "90_custom_rules.md",
-  "99_context_glue.md",
-];
-
 export const GLOBAL_RULES = {
   // 默认文档目录
   DEFAULT_DOC_DIR: ".architext",
@@ -37,6 +27,8 @@ export const GLOBAL_RULES = {
   PLACEHOLDERS: {
     DOCS_DIR: "[[__DOCS_DIR__]]",
     PROJECT_TYPE: "[[__PROJECT_TYPE__]]",
+    /** 协议文件所在目录，按 editor 替换：有 commands 用 commands 目录，无 commands 用 docDir/prompts/{editor} */
+    PROMPTS_PATH: "[[__PROMPTS_PATH__]]",
   },
 } as const;
 
@@ -120,18 +112,24 @@ export const SUPPORTED_EDITORS = Object.keys(
 ) as SupportedEditor[];
 
 /**
- * 条件性全局文件映射：文件名 → 要求的 feature。
- * 仅当 features 包含对应项时才部署该文件；不在此表的文件始终部署。
+ * 根据 editor 能力计算协议文件目录路径。
+ * - 有 commands：使用 commands.targetDir（如 .cursor/commands）
+ * - 无 commands：使用 docDir/prompts/{editor}（如 .architext/prompts/windsurf）
+ *
+ * @param editor 编辑器类型
+ * @param docDir 文档目录
+ * @returns 协议文件目录路径
  */
-export const CONDITIONAL_GLOBAL_FILES: Partial<Record<string, ProjectFeature>> =
-  {
-    "api_snapshot.json": "api",
-    "env_registry.json": "api",
-    "command_api.json": "cli",
-    "public_api.json": "lib",
-    "design_tokens.json": "ui",
-    "data_snapshot.json": "data",
-  };
+export function getPromptsPathForEditor(
+  editor: SupportedEditor,
+  docDir: string,
+): string {
+  const config = EDITOR_CONFIGS[editor];
+  if (config?.commands) {
+    return config.commands.targetDir;
+  }
+  return `${docDir}/prompts/${editor}`;
+}
 
 export interface FeatureOption {
   value: ProjectFeature;
