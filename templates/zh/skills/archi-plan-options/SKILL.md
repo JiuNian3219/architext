@@ -1,5 +1,6 @@
 ---
 name: archi-plan-options
+type: subprocess
 description: Architext 架构决策选项库。定义五个核心维度（Core Structure / Interaction Pattern / Data Flow / Error Handling / Access & Scope）的候选方案及 AI+/AI- 分析，覆盖 Web/CLI/API/Lib/Mobile/MiniApp/Extension/Desktop/AI Agent 等项目类型。含约定继承规则、项目标签路由逻辑、推荐 vs 展开判断准则，供 /archi.plan step_2 Part 2（架构建议阶段）引用。
 ---
 
