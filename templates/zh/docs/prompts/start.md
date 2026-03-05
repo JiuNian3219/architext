@@ -145,11 +145,11 @@
 
 <step_4_5_ui_wireframe>
     **Trigger**: 仅当项目 features 含 `ui` 时执行。
-    **Action**: [[SKILL: archi-ui-wireframe|按 skill 的协议，自动调用 Phase 1 线框图生成。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]
+    **Action**: [[SKILL: archi-ui-wireframe|按 skill 的协议，自动生成 UI 概念设计。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]
     - 无需用户确认即开始生成
     - 读取刚写入的 vision.md + roadmap.json + design_tokens.json + 02_tech_stack
     - 写入 `ui_concept.html` + `ui_context.md`
-    - 输出 Phase 1 线框图摘要，等待用户确认后再进入 Phase 2 着色
+    - 输出 UI 概念设计摘要，等待用户确认或反馈调整
 </step_4_5_ui_wireframe>
 
 <step_5_signoff>
@@ -167,7 +167,7 @@
 
     | 优先级 | 行动 | 说明 |
     |:---|:---|:---|
-    | （仅ui项目） 推荐 | 回复 **OK** 进入 Phase 2 着色 | Phase 1 线框图已自动生成；确认布局后着色 |
+    | （仅ui项目） 推荐 | 审查 ui_concept.html | UI 概念设计已自动生成；在浏览器中确认布局和视觉效果 |
     | 推荐 | `/archi.plan INF-01` | 规划第一个基础设施任务 |
     | 可选 | `/archi.scope <scope-brief.md>` | 如有更多需求待分解，追加到 Roadmap |
 </step_5_signoff>

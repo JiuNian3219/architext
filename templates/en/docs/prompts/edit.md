@@ -47,7 +47,7 @@
       |:---|:---|:---|
       | No screen impact | Logic/data change only | Update spec.md only |
       | Minor UI tweak | New/modified state, popup, local area | Call skill to update; output `MODIFIED: S-XX` |
-      | Screen structure change | Layout refactor, new screen, navigation change | Call skill to update; if colored then re-color |
+      | Screen structure change | Layout refactor, new screen, navigation change | Call skill to update |
       | Task reduction | Screen/region removed entirely | Call skill to remove; output `REMOVED: S-XX` |
 
     - Ask user when requirements are vague.

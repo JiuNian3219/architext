@@ -145,11 +145,11 @@
 
 <step_4_5_ui_wireframe>
     **Trigger**: Only when project features include `ui`.
-    **Action**: [[SKILL: archi-ui-wireframe|Follow the skill protocol to auto-invoke Phase 1 wireframe generation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]
+    **Action**: [[SKILL: archi-ui-wireframe|Follow the skill protocol to auto-generate UI concept design.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]
     - Start generation without user confirmation
     - Read the just-written vision.md + roadmap.json + design_tokens.json + 02_tech_stack
     - Write `ui_concept.html` + `ui_context.md`
-    - Output Phase 1 wireframe summary; await user confirmation before Phase 2 styling
+    - Output UI concept design summary; await user confirmation or feedback for adjustments
 </step_4_5_ui_wireframe>
 
 <step_5_signoff>
@@ -167,7 +167,7 @@
 
     | Priority | Action | Notes |
     |:---|:---|:---|
-    | (UI projects only) Recommended | Reply **OK** to enter Phase 2 styling | Phase 1 wireframe auto-generated; confirm layout then style |
+    | (UI projects only) Recommended | Review ui_concept.html | UI concept design auto-generated; confirm layout and visuals in browser |
     | Recommended | `/archi.plan INF-01` | Plan the first infrastructure task |
     | Optional | `/archi.scope <scope-brief.md>` | If more requirements to decompose, append to Roadmap |
 </step_5_signoff>
