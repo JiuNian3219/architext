@@ -1,5 +1,6 @@
 ---
 name: archi-plan-options
+type: subprocess
 description: Architext architecture decision option library. Defines candidate approaches and AI+/AI- analysis for five core dimensions (Core Structure / Interaction Pattern / Data Flow / Error Handling / Access & Scope), covering Web/CLI/API/Lib/Mobile/MiniApp/Extension/Desktop/AI Agent project types. Includes convention inheritance rules, project tag routing logic, and recommend vs. expand criteria. Referenced by /archi.plan step_2 Part 2 (architecture recommendation phase).
 ---
 
@@ -14,7 +15,7 @@ description: Architext architecture decision option library. Defines candidate a
     ↓
 Direct recommendation row (most dimensions) or Q-table (when user decision needed)
     ↓
-Written into Feature Proposal architecture recommendation table
+Written into Task Proposal architecture recommendation table
 ```
 
 > **Skill responsibility boundary**:
@@ -36,7 +37,7 @@ Read `02_tech_stack.md` Section 9 (project conventions).
 
 ### Step 2 · Project Tag Routing
 
-Use project tags activated in step_1_load (`[?UI]` / `[?Data]` / `[?CLI]` / `[?Lib]` / `[?API]` / `[?Mobile]` / `[?MiniApp]` / `[?Extension]` / `[?Desktop]` / `[?AI]`) to select applicable dimensions; skip inapplicable ones. Routing rules are in each dimension's heading.
+Use project tags activated in step_1_load (`ui` / `data` / `cli` / `lib` / `api` / `mobile` / `miniapp` / `extension` / `desktop` / `ai`) to select applicable dimensions; skip inapplicable ones. Routing rules are in each dimension's heading.
 
 ### Step 3 · Recommend vs. Expand
 
@@ -361,4 +362,4 @@ Only add supplementary handling if this feature has **special exception scenario
 
 ---
 
-> **Intermediate artifact**: This Skill is a subroutine. After producing a recommendation row or Q-table, control returns to `/archi.plan` step_2, where the caller assembles the output into the Feature Proposal's architecture recommendation table.
+> **Intermediate artifact**: This Skill is a subroutine. After producing a recommendation row or Q-table, control returns to `/archi.plan` step_2, where the caller assembles the output into the Task Proposal's architecture recommendation table.

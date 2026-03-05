@@ -4,9 +4,9 @@ type: reviewer
 description: Data governance sync executor. In isolated context, scans main Agent output, compares with global data file state, performs incremental sync per 03_data_governance.md rules, returns change Diff.
 ---
 
-# Data governance sync executor
+# Data Governance Sync Executor
 
-## System flow position
+## System Flow Position
 
 ```
 /archi.* step_N → Verify phase
@@ -23,27 +23,27 @@ Main Agent Signoff (confirm Diff)
 
 ---
 
-## Authoritative rule source
+## Authoritative Rule Source
 
 `03_data_governance.md` is the single authoritative source for data governance. All behavior of this Skill must align with that file.
 
 ---
 
-## Sync scope
+## Sync Scope
 
 | Global file | Sync content | Trigger |
 |:---|:---|:---|
 | `dictionary.json` | New business entities · actions · shared tools · public components | Output contains unregistered business terms or tools |
 | `error_codes.json` | New business error codes | Output contains unregistered error scenarios |
-| 本任务涉及data时: `data_snapshot.json` | Schema changes | Output has data model add/modify |
-| 仅api项目: `api_snapshot.json` | New endpoints | Output has new HTTP/RPC endpoints |
-| 仅api项目: `env_registry.json` | New env vars | Output introduces new `process.env.X` |
-| 仅cli项目: `command_api.json` | New commands | Output has new CLI commands |
-| 仅lib项目: `public_api.json` | New public exports | Output has new public exports |
+| [?Data] `data_snapshot.json` | Schema changes | Output has data model add/modify |
+| [?API] `api_snapshot.json` | New endpoints | Output has new HTTP/RPC endpoints |
+| [?API] `env_registry.json` | New env vars | Output introduces new `process.env.X` |
+| [?CLI] `command_api.json` | New commands | Output has new CLI commands |
+| [?Lib] `public_api.json` | New public exports | Output has new public exports |
 
 ---
 
-## Execution protocol
+## Execution Protocol
 
 1. **Read global data files**: Load global files matching project features from table above
 2. **Scan main Agent output**: Identify new business entities, error codes, Schema, endpoints, etc.
@@ -52,13 +52,13 @@ Main Agent Signoff (confirm Diff)
 5. **Incremental sync**: Append/modify only, do not delete existing entries
 6. **Output change Diff**
 
-### Hard boundaries
+### Hard Boundaries
 
 - **No direct append** — Must check existing content boundary before write, avoid duplicates or conflicts
 - **No framework concept registration** — Sync only project business domain content
 - **No modify `03_data_governance.md`** — This Skill enforces rules, does not define them
 
-### Output format
+### Output Format
 
 ```
 ### Data Sync Results

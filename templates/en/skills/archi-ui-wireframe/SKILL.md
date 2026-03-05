@@ -1,5 +1,6 @@
 ---
 name: archi-ui-wireframe
+type: subagent
 description: UI concept design expert. Generates hi-fi ui_concept.html — when tokens are sufficient, outputs colored hi-fi design directly; when tokens are incomplete, guides user to fill them first. Supports adopt mode to reverse-capture UI state from existing code. The output is the single visual source of truth for the entire project UI; all Task-level ui.md files reference this file for their screen scope.
 ---
 

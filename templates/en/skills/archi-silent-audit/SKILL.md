@@ -6,7 +6,7 @@ description: Embedded lightweight review. In an isolated context, reviews main A
 
 # Embedded Lightweight Review
 
-## System flow position
+## System Flow Position
 
 ```
 /archi.* step_N → Verify phase
@@ -27,25 +27,25 @@ Main Agent Signoff (must respond to findings)
 
 ---
 
-## Modes and review dimensions
+## Modes and Review Dimensions
 
 ### Mode `init` (caller: start, inherit)
 
 Review global file quality for new/inherited projects.
 
-| # | Dimension | Review points |
+| # | Dimension | Review Points |
 |:---|:---|:---|
 | 1 | **Vision-Roadmap alignment** | Roadmap task direction aligns with vision.md north star |
 | 2 | **Tech Stack consistency** | `02_tech_stack.md` matches actual deps/config |
 | 3 | **Global file completeness** | Required global files present (vision, roadmap, map, dictionary, tech_stack, custom_rules) |
 | 4 | **Zero info omission** | All Brief/code info routed to corresponding files |
-| 5 | 仅ui项目: **Design Tokens** | `design_tokens.json` has base colors/fonts/spacing |
+| 5 | [?UI] **Design Tokens** | `design_tokens.json` has base colors/fonts/spacing |
 
 ### Mode `plan-docs` (caller: plan)
 
 Review planning doc (spec/ui/plan) quality.
 
-| # | Dimension | Review points |
+| # | Dimension | Review Points |
 |:---|:---|:---|
 | 1 | **Design Fidelity** | spec § 2 fully covers confirmed functional design |
 | 2 | **Dimension Match** | spec § 2 dimension format matches Task Type |
@@ -54,39 +54,39 @@ Review planning doc (spec/ui/plan) quality.
 | 5 | **Notes Quality** | plan.json each task notes has deliverable+constraint+executable verification |
 | 6 | **Interface Exports** | INF task § 4 filled; interface declared when downstream deps exist |
 | 7 | **Constraints** | § 5 includes vision.md + tech_stack red lines |
-| 8 | 本任务涉及data时: **Data Integrity** | Entities and fields match confirmed core entities |
-| 9 | 仅Complex任务: **Design Trace** | design.md § 6 all ACs traceable |
-| 10 | 仅Complex任务: **Parameter Specificity** | design.md § 3 params concrete (no vague terms) |
-| 11 | 仅Complex任务: **Self-Check Pass** | design.md § 2 mechanism self-check list passes |
+| 8 | [?Data] **Data Integrity** | Entities and fields match confirmed core entities |
+| 9 | [?Complex] **Design Trace** | design.md § 6 all ACs traceable |
+| 10 | [?Complex] **Parameter Specificity** | design.md § 3 params concrete (no vague terms) |
+| 11 | [?Complex] **Self-Check Pass** | design.md § 2 mechanism self-check list passes |
 
 ### Mode `code-impl` (caller: code)
 
 Review code implementation quality.
 
-| # | Dimension | Review points |
+| # | Dimension | Review Points |
 |:---|:---|:---|
 | 1 | **Tech Consistency** | Matches `02_tech_stack.md` (libs/patterns/API style) |
 | 2 | **SOTA** | Reject outdated patterns; use tech_stack best practices |
 | 3 | **Security** | No sensitive info leak; input validated |
 | 4 | **Performance** | Avoid unnecessary large deps/full imports/useless computation/memory leaks |
-| 5 | 本任务涉及ui时: **Design Compliance** | Styles use Token/Preset only; no hardcoded magic values |
-| 6 | 本任务涉及ui时: **Accessibility** | Necessary a11y attributes present |
-| 7 | 本任务涉及data时: **Data Integrity** | Matches `data_snapshot.json`; field names/types consistent |
-| 8 | 仅i18n项目: **I18n** | No hardcoded strings; use Key/dictionary reference |
-| 9 | 仅Complex任务: **Design Compliance** | State transitions/flows/protocols match design.md § 2 |
-| 10 | 仅Complex任务: **Invariant Enforcement** | design.md § 4 invariants have assert/runtime checks in code |
-| 11 | 仅Complex任务: **Parameter Alignment** | Code values match design.md § 3 param table |
+| 5 | [?UI] **Design Compliance** | Styles use Token/Preset only; no hardcoded magic values |
+| 6 | [?UI] **Accessibility** | Necessary a11y attributes present |
+| 7 | [?Data] **Data Integrity** | Matches `data_snapshot.json`; field names/types consistent |
+| 8 | [?i18n] **I18n** | No hardcoded strings; use Key/dictionary reference |
+| 9 | [?Complex] **Design Compliance** | State transitions/flows/protocols match design.md § 2 |
+| 10 | [?Complex] **Invariant Enforcement** | design.md § 4 invariants have assert/runtime checks in code |
+| 11 | [?Complex] **Parameter Alignment** | Code values match design.md § 3 param table |
 
 ---
 
-## Execution protocol
+## Execution Protocol
 
 1. **Load context**: Load required docs and code per caller-provided file paths
 2. **Filter dimensions by mode**: Execute only dimensions for current mode
 3. **Review item by item**: Each dimension outputs PASS or finding (level+location+description)
 4. **Output finding list**: Return sorted by level
 
-### Finding levels
+### Finding Levels
 
 | Level | Meaning | Main Agent must |
 |:---|:---|:---|
@@ -94,7 +94,7 @@ Review code implementation quality.
 | `WARNING` | Risk | **Must explain** handling in signoff report |
 | `INFO` | Suggestion | May decide whether to handle |
 
-### Output format
+### Output Format
 
 ```
 ### Silent Audit Results (mode: <mode>)

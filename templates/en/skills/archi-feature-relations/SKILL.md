@@ -4,9 +4,9 @@ type: reviewer
 description: featureRelations linkage handler. In isolated context, handles map.json featureRelations register/check/cleanup, ensures aggregator Tasks maintain correct linkage with their sources.
 ---
 
-# featureRelations linkage handler
+# featureRelations Linkage Handler
 
-## System flow position
+## System Flow Position
 
 ```
 /archi.* step_N → Verify phase
@@ -22,7 +22,7 @@ Main Agent Signoff (confirm linkage prompts)
 
 ---
 
-## Modes and behavior
+## Modes and Behavior
 
 ### Mode `register` (caller: plan, inherit)
 
@@ -71,7 +71,7 @@ Remove featureRelations entries referencing removed Task, assess impact.
 
 ---
 
-## Output format
+## Output Format
 
 ### register mode
 
