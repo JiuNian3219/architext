@@ -1,5 +1,5 @@
 <protocol_code>
-  **Trigger**: `/archi.code <id>`
+  **Trigger**: `/archi.code <id>` | Auto-loaded by Workflow Dispatch on natural language trigger
   **Goal**: Complete feature development per `tasks/<id>_<Slug>/plan.json` task list; follow `02_tech_stack.md` (UI projects only: also follow `design_tokens.json`); pass build, types, Lint, format, tests and audit.
 
 <meta>
@@ -13,6 +13,7 @@
       5.  **No Commit Policy**: Do not commit without authorization; present changes as patches.
       6.  **Static Check First**: Must pass all static checks (types/Lint/format).
       7.  **Plan Completion Gate**: Verify Plan completion before finish. All tasks AI can complete must be done; only exempt "manual intervention" and "force majeure".
+      8.  **IDE-Native First**: Leverage IDE native capabilities to drive execution rhythm; this protocol defines quality standards and checkpoints, not fight IDE planning/execution mechanisms.
     </principles>
 </meta>
 
@@ -131,7 +132,13 @@
 
     **Checkpoint** (must confirm before Output): □ Terminal Gate all executed
 
-    **Output**: Completion summary with completed tasks, exempt items (if any), Git Commit suggestion, Next Steps table.
+    **Output**: Completion summary with completed tasks, exempt items (if any), Git Commit suggestion, Next Steps:
+
+    | Priority | Action | Notes |
+    |:---|:---|:---|
+    | Recommended | `/archi.audit <ID>` | Independent review of implementation |
+    | (If Spec drift) | `/archi.edit <ID>` | Update docs before continuing |
+    | (If next pending task) | `/archi.plan <next pending ID>` | Plan the next task |
 </step_6_signoff>
 
 </protocol_code>

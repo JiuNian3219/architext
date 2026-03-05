@@ -1,5 +1,5 @@
 <protocol_edit>
-  **Trigger**: `/archi.edit <id> [context]`
+  **Trigger**: `/archi.edit <id> [context]` | 自然语言触发时由 Workflow Dispatch 自动加载
   **Goal**: 基于新需求/修改意见，更新已纳管模块的 Spec/UI 文档，并追加开发计划。
 
 <meta>
@@ -10,6 +10,7 @@
       2.  **Incremental**: 仅追加新 Task 到 Plan，保留已完成历史（除非需回滚）。
       3.  **Conflict Check**: 检查新需求是否与 tech_stack / design_tokens 冲突。
       4.  **Frontmatter Preservation**: 禁破坏现有文档 Metadata。
+      5.  **IDE-Native First**: 利用 IDE 原生能力驱动执行节奏，本协议定义质量标准和检查点，不对抗 IDE 的规划/执行机制。
     </principles>
 </meta>
 

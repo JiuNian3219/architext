@@ -1,5 +1,5 @@
 <protocol_fix>
-  **Trigger**: `/archi.fix [id] <context>`
+  **Trigger**: `/archi.fix [id] <context>` | 自然语言触发时由 Workflow Dispatch 自动加载
   **Goal**: 针对 Bug 进行诊断并直接执行修复。若未提供 `[id]`，自动定位相关功能模块。
 
 <meta>
@@ -11,6 +11,7 @@
       3.  **Root Cause**: 须分析根因，而非修补表面。
       4.  **Test-Driven**: 修复计划须含新增测试用例。
       5.  **Auto-Discovery**: 若未指定 ID，通过 Context 语义搜索定位 Task。
+      6.  **IDE-Native First**: 利用 IDE 原生能力驱动执行节奏，本协议定义质量标准和检查点，不对抗 IDE 的规划/执行机制。
     </principles>
 </meta>
 

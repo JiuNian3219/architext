@@ -1,5 +1,5 @@
 <protocol_code>
-  **Trigger**: `/archi.code <id>`
+  **Trigger**: `/archi.code <id>` | 自然语言触发时由 Workflow Dispatch 自动加载
   **Goal**: 基于 `tasks/<id>_<Slug>/plan.json` 任务清单，完成功能开发；遵循 `02_tech_stack.md`（仅ui项目: 同时遵循 `design_tokens.json`）；通过构建、类型、Lint、格式化、测试与审计。
 
 <meta>
@@ -13,6 +13,7 @@
       5.  **No Commit Policy**: 未经授权不提交；以补丁呈现变更。
       6.  **Static Check First**: 须通过所有静态检查(类型/Lint/格式化)。
       7.  **Plan Completion Gate**: 结束前验证 Plan 完成度。AI 可完成的任务须全部完成，仅豁免「人工介入」和「不可抗力」类。
+      8.  **IDE-Native First**: 利用 IDE 原生能力驱动执行节奏，本协议定义质量标准和检查点，不对抗 IDE 的规划/执行机制。
     </principles>
 </meta>
 
@@ -131,7 +132,13 @@
 
     **Checkpoint** (Output 前须确认): □ Terminal Gate 全部执行
 
-    **Output**: 完成摘要，含已完成任务、豁免项(如有)、Git Commit 建议、Next Steps 表格。
+    **Output**: 完成摘要，含已完成任务、豁免项(如有)、Git Commit 建议、Next Steps：
+
+    | 优先级 | 动作 | 说明 |
+    |:---|:---|:---|
+    | 推荐 | `/archi.audit <ID>` | 对实现做独立审查 |
+    | （有 Spec 漂移时） | `/archi.edit <ID>` | 先更新文档再继续 |
+    | （有后续 pending 任务时） | `/archi.plan <下一个 pending ID>` | 规划下一个任务 |
 </step_6_signoff>
 
 </protocol_code>

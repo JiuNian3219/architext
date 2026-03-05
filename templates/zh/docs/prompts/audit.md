@@ -1,5 +1,5 @@
 <protocol_audit>
-  **Trigger**: `/archi.audit [id]`
+  **Trigger**: `/archi.audit [id]` | 自然语言触发时由 Workflow Dispatch 自动加载
   **Goal**: 独立深度代码审查。带 `<id>` 审查该任务的代码实现；无 `<id>` 执行项目级体检。不修改代码，仅输出审查报告与修复工单。
 
 <meta>
@@ -11,6 +11,7 @@
       3.  **Actionable Output**: 每个问题须附推荐修复命令（`/archi.fix`, `/archi.edit` 等）。
       4.  **Vision Anchored**: 始终以 `vision.md` 为方向基准，检测偏离。
       5.  **Report Persistence**: 审查结果须写入文件 — 任务级 → `tasks/<id>_*/audit.md`（覆盖），项目级 → `audits/YYYY-MM-DD.md`（按日期存档）。
+      6.  **IDE-Native First**: 利用 IDE 原生能力驱动执行节奏，本协议定义质量标准和检查点，不对抗 IDE 的规划/执行机制。
     </principles>
 </meta>
 

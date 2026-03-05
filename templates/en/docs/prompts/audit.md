@@ -1,5 +1,5 @@
 <protocol_audit>
-  **Trigger**: `/archi.audit [id]`
+  **Trigger**: `/archi.audit [id]` | Auto-loaded by Workflow Dispatch on natural language trigger
   **Goal**: Independent deep code review. With `<id>` review that task's code implementation; without `<id>` run project-wide health check. Do not modify code; output review report and fix work items only.
 
 <meta>
@@ -11,6 +11,7 @@
       3.  **Actionable Output**: Each issue must include recommended fix command (`/archi.fix`, `/archi.edit`, etc.).
       4.  **Vision Anchored**: Always use `vision.md` as direction anchor; detect drift.
       5.  **Report Persistence**: Review results must be written to file — task-level → `tasks/<id>_*/audit.md` (overwrite); project-level → `audits/YYYY-MM-DD.md` (date archive).
+      6.  **IDE-Native First**: Leverage IDE native capabilities to drive execution rhythm; this protocol defines quality standards and checkpoints, not fight IDE planning/execution mechanisms.
     </principles>
 </meta>
 

@@ -1,5 +1,5 @@
 <protocol_scope>
-  **Trigger**: `/archi.scope [file_path]`
+  **Trigger**: `/archi.scope [file_path]` | 自然语言触发时由 Workflow Dispatch 自动加载
   **Phase**: Requirement Decomposition
   **Goal**: 读取 Scope Brief，将大需求分解为多个 Roadmap 任务并建立依赖关系。
 
@@ -12,6 +12,7 @@
       3.  **User Agency First**: Brief 中用户已填写的选择须直接采纳，禁质疑或替换。
       4.  **Minimal Questions**: 仅针对信息缺口提问，Brief 充分时可跳过提问直接分解。
       5.  **Option Z Everywhere**: 补充提问须包含 `[Z] 自定义`。
+      6.  **IDE-Native First**: 利用 IDE 原生能力驱动执行节奏，本协议定义质量标准和检查点，不对抗 IDE 的规划/执行机制。
     </principles>
 </meta>
 
@@ -21,6 +22,7 @@
     1. 解析触发命令中的 `[file_path]`：
        - 如提供了路径 → 读取该文件
        - 如未提供路径 → 依次查找 `scope-brief.md`（项目根）、`[[__DOCS_DIR__]]/scope-brief.md`
+       - 如用户通过自然语言描述需求进入（无 file_path 参数）且上述文件均不存在 → 跳转 `<fallback_interview>`
        - 如均不存在或为空 → 跳转 `<fallback_interview>`
 
     2. 解析 Brief 各 Section，提取：需求名称和描述、任务清单、已有设计决策、边界与约束、受影响的已有任务、参考资料。
@@ -128,19 +130,21 @@
 </step_5_signoff>
 
 <fallback_interview>
-    **Trigger**: Brief 文件不存在或为空。
+    **Trigger**: Brief 文件不存在或为空，或用户以自然语言描述需求进入。
 
     **Action**:
-    1. 告知用户 `scope-brief.md` 未找到。建议：
+    1. 告知用户将通过对话梳理需求。建议：
        - 运行 `npx archi template scope-brief` 获取模板到项目根目录
        - 填写后重新运行 `/archi.scope scope-brief.md`
        - 或继续对话，通过访谈方式提供信息
-    2. 如用户选择继续对话，按以下顺序引导：
-       a. 这次要做什么？（需求名称、一句话描述、动机）
-       b. 包含哪些任务？（具体任务列表）
-       c. 有什么约束？（不做的事、依赖、技术限制）
-       d. 会影响哪些已有任务？
-    3. 收集完毕后，将信息写入 `scope-brief.md`（项目根目录），然后跳转 `<step_1_load>`。
+    2. 如用户选择继续对话，按以下维度引导（已知信息可跳过，每个维度 1-2 题）：
+       a. **动机与目标**: 为什么要做这个？解决什么问题？期望达成什么效果？
+       b. **范围**: 包含哪些功能/模块？不包含什么？
+       c. **任务拆分**: 心中有没有大致的任务划分？（没有则 AI 在 step_3 代为拆分）
+       d. **约束**: 技术限制、时间约束、依赖？
+       e. **影响**: 会影响哪些已有功能？
+    3. 收集完毕后，将信息写入 `scope-brief.md`（项目根目录），格式遵循 scope-brief 模板结构。
+    4. 告知用户 brief 已生成，然后跳转 `<step_1_load>` 继续执行。
 </fallback_interview>
 
 </protocol_scope>

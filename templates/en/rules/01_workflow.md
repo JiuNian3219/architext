@@ -44,22 +44,52 @@ alwaysApply: true
 
 ---
 
-## 2. Natural Language Passthrough
+## 2. Natural Language Dispatch
 
-**Trigger**: User input is not an `/archi.` command.
+**Trigger**: User input is not an `/archi.` command and involves business changes.
 
-**Decision Criterion**: Does this change affect documented behavior (spec/ui/plan)?
+### §2.0 Non-protocol scenarios (answer directly)
 
 | Intent Type | Action |
 |:---|:---|
 | Pure conversation / code reading / architecture discussion | ✅ Answer directly |
 | Trivial edits (typo/comments/formatting/log messages) | ✅ Execute directly |
-| Behavior change (logic/interface/type/UI) | 🔀 Route → `/archi.edit` + `/archi.code` |
-| Bug fix | 🔀 Route → `/archi.fix` |
-| New feature | 🔀 Route → `/archi.scope` or `/archi.plan` |
-| Large-scale refactoring | 🔀 Route → `/archi.revise` |
 
-When routing (🔀): ① Explain why a command is needed ② Recommend specific command + params ③ Ask user to proceed.
-> ⛔ **Prohibited**: Modifying code first then suggesting the command afterward.
+### §2.1 Pre-flight (triggered when business changes are involved)
+
+1. Scan `roadmap.json` + `tasks/<ID>_*/` directory to match user intent to tasks.
+2. Determine protocol to load per the table below:
+
+| Check Result | Load Protocol | Confirmation |
+|:---|:---|:---|
+| No matching task in roadmap | `scope.md` | Inform "Let me help you scope this" then start |
+| Has task · no spec.md | `plan.md` | Inform "This task needs planning, I'll do it" then start |
+| Has spec+plan · status=active | `code.md` | Start directly (IDE native plan mode drives rhythm) |
+| status=done · user wants changes | `edit.md` | Inform "I'll update docs before changing code" then start |
+| User describes abnormal behavior | `fix.md` | Start diagnosis directly |
+| Affects >1 task or global assets | `revise.md` | Output impact assessment first, await confirmation |
+
+3. After loading protocol, follow §1 **Protocol Load Gate** (read full text → override → step_1).
+
+### §2.2 Chain Continuation
+
+Each protocol's Signoff Next Steps already points to the next protocol. AI must:
+- Proactively suggest next step ("Spec is ready, shall we start implementing?")
+- After user confirms, load next protocol and continue
+
+| Transition | Chaining Rule |
+|:---|:---|
+| scope → plan | May chain (after scope, ask "Want to plan the first task?") |
+| plan → code | **Must await user confirmation** (spec is the most important checkpoint) |
+| code → audit | Built-in (code.md step_5 already has silent audit) |
+
+> ⛔ **Prohibited**: Auto-chaining from plan to code without user confirmation.
+
+### §2.3 IDE Collaboration
+
+Leverage IDE native capabilities (plan mode / agent mode / checkpoint) to drive execution rhythm.
+Protocols define "what to do, what to check" — do not fight IDE planning/execution capabilities.
+
+### §2.4 Unmanaged Code
 
 Target not registered in `map.json` and has no Task → **STOP & ASK**, route to `/archi.inherit` or `/archi.scope`.

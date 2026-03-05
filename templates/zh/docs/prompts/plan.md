@@ -1,5 +1,5 @@
 <protocol_plan>
-  **Trigger**: `/archi.plan <ID> [context]`
+  **Trigger**: `/archi.plan <ID> [context]` | 自然语言触发时由 Workflow Dispatch 自动加载
   **Goal**: 通过深度架构访谈，定义功能的 Spec/UI/Plan。
   **Input**:
   - `<ID>` (必填): Roadmap 中已存在的任务 ID。须先通过 `/archi.scope` 或 `/archi.inherit` 创建任务。
@@ -17,6 +17,7 @@
       2.  **AI-Native Perspective**: 所有选项 Pros/Cons 从 AI Agent 视角撰写。关注：Context Locality、Type Safety、Boilerplate、Ambiguity。
       3.  **Flexible Interaction**: 选项为启发式建议，支持多选、混合或自定义。
       4.  **Audit-Gated**: 只有通过审计的文档才能交付。
+      5.  **IDE-Native First**: 利用 IDE 原生能力驱动执行节奏，本协议定义质量标准和检查点，不对抗 IDE 的规划/执行机制。
     </principles>
 </meta>
 
@@ -175,6 +176,7 @@
 
     **4. `plan.json`** (必须):
     - 模板: `templates/plan.template.json`。根据项目类型动态调整 Phase；每个 Task 上下文自包含。
+    - 每个 Phase 须包含 `rationale` 字段，记录该阶段关键设计决策的依据（用户选择/AI 推荐理由）。
 
     **WBS 分解三原则**：
 
@@ -216,7 +218,12 @@
     **Action** (Gate 通过后):
     1.  输出总结。
 
-    **Output**: Task 定义摘要，含架构建议确认表（各维度最终选择及理由）和 Next Steps 表格。
+    **Output**: Task 定义摘要，含架构建议确认表（各维度最终选择及理由）和 Next Steps：
+
+    | 优先级 | 动作 | 说明 |
+    |:---|:---|:---|
+    | 1 | `/archi.code <ID>` | Spec 和 Plan 已就绪，开始实现（须用户确认） |
+    | 可选 | 审查 spec.md / plan.json | 在动手前再检查一遍文档 |
 </step_6_signoff>
 
 </protocol_plan>
