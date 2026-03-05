@@ -10,7 +10,7 @@
       1.  **Code-Driven**: 以代码为唯一真相源，禁凭空推测功能。
       2.  **AI-Native Perspective**: 分析从 AI Agent 视角撰写。关注：Context Locality、Type Safety、Module Boundaries。
       3.  **User Agency First**: AI 的分析须经用户确认。代码解读有歧义时询问用户，禁擅自决定。
-      4.  **Minimal Token**: 优先读配置和入口文件，避免逐行扫描所有代码。
+      4.  **Thorough Discovery, Layered Recording**: 全量读取所有非第三方业务代码（排除 node_modules/vendor/dist 等生成物），不设文件数上限。记录按三档分层：核心模块详细记录流程、共享逻辑记录签名和依赖关系、纯工具记录签名和用途。宁可多读不可遗漏——后续协议无法使用未被记录的代码。
       5.  **Option Z Everywhere**: 补充提问须包含 `[Z] 自定义`。
     </principles>
 </meta>
@@ -41,27 +41,30 @@
        | 其他 | 以根目录配置文件为准 |
 
     2. 读取 README.md（如存在）。
-    3. 扫描目录结构（顶层 + 核心源码目录两层深度）。
+    3. 扫描目录结构（完整深度）。
     4. 推断项目特征标签（UI / Data / CLI / Lib / API — 由目录结构、依赖和配置推断）。
-    5. 识别入口文件和核心模块。
+    5. 识别入口文件和核心模块。沿入口文件的 import 链建立模块依赖草图。
 
     **Output**: 内部摘要（不输出给用户），进入 step_1。
 </step_0_recon>
 
 <step_1_analysis>
     **Role**: 首席产品战略官 (CPO)
-    **扫描策略**: 中度扫描 — 读每个模块的入口文件和核心业务文件，提取主要流程链路。禁逐文件遍历。
+    **扫描策略**: 深度扫描 — 从入口文件出发，沿调用链读取所有业务文件。大型模块（>10 文件）优先读被多处 import 的文件。
 
     **Action**:
     1. 对每个识别出的功能模块：
-       - 读入口文件 + 1-2 个核心业务文件
+       - 从入口文件出发，沿 import/调用链逐层读取，直到覆盖该模块的主要业务逻辑
        - 提取主要流程（用户操作 → 系统处理 → 结果）
        - 记录关联文件路径
     2. 对共享/基建代码（utils, middleware, config）：
-       - 仅记录目录和职责，不作为功能模块
+       读取所有文件，按以下分档记录：
+       - **中等档**（业务共享逻辑：auth/validation/error-handling/permission）：记录职责 + 导出函数签名 + 被谁依赖
+       - **简要档**（纯工具函数：format/slugify/logger/helpers）：记录函数名 + 参数签名 + 一句话用途
+       两者均写入 map.json publicAPI 字段，确保后续协议可发现可复用。
     3. 从代码中提取领域术语和命名约定。
 
-    **Output**: 向用户输出结构化分析报告 — 含项目概况（名称/类型/规模）、技术栈表（语言/框架/构建/测试/部署）、架构模式及依据、功能模块清单（模块/源码位置/职责/关键流程）、共享基建（目录/职责）、领域术语、AI 不确定项（如有）。
+    **Output**: 向用户输出结构化分析报告 — 含项目概况（名称/类型/规模）、技术栈表（语言/框架/构建/测试/部署）、架构模式及依据、功能模块清单（模块/源码位置/职责/关键流程）、共享基建（目录/职责/关键导出接口）、领域术语、AI 不确定项（如有）。
 
     **Gate**: 用户确认或修正。未确认禁进入 step_2。
 </step_1_analysis>
@@ -211,12 +214,23 @@
     ### 3.7 其他全局文档（按需）
     - `dictionary.json`: 从代码提取领域术语
     - （仅ui项目） `design_tokens.json`: 从 CSS 变量/主题提取
-    - （仅ui项目） `ui_concept.html` + `ui_context.md`: **不由本命令生成**。继承完成后，[[SKILL: archi-ui-wireframe|调用 skill 或提示用户运行]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并提示用户按该文档执行）]] 生成全局 UI 线框图。
+    - （仅ui项目） `ui_concept.html` + `ui_context.md`: inherit 完成后自动调用 skill adopt 模式逆向生成（见 step_3_5_ui_adopt）。
     - （仅data项目） `data_snapshot.json`: 从 schema/migration 提取
     - `error_codes.json`: 从代码中的错误定义提取
 
     **Output**: 写入所有文件，运行 `npx archi render`。
 </step_3_constitution>
+
+<step_3_5_ui_adopt>
+    **Trigger**: 仅当项目 features 含 `ui` 时执行。
+    **Action**: [[SKILL: archi-ui-wireframe|调用 skill（adopt 模式），从代码逆向生成 UI 概念设计。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其 Adopt 协议执行）]]
+    - 读取代码中的路由定义、页面组件、布局文件
+    - 读取 step_3 写入的 design_tokens.json（含代码提取的 CSS 变量/theme）
+    - tokens 不完整时触发 skill 内置引导流程
+    - 写入 `ui_concept.html` + `ui_context.md`
+
+    **Output**: UI 概念设计摘要，等待用户确认或反馈调整。
+</step_3_5_ui_adopt>
 
 <step_4_verify>
     **Role**: 独立审查官

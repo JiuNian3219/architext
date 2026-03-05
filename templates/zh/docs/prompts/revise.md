@@ -66,7 +66,7 @@
     按用户确认的清单修改全局文件。每个文件修改后输出变更摘要。
 
     **（仅ui项目） Phase 1.5 — 设计系统变更检查**:
-    若 `design_tokens.json` 有以下变更，须通知用户需重跑 `archi-ui-wireframe` Phase 2：
+    若 `design_tokens.json` 有以下变更，须通知用户需重跑 `archi-ui-wireframe` 重新生成：
 
     | 变更范围 | 影响 |
     |:---|:---|
@@ -76,7 +76,7 @@
     | `illustration.iconLibrary` | 图标库变化 |
     | `layout` (radius/spacing/shadow) | 组件尺寸/圆角变化 |
 
-    > 如上述字段未变动（如仅改 `mode.default`），无需重跑 Phase 2。
+    > 如上述字段未变动（如仅改 `mode.default`），无需重跑。
 
     **Phase 2 — 级联更新 Task 文档**:
     对每个受影响的 Task，按 `/archi.edit` 标准执行:

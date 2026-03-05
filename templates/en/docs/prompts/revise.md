@@ -66,7 +66,7 @@
     Modify global files per user-confirmed list. Output change summary for each file.
 
     **(UI projects only) Phase 1.5 — Design system change check**:
-    If `design_tokens.json` has the following changes, notify user to re-run `archi-ui-wireframe` Phase 2:
+    If `design_tokens.json` has the following changes, notify user to re-run `archi-ui-wireframe` to regenerate:
 
     | Change scope | Impact |
     |:---|:---|
@@ -76,7 +76,7 @@
     | `illustration.iconLibrary` | Icon library change |
     | `layout` (radius/spacing/shadow) | Component size/radius change |
 
-    > If above fields unchanged (e.g. only `mode.default` changed), no need to re-run Phase 2.
+    > If above fields unchanged (e.g. only `mode.default` changed), no need to re-run.
 
     **Phase 2 — Cascade update Task docs**:
     For each affected Task, follow `/archi.edit` standards:
