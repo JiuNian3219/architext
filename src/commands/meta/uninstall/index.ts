@@ -1,12 +1,11 @@
 import { logger } from "@/utils/logger.ts";
-import { confirm, intro, isCancel, outro, spinner } from "@clack/prompts";
+import { intro, outro, spinner } from "@clack/prompts";
 import fs from "fs-extra";
-import path from "path";
 import color from "picocolors";
 import { loadConfig } from "../../../core/config.ts";
 import { AppError } from "../../../core/errors.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
-import { resolveFilesToDelete } from "./resolver.ts";
+import { cleanupOpencodeConfig, resolveUninstallPlan } from "./resolver.ts";
 
 const t = createT(getSystemLocale(), "command.uninstall");
 
@@ -23,26 +22,11 @@ export const uninstallCommand = async () => {
     return;
   }
 
-  // 待删除的文件列表及空目录检查列表
-  const { files: uniqueFiles, dirsToCheck } = await resolveFilesToDelete(cwd);
+  const plan = resolveUninstallPlan(config, cwd);
+  const totalItems = plan.files.length + plan.dirs.length;
 
-  if (uniqueFiles.length === 0) {
+  if (totalItems === 0) {
     outro(color.green(t("success")));
-    return;
-  }
-
-  logger.warn(t("confirm_title"));
-  logger.dim(t("files_to_delete"));
-  uniqueFiles.forEach((f) => {
-    logger.error(`  - ${path.relative(cwd, f)}`);
-  });
-
-  const shouldContinue = await confirm({
-    message: t("confirm_msg"),
-  });
-
-  if (isCancel(shouldContinue) || !shouldContinue) {
-    outro(color.yellow(t("cancel")));
     return;
   }
 
@@ -50,12 +34,25 @@ export const uninstallCommand = async () => {
   s.start(t("cleaning"));
 
   try {
-    for (const file of uniqueFiles) {
-      await fs.remove(file);
+    // 处理 opencode.json（在删除配置文件之前）
+    await cleanupOpencodeConfig(config, cwd);
+
+    // 删除文件
+    for (const file of plan.files) {
+      if (await fs.pathExists(file)) {
+        await fs.remove(file);
+      }
     }
 
-    // 按深度降序检查目录：若已为空则一并删除
-    for (const dir of dirsToCheck) {
+    // 删除目录
+    for (const dir of plan.dirs) {
+      if (await fs.pathExists(dir)) {
+        await fs.remove(dir);
+      }
+    }
+
+    // 清理空目录
+    for (const dir of plan.dirsToCheck) {
       if (dir === cwd) continue;
       if (!(await fs.pathExists(dir))) continue;
       const entries = await fs.readdir(dir);

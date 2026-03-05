@@ -2,22 +2,17 @@
 import { intro, outro } from "@clack/prompts";
 import color from "picocolors";
 import { loadConfig, saveConfig } from "../../../core/config.ts";
-import { logger } from "../../../utils/logger.ts";
+import { CURRENT_FILE_MODEL_VERSION } from "../../../core/file-model.ts";
 import { UserCancelError } from "../../../core/errors.ts";
-import { Scaffolder } from "../../../core/scaffold.ts";
+import { scaffold } from "../../../core/scaffold.ts";
 import type { InitOptions } from "../../../types/index.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
 import { ConflictResolver } from "./conflict.ts";
 import { collectInitConfig } from "./prompts.ts";
+import { logger } from "../../../utils/logger.ts";
 
 const t = createT(getSystemLocale(), "command.init");
 
-/**
- * Init 命令的主入口函数。
- * 收集用户配置 → 保存配置 → 执行脚手架生成。
- *
- * @param options 命令行传入的初始化选项
- */
 export async function initCommand(options: InitOptions): Promise<void> {
   logger.clear();
   intro(color.bgCyan(color.black(` ${t("title")} `)));
@@ -28,29 +23,24 @@ export async function initCommand(options: InitOptions): Promise<void> {
     return;
   }
 
-  await saveConfig({
-    language: config.language,
-    editors: config.editors,
-    docDir: config.docDir,
-    features: config.features,
-  });
+  const existing = await loadConfig();
+  await saveConfig({ ...(existing ?? {}), ...config });
 
   try {
-    const result = await Scaffolder.run(config, {
+    const result = await scaffold(config, {
       resolveConflicts: ConflictResolver.resolve.bind(ConflictResolver),
     });
 
-    if (result?.opencodeInstructionsAdded) {
-      const current = await loadConfig();
-      if (current) {
-        await saveConfig({
-          ...current,
-          opencodeInstructionsAdded: true,
-        });
-      }
-    }
+    const persisted = await loadConfig();
+    await saveConfig({
+      ...config,
+      ...(persisted ?? {}),
+      structureVersion: CURRENT_FILE_MODEL_VERSION,
+      ...(result?.opencodeInstructionsAdded && {
+        opencodeInstructionsAdded: true,
+      }),
+    });
   } catch (error) {
-    // ConflictResolver 在文件冲突时可能抛出 UserCancelError
     if (error instanceof UserCancelError) {
       outro(color.yellow(t("cancel")));
       return;

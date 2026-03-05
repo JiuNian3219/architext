@@ -1,34 +1,53 @@
-/** @fileoverview update 命令主入口，协调版本检查、文件更新、Schema 审计三个阶段。 */
+/**
+ * @fileoverview update 命令主入口——纯流程编排。
+ *
+ * 声明式更新：以当前 architext.json 为准，多了删、少了补。
+ * 1. 加载配置
+ * 2. 版本检查（npm）
+ * 3. Guard：无 structureVersion / 版本过高 → 阻断
+ * 4. 确认更新
+ * 5. 清理旧 framework 文件（operations.ts）
+ * 6. 部署新 framework 文件 + add-only seeds（operations.ts）
+ * 7. templateOnly 规则 → 模板副本（operations.ts）
+ * 8. Schema 审计（auditor.ts）
+ * 9. 汇总 + 保存配置
+ */
 
-import { intro, outro, spinner } from "@clack/prompts";
+import { confirm, intro, isCancel, outro, spinner } from "@clack/prompts";
 import color from "picocolors";
-import { loadConfig } from "../../../core/config.ts";
+import { loadConfig, saveConfig } from "../../../core/config.ts";
 import { AppError } from "../../../core/errors.ts";
+import {
+  CURRENT_FILE_MODEL_VERSION,
+  getCurrentFileModel,
+} from "../../../core/file-model.ts";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
-import { EXPECTED_ROADMAP_VERSION } from "./constants.ts";
-import { checkVersion } from "./resolver.ts";
-import { updateRules, updateSilentFiles } from "./handlers.ts";
 import { auditPlans, auditRoadmap } from "./auditor.ts";
+import { EXPECTED_ROADMAP_VERSION } from "./constants.ts";
+import {
+  deployNewFiles,
+  deployTemplateOnlyRules,
+  removeStaleFiles,
+} from "./operations.ts";
+import { checkVersion } from "./version.ts";
 
 const t = createT(getSystemLocale(), "command.update");
 
-export async function updateCommand(_options: {
-  dryRun: boolean;
-}): Promise<void> {
+export async function updateCommand(): Promise<void> {
   logger.clear();
   intro(color.bgCyan(color.black(` ${t("title")} `)));
 
   const cwd = process.cwd();
 
-  // Step 1: 读取配置（无配置说明未初始化）
+  // ─── Phase 1: 加载配置 ─────────────────────────────────────────
   const config = await loadConfig(cwd);
   if (!config) {
     outro(color.yellow(t("no_config")));
     return;
   }
 
-  // Step 0: 版本检查（网络可选，失败不阻断后续流程）
+  // ─── Phase 2: 版本检查（CLI vs npm 最新） ───────────────────────
   const s = spinner();
   s.start(t("version_checking"));
   const versionInfo = await checkVersion();
@@ -55,35 +74,90 @@ export async function updateCommand(_options: {
     );
   }
 
-  // Step 2: 静默更新 prompts + docs/templates + commands
-  s.start(t("updating_silent"));
-  let silentCount = 0;
-  try {
-    const silentResult = await updateSilentFiles(config, cwd);
-    silentCount = silentResult.count;
-  } catch (error: unknown) {
-    s.stop(color.red(t("failed")));
-    const message = error instanceof Error ? error.message : String(error);
-    throw new AppError(message);
-  }
-  s.stop(color.green(t("updated_silent", { count: silentCount })));
-
-  // Step 3: Rules 更新（展示警告，用户确认后覆盖）
-  logger.dim("");
-  const rulesResult = await updateRules(config, cwd);
-  if (!rulesResult) {
+  // ─── Phase 3: Guard — 结构版本检查 ─────────────────────────────
+  if (config.structureVersion == null) {
+    logger.dim("");
+    logger.warn(t("legacy_migration_blocked"));
+    logger.dim(t("legacy_migration_step1"));
+    logger.dim(t("legacy_migration_step2"));
+    logger.dim(t("legacy_migration_step3"));
+    logger.dim(t("legacy_migration_step4"));
     outro(color.yellow(t("cancel")));
     return;
   }
 
-  // Step 4: Schema 审计
+  if (config.structureVersion > CURRENT_FILE_MODEL_VERSION) {
+    logger.dim("");
+    logger.warn(
+      t("version_too_new", {
+        project: config.structureVersion,
+        cli: CURRENT_FILE_MODEL_VERSION,
+      }),
+    );
+    outro(color.yellow(t("cancel")));
+    return;
+  }
+
+  // ─── Phase 4: 确认更新 ─────────────────────────────────────────
+  const model = getCurrentFileModel();
+  const neverTouchNames = Object.entries(model.rulePolicy)
+    .filter(([, p]) => p === "neverTouch")
+    .map(([n]) => n);
+  const templateOnlyNames = Object.entries(model.rulePolicy)
+    .filter(([, p]) => p === "templateOnly")
+    .map(([n]) => n);
+
+  logger.warn(t("update_warning"));
+  logger.dim(
+    t("update_skip_hint", {
+      list: [...neverTouchNames, ...templateOnlyNames].join(", "),
+    }),
+  );
+  logger.dim(t("update_global_hint"));
+
+  const confirmed = await confirm({ message: t("update_confirm") });
+  if (isCancel(confirmed) || !confirmed) {
+    outro(color.yellow(t("cancel")));
+    return;
+  }
+
+  // ─── Phase 5: 清理旧 framework 文件 ───────────────────────────
+  s.start(t("removing_old"));
+  let removedCount = 0;
+  try {
+    removedCount = await removeStaleFiles(config, cwd);
+  } catch (error: unknown) {
+    s.stop(color.red(t("failed")));
+    throw new AppError(error instanceof Error ? error.message : String(error));
+  }
+  s.stop(color.green(t("removed_old", { count: removedCount })));
+
+  // ─── Phase 6: 部署新 framework 文件 + add-only seeds ──────────
+  s.start(t("deploying_new"));
+  let frameworkCount = 0;
+  let seedCount = 0;
+  try {
+    ({ frameworkCount, seedCount } = await deployNewFiles(config, cwd));
+  } catch (error: unknown) {
+    s.stop(color.red(t("failed")));
+    throw new AppError(error instanceof Error ? error.message : String(error));
+  }
+  s.stop(
+    color.green(
+      t("deployed_new", { framework: frameworkCount, seeds: seedCount }),
+    ),
+  );
+
+  // ─── Phase 7: templateOnly 规则 → 模板副本 ────────────────────
+  const templatedRules = await deployTemplateOnlyRules(config);
+
+  // ─── Phase 8: Schema 审计 ─────────────────────────────────────
   logger.dim("");
   logger.step(t("schema_auditing"));
 
   const roadmapResult = await auditRoadmap(config, cwd);
   const planResults = await auditPlans(config, cwd);
 
-  // roadmap.json 审计结果
   if (roadmapResult.compatible) {
     if (roadmapResult.migrated) {
       logger.success(
@@ -101,7 +175,6 @@ export async function updateCommand(_options: {
     roadmapResult.errors?.forEach((e) => logger.dim(`  ${e}`));
   }
 
-  // plan.json 审计结果
   if (planResults.length === 0) {
     logger.dim(t("schema.no_plans"));
   } else {
@@ -116,18 +189,21 @@ export async function updateCommand(_options: {
     }
   }
 
-  // 汇总报告
+  // ─── Phase 9: 汇总 + 保存 ─────────────────────────────────────
   logger.dim("");
   logger.step(t("summary"));
-  if (rulesResult.updated.length > 0) {
-    logger.done(
-      t("summary_updated", { list: rulesResult.updated.join(" · ") }),
-    );
-  }
-  if (rulesResult.templated.length > 0) {
+  logger.done(t("summary_framework", { count: frameworkCount }));
+  if (seedCount > 0) logger.info(t("summary_seeds", { count: seedCount }));
+  if (templatedRules.length > 0)
     logger.info(t("summary_templated", { docDir: config.docDir }));
-  }
-  logger.dim(t("summary_skipped", { list: rulesResult.skipped.join(", ") }));
+  if (neverTouchNames.length > 0)
+    logger.dim(t("summary_skipped", { list: neverTouchNames.join(", ") }));
+  logger.dim(t("summary_global"));
+
+  await saveConfig(
+    { ...config, structureVersion: CURRENT_FILE_MODEL_VERSION },
+    cwd,
+  );
 
   outro(color.green(t("success")));
 }
