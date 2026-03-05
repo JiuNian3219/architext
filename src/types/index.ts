@@ -78,9 +78,9 @@ export interface ArchitextConfig {
   roadmap?: string;
   editors: SupportedEditor[];
   version?: string;
+  /** 上次 init/update 时的框架结构版本（独立整数，仅文件布局变化时递增） */
+  structureVersion?: number;
   updatedAt: string;
-  /** 最近一次生成时的配置快照 */
-  lastScaffold?: InitConfig;
   /**
    * 标记 opencode.json 的 instructions 中 .opencode/rules/*.md 是否为 Architext 添加。
    * 仅当为 true 时，uninstall 才会移除该路径；用户原有配置不会被误删。
