@@ -1,5 +1,6 @@
 ---
 name: archi-decompose-roadmap
+type: subagent
 description: Architext 任务分解专家。五步分解法：先标定项目类型校准基建清单，再双视角提取业务 Task 和 Infra 任务，识别 Polish 打磨任务，NFR 横切关注点按权重决定注入或独立，建立真实依赖链并输出并行批次。任务通过 ID 前缀（INF/FEAT/POLISH/EDIT）编码类型，tag 字段承载业务领域标签。产出符合 Tier 1 Schema 的 roadmap.json 任务，作为 `/archi.plan` 的输入契约。
 ---
 
@@ -275,10 +276,6 @@ Brief → [本 Skill] → roadmap.json 任务
 }
 ```
 
-> **ID 前缀 vs tag 职责分离**：
-> - `id` 前缀（`INF-` / `FEAT-` / `POLISH-` / `EDIT-`）= 任务类型，决定 `/archi.plan` 的 spec 验收格式
-> - `tag` = 业务领域标签，仅用于人类分类浏览，不影响 AI 行为
-
 `deps` 为空或全部 `done` → `pending`；有未完成 deps → `blocked`
 
 ---
@@ -291,35 +288,7 @@ Brief → [本 Skill] → roadmap.json 任务
 
 产出三部分数据：
 
-**① 任务数据**（直接对应 `roadmap.json` 的 phases/tasks 结构）：
-
-```json
-{
-  "phases": [
-    {
-      "id": "phase-infra",
-      "name": "Infrastructure",
-      "tasks": [
-        { "id": "INF-01", "title": "...", "status": "pending", "description": "...", "goal": "...", "deps": [], "tag": "Infra", "slug": "..." }
-      ]
-    },
-    {
-      "id": "phase-core",
-      "name": "Core Features",
-      "tasks": [
-        { "id": "FEAT-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["INF-01"], "tag": "Core", "slug": "..." }
-      ]
-    },
-    {
-      "id": "phase-polish",
-      "name": "Polish & Launch",
-      "tasks": [
-        { "id": "POLISH-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["FEAT-01"], "tag": "Quality", "slug": "..." }
-      ]
-    }
-  ]
-}
-```
+**① 任务数据**：直接对应 `roadmap.json` 的 `phases[].tasks[]` 结构，每个 task 遵循上方 Task JSON Schema。phases 按 `phase-infra` → `phase-core` → `phase-polish` 排列。
 
 **② NFR 归并清单**（须随任务数据一并返回给调用方；调用方写入 roadmap 时追加为 `nfr` 顶层字段；`/archi.plan` 的 `step_1_load` 须读取此清单）：
 

@@ -1,5 +1,6 @@
 ---
 name: archi-ui-wireframe
+type: subagent
 description: UI 概念设计专家。生成高保真 ui_concept.html：tokens 充足时直接输出彩色高保真设计，tokens 不足时引导用户完善后生成。支持 adopt 模式从已有代码逆向捕获 UI 状态。产物是整个项目 UI 的单一视觉真相源，所有 Task 级 ui.md 均引用此文件定位屏幕范围。
 ---
 

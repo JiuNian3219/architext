@@ -1,5 +1,6 @@
 ---
 name: archi-design-patterns
+type: specialist
 description: Architext 技术方案结构化模式库。定义四种核心机制描述模式（State Machine / Pipeline / Decision Matrix / Protocol）的标准格式与自检清单，供 /archi.plan step_4 生成 design.md § 2 时引用，亦供 /archi.code step_5 审计实现与设计一致性时引用。
 ---
 
