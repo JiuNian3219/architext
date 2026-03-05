@@ -6,6 +6,7 @@ import fs from "fs-extra";
 import path from "path";
 import pkg from "../../../../package.json" with { type: "json" };
 import { loadConfig } from "../../../core/config.ts";
+import { getCurrentFileModel } from "../../../core/file-model.ts";
 import { EDITOR_CONFIGS } from "../../../core/rules.ts";
 import type { ArchitextConfig } from "../../../types/index.ts";
 import { logger } from "../../../utils/logger.ts";
@@ -14,10 +15,17 @@ import { createT, getSystemLocale } from "../../../utils/t.ts";
 const t = createT(getSystemLocale(), "command.pack");
 
 /**
- * 需要打包的用户专属规则文件（不含扩展名）。
- * 这些文件由用户在 init 后手动填写，框架升级时须保留。
+ * 从 FileModel 的 rulePolicy 动态提取需要备份的用户规则文件。
+ * templateOnly + neverTouch 的规则都包含用户定制内容，需要打包保护。
  */
-const USER_RULE_BASENAMES = ["90_custom_rules", "02_tech_stack"];
+function getUserRuleBasenames(): string[] {
+  const model = getCurrentFileModel();
+  return Object.entries(model.rulePolicy)
+    .filter(
+      ([, policy]) => policy === "neverTouch" || policy === "templateOnly",
+    )
+    .map(([name]) => name);
+}
 
 export interface PackOptions {
   output?: string;
@@ -138,7 +146,7 @@ async function collectUserData(
     const ec = EDITOR_CONFIGS[editor];
     if (!ec) continue;
 
-    for (const baseName of USER_RULE_BASENAMES) {
+    for (const baseName of getUserRuleBasenames()) {
       const filePath = path.resolve(
         cwd,
         ec.targetDir,

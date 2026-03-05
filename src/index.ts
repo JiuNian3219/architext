@@ -44,10 +44,7 @@ cli
   .action(run(initCommand));
 
 // Update 同步最新规则
-cli
-  .command("update", t("update.desc"))
-  .option("-d, --dry-run", t("update.dry_run"), { default: false })
-  .action(run(updateCommand));
+cli.command("update", t("update.desc")).action(run(updateCommand));
 
 // Doctor 环境自检
 cli.command("doctor", t("doctor.desc")).action(async () => {

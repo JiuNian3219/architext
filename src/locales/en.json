@@ -20,8 +20,8 @@
   },
   "update": {
     "desc": "Sync latest rules, update editor rules and document skeleton",
-    "dry_run": "Dry run, do not actually execute the update operation, only display the update content",
     "failed": "Update failed",
+    "version_gap_warning": "Project structure (v{project}) is far behind CLI (v{current}). Auto-update may be incomplete. Consider: 1) Run npx archi pack to backup; 2) Use AI to help merge pack output; 3) Or re-run npx archi init (loses customizations)",
     "dry_run_msg": "🔍 Dry run mode enabled.",
     "construction": "Update feature is under construction..."
   },
@@ -100,7 +100,10 @@
       "error": "Uninstall error occurred.",
       "cancel": "Uninstall cancelled.",
       "not_found": "Configuration (architext.json) not found. Cannot auto-uninstall.",
-      "cleaning": "Cleaning up..."
+      "cleaning": "Cleaning up...",
+      "legacy_no_version": "This project uses an older version of Architext and cannot be auto-uninstalled.",
+      "legacy_manual_hint": "Please manually delete the following:",
+      "legacy_exit": "Please clean up manually and try again"
     },
     "task": {
       "check": {
@@ -176,15 +179,27 @@
       "version_outdated": "New version v{latest} available (current: v{current})",
       "version_upgrade_hint": "Upgrade command: {cmd}",
       "version_up_to_date": "Already up to date: v{version}",
-      "updating_silent": "Updating prompt and document templates...",
-      "updated_silent": "Updated {count} template files",
-      "rules_overwrite_warning": "The following framework rule files will be fully overwritten. Back them up if you have custom changes:",
-      "rules_confirm": "Confirm overwriting the above rule files?",
+      "legacy_migration_blocked": "Project is missing structure version info. Auto-update is not supported. Please migrate manually:",
+      "legacy_migration_step1": "  1. npx archi pack              Back up your document data",
+      "legacy_migration_step2": "  2. npx archi uninstall         Remove old framework files (delete any leftovers manually)",
+      "legacy_migration_step3": "  3. npx archi init              Re-initialize with the new structure",
+      "legacy_migration_step4": "  4. /archi.recover <pack-file>  Restore your document data in AI",
+      "version_too_new": "Project structure version (v{project}) is newer than CLI supports (v{cli}). Please upgrade: npm install -g architext@latest",
+      "update_warning": "Old framework files will be removed and the latest version will be redeployed:",
+      "update_skip_hint": "Won't touch: {list}",
+      "update_global_hint": "Global docs (roadmap.json, vision.md, etc. in global/) are add-only — existing files won't be overwritten",
+      "update_confirm": "Confirm update?",
+      "removing_old": "Removing old framework files...",
+      "removed_old": "Removed {count} old files",
+      "deploying_new": "Deploying new framework files...",
+      "deployed_new": "Deployed {framework} framework files, added {seeds} seed files",
       "schema_auditing": "Running Schema compatibility audit...",
       "summary": "Update Summary",
-      "summary_updated": "Rules updated: {list}",
-      "summary_templated": "New template → {docDir}/templates/02_tech_stack.template.md (merge manually)",
+      "summary_framework": "Refreshed {count} framework files (rules/prompts/skills/templates)",
+      "summary_seeds": "Added {count} seed files",
+      "summary_templated": "02_tech_stack has project customizations, not overwritten. New template saved to {docDir}/templates/02_tech_stack.template.md — compare and merge into your IDE rules dir (e.g. .cursor/rules/, .windsurf/rules/)",
       "summary_skipped": "Skipped: {list}",
+      "summary_global": "Global docs (global/) are add-only — delete outdated files manually if needed",
       "schema": {
         "parse_error": "JSON parse failed — file may be corrupted",
         "version_too_new": "File version (v{current}) is newer than CLI expected version (v{expected}). Please upgrade the CLI.",
@@ -203,7 +218,7 @@
         "config": "Configuration",
         "doc_structure": "Doc Directory Structure",
         "global_files": "Global Files",
-        "ide_rules": "IDE Rules"
+        "ide_rules": "IDE Framework Files"
       },
       "summary": {
         "result": "Result: {parts}",
