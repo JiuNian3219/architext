@@ -150,9 +150,9 @@ describe("runDocStructureChecks", () => {
     await createTestStructure(tempDir, {
       ".architext": {
         global: {},
-        prompts: {},
-        templates: {},
         tasks: {},
+        refs: {},
+        scripts: {},
       },
     });
     const results = await runDocStructureChecks(BASE_CONFIG, tempDir);
@@ -172,14 +172,15 @@ describe("runDocStructureChecks", () => {
     expect(globalResult?.status).toBe("fail");
   });
 
-  it("可选目录（prompts/templates/tasks）缺失时：为 warn 而非 fail", async () => {
+  it("骨架目录（tasks/refs/scripts）缺失时：为 warn 而非 fail", async () => {
     await createTestStructure(tempDir, {
       ".architext": { global: {} },
     });
     const results = await runDocStructureChecks(BASE_CONFIG, tempDir);
     const optional = results.filter((r) =>
-      ["prompts/", "templates/", "tasks/"].includes(r.label),
+      ["tasks/", "refs/", "scripts/"].includes(r.label),
     );
+    expect(optional.length).toBeGreaterThan(0);
     expect(optional.every((r) => r.status === "warn")).toBe(true);
   });
 
@@ -211,6 +212,7 @@ describe("runGlobalFileChecks", () => {
           "roadmap.json": JSON.stringify(VALID_ROADMAP),
           "map.json": JSON.stringify(VALID_MAP),
           "dictionary.json": JSON.stringify(VALID_DICTIONARY),
+          "error_codes.json": JSON.stringify({ businessErrors: [] }),
         },
       },
     });
@@ -332,21 +334,22 @@ describe("runIdeRulesChecks", () => {
     expect(dirResult?.hint).toBeTruthy();
   });
 
-  it("规则目录不存在时：不产生规则文件的子项", async () => {
+  it("规则目录不存在时：不产生规则文件的子项（提前 continue）", async () => {
     const results = await runIdeRulesChecks(BASE_CONFIG, tempDir);
-    // 目录不存在时提前 continue，不应有文件子项
-    expect(results).toHaveLength(1);
+    // 目录不存在时 rules 子项跳过，但 prompts/skills 检查继续产生 warn
+    const dirFails = results.filter((r) => r.status === "fail");
+    expect(dirFails).toHaveLength(1);
   });
 
-  it("规则目录存在但文件全缺失时：文件项均为 warn", async () => {
+  it("规则目录存在但 rules 文件全缺失时：rules 文件项均为 warn", async () => {
     await createTestStructure(tempDir, { ".cursor": { rules: {} } });
     const results = await runIdeRulesChecks(BASE_CONFIG, tempDir);
-    const fileResults = results.filter((r) => r.label.trim().endsWith(".mdc"));
-    expect(fileResults.length).toBeGreaterThan(0);
-    expect(fileResults.every((r) => r.status === "warn")).toBe(true);
+    const ruleResults = results.filter((r) => r.label.trim().endsWith(".mdc"));
+    expect(ruleResults.length).toBeGreaterThan(0);
+    expect(ruleResults.every((r) => r.status === "warn")).toBe(true);
   });
 
-  it("规则文件全部存在时：目录项和文件项均为 pass", async () => {
+  it("规则文件全部存在时：rules 子项均为 pass", async () => {
     const ruleFiles: Record<string, string> = {
       "00_system.mdc": "",
       "01_workflow.mdc": "",
@@ -358,10 +361,11 @@ describe("runIdeRulesChecks", () => {
     };
     await createTestStructure(tempDir, { ".cursor": { rules: ruleFiles } });
     const results = await runIdeRulesChecks(BASE_CONFIG, tempDir);
-    expect(results.every((r) => r.status === "pass")).toBe(true);
+    const ruleResults = results.filter((r) => r.label.trim().endsWith(".mdc"));
+    expect(ruleResults.every((r) => r.status === "pass")).toBe(true);
   });
 
-  it("多个编辑器时：每个编辑器都产生检查项", async () => {
+  it("多个编辑器时：每个编辑器都产生目录检查项", async () => {
     const cfg: ArchitextConfig = {
       ...BASE_CONFIG,
       editors: ["cursor", "trae"],
@@ -371,5 +375,15 @@ describe("runIdeRulesChecks", () => {
       (r) => r.label.includes(".cursor") || r.label.includes(".trae"),
     );
     expect(dirResults.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("prompts 文件缺失时：产生 warn 项", async () => {
+    await createTestStructure(tempDir, { ".cursor": { rules: {} } });
+    const results = await runIdeRulesChecks(BASE_CONFIG, tempDir);
+    const promptResults = results.filter((r) =>
+      r.label.trim().startsWith("archi."),
+    );
+    expect(promptResults.length).toBeGreaterThan(0);
+    expect(promptResults.every((r) => r.status === "warn")).toBe(true);
   });
 });
