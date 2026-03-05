@@ -1,5 +1,6 @@
 ---
 name: archi-decompose-roadmap
+type: subagent
 description: Architext task decomposition expert. Five-step method: calibrate project type for infrastructure checklist, extract business Tasks and Infra tasks via dual perspective, identify Polish tasks, route NFR cross-cutting concerns by weight (inject vs. standalone), build dependency chain and output parallel batches. Task type encoded by ID prefix (INF/FEAT/POLISH/EDIT); tag field carries business domain labels. Produces Tier 1 Schema-compliant roadmap.json tasks as input contracts for `/archi.plan`.
 ---
 
@@ -27,7 +28,7 @@ Brief → [This Skill] → roadmap.json tasks
 >
 > **Schema constraint (Tier 1 Strict)**: roadmap.json validated by CLI Zod Schema. **Adding or removing fields is forbidden.**
 
-## Invocation Mode
+## Invocation Modes
 
 | Mode | Triggered By | Input | Constraint |
 |:---|:---|:---|:---|
@@ -275,10 +276,6 @@ Route cross-cutting concerns by **effort weight**: lightweight → inject into g
 }
 ```
 
-> **ID prefix vs tag responsibility separation**:
-> - `id` prefix (`INF-` / `FEAT-` / `POLISH-` / `EDIT-`) = task type, determines `/archi.plan` spec acceptance format
-> - `tag` = business domain label, for human categorization only, does not affect AI behavior
-
 `deps` empty or all `done` → `pending`; has incomplete deps → `blocked`
 
 ---
@@ -291,35 +288,7 @@ Route cross-cutting concerns by **effort weight**: lightweight → inject into g
 
 Three outputs:
 
-**① Task data** (directly maps to `roadmap.json` phases/tasks):
-
-```json
-{
-  "phases": [
-    {
-      "id": "phase-infra",
-      "name": "Infrastructure",
-      "tasks": [
-        { "id": "INF-01", "title": "...", "status": "pending", "description": "...", "goal": "...", "deps": [], "tag": "Infra", "slug": "..." }
-      ]
-    },
-    {
-      "id": "phase-core",
-      "name": "Core Features",
-      "tasks": [
-        { "id": "FEAT-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["INF-01"], "tag": "Core", "slug": "..." }
-      ]
-    },
-    {
-      "id": "phase-polish",
-      "name": "Polish & Launch",
-      "tasks": [
-        { "id": "POLISH-01", "title": "...", "status": "blocked", "description": "...", "goal": "...", "deps": ["FEAT-01"], "tag": "Quality", "slug": "..." }
-      ]
-    }
-  ]
-}
-```
+**① Task data** (directly maps to `roadmap.json` phases/tasks structure; each task follows Task JSON Schema above; phases ordered `phase-infra` → `phase-core` → `phase-polish`):
 
 **② NFR merge list** (return with task data; caller appends as `nfr` top-level field; `/archi.plan` step_1_load must read):
 
