@@ -95,6 +95,14 @@
 
     **Terminal Gate** (do not skip): Standard check (task --check + render).
 
+    **Pre-signoff Checklist** (confirm each item before Output):
+    □ User explicitly confirmed change list in step_4 (Gate passed before execution)
+    □ Stale entries removed from directoryMapping
+    □ New entries correctly classified (path + layer + description all filled)
+    □ Renamed entries explicitly handled (not silently ignored)
+    □ lastUpdated updated
+    □ Terminal Gate — task --check + render passed
+
     **Output**: Update summary — removed N / added N (M file-level) / renamed N / total entries.
 </step_5_apply>
 

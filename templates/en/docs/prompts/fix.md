@@ -73,6 +73,15 @@
 </step_5_plan_update>
 
 <step_6_summary>
+    **Pre-signoff Checklist** (confirm each item before Output):
+    □ Root cause analyzed (not surface patch), Hypothesis output in step_1
+    □ plan.json — Bugfix Phase appended (step_2)
+    □ Reproduction test created and verified (Red → Green)
+    □ Code fix targets Bug only, no opportunistic refactoring
+    □ Step 4 Terminal Gate — Build / type check / Lint / tests all passed
+    □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
+    □ plan.json Bugfix Phase — done flags updated (step_5)
+
     **Output**: Bug fix summary with Root Cause analysis, fix content, new tests, and Next Steps table:
 
     | Priority | Action | Notes |

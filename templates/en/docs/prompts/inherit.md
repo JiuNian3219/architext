@@ -232,7 +232,17 @@
 <step_5_signoff>
     **Terminal Gate** (do not skip): Standard check (task --check + render).
 
-    **Action** (after Gate passes):
+    **Pre-signoff Checklist** (confirm each item after Gate passes, before Output):
+    □ vision.md — filled (without Brief: inferred content annotated `(AI completion — review recommended)`)
+    □ 02_tech_stack.md — Sections 1-8 fully filled
+    □ roadmap.json — each functional module has a corresponding LEG-xx (status: done, tag: Legacy)
+    □ tasks/LEG-xx_<Slug>/spec.md — each LEG has a corresponding Stub spec (with related file list)
+    □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations all filled
+    □ dictionary.json + error_codes.json — extracted from codebase
+    □ (UI projects only) design_tokens.json + ui_concept.html + ui_context.md — Adopt mode executed
+    □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
+
+    **Action** (after Checklist confirmed):
     1.  Run `npx archi task` to output task overview.
     2.  Output summary.
 

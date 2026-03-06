@@ -130,7 +130,14 @@
     3.  Output completed task list and patch links.
     4.  Provide next steps and Git Commit Suggestion (Conventional Commits).
 
-    **Checkpoint** (must confirm before Output): □ Terminal Gate all executed
+    **Pre-signoff Checklist** (confirm each item before Output):
+    □ plan.json — every task done flag updated in real-time (not batch-updated at signoff)
+    □ Step 4 — Build / type check / Lint / format all passed
+    □ Step 4 — Task Verification executed for each project type with Evidence attached
+    □ Step 5A Silent Audit — executed, all CRITICAL issues resolved
+    □ Step 5B featureRelations check — executed
+    □ Step 5C data governance sync — executed
+    □ Terminal Gate — npx archi plan <ID> all complete (exempt items only)
 
     **Output**: Completion summary with completed tasks, exempt items (if any), Git Commit suggestion, Next Steps:
 

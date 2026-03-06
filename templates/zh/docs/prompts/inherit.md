@@ -232,7 +232,17 @@
 <step_5_signoff>
     **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 
-    **Action** (Gate 通过后):
+    **Pre-signoff Checklist** (Gate 通过后、输出前须逐项确认):
+    □ vision.md — 已填充（无 Brief 时: 推导内容标注了 `(AI 补全 — 建议用户审查)`）
+    □ 02_tech_stack.md — Section 1-8 完整填充
+    □ roadmap.json — 每个功能模块对应一条 LEG-xx（status: done, tag: Legacy）
+    □ tasks/LEG-xx_<Slug>/spec.md — 每条 LEG 均有对应 Stub spec（含关联文件列表）
+    □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations 均已填充
+    □ dictionary.json + error_codes.json — 从代码提取完毕
+    □ （仅ui项目）design_tokens.json + ui_concept.html + ui_context.md — Adopt 模式已执行
+    □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
+
+    **Action** (Checklist 全部确认后):
     1.  运行 `npx archi task` 输出任务概览。
     2.  输出总结。
 

@@ -95,6 +95,14 @@
 
     **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 
+    **Pre-signoff Checklist** (Output 前须逐项确认):
+    □ 用户已在 step_4 明确确认变更清单（Gate 通过后才执行）
+    □ 过期条目已从 directoryMapping 移除
+    □ 新增条目已正确归类（path + layer + description 均已填写）
+    □ 疑似重命名已明确处理（非静默忽略）
+    □ lastUpdated 已更新
+    □ Terminal Gate — task --check + render 通过
+
     **Output**: 更新摘要 — 移除 N 条 / 新增 N 条（含 M 条文件级）/ 重命名 N 条 / 当前总条目数。
 </step_5_apply>
 

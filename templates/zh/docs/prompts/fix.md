@@ -73,6 +73,15 @@
 </step_5_plan_update>
 
 <step_6_summary>
+    **Pre-signoff Checklist** (输出前须逐项确认):
+    □ 根因已分析（非表面修补），Hypothesis 已在 step_1 输出
+    □ plan.json — Bugfix Phase 已追加（step_2）
+    □ 复现测试已创建并验证（Red → Green）
+    □ 代码修复仅针对 Bug，无借机重构
+    □ Step 4 Terminal Gate — 构建/类型检查/Lint/测试全部通过
+    □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
+    □ plan.json Bugfix Phase — done 标记已更新（step_5）
+
     **Output**: Bug 修复摘要，含 Root Cause 分析、修复内容、新增测试，以及 Next Steps 表格：
 
     | 优先级 | 动作 | 说明 |

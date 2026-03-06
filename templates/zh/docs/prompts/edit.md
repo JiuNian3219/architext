@@ -77,6 +77,14 @@
 </step_4_verify>
 
 <step_5_summary>
+    **Pre-signoff Checklist** (输出前须逐项确认):
+    □ spec.md — 已按 context 更新，变更已追踪
+    □ （ui有修改）ui.md + ui_concept.html + ui_context.md — 已同步更新
+    □ plan.json — 新 Phase 已追加（历史任务完整保留）
+    □ （原 status=done）roadmap.json — status 已重置为 active
+    □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
+    □ Terminal Gate — task --check 无 ERROR（step_3 中已执行）
+
     **Action** (Gate 须在 step_3 完成):
     **Output**: Task 更新摘要，含 Spec/UI/Plan 变更概要和 Next Steps 表格。推荐运行 `/archi.code <ID>`。
 </step_5_summary>

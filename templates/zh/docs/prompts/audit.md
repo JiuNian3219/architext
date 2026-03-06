@@ -117,6 +117,13 @@
     | 功能未完成 | `/archi.code <ID>` |
     | 小问题 | 下次 `/archi.code` 时一并处理 |
 
+    **Pre-signoff Checklist** (写入文件前须逐项确认):
+    □ （任务级）15 个审查维度全部覆盖，不适用项标注 N/A（非静默跳过）
+    □ （项目级）7 个检查项全部评估
+    □ 每个 CRITICAL/WARNING 发现已附 `文件:行号` + 代码片段
+    □ 每个发现已附推荐修复命令（/archi.fix / /archi.edit 等）
+    □ 报告已写入对应文件（任务级: tasks/<id>/audit.md；项目级: audits/YYYY-MM-DD.md）
+
     **Report Structure**: 审查概要 → 发现列表（CRITICAL → WARNING → INFO）→ 统计摘要 → 修复工单汇总 → Next Steps。
 
     **Write Report File**:

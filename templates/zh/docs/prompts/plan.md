@@ -217,7 +217,17 @@
     |:---|:---|:---|
     | 1 | `npx archi task <ID> --status active` | 任务已标记为进行中 |
 
-    **Action** (Gate 通过后):
+    **Pre-signoff Checklist** (Gate 通过后、输出前须逐项确认):
+    □ spec.md § 2 — AC/场景/契约对应功能设计中的具体内容（无凭空捏造）
+    □ spec.md § 4 Interface — 已填写（INF 任务 / 有下游 deps 时必填）
+    □ spec.md § 5 Constraints — 已从 vision + tech_stack 提取（非空）
+    □ plan.json — spec § 2 每条 AC → ≥1 task 覆盖（100% 覆盖原则）
+    □ plan.json — 每个 task notes 含验证字段（非空，非 title 同义重复）
+    □ map.json — tasks/<ID>_<Slug> 已在 directoryMapping 注册
+    □ 全局文件 — 新术语/错误码/Schema 已同步（dictionary/error_codes/data_snapshot）
+    □ Step 6 Silent Audit — 已执行，所有 CRITICAL 问题已修复
+
+    **Action** (Checklist 全部确认后):
     1.  输出总结。
 
     **Output**: Task 定义摘要，含架构建议确认表（各维度最终选择及理由）和 Next Steps：
