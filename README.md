@@ -281,7 +281,7 @@ Agent mode is great for single sessions. Architext provides persistent context t
 
 **Q: Can I use this on an existing codebase?**
 
-Yes. Run `/archi.inherit` — Architext analyzes your existing code and generates a document skeleton. Existing features are registered as `LEG-xx` tasks with stub specs, so you can gradually adopt the workflow without a big-bang rewrite.
+Yes. Run `npx archi init` first to deploy the framework, then run `/archi.inherit` — Architext analyzes your existing code and fills the document skeleton (does not overwrite your existing content). Existing features are registered as `LEG-xx` tasks with stub specs, so you can gradually adopt the workflow without a big-bang rewrite.
 
 > **Note**: `/archi.inherit` is still early-stage. Analysis results for large or complex repos may be incomplete and require manual cleanup. Feel free to open an Issue if you hit problems.
 

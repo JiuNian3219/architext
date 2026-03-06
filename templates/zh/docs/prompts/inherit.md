@@ -1,7 +1,7 @@
 <protocol_inherit>
   **Trigger**: `/archi.inherit [brief_path]`
   **Phase**: Legacy Adoption
-  **Goal**: 逆向分析已有代码仓库，生成 Architext 文档骨架，将项目纳入框架管理。可选提供 Brief 以补充愿景/路线图（适用于代码库尚空、骨架刚搭的场景）。
+  **Goal**: 逆向分析已有代码仓库，用分析结果填充 init 部署的文档骨架（`[[__DOCS_DIR__]]`），将项目纳入框架管理。填充空占位符，非覆盖用户既有内容。可选提供 Brief 以补充愿景/路线图（适用于代码库尚空、骨架刚搭的场景）。
 
 <meta>
     <style>Analytical, Systematic, Evidence-Based</style>
@@ -102,7 +102,7 @@
 <step_3_constitution>
     **Role**: 首席架构师
     **Input**: Step 0 Brief 解析（如有）+ Step 1 分析报告 + Step 2 补充（如有）。
-    **Action**: 一次性生成项目文档骨架。**有 Brief 时**：Brief 优先于代码（vision/roadmap/tech_stack）；代码仍用于 map、LEG-xx、目录结构。**无 Brief 时**：仅以代码为输入源（保持原逻辑）。
+    **Action**: 一次性填充 init 部署的文档骨架。**有 Brief 时**：Brief 优先于代码（vision/roadmap/tech_stack）；代码仍用于 map、LEG-xx、目录结构。**无 Brief 时**：仅以代码为输入源（保持原逻辑）。
 
     ### 信息路由规则
 
