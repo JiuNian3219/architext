@@ -28,10 +28,10 @@
     3.  **Dependency Context** (有依赖时): 仅读依赖任务 spec.md 的 Interface/Type 段；无引用时跳过。Stub 依赖 → 从关联文件提取源码公共接口。
     4.  **Refs** (如有): 读 refs/index.json，按 tags 语义匹配，仅读命中 ref 文件；不存在则跳过。
 
-    **Output**: 向用户输出 **Task Context Brief** — 含任务类型（从 ID 前缀推断）、目标（goal，高亮 [用户预设]）、上游依赖及关键接口、项目特征标签、技术约束、设计哲学、项目约定（§9 各项值，无则"未设置"）、外部知识引用（命中 ref id 列表）。内部保留完整上下文，进入 step_2。
+    **Output**: 向用户输出 **Task Context Brief** — 含任务类型（从 ID 前缀推断）、目标（goal，高亮 [用户预设]）、上游依赖及关键接口、项目特征标签、技术约束、设计哲学、项目约定（§9 各项值，无则"未设置"）、外部知识引用（命中 ref id 列表）。内部保留完整上下文，进入 step_2_complexity。
 </step_1_load>
 
-<step_1_5_complexity>
+<step_2_complexity>
     **Action**: 检测任务类型，评估复杂度，决定流程路径。
 
     **⓪ Task Type + 粒度红线**：
@@ -49,18 +49,18 @@
 
     | 信号 | 判定 | 流程 |
     |:---|:---|:---|
-    | 无依赖 + 无新实体 + 无架构决策 + 预估 ≤3 tasks | **Simple** | 跳过 step_2，直接生成 spec + plan（精简单 Phase，signoff 时确认） |
-    | 有依赖 或 有新实体 或 需架构决策 | **Standard** | 正常执行 step_2 Unified Proposal |
+    | 无依赖 + 无新实体 + 无架构决策 + 预估 ≤3 tasks | **Simple** | 跳过 step_3，直接生成 spec + plan（精简单 Phase，signoff 时确认） |
+    | 有依赖 或 有新实体 或 需架构决策 | **Standard** | 正常执行 step_3 Unified Proposal |
 
     **② Design 信号检测**（Standard 后执行）：
 
     | 信号 | 判定 |
     |:---|:---|
-    | AI- 含复杂度警告 或 涉及自定义状态机/非平凡算法/多组件协调/重试恢复 | **Standard + Design**（step_2 输出机制预览，step_4 额外生成 design.md） |
+    | AI- 含复杂度警告 或 涉及自定义状态机/非平凡算法/多组件协调/重试恢复 | **Standard + Design**（step_3 输出机制预览，step_5 额外生成 design.md） |
     | 标准 CRUD / 配置 / 简单集成 | **Standard** |
-</step_1_5_complexity>
+</step_2_complexity>
 
-<step_2_interview>
+<step_3_interview>
     **Role**: 架构师
 
     ---
@@ -98,7 +98,7 @@
 
     #### Part 1.5: Mechanism Preview (机制预览) 仅Complex任务:
 
-    仅当 step_1_5 判定为 **Standard + Design** 时输出。列出需要技术方案设计的核心机制及拟用模式（机制 / 模式 / 简述表格）。用户可增删机制或修改模式选择。
+    仅当 step_2 判定为 **Standard + Design** 时输出。列出需要技术方案设计的核心机制及拟用模式（机制 / 模式 / 简述表格）。用户可增删机制或修改模式选择。
 
     #### Output Format
 
@@ -106,18 +106,20 @@
 
     **Goal**: 锁定 `spec`, `ui`(如适用), `data_snapshot.json`(如适用)。
 
-    **⌨️ INPUT**: 回复 **OK** 全部接受；或自由文本标注修改项。无需按固定格式。
-</step_2_interview>
+    **⌨️ INPUT**: 回复 **OK** 全部接受（→ 进入 step_4_global_sync）；或自由文本标注修改项（→ 进入 step_3_5_refinement）。无需按固定格式。
+</step_3_interview>
 
-<step_2_5_refinement>
+<step_3_5_refinement>
     **Trigger**: 用户回复非 OK，含修正、疑问、覆写或明显逻辑冲突。
     **Action**: 不生成文档。融入用户反馈，刷新 Unified Proposal 重新输出，等待再次确认。
     - 如是功能设计疑问 → 给出替代方案对比，重新提出设计
     - 如是架构维度疑问 → 结合此功能具体场景解释差异，更新推荐
     - 如是维度覆写 → 直接替换推荐并调整相关设计
-</step_2_5_refinement>
 
-<step_3_global_sync>
+    用户回复 OK → 进入 step_4_global_sync。
+</step_3_5_refinement>
+
+<step_4_global_sync>
     **Constraint**: 在生成 Task 文档**之前**，须先更新以下全局文件。
 
     **Boundary**: 仅注册**项目业务域**内容。Architext 框架概念（scripts、scaffold、roadmap、plan 等）和框架基础设施错误禁注册到全局文件。
@@ -127,11 +129,11 @@
     2.  **数据治理同步** (`dictionary.json` / `error_codes.json` / `data_snapshot.json` 等): 按 `03_data_governance.md` 规则，将提案中涉及的新业务术语、错误码、Schema 增量同步至对应全局文件。
     3.  **`map.json` featureRelations**: [[SUBAGENT: archi-feature-relations|mode: register, context: 判断本 Task 是否为聚合型，若是则注册 featureRelations 条目]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: register 的逻辑执行）]]
 
-    **Output**: 上述文件的变更 Diff (简要)。
-</step_3_global_sync>
+    **Output**: 上述文件的变更 Diff (简要)。进入 step_5_generate。
+</step_4_global_sync>
 
-<step_4_generate>
-    **Input**: 确认的 Unified Proposal（功能设计 + 架构建议）+ 已更新的全局上下文 + step_1_5 检测的 Task Type。
+<step_5_generate>
+    **Input**: 确认的 Unified Proposal（功能设计 + 架构建议）+ 已更新的全局上下文 + step_2 检测的 Task Type。
     **Action**: 在 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/` 下生成标准文档。
 
     **1. `spec.md`** (必须):
@@ -199,17 +201,17 @@
     **`notes` 质量**: 格式 `[产出文件路径] · [spec 引用] · [关键约束] · 验证: [可执行命令 + 期望结果]`。禁留空。
     > Red Flag: notes 退化为 title 同义重复。每个 notes 须包含 title 中**不存在**的信息量。
 
-    - 生成后运行 `npx archi render` 生成可读的 `.md` 视图。
-</step_4_generate>
+    - 生成后运行 `npx archi render` 生成可读的 `.md` 视图。进入 step_6_verify。
+</step_5_generate>
 
-<step_5_verify>
+<step_6_verify>
     **Role**: 独立审查官
-    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_4 生成的文档（spec.md, ui.md, plan.json, design.md）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 的审查维度表逐项检查）]]
+    [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_5 生成的文档（spec.md, ui.md, plan.json, design.md）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 的审查维度表逐项检查）]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
-</step_5_verify>
+</step_6_verify>
 
-<step_6_signoff>
+<step_7_signoff>
     **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
     | 步骤 | 命令 | 通过条件 |
     |:---|:---|:---|
@@ -224,6 +226,6 @@
     |:---|:---|:---|
     | 1 | `/archi.code <ID>` | Spec 和 Plan 已就绪，开始实现（须用户确认） |
     | 可选 | 审查 spec.md / plan.json | 在动手前再检查一遍文档 |
-</step_6_signoff>
+</step_7_signoff>
 
 </protocol_plan>

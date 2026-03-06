@@ -52,6 +52,8 @@
 <step_3_5_refinement>
     **Trigger**: 用户回复非 OK，含修正、否决或追加意见。
     **Action**: 不执行修改。融入用户反馈，刷新影响评估书重新输出，等待再次确认。
+
+    用户回复 OK → 进入 step_4_execute。
 </step_3_5_refinement>
 
 <step_4_execute>
@@ -84,18 +86,18 @@
     2.  （仅ui项目） 更新 `ui.md`；如屏幕结构受影响，[[SKILL: archi-ui-wireframe|运行 skill（局部更新模式）同步更新]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]。
     3.  在 `plan.json` 追加新 Phase: `Phase X: Global Revision — [变更主题] (<Date>)`。
 
-    **Output**: 每个文件的变更摘要（全局 + Task）。
+    **Output**: 每个文件的变更摘要（全局 + Task）。进入 step_5_verify。
 </step_4_execute>
 
-<step_4_5_verify>
+<step_5_verify>
     **Role**: 独立审查官
 
     [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_4 Phase 2 级联更新的 Task 文档，确保与修改后的全局资产一致]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 的审查维度表逐项检查）]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
-</step_4_5_verify>
+</step_5_verify>
 
-<step_5_summary>
+<step_6_summary>
     **Role**: 首席审计官
     **Checklist**:
     1.  全局资产间一致性（vision ↔ tech_stack ↔ roadmap ↔ map）。
@@ -108,6 +110,6 @@
     1.  输出变更总结。
 
     **Output**: Global Revision Summary — 含全局资产变更文件列表、Task 更新列表及影响摘要、审计结果、Next Steps 表格。
-</step_5_summary>
+</step_6_summary>
 
 </protocol_revise>

@@ -63,16 +63,16 @@
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
-<step_4_5_plan_update>
+<step_5_plan_update>
     **Action**:
     1. Update plan.json Bugfix Phase completed tasks `done: true`.
     2. [status=`done` and Bugfix all pass] → keep `done`.
     3. [Bugfix has incomplete items] → `npx archi task <ID> --status active`; signoff note to re-run `/archi.code`.
 
-    **Output**: `MODIFIED: plan.json Bugfix Phase done flags`.
-</step_4_5_plan_update>
+    **Output**: `MODIFIED: plan.json Bugfix Phase done flags`. Enter step_6_summary.
+</step_5_plan_update>
 
-<step_5_summary>
+<step_6_summary>
     **Output**: Bug fix summary with Root Cause analysis, fix content, new tests, and Next Steps table:
 
     | Priority | Action | Notes |

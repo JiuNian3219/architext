@@ -15,20 +15,15 @@
     </principles>
 </meta>
 
-<step_0_ingest>
-    **Role**: Intelligence Analyst
-    **Trigger**: Only when user provides `[brief_path]`. Skip if no argument or path invalid.
-    **Action**:
-    1. Parse `[brief_path]`: if path provided → read that file; if not → search `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
-    2. If file exists and non-empty: parse Brief sections, extract project identity, core tasks, tech preferences, boundaries, supplementary notes (same as start step_0_ingest)
-    3. If file missing or empty: skip this step; subsequent steps use code only as input
-
-    **Output**: Internal Brief summary (not shown to user), proceed to step_0_recon.
-</step_0_ingest>
-
 <step_0_recon>
     **Role**: Intelligence Analyst
-    **Action**:
+
+    **Brief detection** (only when user provides `[brief_path]`):
+    1. Parse `[brief_path]`: if path provided → read that file; if not → search `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
+    2. If file exists and non-empty: parse Brief sections, extract project identity, core tasks, tech preferences, boundaries, supplementary notes (same as start step_0_ingest)
+    3. If file missing or empty: skip Brief; subsequent steps use code only as input
+
+    **Code reconnaissance**:
     1. Read project root config files (auto-detect type):
 
        | Language/Ecosystem | Config Files |
@@ -214,23 +209,18 @@
     ### 3.7 Other global docs (as needed)
     - `dictionary.json`: Extract domain terminology from code
     - (UI projects only) `design_tokens.json`: Extract from CSS variables/theme
-    - (UI projects only) `ui_concept.html` + `ui_context.md`: Auto-invoked via skill adopt mode after inherit completes (see step_3_5_ui_adopt).
     - (Data projects only) `data_snapshot.json`: Extract from schema/migration
     - `error_codes.json`: Extract from error definitions in code
 
-    **Output**: Write all files, run `npx archi render`.
-</step_3_constitution>
-
-<step_3_5_ui_adopt>
-    **Trigger**: Only when project features include `ui`.
-    **Action**: [[SKILL: archi-ui-wireframe|Invoke skill (adopt mode) to reverse-generate UI concept design from code.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its Adopt protocol)]]
+    UI projects only: **UI concept design (Adopt mode)**: [[SKILL: archi-ui-wireframe|Invoke skill (adopt mode) to reverse-generate UI concept design from code.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its Adopt protocol)]]
     - Read route definitions, page components, layout files from code
     - Read design_tokens.json written in step_3 (containing CSS variables/theme extracted from code)
     - When tokens incomplete, triggers skill's built-in guidance flow
     - Write `ui_concept.html` + `ui_context.md`
+    - Output UI concept design summary; await user confirmation or feedback for adjustments
 
-    **Output**: UI concept design summary; await user confirmation or feedback for adjustments.
-</step_3_5_ui_adopt>
+    **Output**: Write all files, run `npx archi render`. Enter step_4_verify.
+</step_3_constitution>
 
 <step_4_verify>
     **Role**: Independent Reviewer

@@ -54,19 +54,19 @@
 
     **缺口分级**: 必须 → 无法分解 | 可补 → AI 可推导建议确认 | 建议 → AI 自决
 
-    **Decision**: 无"必须"+"可补"缺口 → 跳 Step 2.5 | 有缺口 → 进入 Step 2.5
+    **Decision**: 无"必须"+"可补"缺口 → 跳 Step 3 | 有缺口 → 进入 Step 3
 
-    **Output**: 向用户输出 SCOPE BRIEF 分析报告 — 含需求名/预估规模、Vision 对齐状态、已确认信息、受影响已有任务表（任务/状态/预估影响）、（有命中）联动提示表、信息缺口、AI 自动决定项。
+    **Output**: 向用户输出 SCOPE BRIEF 分析报告 — 含需求名/预估规模、Vision 对齐状态、已确认信息、受影响已有任务表（任务/状态/预估影响）、（有命中）联动提示表、信息缺口、AI 自动决定项。进入 step_3_supplementary（有缺口）或 step_4_decompose（无缺口）。
 </step_2_analysis>
 
-<step_2_5_supplementary>
+<step_3_supplementary>
     **Trigger**: 仅当 Step 2 发现"必须"或"可补"级缺口时执行。
     **Input**: Step 2 的缺口列表。问题数上限 3 题。
 
     [[SKILL: archi-interview-protocol|按 skill 的核心规则和标准输出格式提问。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` 并遵循其规则）]]
-</step_2_5_supplementary>
+</step_3_supplementary>
 
-<step_3_decompose>
+<step_4_decompose>
     **Role**: 首席架构师
     **Input**: Brief 全文 + 项目上下文 + 补充回答（如有）。
 
@@ -89,15 +89,17 @@
     - [NFR 名称] → 注入 [任务 ID] | 影响：[其他任务 ID]
     ```
 
-    **Gate**: 用户回复 **OK** 后进入 step_4；未确认禁写入 Roadmap。
-</step_3_decompose>
+    **Gate**: 用户回复 **OK** 后进入 step_5_roadmap_update；未确认禁写入 Roadmap。
+</step_4_decompose>
 
-<step_3_5_refinement>
+<step_4_5_refinement>
     **Trigger**: 用户回复非 OK，含合并/拆分/增删/依赖调整等修正。
     **Action**: 融入用户反馈，刷新分解方案重新输出，等待再次确认。
-</step_3_5_refinement>
 
-<step_4_roadmap_update>
+    用户回复 OK → 进入 step_5_roadmap_update。
+</step_4_5_refinement>
+
+<step_5_roadmap_update>
     **Input**: 用户确认的分解方案。
 
     **Action**:
@@ -108,11 +110,11 @@
 
     **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 
-    **Output**: 写入确认。
-</step_4_roadmap_update>
+    **Output**: 写入确认。进入 step_6_signoff。
+</step_5_roadmap_update>
 
-<step_5_signoff>
-    **Action** (Gate 须在 step_4 完成):
+<step_6_signoff>
+    **Action** (Gate 须在 step_5 完成):
     1.  运行 `npx archi task` 输出任务进度概览。
     2.  输出总结。
 
@@ -127,7 +129,7 @@
     | （仅ui项目） 推荐 | [[SKILL: archi-ui-wireframe|运行 skill（追加模式）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]] | 为新增任务追加屏幕到 `ui_concept.html` |
     | 1 | `/archi.plan <第一个 pending 任务 ID>` | 对首个可执行任务做深度规划 |
     | 2 | 审查 roadmap | 确认依赖关系和优先级 |
-</step_5_signoff>
+</step_6_signoff>
 
 <fallback_interview>
     **Trigger**: Brief 文件不存在或为空，或用户以自然语言描述需求进入。

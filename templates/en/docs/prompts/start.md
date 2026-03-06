@@ -144,7 +144,13 @@
     - `directoryMapping`: Pre-register core directory skeleton from tech_stack architecture pattern
     - `logicalTopology` / `criticalUserJourneys` / `featureRelations`: Empty array for now
 
-    **Output**: Write all files, then run `npx archi render`.
+    UI projects only: **UI concept design**: [[SKILL: archi-ui-wireframe|Follow the skill protocol to auto-generate UI concept design.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]
+    - Start generation without user confirmation
+    - Read the just-written vision.md + roadmap.json + design_tokens.json + 02_tech_stack
+    - Write `ui_concept.html` + `ui_context.md`
+    - Output UI concept design summary; await user confirmation or feedback for adjustments
+
+    **Output**: Write all files, then run `npx archi render`. Enter step_4_verify.
 </step_3_constitution>
 
 <step_4_verify>
@@ -153,15 +159,6 @@
 
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
-
-<step_4_5_ui_wireframe>
-    **Trigger**: Only when project features include `ui`.
-    **Action**: [[SKILL: archi-ui-wireframe|Follow the skill protocol to auto-generate UI concept design.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]
-    - Start generation without user confirmation
-    - Read the just-written vision.md + roadmap.json + design_tokens.json + 02_tech_stack
-    - Write `ui_concept.html` + `ui_context.md`
-    - Output UI concept design summary; await user confirmation or feedback for adjustments
-</step_4_5_ui_wireframe>
 
 <step_5_signoff>
     **Terminal Gate** (do not skip): Standard check (task --check + render).

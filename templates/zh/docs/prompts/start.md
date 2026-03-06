@@ -140,11 +140,17 @@
     - （仅ui项目） `design_tokens.json`: 基于「风格与调性」和「视觉参考」填充 aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens
     - `error_codes.json`: 基于任务列表预定义核心错误码
 
+    仅ui项目: **UI 概念设计**: [[SKILL: archi-ui-wireframe|按 skill 的协议，自动生成 UI 概念设计。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]
+    - 无需用户确认即开始生成
+    - 读取刚写入的 vision.md + roadmap.json + design_tokens.json + 02_tech_stack
+    - 写入 `ui_concept.html` + `ui_context.md`
+    - 输出 UI 概念设计摘要，等待用户确认或反馈调整
+
     ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
     - `directoryMapping`: 基于 tech_stack 架构模式预注册核心目录骨架
     - `logicalTopology` / `criticalUserJourneys` / `featureRelations`: 暂为空数组
 
-    **Output**: 写入所有文件，然后运行 `npx archi render`。
+    **Output**: 写入所有文件，然后运行 `npx archi render`。进入 step_4_verify。
 </step_3_constitution>
 
 <step_4_verify>
@@ -153,15 +159,6 @@
 
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
-
-<step_4_5_ui_wireframe>
-    **Trigger**: 仅当项目 features 含 `ui` 时执行。
-    **Action**: [[SKILL: archi-ui-wireframe|按 skill 的协议，自动生成 UI 概念设计。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]
-    - 无需用户确认即开始生成
-    - 读取刚写入的 vision.md + roadmap.json + design_tokens.json + 02_tech_stack
-    - 写入 `ui_concept.html` + `ui_context.md`
-    - 输出 UI 概念设计摘要，等待用户确认或反馈调整
-</step_4_5_ui_wireframe>
 
 <step_5_signoff>
     **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。

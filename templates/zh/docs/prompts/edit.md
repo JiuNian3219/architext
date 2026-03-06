@@ -65,20 +65,20 @@
     |:---|:---|:---|
     | 3 | [当前 status=done] `npx archi task <ID> --status active` | 状态已重置 |
 
-    **Output**: 追加了新任务的 plan.json；若执行状态转换，输出 `MODIFIED: roadmap.json <ID>.status done→active`。
+    **Output**: 追加了新任务的 plan.json；若执行状态转换，输出 `MODIFIED: roadmap.json <ID>.status done→active`。进入 step_4_verify。
 </step_3_update_plan>
 
-<step_3_5_verify>
+<step_4_verify>
     **Role**: 独立审查官
 
     [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: 审查 step_2 更新的 spec.md/ui.md 与 step_3 追加的 plan.json 新 Phase]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，按 mode: plan-docs 审查）]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
-</step_3_5_verify>
+</step_4_verify>
 
-<step_4_summary>
+<step_5_summary>
     **Action** (Gate 须在 step_3 完成):
     **Output**: Task 更新摘要，含 Spec/UI/Plan 变更概要和 Next Steps 表格。推荐运行 `/archi.code <ID>`。
-</step_4_summary>
+</step_5_summary>
 
 </protocol_edit>

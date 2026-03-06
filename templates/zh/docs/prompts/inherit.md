@@ -15,20 +15,15 @@
     </principles>
 </meta>
 
-<step_0_ingest>
-    **Role**: 情报分析官
-    **Trigger**: 仅当用户提供 `[brief_path]` 时执行。无参数或路径无效则跳过。
-    **Action**:
-    1. 解析 `[brief_path]`：提供了路径 → 读取该文件；未提供 → 依次查找 `project-brief.md`（项目根）、`[[__DOCS_DIR__]]/project-brief.md`
-    2. 若文件存在且非空：解析 Brief 各 Section，提取项目身份、核心任务、技术偏好、边界约束、补充说明（与 start 的 step_0_ingest 一致）
-    3. 若文件不存在或为空：跳过本 step，后续仅以代码为输入源
-
-    **Output**: 内部 Brief 摘要（不输出给用户），进入 step_0_recon。
-</step_0_ingest>
-
 <step_0_recon>
     **Role**: 情报分析官
-    **Action**:
+
+    **Brief 检测**（仅当用户提供 `[brief_path]` 时）:
+    1. 解析 `[brief_path]`：提供了路径 → 读取该文件；未提供 → 依次查找 `project-brief.md`（项目根）、`[[__DOCS_DIR__]]/project-brief.md`
+    2. 若文件存在且非空：解析 Brief 各 Section，提取项目身份、核心任务、技术偏好、边界约束、补充说明（与 start 的 step_0_ingest 一致）
+    3. 若文件不存在或为空：跳过 Brief，后续仅以代码为输入源
+
+    **代码侦察**:
     1. 读取项目根配置文件（自动识别类型）：
 
        | 语言/生态 | 配置文件 |
@@ -45,7 +40,7 @@
     4. 推断项目特征标签（UI / Data / CLI / Lib / API — 由目录结构、依赖和配置推断）。
     5. 识别入口文件和核心模块。沿入口文件的 import 链建立模块依赖草图。
 
-    **Output**: 内部摘要（不输出给用户），进入 step_1。
+    **Output**: 内部摘要（不输出给用户），进入 step_1_analysis。
 </step_0_recon>
 
 <step_1_analysis>
@@ -214,23 +209,18 @@
     ### 3.7 其他全局文档（按需）
     - `dictionary.json`: 从代码提取领域术语
     - （仅ui项目） `design_tokens.json`: 从 CSS 变量/主题提取
-    - （仅ui项目） `ui_concept.html` + `ui_context.md`: inherit 完成后自动调用 skill adopt 模式逆向生成（见 step_3_5_ui_adopt）。
     - （仅data项目） `data_snapshot.json`: 从 schema/migration 提取
     - `error_codes.json`: 从代码中的错误定义提取
 
-    **Output**: 写入所有文件，运行 `npx archi render`。
-</step_3_constitution>
-
-<step_3_5_ui_adopt>
-    **Trigger**: 仅当项目 features 含 `ui` 时执行。
-    **Action**: [[SKILL: archi-ui-wireframe|调用 skill（adopt 模式），从代码逆向生成 UI 概念设计。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其 Adopt 协议执行）]]
+    仅ui项目: **UI 概念设计（Adopt 模式）**: [[SKILL: archi-ui-wireframe|调用 skill（adopt 模式），从代码逆向生成 UI 概念设计。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其 Adopt 协议执行）]]
     - 读取代码中的路由定义、页面组件、布局文件
     - 读取 step_3 写入的 design_tokens.json（含代码提取的 CSS 变量/theme）
     - tokens 不完整时触发 skill 内置引导流程
     - 写入 `ui_concept.html` + `ui_context.md`
+    - 输出 UI 概念设计摘要，等待用户确认或反馈调整
 
-    **Output**: UI 概念设计摘要，等待用户确认或反馈调整。
-</step_3_5_ui_adopt>
+    **Output**: 写入所有文件，运行 `npx archi render`。进入 step_4_verify。
+</step_3_constitution>
 
 <step_4_verify>
     **Role**: 独立审查官
