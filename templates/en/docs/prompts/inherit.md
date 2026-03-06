@@ -1,7 +1,7 @@
 <protocol_inherit>
   **Trigger**: `/archi.inherit [brief_path]`
   **Phase**: Legacy Adoption
-  **Goal**: Reverse-engineer existing codebase to generate Architext document skeleton, bringing project under framework governance. Optionally provide Brief to supplement vision/roadmap (for skeleton repos with minimal code).
+  **Goal**: Reverse-engineer existing codebase to fill the init-deployed document skeleton (`[[__DOCS_DIR__]]`) with analysis results, bringing project under framework governance. Fills empty placeholders; does not overwrite user's existing content. Optionally provide Brief to supplement vision/roadmap (for skeleton repos with minimal code).
 
 <meta>
     <style>Analytical, Systematic, Evidence-Based</style>
@@ -102,7 +102,7 @@
 <step_3_constitution>
     **Role**: Chief Architect
     **Input**: Step 0 Brief parse (if any) + Step 1 analysis report + Step 2 supplements (if any).
-    **Action**: Generate project document skeleton in one pass. **With Brief**: Brief takes precedence for vision/roadmap/tech_stack; code still used for map, LEG-xx, directory structure. **Without Brief**: Code only as input (original logic).
+    **Action**: Fill the init-deployed document skeleton in one pass. **With Brief**: Brief takes precedence for vision/roadmap/tech_stack; code still used for map, LEG-xx, directory structure. **Without Brief**: Code only as input (original logic).
 
     ### Information Routing Rules
 
