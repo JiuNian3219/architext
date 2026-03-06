@@ -6,7 +6,33 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ---
 
-## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.4...HEAD) / 待发布
+## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.5...HEAD) / 待发布
+
+---
+
+## [0.0.5](https://github.com/JiuNian3219/architext/releases/tag/v0.0.5) - 2026-03-06
+
+### Added / 新增
+
+- `FileModel` 注册表，实现声明式文件管理，替代分散的路径硬编码 / Introduced FileModel registry for declarative file management
+- `archi init` 支持 `--yes` 和 `--brief` flag，实现非交互式初始化 / Added `--yes` and `--brief` flags for non-interactive init
+- Brief 附件资产目录支持（`_modules.md` 等附件模块）/ Added Brief attachment asset directory support
+- Skill 类型声明（`type: specialist` / `type: reviewer`）/ Added Skill type classification in frontmatter
+
+### Changed / 变更
+
+- 重构 `init`、`uninstall`、`update` 命令，基于 FileModel 驱动，逻辑更一致 / Refactored commands to be driven by FileModel
+- 拆分 `scaffold.ts` 为 `brief.ts` 和 `ide-integrations.ts`，拆分 `index.ts` 为 `collector.ts` 和 `serializer.ts` / Decomposed large source files for clarity
+- 精简 14 个中文协议文件，总行数从 2474 压缩至 1852（-25%）/ Compressed 14 zh protocol files by 25%
+- `01_workflow.md` 改造为 Chat Mode：高频命令（plan/code/edit/fix/scope）支持自然语言触发，AI 自动加载协议执行 / Workflow now supports natural-language intent detection for high-frequency commands
+- 两阶段协议生成合并为统一协议，减少用户操作步骤 / Merged two-phase protocol generation into single flow
+- 更新触发器描述，支持自然语言触发 / Updated trigger descriptions to support natural language
+- 补充 `01_workflow` 中 `ref` 与 `recover` 命令路由 / Added routing for `ref` and `recover` commands
+
+### Fixed / 修复
+
+- 修正 `inherit` 协议表述，避免误导用户认为会覆盖既有 `.architext` 数据 / Fixed `inherit` wording to prevent misunderstanding about overwriting existing data
+- 补全 zh prompts 到 en 的完整翻译 / Completed full translation of zh prompts to en
 
 ---
 
