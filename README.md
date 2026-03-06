@@ -104,9 +104,10 @@ The AI reads the brief, interviews you on key decisions, and generates the proje
 The main trunk of a project lifecycle. Everything happens in your AI chat window.
 
 ```
-project-brief.md → /archi.start → [/archi.scope] → /archi.plan → /archi.code → /archi.audit
+project-brief.md → /archi.start → /archi.plan → /archi.code → /archi.audit
                                          ↑
-                               use when you have extra requirements to decompose
+                    /archi.scope runs anytime you have NEW feature requirements
+                    (not limited to "right after start" — mid-project, post-release, etc.)
 ```
 
 **Stage 1 — Initialize**
@@ -126,14 +127,15 @@ AI:   [Analyzing project brief...]
       ✔ MODIFIED: .cursor/rules/02_tech_stack.mdc    (filled with project tech decisions)
       ✔ MODIFIED: .cursor/rules/90_custom_rules.mdc  (filled with team conventions)
 
-      Next: run /archi.scope to decompose requirements into tasks.
+      Next: if the brief covers everything → /archi.plan <first-task-id>
+            if you have more requirements → /archi.scope to add tasks first
 ```
 
 > **Existing codebase?** Use `/archi.inherit` instead — it reverse-engineers your project and registers existing features as `LEG-xx` tasks. Also generates `map.json`.
 
-**Stage 2 — Decompose (optional)**
+**Stage 2 — Decompose (optional, runs anytime)**
 
-> Use `/archi.scope` when you have requirements beyond what's in the initial brief. If the brief already covers everything, go straight to Stage 3.
+> `/archi.scope` is **not** "the step after start." Run it **whenever** you have new feature requirements beyond what's in the initial brief or current roadmap — right after start, mid-project, or after all tasks are done.
 
 ```
 You:  /archi.scope scope-brief.md           ← provide a file, or run bare to trigger an interview
@@ -207,13 +209,88 @@ AI:   [Reading code + spec + plan + vision + tech_stack...]
       [LOW]    Token expiry not configurable via env var → suggest /archi.edit
 ```
 
-> **Daily development between commands** is driven by natural language Chat Mode — ask questions, tweak code, debug — no slash commands needed. Four of the seven rule files act as always-on base rules: `00_system`, `02_tech_stack`, `90_custom_rules`, `99_context_glue`.
+> **Daily development between commands** is driven by natural language **Chat Mode**. Describe what you want in plain language — e.g. "add a login feature" or "fix the auth bug" — and the AI will automatically load and execute the right protocol (scope/plan/code/edit/fix). No need to manually type `/archi.*` slash commands. For questions, trivial edits, and debugging, the AI answers directly. Four of the seven rule files act as always-on base rules: `00_system`, `02_tech_stack`, `90_custom_rules`, `99_context_glue`.
+
+---
+
+## Tutorials
+
+Different scenarios, same protocol. Pick the one that matches your situation.
+
+### Tutorial A: New project, brief covers everything
+
+Your `project-brief.md` already lists all features. No scope needed.
+
+```
+/archi.start project-brief.md  →  /archi.plan FEAT-001  →  /archi.code FEAT-001  →  ...
+```
+
+Start produces a roadmap. Go straight to plan the first task, then code.
+
+---
+
+### Tutorial B: New project, brief incomplete
+
+You ran start, but later realize you forgot features or want to add more.
+
+```
+/archi.start project-brief.md  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-001  →  ...
+```
+
+Scope appends new tasks to `roadmap.json`. Then plan and code as usual.
+
+---
+
+### Tutorial C: Add features mid-project
+
+You're already building. FEAT-001 is done, and you want to add FEAT-002, FEAT-003, etc.
+
+```
+...  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-002  →  /archi.code FEAT-002  →  ...
+```
+
+**Scope runs anytime** — not only after start. Whenever you have new requirements beyond the current roadmap, run scope.
+
+---
+
+### Tutorial D: Existing codebase
+
+You have an existing repo. Adopt Architext without rewriting.
+
+```
+npx archi init  →  /archi.inherit [project-brief.md]  →  /archi.edit LEG-xx 补全 Stub  →  /archi.code LEG-xx
+```
+
+Inherit reverse-engineers the repo and registers features as `LEG-xx` tasks. Use edit to complete stub specs, then code when needed.
+
+---
+
+### Tutorial E: Bug fix
+
+```
+/archi.fix FEAT-001 "login fails when password has special chars"
+```
+
+Fix diagnoses, appends a Bugfix Phase to the plan, and repairs the code.
+
+---
+
+### When to use /archi.scope (summary)
+
+| When | Action |
+|:---|:---|
+| Right after start, brief didn't cover everything | scope |
+| Mid-project, new feature idea | scope |
+| All tasks done, want to add a new module | scope |
+| Brief already covers everything | Skip scope, go to plan |
 
 ---
 
 ## Commands
 
 ### AI Chat Commands
+
+You can trigger these either by typing `/archi.<command>` or by describing your intent in natural language — Chat Mode will automatically load and execute the matching protocol.
 
 | Command | Description |
 |:---|:---|

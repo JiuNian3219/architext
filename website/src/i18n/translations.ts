@@ -90,6 +90,7 @@ export interface TranslationData {
     eyebrow: string;
     title: string;
     desc: string;
+    chatMode: { title: string; desc: string };
     items: IterateItem[];
   };
   quickstart: {
@@ -227,11 +228,15 @@ export const t: Record<Locale, TranslationData> = {
       eyebrow: "Day 2+",
       title: "Project live.<br>Stay in control.",
       desc: "Every ongoing change — new requirements, spec updates, bug fixes, architectural pivots — has a dedicated command that keeps your document chain intact.",
+      chatMode: {
+        title: "Chat Mode — no slash commands needed",
+        desc: 'Describe what you want in plain language (e.g. "add a login feature", "fix the auth bug"). The AI automatically loads and executes the right protocol (scope/plan/code/edit/fix). For questions and trivial edits, it answers directly.',
+      },
       items: [
         {
           cmd: "/archi.scope",
           title: "Add requirements",
-          desc: "Decompose new requirements into roadmap tasks at any point. Incremental by design — never overwrites existing tasks.",
+          desc: "Decompose new requirements into roadmap tasks. Run anytime — not only after start (mid-project, post-release, etc.). Incremental by design.",
         },
         {
           cmd: "/archi.edit",
@@ -256,11 +261,12 @@ export const t: Record<Locale, TranslationData> = {
       tab1: "New project",
       tab2: "Existing codebase",
       new: {
-        comment1: "# 1. Deploy the framework files",
+        comment1:
+          "# 1. Deploy the framework (interactive: language, IDE, features, project-brief)",
         comment2: "# 2. Fill in project-brief.md, then in Cursor:",
         out1: "✔  vision.md, roadmap.json, tech_stack generated",
         out2: "✔  .cursor/rules/ configured",
-        out3: "◆  Run /archi.plan FEAT-001 to start your first feature",
+        out3: "◆  Brief complete → /archi.plan FEAT-001. Else → /archi.scope first",
       },
       existing: {
         comment1: "# 1. Deploy the framework files",
@@ -276,7 +282,7 @@ export const t: Record<Locale, TranslationData> = {
           rows: [
             {
               cmd: "archi init",
-              desc: "Deploy framework files (docs, rules, skills, IDE configs) into the project. Optionally generates project-brief.md (fill in for /archi.start or /archi.inherit). Run once per project.",
+              desc: "Deploy framework files into the project. Interactive: language, IDE(s), project features (ui/data/api…), project-brief. Optionally generates project-brief.md. Run once per project.",
               out: "docs · rules · skills · IDE configs · project-brief (optional)",
             },
             {
@@ -321,7 +327,7 @@ export const t: Record<Locale, TranslationData> = {
           rows: [
             {
               cmd: "/archi.scope",
-              desc: "Decompose requirements into roadmap tasks (incremental — never rewrites existing tasks)",
+              desc: "Decompose requirements into roadmap tasks. Run anytime you have new features beyond the initial brief (incremental — never rewrites existing tasks)",
               out: "updated roadmap.json",
             },
             {
@@ -512,11 +518,15 @@ export const t: Record<Locale, TranslationData> = {
       eyebrow: "持续迭代",
       title: "项目上线后，<br>保持掌控。",
       desc: "无论是追加需求、变更规格、修复缺陷还是调整架构，每种场景都有专属命令，始终维护文档链的完整性。",
+      chatMode: {
+        title: "Chat Mode — 无需斜杠命令",
+        desc: "用自然语言描述需求（如「加个登录功能」「修一下认证的 bug」），AI 会自动识别意图并加载对应协议（scope/plan/code/edit/fix）执行。提问、琐碎修改则直接回答。",
+      },
       items: [
         {
           cmd: "/archi.scope",
           title: "追加需求",
-          desc: "在项目任何阶段将新需求增量分解为 roadmap 任务，设计上不会重写任何已有任务。",
+          desc: "将新需求增量分解为 roadmap 任务。随时可跑——不限「start 之后」（项目进行中、发布后均可）。设计上不会重写已有任务。",
         },
         {
           cmd: "/archi.edit",
@@ -541,11 +551,11 @@ export const t: Record<Locale, TranslationData> = {
       tab1: "新项目",
       tab2: "已有代码库",
       new: {
-        comment1: "# 1. 部署框架文件",
+        comment1: "# 1. 部署框架（交互式：语言、IDE、项目特征、project-brief）",
         comment2: "# 2. 填写 project-brief.md，然后在 Cursor 中运行：",
         out1: "✔  vision.md, roadmap.json, tech_stack 已生成",
         out2: "✔  .cursor/rules/ 已配置",
-        out3: "◆  运行 /archi.plan FEAT-001 开始第一个功能",
+        out3: "◆  Brief 完整 → /archi.plan FEAT-001；否则 → 先 /archi.scope",
       },
       existing: {
         comment1: "# 1. 部署框架文件",
@@ -561,7 +571,7 @@ export const t: Record<Locale, TranslationData> = {
           rows: [
             {
               cmd: "archi init",
-              desc: "将框架文件（文档、规则、技能、IDE 配置）部署到项目中。可选生成 project-brief.md（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）。每个项目执行一次。",
+              desc: "将框架文件部署到项目中。交互式：语言、IDE(s)、项目特征(ui/data/api…)、project-brief。可选生成 project-brief.md。每个项目执行一次。",
               out: "文档 · 规则 · 技能 · IDE 配置 · project-brief（可选）",
             },
             {
@@ -606,7 +616,7 @@ export const t: Record<Locale, TranslationData> = {
           rows: [
             {
               cmd: "/archi.scope",
-              desc: "将需求增量分解为路线图任务，禁止重写已有任务",
+              desc: "将需求增量分解为路线图任务。只要有超出初始 Brief 的新功能，随时可跑（禁止重写已有任务）",
               out: "更新后的 roadmap.json",
             },
             {

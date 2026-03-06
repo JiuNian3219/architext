@@ -125,11 +125,13 @@ graph TD
 
 **主干路径** (从上往下):
 ```
-project-brief → start → scope → plan → code → audit
+project-brief → start → plan → code → audit
 ```
 
+**scope 的时机**：`/archi.scope` **不限于 start 之后**。只要你有**除初始 Brief 之外的新功能需求**，随时可运行 scope 追加任务。典型场景：start 后 Brief 未覆盖全部 → scope；项目进行中想到新功能 → scope；所有任务 done 后要加新模块 → scope。start 的 signoff 可能推荐 plan 或 scope，取决于 Brief 完整度，但 scope 并非"start 的下一步"。
+
 > 此图仅展示 `/archi.*` 命令之间的流转关系。
-> 自然语言交互（Chat Mode）是独立的调度层，见 Section 0.3。
+> 自然语言交互（Chat Mode）是独立的调度层，识别意图后自动加载协议执行，见 Section 0.3。
 
 **三条修复回路** (从 audit 回到 code):
 ```
@@ -191,7 +193,9 @@ project-brief → start → scope → plan → code → audit
 
 ### 定义阶段
 
-#### /archi.scope — 将大需求分解为多个 Roadmap 任务
+#### /archi.scope — 将大需求分解为多个 Roadmap 任务（增量追加）
+
+**时机**：**任意时刻**，只要你有新功能需求超出初始 Brief 或当前 roadmap 覆盖范围。非 start 专属，非"start 之后必跑"。
 
 | 方向 | 资产 | 作用 |
 |:---|:---|:---|
@@ -380,13 +384,13 @@ project-brief → start → scope → plan → code → audit
 | 模式 | 触发方式 | 本质 | 对应图 |
 |:---|:---|:---|:---|
 | **Command Mode** | `/archi.*` 指令 | 加载 prompt 协议，结构化执行 | Section 0 全景图 |
-| **Chat Mode** | 自然语言 | 意图识别 → 调度引导（不执行开发） | 本节图 |
+| **Chat Mode** | 自然语言 | 意图识别 → 自动加载对应协议并执行（无需用户手动输入斜杠命令） | 本节图 |
 
 ---
 
 ### 图 A：Chat Mode 意图调度（来源：`01_workflow.md` §2）
 
-Chat Mode 的核心职责是**识别意图并引导到正确命令**，本身只处理问答和琐碎修改，**不承担开发工作**。
+Chat Mode 的核心职责是**识别意图并自动加载对应协议执行**。涉及业务变更时，AI 会直接加载 scope/plan/code/edit/fix/revise 等协议并执行，**无需用户手动输入 `/archi.*` 斜杠命令**。纯对话和琐碎修改仍由 Chat Mode 直接处理。
 
 ```mermaid
 graph TD
@@ -404,35 +408,35 @@ graph TD
     ANSWER["✅ 直接回答<br/>(不改代码)"]
     TRIVIAL["✅ 直接执行<br/>(DDAD + Silent Audit Loop 约束下)"]
 
-    CMD_EDIT["🔀 引导 → /archi.edit + /archi.code"]
-    CMD_FIX["🔀 引导 → /archi.fix"]
-    CMD_SCOPE["🔀 引导 → /archi.scope / /archi.plan"]
-    CMD_REVISE["🔀 引导 → /archi.revise"]
+    EXEC_EDIT["▶ 加载 edit.md 执行<br/>先更新文档再改代码"]
+    EXEC_FIX["▶ 加载 fix.md 执行<br/>直接诊断修复"]
+    EXEC_SCOPE["▶ 加载 scope.md / plan.md 执行<br/>告知后直接开始"]
+    EXEC_REVISE["▶ 加载 revise.md 执行<br/>先输出影响评估，等确认"]
 
     INPUT --> Dispatcher
     I1 --> ANSWER
     I2 --> TRIVIAL
-    I3 --> CMD_EDIT
-    I4 --> CMD_FIX
-    I5 --> CMD_SCOPE
-    I6 --> CMD_REVISE
+    I3 --> EXEC_EDIT
+    I4 --> EXEC_FIX
+    I5 --> EXEC_SCOPE
+    I6 --> EXEC_REVISE
 
     style INPUT fill:#8E44AD,stroke:#6C3483,stroke-width:2px,color:#fff
     style ANSWER fill:#27AE60,stroke:#1E8449,stroke-width:2px,color:#fff
     style TRIVIAL fill:#27AE60,stroke:#1E8449,stroke-width:2px,color:#fff
-    style CMD_EDIT fill:#E67E22,stroke:#CA6F1E,stroke-width:2px,color:#fff
-    style CMD_FIX fill:#E67E22,stroke:#CA6F1E,stroke-width:2px,color:#fff
-    style CMD_SCOPE fill:#E67E22,stroke:#CA6F1E,stroke-width:2px,color:#fff
-    style CMD_REVISE fill:#E67E22,stroke:#CA6F1E,stroke-width:2px,color:#fff
+    style EXEC_EDIT fill:#27AE60,stroke:#1E8449,stroke-width:2px,color:#fff
+    style EXEC_FIX fill:#27AE60,stroke:#1E8449,stroke-width:2px,color:#fff
+    style EXEC_SCOPE fill:#27AE60,stroke:#1E8449,stroke-width:2px,color:#fff
+    style EXEC_REVISE fill:#E67E22,stroke:#CA6F1E,stroke-width:2px,color:#fff
 ```
 
-> ⛔ **禁**: 先改代码再事后建议走命令（`01_workflow.md §2.2`）。违反须撤销变更并重新引导。
+> ⛔ **禁**: 涉及行为变更时直接改代码而不走协议（`01_workflow.md` STOP CHECK）。违反须撤销变更并加载对应协议执行。
 
 ---
 
 ### 图 B：Chat Mode 基底规则（直接回答 / 琐碎修改时生效）
 
-仅在 Chat Mode 直接处理（不引导）时，以下四层规则约束 AI 行为：
+仅在 Chat Mode 直接处理（不加载协议）时，以下四层规则约束 AI 行为：
 
 ```mermaid
 graph LR
@@ -464,16 +468,12 @@ graph LR
 
 ### Chat Mode 资产交互
 
-| 资产 | Chat Mode 行为 | 对比 Command Mode |
+| 场景 | Chat Mode 行为 | 说明 |
 |:---|:---|:---|
-| `map.json` | Silent Audit Loop Step 1 读取（如非空） | plan/code/map 显式读写 |
-| `spec.md` | DDAD 改代码前读取；改代码后 step_5 漂移检查 | plan 创建、edit 修改 |
-| `02_tech_stack.md` | Silent Audit Loop Step 2 读取 | 所有执行命令读取 |
-| `dictionary.json` | data_governance 建议"主动添加"（无强制） | plan step_3 显式更新 |
-| `data_snapshot.json` | data_governance 建议"同步变更"（无强制） | plan step_3 显式更新 |
-| `error_codes.json` | data_governance 建议"发现时添加"（无强制） | plan step_3 显式更新 |
-| `context_glue` | DDAD 寻址时读取（通常为空） | 仅 remove 清理 |
-| `plan.json` | 不读不写 | code 标记 done、fix 追加 Bugfix Phase |
+| **直接回答 / 琐碎修改** | 遵循四层基底规则 + Silent Audit Loop | 与 Command Mode 不同，仅读 map/tech_stack/spec 等做约束检查 |
+| **涉及业务变更** | 加载对应协议后，资产读写与 Command Mode 相同 | 加载 scope/plan/code/edit/fix/revise 后，按该协议规范读写 roadmap/map/spec/plan 等 |
+
+琐碎修改时：`map.json`、`spec.md`、`02_tech_stack.md` 由 Silent Audit Loop 读取；`dictionary`/`data_snapshot`/`error_codes` 为 data_governance 建议性；`plan.json` 不读不写。加载协议执行时，资产读写行为与该协议完全一致。
 
 ---
 

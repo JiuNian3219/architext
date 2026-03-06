@@ -457,6 +457,24 @@ const jsonLd = JSON.stringify({
       padding: 0.08em 0.35em; color: var(--amber);
     }
 
+    /* ── Chat Mode callout ───────────────────────────── */
+    .chatmode-callout {
+      margin-top: 2rem;
+      padding: 1.25rem 1.5rem;
+      background: rgba(184,138,63,0.06);
+      border: 1px solid rgba(184,138,63,0.2);
+      border-radius: 8px;
+      border-left: 3px solid var(--amber);
+    }
+    .chatmode-callout h3 {
+      font-size: 0.9rem; font-weight: 600;
+      color: var(--amber); margin-bottom: 0.5rem;
+    }
+    .chatmode-callout p {
+      font-size: 0.88rem; color: var(--text-2);
+      line-height: 1.65; margin: 0;
+    }
+
     /* ── Iterate cards ──────────────────────────────── */
     .iter-grid {
       display: grid;
@@ -642,17 +660,19 @@ const jsonLd = JSON.stringify({
     <div class="term-body">
       <div><span class="tc-dim">$</span> <span class="tc-text">npx archi init</span></div>
       <div class="tc-dim">——————————————————————————————————</div>
-      <div><span class="tc-amber">◆</span> <span class="tc-text">Select language</span>  <span class="tc-dim">› English</span></div>
-      <div><span class="tc-amber">◆</span> <span class="tc-text">Select IDE(s)</span>     <span class="tc-dim">› Cursor</span></div>
+      <div><span class="tc-amber">◆</span> <span class="tc-text">Select language</span>       <span class="tc-dim">› English</span></div>
+      <div><span class="tc-amber">◆</span> <span class="tc-text">Select IDE(s)</span>        <span class="tc-dim">› Cursor</span></div>
       <div><span class="tc-amber">◆</span> <span class="tc-text">Select project features</span> <span class="tc-dim">› ui, api</span></div>
       <div><span class="tc-amber">◆</span> <span class="tc-text">Generate project-brief.md?</span> <span class="tc-dim">› Yes</span></div>
       <div>&nbsp;</div>
-      <div><span class="tc-green">✔</span> <span class="tc-text">Docs deployed</span>     <span class="tc-dim">→ .architext/</span></div>
-      <div><span class="tc-green">✔</span> <span class="tc-text">Rules deployed</span>    <span class="tc-dim">→ .cursor/rules/</span></div>
-      <div><span class="tc-green">✔</span> <span class="tc-text">Commands deployed</span> <span class="tc-dim">→ .cursor/commands/</span></div>
-      <div><span class="tc-green">✔</span> <span class="tc-text">Skills deployed</span>   <span class="tc-dim">→ .cursor/skills/</span></div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">Docs deployed</span>       <span class="tc-dim">→ .architext/</span></div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">Rules deployed</span>      <span class="tc-dim">→ .cursor/rules/</span></div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">Commands deployed</span>  <span class="tc-dim">→ .cursor/commands/</span></div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">Skills deployed</span>      <span class="tc-dim">→ .cursor/skills/</span></div>
+      <div><span class="tc-green">✔</span> <span class="tc-text">project-brief.md</span>   <span class="tc-dim">→ project root</span></div>
       <div>&nbsp;</div>
-      <div><span class="tc-amber">◆</span> Done. Fill in <span class="tc-yellow">project-brief.md</span>, then run <span class="tc-yellow">/archi.start</span> in Cursor.</div>
+      <div><span class="tc-amber">◆</span> Fill in <span class="tc-yellow">project-brief.md</span>, then run <span class="tc-yellow">/archi.start</span> in Cursor.</div>
+      <div><span class="tc-dim">   Next: /archi.plan (brief complete) or /archi.scope (more requirements)</span></div>
     </div>
   </div>
 
@@ -862,6 +882,11 @@ const jsonLd = JSON.stringify({
     <span class="eyebrow">{T.iterate.eyebrow}</span>
     <h2 class="section-title" set:html={T.iterate.title} />
     <p class="section-desc">{T.iterate.desc}</p>
+
+    <div class="chatmode-callout">
+      <h3>{T.iterate.chatMode.title}</h3>
+      <p>{T.iterate.chatMode.desc}</p>
+    </div>
 
     <div class="iter-grid">
       {T.iterate.items.map(item => (
