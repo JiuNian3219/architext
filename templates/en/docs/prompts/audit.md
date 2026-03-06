@@ -117,6 +117,13 @@
     | Feature incomplete | `/archi.code <ID>` |
     | Minor | Address in next `/archi.code` |
 
+    **Pre-signoff Checklist** (confirm each item before writing report file):
+    □ (Task-level) All 15 review dimensions covered; inapplicable items marked N/A (not silently skipped)
+    □ (Project-level) All 7 checklist items evaluated
+    □ Each CRITICAL/WARNING finding includes `file:line` + code snippet
+    □ Each finding includes a recommended fix command (/archi.fix / /archi.edit etc.)
+    □ Report written to correct file (task-level: tasks/<id>/audit.md; project-level: audits/YYYY-MM-DD.md)
+
     **Report Structure**: Review summary → Finding list (CRITICAL → WARNING → INFO) → Stats summary → Fix work items → Next Steps.
 
     **Write Report File**:

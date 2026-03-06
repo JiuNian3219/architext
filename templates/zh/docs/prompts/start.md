@@ -163,7 +163,17 @@
 <step_5_signoff>
     **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 
-    **Action** (Gate 通过后):
+    **Pre-signoff Checklist** (Gate 通过后、输出前须逐项确认):
+    □ vision.md — 所有占位符已替换，无模板示例文字残留
+    □ 02_tech_stack.md — Section 1-9 完整填充，Section 9 Project Conventions 含 Strategy + Rationale
+    □ roadmap.json — archi-decompose-roadmap Skill 已执行，任务链已生成
+    □ map.json — 核心目录骨架已预注册（directoryMapping）
+    □ dictionary.json + error_codes.json — 领域术语和核心错误码已提取
+    □ （仅ui项目）design_tokens.json + ui_concept.html + ui_context.md — 已生成
+    □ （仅data项目）data_snapshot.json — 初始实体骨架已写入
+    □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
+
+    **Action** (Checklist 全部确认后):
     1.  运行 `npx archi task` 输出任务进度概览。
     2.  输出总结。
 

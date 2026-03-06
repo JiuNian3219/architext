@@ -130,7 +130,14 @@
     3.  输出完成任务清单与补丁链接。
     4.  提供下一步建议与 Git Commit Suggestion（Conventional Commits）。
 
-    **Checkpoint** (Output 前须确认): □ Terminal Gate 全部执行
+    **Pre-signoff Checklist** (Output 前须逐项确认):
+    □ plan.json — 每个 task done 标记已实时更新（非 signoff 时批量操作）
+    □ Step 4 — 构建/类型检查/Lint/格式化 全部通过
+    □ Step 4 — 每种项目类型的 Task Verification 已执行并附 Evidence
+    □ Step 5A Silent Audit — 已执行，所有 CRITICAL 问题已修复
+    □ Step 5B featureRelations 联动检查 — 已执行
+    □ Step 5C 数据治理同步 — 已执行
+    □ Terminal Gate — npx archi plan <ID> 全部完成（仅豁免项除外）
 
     **Output**: 完成摘要，含已完成任务、豁免项(如有)、Git Commit 建议、Next Steps：
 

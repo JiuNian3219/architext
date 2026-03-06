@@ -97,10 +97,14 @@
 
 <step_6_summary>
     **Role**: Chief Auditor
-    **Checklist**:
-    1.  Cross-consistency between global assets (vision ↔ tech_stack ↔ roadmap ↔ map).
-    2.  Task docs aligned with updated global assets.
-    3.  No orphan refs (stale terms/paths in dictionary/map cleaned).
+
+    **Pre-signoff Checklist** (confirm each item after Gate passes, before Output):
+    □ step_4 Safety Checkpoint — Git workspace confirmed (no uncommitted changes or user informed)
+    □ Phase 1 — all confirmed global assets modified, change summary output per file
+    □ (UI projects only, design system changed) User notified to re-run archi-ui-wireframe
+    □ Phase 2 — each affected Task: spec.md updated + plan.json appended Revision Phase
+    □ Step 5 Silent Audit — executed, all CRITICAL issues resolved
+    □ Consistency confirmed: vision ↔ tech_stack ↔ roadmap ↔ map, no orphan refs (stale terms/paths cleaned)
 
     **Terminal Gate** (do not skip): Standard check (task --check + render).
 

@@ -90,6 +90,15 @@
 </step_4_verify>
 
 <step_5_summary>
+    **Pre-signoff Checklist** (输出前须逐项确认):
+    □ 代码文件/目录 — 已删除（step_3 操作 #1）
+    □ tasks/<id>_<slug>/ 文档目录 — 已删除（step_3 操作 #2）
+    □ roadmap.json — 任务条目 + deps 引用 — 已清理（step_3 操作 #3）
+    □ map.json — 模块条目 + featureRelations — 已清理（step_3 操作 #4）
+    □ 99_context_glue.md — 关联条目 — 已清理（step_3 操作 #5）
+    □ （有独占术语/错误码）dictionary.json + error_codes.json — 已处理
+    □ Terminal Gate — 项目构建通过，无残留 import 引用（step_4）
+
     **Output**: 下线完成摘要：
     - **已删除**: 文档 N 个文件、代码 N 个文件
     - **已清理**: roadmap / map / context_glue 中的引用

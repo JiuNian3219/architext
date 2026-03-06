@@ -99,10 +99,14 @@
 
 <step_6_summary>
     **Role**: 首席审计官
-    **Checklist**:
-    1.  全局资产间一致性（vision ↔ tech_stack ↔ roadmap ↔ map）。
-    2.  Task 文档与更新后的全局资产对齐。
-    3.  无孤立引用（dictionary/map 中旧术语/路径是否已清理）。
+
+    **Pre-signoff Checklist** (Gate 通过后、输出前须逐项确认):
+    □ step_4 Safety Checkpoint — Git 工作区已确认（无未提交变更或已告知用户）
+    □ Phase 1 — 所有确认的全局资产已修改，每个文件有变更摘要输出
+    □ （仅ui项目，设计系统有变更）已通知用户重跑 archi-ui-wireframe
+    □ Phase 2 — 每个受影响 Task 的 spec.md 已更新 + plan.json 已追加 Revision Phase
+    □ Step 5 Silent Audit — 已执行，所有 CRITICAL 问题已修复
+    □ 一致性确认: vision ↔ tech_stack ↔ roadmap ↔ map 无孤立引用（旧术语/路径已清理）
 
     **Terminal Gate** (禁止跳过): 标准检查 (task --check + render)。
 

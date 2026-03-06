@@ -217,7 +217,17 @@
     |:---|:---|:---|
     | 1 | `npx archi task <ID> --status active` | Task marked as in-progress |
 
-    **Action** (after Gate passes):
+    **Pre-signoff Checklist** (confirm each item after Gate passes, before Output):
+    □ spec.md § 2 — ACs/scenarios/contracts map to specific design content (no fabrication)
+    □ spec.md § 4 Interface — filled (required for INF tasks / tasks with downstream deps)
+    □ spec.md § 5 Constraints — extracted from vision + tech_stack (not empty)
+    □ plan.json — every AC in spec § 2 → ≥1 task covering it (100% coverage rule)
+    □ plan.json — every task notes includes verification field (not empty, not title paraphrase)
+    □ map.json — tasks/<ID>_<Slug> registered in directoryMapping
+    □ Global files — new terms/error codes/schemas synced (dictionary/error_codes/data_snapshot)
+    □ Step 6 Silent Audit — executed, all CRITICAL issues resolved
+
+    **Action** (after Checklist confirmed):
     1.  Output summary.
 
     **Output**: Task definition summary with architecture confirmation table (each dimension final choice and rationale) and Next Steps:

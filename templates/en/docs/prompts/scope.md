@@ -114,7 +114,13 @@
 </step_5_roadmap_update>
 
 <step_6_signoff>
-    **Action** (Gate must complete in step_4):
+    **Pre-signoff Checklist** (confirm each item before Output):
+    □ Decomposition proposal confirmed by user (replied OK before writing to roadmap — step_4 Gate)
+    □ roadmap.json — tasks appended (not overwritten), lastUpdated updated
+    □ (new modules) map.json directoryMapping — new task module paths pre-registered
+    □ step_5 Terminal Gate — task --check + render passed
+
+    **Action** (Gate must complete in step_5):
     1.  Run `npx archi task` to output task progress overview.
     2.  Output summary.
 

@@ -77,6 +77,14 @@
 </step_4_verify>
 
 <step_5_summary>
+    **Pre-signoff Checklist** (confirm each item before Output):
+    □ spec.md — updated per context, changes tracked
+    □ (if UI changed) ui.md + ui_concept.html + ui_context.md — synced
+    □ plan.json — new Phase appended (history tasks fully preserved)
+    □ (if original status=done) roadmap.json — status reset to active
+    □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
+    □ Terminal Gate — task --check no ERROR (executed in step_3)
+
     **Action** (Gate must complete in step_3):
     **Output**: Task update summary with Spec/UI/Plan change overview and Next Steps table. Recommend running `/archi.code <ID>`.
 </step_5_summary>

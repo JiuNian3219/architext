@@ -90,6 +90,15 @@
 </step_4_verify>
 
 <step_5_summary>
+    **Pre-signoff Checklist** (confirm each item before Output):
+    □ Code files/directories — deleted (step_3 action #1)
+    □ tasks/<id>_<slug>/ doc directory — deleted (step_3 action #2)
+    □ roadmap.json — task entry + deps refs — cleaned (step_3 action #3)
+    □ map.json — module entry + featureRelations — cleaned (step_3 action #4)
+    □ 99_context_glue.md — association entries — cleaned (step_3 action #5)
+    □ (if exclusive terms/codes) dictionary.json + error_codes.json — handled
+    □ Terminal Gate — project build passes, no residual import refs (step_4)
+
     **Output**: Decommission completion summary:
     - **Deleted**: N doc files, N code files
     - **Cleaned**: refs in roadmap / map / context_glue

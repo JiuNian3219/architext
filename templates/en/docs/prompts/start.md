@@ -163,7 +163,17 @@
 <step_5_signoff>
     **Terminal Gate** (do not skip): Standard check (task --check + render).
 
-    **Action** (after Gate passes):
+    **Pre-signoff Checklist** (confirm each item after Gate passes, before Output):
+    □ vision.md — all placeholders replaced, no template example text remaining
+    □ 02_tech_stack.md — Sections 1-9 fully filled, Section 9 Project Conventions includes Strategy + Rationale
+    □ roadmap.json — archi-decompose-roadmap Skill executed, task chain generated
+    □ map.json — core directory skeleton pre-registered (directoryMapping)
+    □ dictionary.json + error_codes.json — domain terms and core error codes extracted
+    □ (UI projects only) design_tokens.json + ui_concept.html + ui_context.md — generated
+    □ (Data projects only) data_snapshot.json — initial entity skeleton written
+    □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
+
+    **Action** (after Checklist confirmed):
     1.  Run `npx archi task` to output task progress overview.
     2.  Output summary.
 
