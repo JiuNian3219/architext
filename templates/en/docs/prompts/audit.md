@@ -20,8 +20,8 @@
 
     | Input | Mode | Next Steps |
     |:---|:---|:---|
-    | `/archi.audit <id>` | Task-level deep review | step_2_task → step_3_report |
-    | `/archi.audit` | Project-level health check | step_2_project → step_3_report |
+    | `/archi.audit <id>` | Task-level deep review | step_2a_task → step_3_report |
+    | `/archi.audit` | Project-level health check | step_2b_project → step_3_report |
 
     **Task-level — Resolve ID**:
     1.  Parse `<id>` from roadmap.json → Task Name, Slug, status.
@@ -40,10 +40,10 @@
     2.  Scan tasks/ directory structure.
     3.  Read project code entry points and key modules.
 
-    **Output**: Review scope and context checklist.
+    **Output**: Review scope and context checklist. Enter step_2a_task or step_2b_project.
 </step_1_resolve>
 
-<step_2_task>
+<step_2a_task>
     **Role**: Chief Auditor
     **Scope**: Task-level deep code review (only when `/archi.audit <id>`).
 
@@ -67,10 +67,10 @@
     | 14 | **Spec-Code drift** | Interface/type/behavior match `spec.md`; manual changes synced to docs |
     | 15 | (When this task involves UI) **UI ref completeness** | `ui.md` `ref: ui_concept.html#S-XX` pointers still valid |
 
-    **Output**: Finding list grouped by dimension; each with level, location, description.
-</step_2_task>
+    **Output**: Finding list grouped by dimension; each with level, location, description. Enter step_3_report.
+</step_2a_task>
 
-<step_2_project>
+<step_2b_project>
     **Role**: Chief Auditor
     **Scope**: Project-level health check (only when `/archi.audit` no args).
 
@@ -86,8 +86,8 @@
 
     After scan, recommend tasks for deep review (`done` but plan incomplete / large codebase no tests / long `active`).
 
-    **Output**: Project health overview + deep review recommendation list.
-</step_2_project>
+    **Output**: Project health overview + deep review recommendation list. Enter step_3_report.
+</step_2b_project>
 
 <step_3_report>
     **Action**:

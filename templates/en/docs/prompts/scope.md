@@ -54,19 +54,19 @@
 
     **Gap levels**: Required → cannot decompose | Can supplement → AI can derive, suggest confirm | Suggested → AI decides
 
-    **Decision**: No "Required" + "Can supplement" gaps → skip Step 2.5 | Has gaps → proceed to Step 2.5
+    **Decision**: No "Required" + "Can supplement" gaps → skip Step 3 | Has gaps → enter Step 3
 
-    **Output**: Output SCOPE BRIEF analysis report to user — include initiative name/estimated scale, Vision alignment, confirmed info, affected existing tasks table (task/status/estimated impact), (if matched) linkage reminder table, information gaps, AI auto-decide items.
+    **Output**: Output SCOPE BRIEF analysis report to user — include initiative name/estimated scale, Vision alignment, confirmed info, affected existing tasks table (task/status/estimated impact), (if matched) linkage reminder table, information gaps, AI auto-decide items. Enter step_3_supplementary (has gaps) or step_4_decompose (no gaps).
 </step_2_analysis>
 
-<step_2_5_supplementary>
+<step_3_supplementary>
     **Trigger**: Only when Step 2 finds "Required" or "Can supplement" gaps.
     **Input**: Step 2 gap list. Max 3 questions.
 
     [[SKILL: archi-interview-protocol|Follow the skill's core rules and standard output format for questioning.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-interview-protocol/SKILL.md` and follow its rules)]]
-</step_2_5_supplementary>
+</step_3_supplementary>
 
-<step_3_decompose>
+<step_4_decompose>
     **Role**: Chief Architect
     **Input**: Full Brief + project context + supplement answers (if any).
 
@@ -89,13 +89,15 @@
     - [NFR name] → inject [task ID] | affects: [other task IDs]
     ```
 
-    **Gate**: Proceed to step_4 only after user replies **OK**; do not write to Roadmap without confirmation.
-</step_3_decompose>
+    **Gate**: User replies **OK** to enter step_5_roadmap_update; do not write to Roadmap without confirmation.
+</step_4_decompose>
 
-<step_3_5_refinement>
+<step_4_5_refinement>
     **Trigger**: User reply is not OK — contains merge/split/add/remove/dependency adjustments.
     **Action**: Incorporate user feedback, refresh decomposition plan and re-output, await re-confirmation.
-</step_3_5_refinement>
+
+    User replies OK → enter step_5_roadmap_update.
+</step_4_5_refinement>
 
 <step_4_roadmap_update>
     **Input**: User-confirmed decomposition plan.
@@ -108,10 +110,10 @@
 
     **Terminal Gate** (do not skip): Standard check (task --check + render).
 
-    **Output**: Write confirmation.
-</step_4_roadmap_update>
+    **Output**: Write confirmation. Enter step_6_signoff.
+</step_5_roadmap_update>
 
-<step_5_signoff>
+<step_6_signoff>
     **Action** (Gate must complete in step_4):
     1.  Run `npx archi task` to output task progress overview.
     2.  Output summary.

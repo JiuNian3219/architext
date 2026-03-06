@@ -84,18 +84,18 @@
     2.  (UI projects only) Update `ui.md`; if screen structure affected, [[SKILL: archi-ui-wireframe|run skill (local update mode) to sync]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]].
     3.  Append new Phase to `plan.json`: `Phase X: Global Revision — [Change Topic] (<Date>)`.
 
-    **Output**: Change summary for each file (global + Task).
+    **Output**: Change summary for each file (global + Task). Enter step_5_verify.
 </step_4_execute>
 
-<step_4_5_verify>
+<step_5_verify>
     **Role**: Independent Reviewer
 
     [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: Review step_4 Phase 2 cascade-updated Task docs for alignment with modified global assets]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: plan-docs review dimension table)]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
-</step_4_5_verify>
+</step_5_verify>
 
-<step_5_summary>
+<step_6_summary>
     **Role**: Chief Auditor
     **Checklist**:
     1.  Cross-consistency between global assets (vision ↔ tech_stack ↔ roadmap ↔ map).

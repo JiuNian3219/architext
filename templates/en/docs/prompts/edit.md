@@ -65,20 +65,20 @@
     |:---|:---|:---|
     | 3 | [when status=done] `npx archi task <ID> --status active` | Status reset |
 
-    **Output**: plan.json with new tasks appended; if status transition performed, output `MODIFIED: roadmap.json <ID>.status done→active`.
+    **Output**: plan.json with new tasks appended; if status transition performed, output `MODIFIED: roadmap.json <ID>.status done→active`. Enter step_4_verify.
 </step_3_update_plan>
 
-<step_3_5_verify>
+<step_4_verify>
     **Role**: Independent Reviewer
 
     [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: Review step_2 updated spec.md/ui.md and step_3 appended plan.json new Phase]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: plan-docs review)]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
-</step_3_5_verify>
+</step_4_verify>
 
-<step_4_summary>
+<step_5_summary>
     **Action** (Gate must complete in step_3):
     **Output**: Task update summary with Spec/UI/Plan change overview and Next Steps table. Recommend running `/archi.code <ID>`.
-</step_4_summary>
+</step_5_summary>
 
 </protocol_edit>

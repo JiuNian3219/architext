@@ -20,8 +20,8 @@
 
     | 输入 | 模式 | 后续步骤 |
     |:---|:---|:---|
-    | `/archi.audit <id>` | 任务级深度审查 | step_2_task → step_3_report |
-    | `/archi.audit` | 项目级体检 | step_2_project → step_3_report |
+    | `/archi.audit <id>` | 任务级深度审查 | step_2a_task → step_3_report |
+    | `/archi.audit` | 项目级体检 | step_2b_project → step_3_report |
 
     **任务级 — Resolve ID**:
     1.  从 roadmap.json 解析 `<id>` → Task Name、Slug、状态。
@@ -40,10 +40,10 @@
     2.  扫描 tasks/ 目录结构。
     3.  读取项目代码入口文件与关键模块。
 
-    **Output**: 审查范围与上下文清单。
+    **Output**: 审查范围与上下文清单。进入 step_2a_task 或 step_2b_project。
 </step_1_resolve>
 
-<step_2_task>
+<step_2a_task>
     **Role**: 首席审计官
     **Scope**: 任务级深度代码审查（仅 `/archi.audit <id>` 时执行）。
 
@@ -67,10 +67,10 @@
     | 14 | **Spec-Code 漂移** | 接口/类型/行为与 `spec.md` 一致；手动变更已同步文档 |
     | 15 | （本任务涉及ui时） **UI 引用完整性** | `ui.md` 中 `ref: ui_concept.html#S-XX` 指针是否仍有效 |
 
-    **Output**: 按维度分组的发现列表，每项含级别、位置、描述。
-</step_2_task>
+    **Output**: 按维度分组的发现列表，每项含级别、位置、描述。进入 step_3_report。
+</step_2a_task>
 
-<step_2_project>
+<step_2b_project>
     **Role**: 首席审计官
     **Scope**: 项目级健康体检（仅 `/archi.audit` 无参数时执行）。
 
@@ -86,8 +86,8 @@
 
     扫描后推荐需深度审查的 Task（`done` 但 plan 未全完成 / 代码量大无测试 / 长期 `active`）。
 
-    **Output**: 项目健康概览 + 深度审查推荐列表。
-</step_2_project>
+    **Output**: 项目健康概览 + 深度审查推荐列表。进入 step_3_report。
+</step_2b_project>
 
 <step_3_report>
     **Action**:

@@ -63,22 +63,22 @@
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
-<step_4_5_plan_update>
+<step_5_plan_update>
     **Action**:
     1. 更新 plan.json Bugfix Phase 中已完成 tasks 的 `done: true`。
     2. [status=`done` 且 Bugfix 全通过] → 保持 `done`。
     3. [Bugfix 有未通过项] → `npx archi task <ID> --status active`；signoff 标注须重新 `/archi.code`。
 
-    **Output**: `MODIFIED: plan.json Bugfix Phase done 标记`。
-</step_4_5_plan_update>
+    **Output**: `MODIFIED: plan.json Bugfix Phase done 标记`。进入 step_6_summary。
+</step_5_plan_update>
 
-<step_5_summary>
+<step_6_summary>
     **Output**: Bug 修复摘要，含 Root Cause 分析、修复内容、新增测试，以及 Next Steps 表格：
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
     | 推荐 | `/archi.audit <ID>` | 重新审查，确认修复完整 |
     | 可选 | `/archi.code <ID>` | 如有未完成项，继续实现 |
-</step_5_summary>
+</step_6_summary>
 
 </protocol_fix>

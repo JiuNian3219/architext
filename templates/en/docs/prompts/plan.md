@@ -28,10 +28,10 @@
     3.  **Dependency Context** (when deps exist): Read only dep task spec.md Interface/Type section; skip if no ref. Stub dep → extract public interfaces from associated files.
     4.  **Refs** (if any): Read refs/index.json; match by tag semantics; load only matched ref files; skip if absent.
 
-    **Output**: Output **Task Context Brief** to user — include task type (from ID prefix), goal (highlight [User Preset]), upstream deps and key interfaces, project feature tags, tech constraints, design philosophy, project conventions (§9 values, or "not set"), external ref ids (matched). Retain full context internally; proceed to step_2.
+    **Output**: Output **Task Context Brief** to user — include task type (from ID prefix), goal (highlight [User Preset]), upstream deps and key interfaces, project feature tags, tech constraints, design philosophy, project conventions (§9 values, or "not set"), external ref ids (matched). Retain full context internally; enter step_2_complexity.
 </step_1_load>
 
-<step_1_5_complexity>
+<step_2_complexity>
     **Action**: Detect task type, assess complexity, decide flow path.
 
     **⓪ Task Type + granularity red lines**:
@@ -58,9 +58,9 @@
     |:---|:---|
     | AI- contains complexity warning OR involves custom state machine / non-trivial algorithm / multi-component coordination / retry recovery | **Standard + Design** (step_2 output mechanism preview; step_4 add design.md) |
     | Standard CRUD / config / simple integration | **Standard** |
-</step_1_5_complexity>
+</step_2_complexity>
 
-<step_2_interview>
+<step_3_interview>
     **Role**: Architect
 
     ---
@@ -106,18 +106,20 @@
 
     **Goal**: Lock `spec`, `ui` (if applicable), `data_snapshot.json` (if applicable).
 
-    **⌨️ INPUT**: Reply **OK** to accept all; or free-text changes. No fixed format.
-</step_2_interview>
+    **⌨️ INPUT**: Reply **OK** to accept all (→ enter step_4_global_sync); or free-text changes (→ enter step_3_5_refinement). No fixed format.
+</step_3_interview>
 
-<step_2_5_refinement>
+<step_3_5_refinement>
     **Trigger**: User reply is not OK — contains corrections, questions, overrides, or logic conflicts.
     **Action**: Do not generate docs. Incorporate feedback, refresh Unified Proposal and re-output; await re-confirmation.
     - If task design question → Compare alternatives, re-propose design
     - If architecture dimension question → Explain differences in this task context, update recommendation
     - If dimension override → Replace recommendation directly and adjust related design
-</step_2_5_refinement>
 
-<step_3_global_sync>
+    User replies OK → enter step_4_global_sync.
+</step_3_5_refinement>
+
+<step_4_global_sync>
     **Constraint**: Must update the following global files **before** generating Task docs.
 
     **Boundary**: Only register **project business domain** content. Architext framework concepts (scripts, scaffold, roadmap, plan, etc.) and framework infra errors must not be registered.
@@ -127,10 +129,10 @@
     2.  **Data governance sync** (`dictionary.json` / `error_codes.json` / `data_snapshot.json` etc.): Per `03_data_governance.md`, incrementally sync new business terms, error codes, Schema to corresponding global files.
     3.  **`map.json` featureRelations**: [[SUBAGENT: archi-feature-relations|mode: register, context: Determine if this Task is aggregator; if yes register featureRelations entry]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`, follow mode: register logic)]]
 
-    **Output**: Diff summary of above files.
-</step_3_global_sync>
+    **Output**: Diff summary of above files. Enter step_5_generate.
+</step_4_global_sync>
 
-<step_4_generate>
+<step_5_generate>
     **Input**: Confirmed Unified Proposal (task design + arch recommendations) + updated global context + step_1_5 Task Type.
     **Action**: Generate standard docs under `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/`.
 
@@ -199,17 +201,17 @@
     **`notes` quality**: Format `[output file path] · [spec ref] · [key constraints] · Verify: [executable command + expected result]`. Do not leave empty.
     > Red Flag: notes degenerate to title synonym. Each notes must contain information **not in** title.
 
-    - Run `npx archi render` after generation to produce readable `.md` views.
-</step_4_generate>
+    - Run `npx archi render` after generation to produce readable `.md` views. Enter step_6_verify.
+</step_5_generate>
 
-<step_5_verify>
+<step_6_verify>
     **Role**: Independent Reviewer
     [[SUBAGENT: archi-silent-audit|mode: plan-docs, context: Review step_4 generated docs (spec.md, ui.md, plan.json, design.md)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, follow mode: plan-docs review dimension table)]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
-</step_5_verify>
+</step_6_verify>
 
-<step_6_signoff>
+<step_7_signoff>
     **Terminal Gate** (do not skip): Standard check (task --check + render).
     | Step | Command | Pass Condition |
     |:---|:---|:---|
