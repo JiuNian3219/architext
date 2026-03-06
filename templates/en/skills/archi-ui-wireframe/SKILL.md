@@ -93,7 +93,7 @@ Read `design_tokens.json` and check key field completeness:
 | `semanticTokens.colors` | At least `bg`/`surface`/`text` semantic mappings | Include in guidance Q2 |
 | `semanticTokens.typography` | At least 1 font family declaration | AI picks from aesthetic direction (non-blocking) |
 | `motion.preference` | Non-empty | Defaults to `subtle` (non-blocking) |
-| `illustration.iconLibrary` | Non-empty | No icon library imported (non-blocking) |
+| `illustration.iconLibrary` | Non-empty | Fall back to self-drawn inline SVG (non-blocking); emoji substitution forbidden |
 
 **Tokens sufficient** → proceed directly to Step 5 hi-fi generation.
 
@@ -223,6 +223,7 @@ Use `aestheticDirection.preset` to determine baseline values for design paramete
 | Radius | Uniform rounded-lg on everything | Radius must have hierarchy: containers large, buttons medium, badges small (or uniformly 0/sm per aesthetic direction) |
 | Shadow | Identical shadow-md everywhere | Shadow must match aesthetic direction: dark themes barely use shadow; light themes use layered shadow |
 | Motion | Scattered transition-all everywhere | Focus on high-impact moments: orchestrated page load (staggered reveals via animation-delay) > scattered micro-interactions |
+| Emoji | Using emoji as icons (🔔📁⚙️✅ etc.) → inconsistent cross-platform rendering, clashes with the overall design language | Use the icon library declared in `illustration.iconLibrary`, or plain text/symbols with `data-el` annotation |
 | Overall | Every generation converges to the same look | Each project's design MUST differ by aesthetic direction — two different projects' ui_concept.html must be instantly distinguishable |
 
 **Styling rules** (execute within aesthetic direction baseline + blacklist constraints):
@@ -233,11 +234,26 @@ Use `aestheticDirection.preset` to determine baseline values for design paramete
 | Typography | Use declared fonts from `semanticTokens.typography`; if empty, pick from aesthetic direction strategy (Google Fonts CDN), blacklisted fonts forbidden |
 | Radius/Shadow | Per `layout.radius` / `layout.shadow`; empty values filled from aesthetic direction baseline |
 | Motion | Apply CSS transition/animation per `motion.patterns`; prioritize orchestrated page-load staggered reveal (animation-delay) |
-| Icons | Import CDN per `illustration.iconLibrary`; if style=none, no illustrations |
+| Icons | `illustration.iconLibrary` set → import CDN; not set or style=none → self-drawn inline SVG (see spec below); **emoji as icons is forbidden** |
 | Mode | If `mode.support` includes dark, add CSS `@media (prefers-color-scheme: dark)` + toggle button |
 | Forbidden | Follow "Forbidden styles" from vision.md Visual Reference |
 | Space | Create breathing room or controlled density (per aesthetic direction), avoid mechanical uniform spacing |
 | Background | No flat solid-color fills — add subtle texture/gradient mesh/noise/geometric pattern per aesthetic direction |
+
+**Self-drawn SVG spec** (use only when no `illustration.iconLibrary` is set):
+
+```html
+<!-- Stroke style (saas-dark / saas-light / dashboard) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+     style="width:1em;height:1em;vertical-align:-0.125em">…</svg>
+
+<!-- Fill style (mobile-app / marketing) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+     fill="currentColor" style="width:1em;height:1em;vertical-align:-0.125em">…</svg>
+```
+
+Rules: ① Color 100% via `currentColor`, controlled by parent CSS `color`; ② Size follows font size (`1em`), no hardcoded px; ③ stroke-width: saas-dark/brutalist → `2`, all others → `1.5`; ④ When a complex icon is too hard to draw, use the simplest geometric substitute — emoji as fallback is forbidden.
 
 ### Step 6 — Generate AI Index
 
@@ -279,6 +295,7 @@ S-XX →（[trigger]）→ S-YY
 - [ ] Page/state control bar remains wireframe-style grayscale (no coloring — debug tool identity)
 - [ ] `data-el` labels fully preserved
 - [ ] Every state (default/loading/empty/error) of every screen visually implemented
+- [ ] **Icon check**: icon library set → CDN used; no icon library → self-drawn SVG used; **zero emoji**
 - [ ] **Anti-AI aesthetic check**: no blacklisted fonts, no purple-gradient-on-white, layout variety, radius hierarchy
 - [ ] **Identity check**: opening the HTML, one can instantly tell which aesthetic direction this follows — not a generic template
 - [ ] **UI quality check**: no pure black text, layered backgrounds, soft card shadows, primary color ≤10%, interaction states complete, realistic content fill

@@ -93,7 +93,7 @@ description: UI 概念设计专家。生成高保真 ui_concept.html：tokens �
 | `semanticTokens.colors` | 至少含 `bg`/`surface`/`text` 语义映射 | 纳入引导 Q2 |
 | `semanticTokens.typography` | 至少含 1 个字体族声明 | AI 基于审美方向选择（非阻塞） |
 | `motion.preference` | 非空 | 默认 `subtle`（非阻塞） |
-| `illustration.iconLibrary` | 非空 | 不引入图标库（非阻塞） |
+| `illustration.iconLibrary` | 非空 | 降级到自绘内联 SVG（非阻塞）；禁用 emoji 替代 |
 
 **tokens 充足** → 直接进入 Step 5 高保真生成。
 
@@ -223,6 +223,7 @@ AI 根据回答填充 `design_tokens.json`（写入文件），然后继续生�
 | 圆角 | 所有元素统一 rounded-lg | 圆角须有层级：容器大、按钮中、Badge 小（或按审美方向统一为 0/sm） |
 | 阴影 | 千篇一律的 shadow-md | 阴影须匹配审美方向：dark 主题几乎不用阴影；light 主题分层使用 |
 | 动效 | 到处撒 transition-all | 聚焦高影响力时刻：页面加载编排（交错淡入）> 散布的微交互 |
+| Emoji | 用 emoji 代替图标（🔔📁⚙️✅ 等）→ 跨平台渲染不一致、与整体设计语言格格不入 | 使用 `illustration.iconLibrary` 声明的图标库，或用带 `data-el` 标注的纯文字/符号替代 |
 | 整体 | 每次生成都趋同 | 每个项目的设计必须因审美方向而异——打开两个不同项目的 ui_concept.html，必须一眼看出区别 |
 
 **着色规则** (在审美方向基准 + 黑名单约束下执行):
@@ -233,11 +234,26 @@ AI 根据回答填充 `design_tokens.json`（写入文件），然后继续生�
 | 字体 | `semanticTokens.typography` 有值时引入声明字体；空值时按审美方向策略选择（Google Fonts CDN），禁选黑名单字体 |
 | 圆角/阴影 | 按 `layout.radius` / `layout.shadow`；空值时按审美方向基准填充 |
 | 动效 | 按 `motion.patterns` 添加 CSS transition/animation；优先编排页面加载交错淡入（staggered reveal via animation-delay） |
-| 图示 | 按 `illustration.iconLibrary` 引入对应 CDN；style=none 则不插图 |
+| 图示 | 有 `illustration.iconLibrary` → 引入对应 CDN；未指定或 style=none → 自绘内联 SVG（见下方规范）；**禁用 emoji 替代图标** |
 | 模式 | 若 `mode.support` 含 dark，添加 CSS `@media (prefers-color-scheme: dark)` + 切换按钮 |
 | 禁用 | 遵循 vision.md Visual Reference 中的「禁用风格」描述 |
 | 空间 | 创造有呼吸感或有密度的排版（取决于审美方向），不做机械均匀间距 |
 | 背景 | 禁纯色大面积平铺——按审美方向添加微妙纹理/渐变网格/噪点/几何图案 |
+
+**自绘 SVG 规范**（仅当无 `illustration.iconLibrary` 时使用）:
+
+```html
+<!-- 描边风格（saas-dark/saas-light/dashboard） -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+     style="width:1em;height:1em;vertical-align:-0.125em">…</svg>
+
+<!-- 填充风格（mobile-app/marketing） -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+     fill="currentColor" style="width:1em;height:1em;vertical-align:-0.125em">…</svg>
+```
+
+规则：① 颜色 100% 用 `currentColor`，通过父元素 CSS `color` 控制；② 尺寸跟随字号（`1em`），不硬编码 px；③ stroke-width: saas-dark/brutalist → `2`，其余 → `1.5`；④ 复杂图标画不出来时，用最简几何形状代替，禁用 emoji 凑数。
 
 ### Step 6 — 生成 AI 索引
 
@@ -279,6 +295,7 @@ S-XX →（[触发条件]）→ S-YY
 - [ ] 页面/状态切换控制栏保持线框图灰度风格（不着色，保持调试工具属性）
 - [ ] `data-el` 标注完整保留
 - [ ] 每个屏幕的所有状态（default/loading/empty/error）均已视觉化
+- [ ] **图标检查**: 有图标库时使用 CDN；无图标库时使用自绘 SVG；**零 emoji**
 - [ ] **反 AI 审美检查**: 未使用黑名单字体、无紫色渐变白底、布局有差异性、圆角有层级
 - [ ] **辨识度检查**: 打开 HTML，能一眼判断这是哪个审美方向，而非通用模板
 - [ ] **UI 质量标准检查**: 文字非纯黑、背景有层次、卡片有柔和投影、主色面积≤10%、交互状态完整、内容为真实感填充
