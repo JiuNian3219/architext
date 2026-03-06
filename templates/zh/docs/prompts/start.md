@@ -23,18 +23,23 @@
        - 如未提供路径 → 依次查找 `project-brief.md`（项目根）、`[[__DOCS_DIR__]]/project-brief.md`
        - 如均不存在或为空 → 跳转 `<fallback_interview>`
 
-    2. **资源可达性检查**（须在解析前完成）：
-       扫描 Brief 全文，识别所有外部引用（URL、文件路径、图片）。逐一尝试访问：
+    2. **资源扫描与读取**（须在解析前完成）：
+
+       **a) `brief-assets/` 目录扫描**：检查项目根目录是否存在 `brief-assets/` 文件夹。如存在，读取其中所有文件（图片/PDF/文档/Schema）。Brief 中通过 `./brief-assets/文件名` 引用的文件与此处读取的文件做匹配。
+
+       **b) Brief 全文外部引用检查**：扫描 Brief 全文，识别所有外部引用（URL、文件路径、图片）。逐一尝试访问：
 
        | 状态 | 处理 |
        |:---|:---|
-       | 可访问 | 读取内容，纳入后续分析 |
+       | 可访问（含 brief-assets/ 中的本地文件） | 读取内容，纳入后续分析 |
        | 不可访问（需认证/404/私有链接） | 标记为 `[不可读]`，后续向用户报告 |
        | 非链接的描述性引用 | 正常处理，无需访问 |
 
-    3. 解析 Brief 各 Section，提取：项目特征标签、核心任务列表、已有设计决策、技术偏好（区分"已确定"与"留空/推荐"）、已有资源、边界与约束、参考项目、补充说明。
+       **c) 资产语义标签提取**：Brief 中以 `- [语义标签] 路径` 格式引用的资产，记录标签与文件的对应关系，供后续步骤使用（如 `[竞品参考]` → 影响 design_tokens，`[数据库 Schema]` → 影响 data_snapshot）。
 
-    > Brief 是一次性输入文件，处理完成后用户可自行删除。
+    3. 解析 Brief 各 Section，提取：项目特征标签、核心任务列表、业务流程（如有）、已有设计决策、技术偏好（区分"已确定"与"留空/推荐"）、数据模型草案（如有）、已有 API 端点（如有）、已有资源、边界与约束、参考项目、补充说明。
+
+    > Brief 是一次性输入文件，处理完成后用户可自行删除（brief-assets/ 同理）。
 
     **Output**:
     - 如有不可访问的资源 → **立即输出资源可达性报告**，等待用户回复后再继续。
@@ -93,8 +98,14 @@
     | 技术栈、部署目标、第三方库/服务 | 规则文件 `02_tech_stack` |
     | 风格调性 — 审美方向/信息密度/动效偏好 | `02_tech_stack` (UI Protocol) + `design_tokens.json` |
     | （仅ui项目）审美方向 preset + 视觉参考（品牌色/字体/图标/竞品截图） | `design_tokens.json` 对应字段 + `vision.md` Visual Reference |
+    | （仅ui项目）brief-assets/ 中标记为 `[竞品参考]` 的图片 | `design_tokens.json` aestheticDirection 参考 + `vision.md` Visual Reference |
     | 核心任务列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
+    | 业务流程（如有） | Roadmap 任务 `description` / `goal` 字段注入，辅助 `/archi.plan` 理解上下文 |
     | 已有设计决策 | Roadmap 任务 `goal` 字段注入，`/archi.plan` 时作硬约束 |
+    | （仅data项目）数据模型草案（如有） | `data_snapshot.json` 初始实体骨架 |
+    | （仅api项目）已有 API 端点（如有） | `vision.md` Context + Roadmap 相关任务 `description` 注入 |
+    | brief-assets/ 中标记为 `[数据库 Schema]` 的文件 | 解析后写入 `data_snapshot.json` |
+    | brief-assets/ 中标记为 `[API 文档]` 的文件 | 解析后路由到 `vision.md` Context + 相关 Roadmap 任务 |
     | 边界与反目标 | `vision.md` Boundaries |
     | 已有资源 | `vision.md` + `02_tech_stack` 按归属 |
     | 补充说明中的规则/约定/偏好 | 规则文件 `90_custom_rules` |

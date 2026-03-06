@@ -5,10 +5,37 @@
 <!-- @tech:data -->
 **Database**: [e.g.: PostgreSQL / MongoDB / SQLite]
 **ORM / Query Builder**: [e.g.: Prisma / Drizzle / TypeORM]
+
+### Data Model Draft
+
+> If you already know core data entities and relationships, describe them here. No need for full schema—list entity names and key fields.
+> AI will generate detailed data model in `/archi.plan`; here just clarify "what data exists."
+> Leave blank if not applicable; AI will derive from core tasks.
+
+<!-- Format reference:
+- **User**: email, name, role (admin/user), avatar
+- **Post**: title, content, status (draft/published), author → User
+- **Comment**: body, author → User, post → Post
+- User 1:N Post, Post 1:N Comment
+-->
+
 <!-- @end -->
 
 <!-- @tech:api -->
 **API style**: [e.g.: RESTful / GraphQL / gRPC / tRPC]
+
+### Existing API Endpoints
+
+> If you have existing backend API (self-hosted or third-party), list core endpoints here. Or place full docs in `brief-assets/`.
+> Leave blank if not applicable.
+
+<!-- Format reference:
+- `POST /auth/login` → returns JWT token
+- `GET /users/:id` → user detail
+- `POST /posts` → create post (auth required)
+- Full docs: [API docs] ./brief-assets/api-spec.yaml
+-->
+
 <!-- @end -->
 
 <!-- @tech:cli -->
@@ -44,8 +71,8 @@
 
 ### Visual Reference
 
-> Provides aesthetic input for AI — directly impacts `ui_concept.html` quality.
-> Fill in any of the fields below; the more you provide, the closer AI can match your vision.
+> Provides aesthetic input for AI—directly impacts `ui_concept.html` visual quality.
+> Any field below is valid; the more you fill, the better AI can match your expected style.
 
 **Competitor/inspiration screenshots**: [paste image / Figma link / URL]
 **Brand palette**: [primary color Hex / gradient description / none (AI generates from aesthetic direction)]
@@ -116,7 +143,7 @@
 **Real-time transport**: [e.g.: Socket.io / native WebSocket / SSE / WebRTC]
 **Real-time framework/hosting**: [e.g.: Ably / Pusher / Liveblocks / self-hosted]
 **Room/channel model**: [e.g.: subscribe by user ID / room by document ID / broadcast]
-**[?CRDT] Conflict resolution**: [e.g.: Yjs / Automerge / not needed (broadcast only)]
+**(CRDT projects only) Conflict resolution**: [e.g.: Yjs / Automerge / not needed (broadcast only)]
 **Offline support**: [e.g.: offline queue + reconnect sync / not needed]
 <!-- @end -->
 
@@ -125,7 +152,7 @@
 **AI framework**: [e.g.: Vercel AI SDK / LangChain / LlamaIndex / direct API calls]
 **Tool/Function Calling**: [e.g.: needed (list tool names) / not needed]
 **Memory approach**: [e.g.: vector DB (pgvector/Pinecone) / sliding window history / none]
-**[?MCP] MCP protocol**: [e.g.: @modelcontextprotocol/sdk / not needed]
+**(MCP projects only) MCP protocol**: [e.g.: @modelcontextprotocol/sdk / not needed]
 **Streaming output**: [e.g.: SSE streaming / batch response]
 <!-- @end -->
 

@@ -5,10 +5,37 @@
 <!-- @tech:data -->
 **数据库**: [例：PostgreSQL / MongoDB / SQLite]
 **ORM / Query Builder**: [例：Prisma / Drizzle / TypeORM]
+
+### 数据模型草案
+
+> 如果你已经知道核心数据实体和关系，在此描述。不需要写完整 Schema——列出实体名和关键字段即可。
+> AI 会在 `/archi.plan` 阶段据此生成详细的数据模型，此处只需明确"有什么数据"。
+> 没有的话留空，AI 会从核心任务中推导。
+
+<!-- 写法参考：
+- **用户 (User)**: email, name, role (admin/user), avatar
+- **文章 (Post)**: title, content, status (draft/published), author → User
+- **评论 (Comment)**: body, author → User, post → Post
+- User 1:N Post, Post 1:N Comment
+-->
+
 <!-- @end -->
 
 <!-- @tech:api -->
 **API 风格**: [例：RESTful / GraphQL / gRPC / tRPC]
+
+### 已有 API 端点
+
+> 如果已有后端 API（自建或第三方），在此列出核心端点。也可将完整文档放入 `brief-assets/`。
+> 没有的话留空。
+
+<!-- 写法参考：
+- `POST /auth/login` → 返回 JWT token
+- `GET /users/:id` → 用户详情
+- `POST /posts` → 创建文章（需认证）
+- 完整文档: [API 文档] ./brief-assets/api-spec.yaml
+-->
+
 <!-- @end -->
 
 <!-- @tech:cli -->

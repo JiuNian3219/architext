@@ -23,18 +23,23 @@
        - If not provided → search `project-brief.md` (project root), then `[[__DOCS_DIR__]]/project-brief.md`
        - If neither exists or empty → goto `<fallback_interview>`
 
-    2. **Resource Accessibility Check** (must complete before parsing):
-       Scan Brief for all external references (URLs, file paths, images). Try to access each:
+    2. **Resource scan and read** (must complete before parsing):
+
+       **a) `brief-assets/` directory scan**: Check if `brief-assets/` exists at project root. If so, read all files (images/PDFs/docs/Schema). Match files referenced in Brief via `./brief-assets/filename` with files read here.
+
+       **b) Brief full-text external reference check**: Scan Brief for all external references (URLs, file paths, images). Try to access each:
 
        | Status | Handling |
        |:---|:---|
-       | Accessible | Read content, include in analysis |
+       | Accessible (incl. local files in brief-assets/) | Read content, include in analysis |
        | Inaccessible (auth required/404/private) | Mark `[unreadable]`, report to user later |
        | Non-link descriptive references | Process normally, no fetch |
 
-    3. Parse Brief sections, extract: project feature tags, core task list, pre-defined design decisions, tech preferences (distinguish "confirmed" vs "blank/recommend"), existing resources, boundaries and constraints, reference projects, supplementary notes.
+       **c) Asset semantic tag extraction**: For assets referenced in Brief as `- [semantic label] path`, record tag-to-file mapping for later steps (e.g. `[competitor reference]` → affects design_tokens, `[database Schema]` → affects data_snapshot).
 
-    > Brief is a one-time input file; user may delete after processing.
+    3. Parse Brief sections, extract: project feature tags, core task list, business process (if any), pre-defined design decisions, tech preferences (distinguish "confirmed" vs "blank/recommend"), data model draft (if any), existing API endpoints (if any), existing resources, boundaries and constraints, reference projects, supplementary notes.
+
+    > Brief is a one-time input file; user may delete after processing (brief-assets/ likewise).
 
     **Output**:
     - If any resources inaccessible → **Immediately output Resource Accessibility Report**, wait for user reply before continuing.
@@ -93,8 +98,14 @@
     | Tech stack, deploy target, 3rd-party libs/services | rule file `02_tech_stack` |
     | Style/tone — aesthetic direction / density / motion preference | `02_tech_stack` (UI Protocol) + `design_tokens.json` |
     | (UI projects only) Aesthetic preset + visual reference (brand palette / font / icon / competitor screenshots) | `design_tokens.json` corresponding fields + `vision.md` Visual Reference |
+    | (UI projects only) Images in brief-assets/ tagged `[competitor reference]` | `design_tokens.json` aestheticDirection reference + `vision.md` Visual Reference |
     | Core task list | `[[__DOCS_DIR__]]/global/roadmap.json` |
+    | Business process (if any) | Inject into Roadmap task `description` / `goal`; aids `/archi.plan` context |
     | Pre-defined design decisions | Inject into Roadmap task `goal`; hard constraint in `/archi.plan` |
+    | (Data projects only) Data model draft (if any) | `data_snapshot.json` initial entity skeleton |
+    | (API projects only) Existing API endpoints (if any) | `vision.md` Context + Roadmap task `description` injection |
+    | Files in brief-assets/ tagged `[database Schema]` | Parse and write to `data_snapshot.json` |
+    | Files in brief-assets/ tagged `[API docs]` | Parse and route to `vision.md` Context + related Roadmap tasks |
     | Boundaries and anti-goals | `vision.md` Boundaries |
     | Existing resources | `vision.md` + `02_tech_stack` by content |
     | Rules/conventions/preferences from supplementary notes | rule file `90_custom_rules` |

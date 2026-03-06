@@ -8,6 +8,7 @@
 import fs from "fs-extra";
 import path from "path";
 import { CONFIG_NAME } from "../../../core/config.ts";
+import { BRIEF_ASSETS_DIR } from "../../../core/rules.ts";
 import {
   getCurrentFileModel,
   resolveAllPossibleFiles,
@@ -31,6 +32,7 @@ export interface UninstallPlan {
  * - 所有 Seed 文件
  * - 整个 docDir 目录
  * - project-brief.md
+ * - brief-assets/ 目录
  * - opencode.json 处理
  * - architext.json
  * - 空目录清理（按深度降序）
@@ -67,8 +69,9 @@ export function resolveUninstallPlan(
   // docDir 整体删除
   dirs.push(path.resolve(cwd, config.docDir));
 
-  // project-brief.md + architext.json
+  // project-brief.md + brief-assets/ + architext.json
   files.push(path.resolve(cwd, "project-brief.md"));
+  dirs.push(path.resolve(cwd, BRIEF_ASSETS_DIR));
   files.push(path.resolve(cwd, CONFIG_NAME));
 
   // 收集 framework 文件的父目录用于空目录清理
