@@ -8,6 +8,7 @@
 import fs from "fs-extra";
 import path from "path";
 import {
+  BRIEF_ASSETS_DIR,
   BRIEF_BASE_NAME,
   BRIEF_MODULES_NAME,
   BRIEF_OUTPUT_NAME,
@@ -61,4 +62,7 @@ export async function generateBrief(
 
   const destPath = path.join(process.cwd(), BRIEF_OUTPUT_NAME);
   await fs.writeFile(destPath, base, "utf-8");
+
+  const assetsDir = path.join(process.cwd(), BRIEF_ASSETS_DIR);
+  await fs.ensureDir(assetsDir);
 }

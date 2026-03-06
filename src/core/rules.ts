@@ -179,6 +179,8 @@ export const BRIEF_BASE_NAME = "_base.md";
 export const BRIEF_MODULES_NAME = "_modules.md";
 /** 拼装后输出到项目根目录的文件名 */
 export const BRIEF_OUTPUT_NAME = "project-brief.md";
+/** Brief 附件资产目录名，与 project-brief.md 同级 */
+export const BRIEF_ASSETS_DIR = "brief-assets";
 
 /**
  * 编辑器能力标记集，用于驱动模板中的条件化内容解析。

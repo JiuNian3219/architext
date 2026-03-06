@@ -239,4 +239,41 @@ describe("Scaffolder Integration", () => {
     );
     expect(skillOps.length).toBeGreaterThan(0);
   });
+
+  it("生成 Brief 时应同时创建 brief-assets 目录", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: ["ui", "data"],
+      generateBrief: true,
+    };
+
+    await scaffold(config);
+
+    // project-brief.md 应存在
+    const briefPath = path.join(tempDir, "project-brief.md");
+    expect(await fs.pathExists(briefPath)).toBe(true);
+
+    // brief-assets/ 目录应存在
+    const assetsDir = path.join(tempDir, "brief-assets");
+    expect(await fs.pathExists(assetsDir)).toBe(true);
+    const stat = await fs.stat(assetsDir);
+    expect(stat.isDirectory()).toBe(true);
+  });
+
+  it("不生成 Brief 时不应创建 brief-assets 目录", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+      generateBrief: false,
+    };
+
+    await scaffold(config);
+
+    const assetsDir = path.join(tempDir, "brief-assets");
+    expect(await fs.pathExists(assetsDir)).toBe(false);
+  });
 });
