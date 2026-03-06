@@ -13,7 +13,7 @@ alwaysApply: true
 > | 违规行为 | 正确处理 |
 > |:---|:---|
 > | 收到 `/archi.*` 却未读协议文件就执行 | 停止 → 先读取协议文件 |
-> | 用户请求涉及行为变更却直接改代码 | 停止 → 引导到对应命令 |
+> | 用户请求涉及行为变更却直接改代码 | 停止 → 加载对应协议执行 |
 > | 执行 `npx archi` 前未确认工作目录 | 停止 → 先通过 Working Directory Gate（见 `04_cli_tools.md`） |
 
 ## 1. Explicit Command Routing
@@ -92,4 +92,4 @@ alwaysApply: true
 
 ### §2.4 未纳管代码
 
-修改对象未在 `map.json` 中注册、无对应 Task → **STOP & ASK**，引导 `/archi.inherit` 或 `/archi.scope` 纳管。
+修改对象未在 `map.json` 中注册、无对应 Task → **STOP & ASK**，提示用户通过 `/archi.inherit` 或 `/archi.scope` 纳管。

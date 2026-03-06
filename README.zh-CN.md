@@ -104,9 +104,10 @@ AI 读取 Brief，就关键决策向你提问，生成项目的基础文档（`v
 项目全生命周期的主干路径，全部在 AI 对话框中完成。
 
 ```
-project-brief.md → /archi.start → [/archi.scope] → /archi.plan → /archi.code → /archi.audit
+project-brief.md → /archi.start → /archi.plan → /archi.code → /archi.audit
                                         ↑
-                              有额外需求时使用，可多次运行
+              /archi.scope  anytime you have NEW feature requirements
+              （不限「start 之后」——项目进行中、发布后均可）
 ```
 
 **第一阶段 · 初始化**
@@ -126,14 +127,15 @@ AI:   [正在分析项目 Brief...]
       ✔ 填充:    .cursor/rules/02_tech_stack.mdc    (写入项目技术决策)
       ✔ 填充:    .cursor/rules/90_custom_rules.mdc  (写入团队编码规范)
 
-      下一步：运行 /archi.scope 将需求分解为任务。
+      下一步：Brief 已覆盖全部需求 → /archi.plan <首个任务ID>
+             Brief 之外还有需求 → /archi.scope 先追加任务
 ```
 
 > **已有代码？** 改用 `/archi.inherit` —— 逆向分析项目，将已有功能注册为 `LEG-xx` 任务，并额外生成 `map.json`。
 
-**第二阶段 · 需求分解（可选）**
+**第二阶段 · 需求分解（可选，随时可跑）**
 
-> 当你的 Brief 之外还有额外需求要拆解时使用 `/archi.scope`；若 Brief 已覆盖全部需求，可直接跳到第三阶段。
+> `/archi.scope` **不是**「start 的下一步」。只要你有**除初始 Brief 之外的新功能需求**，随时可运行——start 后、项目进行中、所有任务完成后均可。
 
 ```
 你:   /archi.scope scope-brief.md          ← 提供文件；或直接 /archi.scope 触发访谈
@@ -207,13 +209,88 @@ AI:   [正在读取 代码 + spec + plan + vision + tech_stack...]
       [低] Token 过期时间未通过环境变量配置 → 建议运行 /archi.edit
 ```
 
-> **命令之间的日常开发**由自然语言 **Chat Mode** 驱动——提问、微调代码、调试——无需斜杠命令。7 个规则文件中有 4 个作为始终在线的基底规则：`00_system`、`02_tech_stack`、`90_custom_rules`、`99_context_glue`，AI 不会因会话切换而"失忆"。
+> **命令之间的日常开发**由自然语言 **Chat Mode** 驱动。用自然语言描述需求（如「加个登录功能」「修一下认证的 bug」），AI 会自动识别意图并加载对应协议（scope/plan/code/edit/fix）执行，**无需手动输入 `/archi.*` 斜杠命令**。提问、琐碎修改、调试则直接回答。7 个规则文件中有 4 个作为始终在线的基底规则：`00_system`、`02_tech_stack`、`90_custom_rules`、`99_context_glue`，AI 不会因会话切换而"失忆"。
+
+---
+
+## 教程
+
+不同场景，同一套协议。按你的情况选择对应路径。
+
+### 教程 A：新项目，Brief 已覆盖全部需求
+
+`project-brief.md` 已列出所有功能，无需 scope。
+
+```
+/archi.start project-brief.md  →  /archi.plan FEAT-001  →  /archi.code FEAT-001  →  ...
+```
+
+Start 产出 roadmap 后，直接 plan 首个任务，再 code。
+
+---
+
+### 教程 B：新项目，Brief 不完整
+
+start 跑完后发现漏了功能，或想追加更多。
+
+```
+/archi.start project-brief.md  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-001  →  ...
+```
+
+Scope 向 `roadmap.json` 追加任务，再按 plan → code 继续。
+
+---
+
+### 教程 C：项目进行中追加功能
+
+FEAT-001 已做完，想加 FEAT-002、FEAT-003 等。
+
+```
+...  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-002  →  /archi.code FEAT-002  →  ...
+```
+
+**Scope 随时可跑**——不限「start 之后」。只要有超出当前 roadmap 的新需求，就运行 scope。
+
+---
+
+### 教程 D：已有代码库
+
+已有仓库，想纳入 Architext 管理。
+
+```
+npx archi init  →  /archi.inherit [project-brief.md]  →  /archi.edit LEG-xx 补全 Stub  →  /archi.code LEG-xx
+```
+
+Inherit 逆向分析项目，将已有功能注册为 `LEG-xx` 任务。用 edit 补全 Stub spec，再按需 code。
+
+---
+
+### 教程 E：Bug 修复
+
+```
+/archi.fix FEAT-001 "密码含特殊字符时登录失败"
+```
+
+Fix 诊断根因，向 plan 追加 Bugfix Phase，并修复代码。
+
+---
+
+### 何时用 /archi.scope（速查）
+
+| 时机 | 操作 |
+|:---|:---|
+| start 后，Brief 未覆盖全部 | scope |
+| 项目进行中，想到新功能 | scope |
+| 所有任务 done，要加新模块 | scope |
+| Brief 已覆盖全部 | 跳过 scope，直接 plan |
 
 ---
 
 ## 命令速查
 
 ### AI 对话命令
+
+可通过输入 `/archi.<命令>` 或直接用自然语言描述意图触发——Chat Mode 会自动加载并执行对应协议。
 
 | 命令 | 说明 |
 |:---|:---|

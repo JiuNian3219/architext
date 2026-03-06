@@ -13,7 +13,7 @@ alwaysApply: true
 > | Violation | Correct Action |
 > |:---|:---|
 > | Received `/archi.*` but started executing without loading protocol file | Stop → Load protocol file first |
-> | User request involves behavior change but code was modified directly | Stop → Route to the appropriate command |
+> | User request involves behavior change but code was modified directly | Stop → Load and execute the corresponding protocol |
 > | Ran `npx archi` without confirming working directory | Stop → Pass Working Directory Gate (see `04_cli_tools.md`) |
 
 ## 1. Explicit Command Routing
@@ -92,4 +92,4 @@ Protocols define "what to do, what to check" — do not fight IDE planning/execu
 
 ### §2.4 Unmanaged Code
 
-Target not registered in `map.json` and has no Task → **STOP & ASK**, route to `/archi.inherit` or `/archi.scope`.
+Target not registered in `map.json` and has no Task → **STOP & ASK**, prompt user to adopt via `/archi.inherit` or `/archi.scope`.
