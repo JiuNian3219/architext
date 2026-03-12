@@ -54,7 +54,10 @@ export const DesignTokensSchema = z
 
 export const MapSchema = z
   .object({
-    governance: z.record(z.string(), z.unknown()),
+    directoryMapping: z.array(z.unknown()).optional(),
+    logicalTopology: z.array(z.unknown()).optional(),
+    criticalUserJourneys: z.array(z.unknown()).optional(),
+    featureRelations: z.array(z.unknown()).optional(),
   })
   .catchall(z.unknown());
 

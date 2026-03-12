@@ -26,6 +26,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: true,
         hasSubagents: true,
+        hasCommands: false,
       });
 
       expect(result).toContain("**[子代理]**");
@@ -42,6 +43,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: true,
         hasSubagents: false,
+        hasCommands: false,
       });
 
       expect(result).not.toContain("**[子代理]**");
@@ -57,6 +59,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: false,
         hasSubagents: false,
+        hasCommands: false,
       });
 
       expect(result).toBe("before  after");
@@ -72,6 +75,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: true,
         hasSubagents: true,
+        hasCommands: false,
       });
 
       expect(result).toContain("skills/archi-silent-audit/SKILL.md");
@@ -88,6 +92,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: true,
         hasSubagents: true,
+        hasCommands: false,
       });
 
       expect(result).toContain("请使用 Skill 工具调用");
@@ -100,6 +105,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: false,
         hasSubagents: false,
+        hasCommands: false,
       });
 
       expect(result).toBe("before  after");
@@ -112,6 +118,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: true,
         hasSubagents: true,
+        hasCommands: false,
       });
 
       expect(result).toBe("");
@@ -122,6 +129,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: false,
         hasSubagents: false,
+        hasCommands: false,
       });
 
       expect(result).toBe("请手动阅读文档执行");
@@ -137,6 +145,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: true,
         hasSubagents: true,
+        hasCommands: false,
       });
 
       expect(result).toContain("**[子代理]**");
@@ -151,6 +160,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: true,
         hasSubagents: false,
+        hasCommands: false,
       });
 
       expect(result).toContain("请读取 Skill");
@@ -166,6 +176,7 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: false,
         hasSubagents: false,
+        hasCommands: false,
       });
 
       expect(result).not.toContain("**[子代理]**");
@@ -209,9 +220,153 @@ describe("resolveCapabilityRefs", () => {
       const result = resolveCapabilityRefs(input, {
         hasSkills: true,
         hasSubagents: true,
+        hasCommands: false,
       });
 
       expect(result).toBe("[[INCLUDE: shared/status-gate.md]]");
+    });
+  });
+
+  describe("[[NO-COMMANDS:]] marker", () => {
+    it("should be removed when hasCommands=true", () => {
+      const input = "[[NO-COMMANDS: fallback text here]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: true,
+      });
+
+      expect(result).toBe("");
+    });
+
+    it("should expand to content when hasCommands=false", () => {
+      const input = "[[NO-COMMANDS: 这是路由表内容]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      expect(result).toBe("这是路由表内容");
+    });
+
+    it("should handle multi-line content", () => {
+      const input = `before
+[[NO-COMMANDS:
+## 路由表
+
+| 命令 | 文件 |
+|:---|:---|
+| /archi.start | archi.start.md |
+]]
+after`;
+
+      // hasCommands=true → 移除内容
+      const resultWithCommands = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: true,
+      });
+      expect(resultWithCommands).toBe("before\n\nafter");
+
+      // hasCommands=false → 保留内容
+      const resultWithoutCommands = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+      expect(resultWithoutCommands).toContain("## 路由表");
+      expect(resultWithoutCommands).toContain("| 命令 | 文件 |");
+      expect(resultWithoutCommands).toContain("/archi.start");
+    });
+  });
+
+  describe("[[NO-COMMANDS:]] marker", () => {
+    it("should be removed when hasCommands=true", () => {
+      const input = "[[NO-COMMANDS: fallback text here]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: true,
+      });
+
+      expect(result).toBe("");
+    });
+
+    it("should expand to content when hasCommands=false", () => {
+      const input = "[[NO-COMMANDS: 这是路由表内容]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      expect(result).toBe("这是路由表内容");
+    });
+
+    it("should handle multi-line content", () => {
+      const input = `before
+[[NO-COMMANDS:
+## 路由表
+
+| 命令 | 文件 |
+|:---|:---|
+| /archi.start | archi.start.md |
+]]
+after`;
+
+      // hasCommands=true → 移除内容
+      const resultWithCommands = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: true,
+      });
+      expect(resultWithCommands).toBe("before\n\nafter");
+
+      // hasCommands=false → 保留内容
+      const resultWithoutCommands = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+      expect(resultWithoutCommands).toContain("## 路由表");
+      expect(resultWithoutCommands).toContain("| 命令 | 文件 |");
+      expect(resultWithoutCommands).toContain("/archi.start");
+    });
+  });
+
+  describe("combined capabilities (real-world IDE configs)", () => {
+    it("Cursor: has all capabilities", () => {
+      const input = `[[SUBAGENT: test|args]]
+[[NO-SKILL: no skill fallback]]
+[[NO-COMMANDS: no commands fallback]]`;
+
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: true,
+      });
+
+      expect(result).toContain("**[子代理]**");
+      expect(result).not.toContain("no skill fallback");
+      expect(result).not.toContain("no commands fallback");
+    });
+
+    it("Windsurf: skills but no subagents/commands", () => {
+      const input = `[[SUBAGENT: test|args]]
+[[NO-SKILL: no skill fallback]]
+[[NO-COMMANDS: no commands fallback]]`;
+
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: false,
+        hasCommands: false,
+      });
+
+      expect(result).toContain("请读取 Skill");
+      expect(result).not.toContain("**[子代理]**");
+      expect(result).not.toContain("no skill fallback");
+      expect(result).toContain("no commands fallback");
     });
   });
 
@@ -225,7 +380,7 @@ describe("resolveCapabilityRefs", () => {
       const input = "[[INCLUDE: fragment.md]]";
       const result = resolveCapabilityRefs(
         input,
-        { hasSkills: true, hasSubagents: true },
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
         tmpDir,
       );
 

@@ -356,18 +356,23 @@ describe("Tier 2: DesignTokensSchema", () => {
 });
 
 describe("Tier 2: MapSchema", () => {
-  it("合法数据应通过", () => {
-    const data = { governance: { coreRules: [] }, directoryMapping: [] };
+  it("空对象应通过（所有字段可选）", () => {
+    const data = {};
     expect(() => validateJson(MapSchema, data, "map.json")).not.toThrow();
   });
 
-  it("缺少 governance 应抛出 AppError", () => {
-    const data = { directoryMapping: [] };
-    expect(() => validateJson(MapSchema, data, "map.json")).toThrow(AppError);
+  it("包含四个动态字段的合法数据应通过", () => {
+    const data = {
+      directoryMapping: [],
+      logicalTopology: [],
+      criticalUserJourneys: [],
+      featureRelations: [],
+    };
+    expect(() => validateJson(MapSchema, data, "map.json")).not.toThrow();
   });
 
   it("顶层扩展 key 不应报错", () => {
-    const data = { governance: {}, customTopology: { layers: [] } };
+    const data = { directoryMapping: [], customTopology: { layers: [] } };
     expect(() => validateJson(MapSchema, data, "map.json")).not.toThrow();
   });
 });

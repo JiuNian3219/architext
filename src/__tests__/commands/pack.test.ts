@@ -165,11 +165,11 @@ describe("packCommand", () => {
     expect(content).toContain("用户约定内容");
   });
 
-  it("应打包 02_tech_stack 规则文件", async () => {
+  it("应打包 global/tech_stack.md 文件", async () => {
     await saveConfig(BASE_CONFIG);
-    await fs.ensureDir(path.join(tempDir, ".cursor", "rules"));
+    await fs.ensureDir(path.join(tempDir, ".architext", "global"));
     await fs.writeFile(
-      path.join(tempDir, ".cursor", "rules", "02_tech_stack.mdc"),
+      path.join(tempDir, ".architext", "global", "tech_stack.md"),
       "# Tech Stack\nTypeScript + Vitest",
       "utf-8",
     );
@@ -180,7 +180,7 @@ describe("packCommand", () => {
       path.join(tempDir, "test-pack.xml"),
       "utf-8",
     );
-    expect(content).toContain(".cursor/rules/02_tech_stack.mdc");
+    expect(content).toContain(".architext/global/tech_stack.md");
     expect(content).toContain("TypeScript + Vitest");
   });
 

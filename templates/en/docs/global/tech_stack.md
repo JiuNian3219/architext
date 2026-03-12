@@ -1,10 +1,3 @@
----
-description: Technical Standards & Technology Stack. Contains language versions, framework choices, coding conventions, naming rules, and forbidden patterns. Consult when writing code.
-globs: **/*
-applyTo: **/*
-alwaysApply: true
----
-
 # Tech Stack & Engineering Standards: [Project Name]
 
 > **Role:** The "Law" of the codebase. Defines tools, structure, and engineering workflows.
