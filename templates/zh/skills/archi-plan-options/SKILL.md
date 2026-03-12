@@ -1,7 +1,7 @@
 ---
 name: archi-plan-options
 type: subprocess
-description: Architext 架构决策选项库。定义五个核心维度（Core Structure / Interaction Pattern / Data Flow / Error Handling / Access & Scope）的候选方案及 AI+/AI- 分析，覆盖 Web/CLI/API/Lib/Mobile/MiniApp/Extension/Desktop/AI Agent 等项目类型。含约定继承规则、项目标签路由逻辑、推荐 vs 展开判断准则，供 /archi.plan step_2 Part 2（架构建议阶段）引用。
+description: 架构决策选项库。按项目类型列出必须回答的核心问题，输出推荐或待裁决问题。
 ---
 
 # 架构决策选项库
@@ -11,355 +11,131 @@ description: Architext 架构决策选项库。定义五个核心维度（Core S
 ```
 /archi.plan step_2 Part 2
     ↓
-[本 Skill] 三步选用逻辑
+[本 Skill] 按项目标签提取核心问题清单
     ↓
-直接推荐行（多数维度）或 Q-table（需用户裁决时）
+逐问题判断：直接推荐 或 展开 Q-table
     ↓
 写入 Task Proposal 架构建议表
 ```
 
-> **Skill 的职责边界**：
-> - 负责：各维度的候选方案内容、约定继承规则、推荐 vs 展开判断
-> - 不负责：Q-table 格式规范（见 `archi-interview-protocol` Skill）、Unified Proposal 输出格式（见 plan.md step_2）
+> **职责边界**：负责各项目类型的核心问题清单、候选方案、推荐 vs 展开决策；不负责 Q-table 格式（见 `archi-interview-protocol`）。
 
 ---
 
-## 选用逻辑（三步，按序执行）
+## 选用逻辑（三步）
 
-### Step 1 · 约定继承检查
+**Step 1 · 约定继承检查**
+读 `02_tech_stack.md` §9。有项目约定 → 直接继承，禁展开（除非功能明确需偏离）。
 
-读取 `02_tech_stack.md` Section 9（项目约定）。
+**Step 2 · 提取核心问题**
+根据项目标签，从下表提取该类型必须回答的核心问题清单。
 
-| 情形 | 处理 |
+**Step 3 · 逐问题裁决**
+| 条件 | 处理 |
 |:---|:---|
-| 该维度有项目约定 | 直接继承为推荐，来源标注 `项目约定`，**禁展开选项表**（除非此功能有明确特殊需求须偏离约定） |
-| 该维度无项目约定 | 进入 Step 2 |
-
-### Step 2 · 项目标签路由
-
-根据 step_1_load 已激活的项目 features（`ui` / `data` / `cli` / `lib` / `api` / `mobile` / `miniapp` / `extension` / `desktop` / `ai`）选择适用维度，跳过不适用的维度。路由规则见各维度标题。
-
-### Step 3 · 推荐 vs 展开
-
-| 判断条件 | 处理 |
-|:---|:---|
-| 有明显最优方案（上下文已足够） | 直接推荐，写出 1-2 句理由，不展开选项表 |
-| 存在 2+ 合理选项且选择显著影响实现 | 展开 Q-table（格式见 `archi-interview-protocol` Skill） |
-
-**功能上下文化（Critical）**：无论推荐还是展开，须用功能设计中确认的实体名、操作名、业务流程描述，禁照搬泛化描述。
+| 答案明确（上下文足够）| 直接推荐，1-2 句理由 |
+| 2+ 合理选项且选择显著影响实现 | 展开 Q-table（格式见 `archi-interview-protocol` Skill 的标准输出格式） |
 
 ---
 
-## 维度 1 · Core Structure（必用）
+## 按项目类型的核心问题清单
 
-根据项目标签路由到对应选项库：
+### `data` 项目：数据层设计
 
-### 仅data项目: 数据模型与关系策略
-
-> 决定此功能的数据如何存储和组织。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Flat / Single Entity | 所有数据存在单张表/单个文档中，无外键关联。适合实体独立、字段固定、不涉及跨表关联的场景 | 上下文集中在单文件，AI 生成 CRUD 不需跨文件追踪关系，错误率最低 | 数据天然有从属关系时强行平铺会导致字段冗余，后续拆分重构成本高 |
-| B | 1:N Relation | 一个父实体拥有多个子实体，通过外键关联。适合主从关系明确、子实体依附父实体存在的场景 | 最常见的关系模式，AI 训练数据充足，生成 JOIN 查询和级联操作的准确率高 | 须同时维护两个 Model 及关联逻辑，AI 可能遗漏级联删除/更新或嵌套序列化 |
-| C | M:N Relation | 两个实体间多对多关系，需中间表。适合两个实体互不从属但需要关联的场景 | 中间表结构标准化，关系语义清晰 | 极易遗漏中间表创建和事务逻辑；中间表常需额外字段，AI 经常忘记处理 |
-| D | Recursive / Tree | 实体自引用形成树形结构，适合层级深度不确定的分类、目录、评论树 | 单表即可表达任意深度，Schema 简洁 | 递归查询/渲染易产生无限循环或栈溢出，AI 生成的递归终止条件常不完整 |
-| E | JSON / EAV | 用 JSON 列或 EAV 模式存储动态字段，适合 Schema 不确定、字段因用户/场景而异的需求 | Schema 灵活，新增字段无需数据库迁移 | 丧失数据库级类型校验和索引能力，AI 无法从 Schema 推断字段结构，易产生运行时类型错误 |
-| F | Virtual / Computed | 数据不直接存储，从其他字段实时计算，适合衍生数据、统计聚合、格式化展示 | 无需数据迁移，数据始终与源保持一致 | 计算逻辑分散在查询层，AI 易写出 N+1 查询或低效聚合语句 |
-| Z | 自定义 | (请描述你的数据结构方案) | - | - |
-
-### 仅cli项目: 输入/输出与配置设计
-
-> 决定此功能如何接收输入、以什么形式输出结果。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Pure Args/Flags | 所有输入通过命令行参数传入。适合自动化脚本调用、CI/CD 管道 | 输入结构明确，AI 可直接从参数定义推导解析代码和帮助文档 | 参数过多时用户记忆成本高，复杂嵌套配置难以通过命令行表达 |
-| B | Interactive Prompts | 运行后通过交互式问答引导输入。适合初始化向导、配置生成器等需要引导的场景 | 每个 prompt 步骤独立，AI 可按顺序逐一生成处理逻辑 | 须处理 Ctrl+C 取消、回退、默认值等边界情况，测试需 Mock stdin |
-| C | Hybrid (Args + Prompts) | 优先读取命令行参数，缺失项才弹交互提示。适合同时服务脚本调用和手动操作 | 兼顾自动化与交互，是现代 CLI 的最佳实践 | 须维护参数解析和交互提示两套逻辑，AI 须确保两条路径行为一致 |
-| D | Config File | 从配置文件读取输入。适合参数数量多、需要版本化管理配置的场景 | 配置可用 JSON Schema 严格校验，AI 可基于 Schema 生成解析代码 | 须处理文件不存在、格式错误、Schema 版本迁移等边界情况 |
-| E | Stdin / Pipe | 从标准输入或管道接收数据。适合数据处理管道、与 Unix 命令组合使用 | 输入格式可定义清晰的 Parser 契约 | 流式读取和编码处理易出错，须处理空输入和超大文件 |
-| Z | 自定义 | (请描述你的输入/输出方案) | - | - |
-
-### 仅lib项目: 公共 API 与类型设计
-
-> 决定此功能暴露给消费者的接口形态。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Single Function | 导出一个或少数独立函数。适合功能单一、无状态的工具函数 | 接口最简，AI 生成使用示例和单元测试的准确率最高 | 功能扩展时可能导致函数签名膨胀 |
-| B | Class / Instance | 导出类，消费者创建实例后调方法。适合需维护内部状态、提供多个关联操作的模块 | 类的 constructor + methods 结构清晰，AI 易理解对象生命周期 | 继承层级过深增加上下文复杂度，AI 追踪 this 绑定易出错 |
-| C | Builder / Fluent | 通过链式调用构建配置。适合可选配置项多、需要渐进式构建的场景 | TypeScript 下链式调用可逐步收窄类型，类型安全好 | 链式方法的调用顺序约束和泛型体操复杂，AI 生成类型定义易出错 |
-| D | Config Object | 接受一个配置对象作主要输入。适合初始化参数多且需统一管理的场景 | 配置对象可用 interface/Zod 严格定义，AI 从类型推断行为非常准确 | 配置项过多时文档和校验逻辑繁重，可选字段的默认值合并易出错 |
-| E | Plugin / Middleware | 核心精简，功能通过插件/中间件扩展。适合需要高度可扩展的框架级库 | 核心代码简单，AI 可独立生成每个插件 | 插件间交互、执行顺序和类型安全难以保证，AI 易生成相互冲突的插件 |
-| Z | 自定义 | (请描述你的 API 设计方案) | - | - |
-
-### 仅api项目: 接口契约与路由设计
-
-> 决定此功能的 API 端点结构和调用方式。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | RESTful CRUD | 标准 REST 资源路由。适合实体明确、操作可标准化的增删改查场景 | REST 是最普及的 API 模式，AI 训练数据极充足，生成路由+控制器准确率最高 | 复杂查询和跨资源操作用纯 REST 表达力有限，容易产生非标准端点 |
-| B | RPC-Style Actions | 面向操作的端点，如 `POST /send-invite`。适合业务动作不能简单映射到 CRUD 动词的场景 | 端点语义明确，AI 可从动作名直接推断实现逻辑 | 缺乏统一范式，端点命名易不一致，数量膨胀后难以维护 |
-| C | GraphQL | 单端点 + Schema 查询语言。适合前端数据需求多变、需要减少多次请求的场景 | Schema 即文档，强类型定义，前端自由组合查询 | Resolver 的 N+1 问题和细粒度权限校验复杂，AI 生成 DataLoader 常有缓存 Bug |
-| D | Nested Sub-resource | 嵌套路由表达从属关系，如 `GET /users/:id/posts`。适合资源间有明确父子关系的场景 | 路由结构反映数据关系，AI 可从路由推断查询逻辑 | 嵌套超 2 层路由冗长，权限检查须逐级验证父资源所有权 |
-| Z | 自定义 | (请描述你的 API 设计方案) | - | - |
-
-### 仅mobile项目: 导航架构策略
-
-> 决定此功能在移动端导航体系中的位置与流转方式。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Stack Navigator | 层级式页面堆叠，用户进入详情后可返回。适合操作流程有明确层级深度的场景 | 最常见的移动导航模式，AI 生成 push/pop 准确率高 | 深层嵌套时需维护复杂的路由参数传递，参数类型安全易丢失 |
-| B | Tab Navigator | 底部/顶部固定标签栏，切换各功能入口。适合功能并列、用户需频繁切换的应用主框架 | Tab 结构固定明确，AI 可逐 Tab 独立生成，互不干扰 | 不同 Tab 的状态隔离与共享数据同步需额外处理，AI 易遗漏 Tab 切换时的数据刷新 |
-| C | Drawer Navigator | 侧边抽屉式导航菜单。适合功能较多、不适合 Tab 展示的后台类应用 | 抽屉菜单结构清晰，AI 生成列表项和路由映射准确 | 抽屉手势与内部列表滚动手势冲突较难处理，跨平台行为差异 AI 常忽略 |
-| D | Modal / Bottom Sheet | 模态页面或底部弹出面板，不脱离当前上下文。适合快速操作、筛选、确认等次级流程 | 上下文局部化，不跳转根页面，AI 生成条件渲染逻辑准确 | Focus Trap、手势关闭、键盘弹起适配 AI 常处理不完整；iOS/Android 行为差异多 |
-| Z | 自定义 | (请描述你的移动端导航方案) | - | - |
-
-### 仅miniapp项目: 页面架构与请求策略
-
-> 决定此功能在小程序页面体系中的组织形式和网络请求封装方式。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Single Page | 功能集中在单个小程序页面内完成，无跨页跳转。适合功能聚焦、操作步骤少的场景 | 页面上下文集中，AI 可在单文件内完整生成逻辑，错误率低 | 功能扩展时单页逻辑膨胀，可维护性下降 |
-| B | Page + Sub-page Flow | 主页面 + 跳转详情/编辑子页面，通过 `navigateTo` 传参。适合有明确主从关系的场景 | 页面间职责清晰，AI 可按页面独立生成，上下文互不干扰 | 页面间参数传递须序列化，数据量大时需用 EventBus 或全局 store，AI 易遗漏 |
-| C | Tabbar + Module | 底部 Tabbar 框架 + 各模块独立页面，适合功能并列的主应用框架 | Tabbar 结构稳定，AI 可模块化生成各 Tab 内容 | 跨 Tab 数据共享须全局状态管理，小程序 store 生态较碎片，AI 方案选型易混淆 |
-| D | WebView Hybrid | 部分功能通过 WebView 内嵌 H5 页面实现，适合复杂富文本编辑或已有 Web 资产复用 | 可复用 Web 技术栈，功能完整性高 | WebView 与原生通信通过 bridge，AI 生成消息协议易有兼容性问题；受平台沙箱限制 |
-| Z | 自定义 | (请描述你的小程序页面方案) | - | - |
-
-### 仅extension项目: 架构层分配策略
-
-> 决定此功能的核心逻辑部署在 Background Service Worker、Content Script 还是 Popup 层。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Background-Centric | 核心逻辑在 Background Service Worker，其他层仅做 UI 展示和消息转发。适合需持续运行、跨标签页共享状态的场景 | 逻辑集中，消息协议单向清晰，AI 可在单文件生成主要逻辑 | Service Worker 生命周期短暂（MV3），须处理唤醒和状态持久化 |
-| B | Content-Centric | 主要逻辑注入目标页面的 Content Script，与页面 DOM 深度交互。适合页面增强、划词翻译、内容修改类功能 | 可直接操作页面 DOM，不需要消息中转 | 与页面 JS 环境隔离（isolated world），须通过 window.postMessage 通信，AI 常混淆隔离边界 |
-| C | Popup-Centric | 主要交互和逻辑在 Popup 页面，Background 仅做最小权限代理。适合功能简单、点击即用的工具型扩展 | Popup 本质是普通网页，AI 生成 UI 代码与 Web 无异 | Popup 关闭时状态丢失，须持久化到 chrome.storage；Popup 与 Background 生命周期独立 |
-| D | Full Architecture | Background + Content + Popup 各承担特定职责，通过消息总线协调。适合功能复杂的综合型扩展 | 职责分层明确，各层可独立开发和测试 | 三层消息协议复杂，AI 容易遗漏消息路由或混淆发送方/接收方 |
-| Z | 自定义 | (请描述你的扩展架构方案) | - | - |
-
-### 仅desktop项目: 进程模型与 IPC 策略
-
-> 决定此功能的业务逻辑如何在主进程（Main）与渲染进程（Renderer）之间分配。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Main-Centric | 核心业务逻辑在主进程，渲染进程仅负责展示和用户输入。适合需频繁调用系统 API（文件系统、原生菜单、系统通知）的场景 | 主进程逻辑集中，AI 在单处生成业务逻辑；类型通过 IPC 契约约束 | 主进程阻塞会导致整个 App 无响应；渲染进程须等待 IPC 响应，AI 易忘记异步处理 |
-| B | Renderer-Centric | 业务逻辑主要在渲染进程，主进程仅暴露最小系统 API 代理。适合以 UI 为核心、系统调用较少的应用 | 渲染进程可使用浏览器标准 API，AI 生成代码与 Web 开发一致 | 系统级调用须通过 contextBridge 预加载，AI 常忘记声明 preload 白名单导致安全问题 |
-| C | Worker Thread | 计算密集型逻辑迁移至 Worker Thread，避免阻塞 UI 线程。适合文件处理、数据转换等重型任务 | 将重型任务与 UI 解耦，响应性好 | Worker Thread 无法直接访问 DOM 和 IPC，须通过 MessageChannel 通信，AI 容易遗漏序列化约束 |
-| Z | 自定义 | (请描述你的桌面端进程分配方案) | - | - |
-
-### 仅ai项目: LLM 集成与 Agent 架构策略
-
-> 决定此功能如何集成 LLM 能力、组织 Prompt 和管理 Agent 执行流程。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Direct API Call | 直接调用 LLM Provider API（OpenAI/Claude/Gemini 等）。适合功能简单、无需切换 Provider 的场景 | 实现最简，AI 生成 SDK 调用代码准确率高 | 与 Provider 强耦合；切换模型须改代码；流式输出处理在各 Provider 间不统一 |
-| B | Provider Abstraction | 封装统一 LLM 客户端接口，底层可切换 Provider。适合需支持多模型或本地模型的场景 | 接口稳定，AI 可针对抽象层生成调用代码而无需关心底层 Provider | 抽象层设计复杂，不同 Provider 的能力差异（context window、tool calling 格式）难以完全统一 |
-| C | Tool / Function Calling | 为 LLM 定义 Tool Schema，由 LLM 决策何时调用。适合需 AI 主动调用外部能力（搜索、代码执行、数据库查询）的场景 | Tool Schema 结构化，AI 可从类型定义生成调用适配代码 | Tool 执行错误的重试策略、多 Tool 并发调用的状态管理，AI 容易遗漏幂等性处理 |
-| D | Multi-Agent Orchestration | 多个专职 Agent 协作完成复杂任务，含路由器/协调者角色。适合任务复杂度高、单次对话无法完成的工作流 | 各 Agent 职责单一，AI 可独立生成每个 Agent 的 Prompt 和工具集 | Agent 间状态传递、循环检测、成本控制极难设计正确，AI 生成的协调逻辑容易产生无限循环 |
-| Z | 自定义 | (请描述你的 AI 集成方案) | - | - |
+**实体关系** — Flat | 1:N | M:N | Recursive | JSON/EAV | Virtual
+**一致性** — ACID | 最终一致性 | 乐观锁 | 无需
+**访问模式** — 读多写少 | 读写均衡 | 写密集 | 实时查询
+**安全与备份** — 静态加密 | 传输加密 | 定期备份 | 敏感数据脱敏
 
 ---
 
-## 维度 2 · Interaction Pattern（必用）
+### `cli` 项目：命令行交互设计
 
-### 仅ui项目: 展示与交互模式
-
-> 决定用户看到什么界面、如何操作。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | CRUD Table/List | 数据以表格或列表展示，支持筛选/排序/翻页，点击进入详情。适合后台管理、资源列表 | 表格组件是 AI 训练数据最充足的 UI 模式，生成代码的准确率最高 | 大数据量下需分页+排序+多条件筛选的组合逻辑，交互状态管理较多 |
-| B | Wizard / Stepper | 将复杂操作拆为多步页面，带进度条和步骤指示器。适合注册流程、配置向导、多步表单 | 每步状态独立明确，AI 可逐个生成 Step 组件 | 跨步骤数据共享/校验复杂，AI 易遗漏步骤间状态传递 |
-| C | Dashboard / Kanban | 以卡片/列形式展示数据，可拖拽移动。适合任务管理、状态工作流、项目看板 | 视觉直观，每张卡片是独立上下文单元 | 拖拽排序依赖第三方库，AI 生成拖拽逻辑幻觉风险高，跨浏览器兼容问题多 |
-| D | Modal / Drawer | 点击列表项后弹出浮层或侧边滑出面板展示详情/编辑。适合快速编辑不需要独立页面的场景 | 上下文局部化，不需要路由跳转 | Z-index 层叠、Focus Trap、Escape 关闭、背景滚动锁定等交互细节常出 Bug |
-| E | Infinite Scroll / Feed | 滚动到底部自动加载更多，形成无限信息流。适合内容消费型场景 | 基本的"加载更多"逻辑简单 | 虚拟滚动极难写对，滚动位置恢复和快速滚动白屏 AI 很难处理好 |
-| F | Editor / Canvas | 富文本编辑区或画布式自由操作区域。适合内容创作/可视化编辑 | 功能上限高，用户自由度大 | Canvas 是指令式 API，比声明式 DOM 难生成得多；Selection API 极为复杂 |
-| Z | 自定义 | (请描述你的交互方案) | - | - |
-
-### 仅cli项目: 用户交互模式
-
-> 决定用户如何与此 CLI 功能互动、看到什么反馈。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Silent / Batch | 无交互，纯静默执行，成功到 stdout，失败到 stderr。适合作为脚本/管道中一环 | 实现最简，无 I/O 副作用，测试只需断言 stdout 输出 | 用户在执行过程中无法获得进度反馈 |
-| B | Progress / Spinner | 执行期间显示进度条或旋转动画，完成后输出结果摘要。适合耗时操作 | 标准模式，clack/ora 等库支持完善，几行代码即可接入 | 须处理非 TTY 环境降级、终端宽度变化等边界情况 |
-| C | Interactive Menu | 展示菜单让用户选择操作。适合功能入口多、用户需浏览和选择的场景 | 菜单结构明确，AI 可逐个生成选项处理逻辑 | 菜单层级过深体验差，须处理不支持交互的终端回退方案 |
-| D | REPL / Shell | 进入持续交互循环。适合探索式工具、调试器 | 每轮交互独立，AI 可逐条命令处理 | 须维护会话状态、命令历史、Tab 补全，实现复杂度高 |
-| E | Watch / Daemon | 持续运行并监听变化，自动触发操作。适合开发工具、文件同步、自动构建 | 事件驱动模型清晰，每次触发独立处理 | 跨平台文件监听兼容性、防抖逻辑、优雅退出处理难点多 |
-| Z | 自定义 | (请描述你的交互方案) | - | - |
-
-### 仅api项目: 客户端集成模式
-
-> 决定调用方如何接入和使用此 API。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Direct HTTP Call | 客户端直接发 HTTP 请求调用。最简单直接的集成方式 | 无额外抽象层，AI 生成请求代码最简单直接 | 类型安全需手动维护，接口变更时客户端容易失同步 |
-| B | SDK / Client Lib | 提供封装好的客户端 SDK，调用方使用类型化方法调用 | 强类型安全，接口变更在编译期发现 | 须额外维护 SDK 代码和版本发布，增加开发负担 |
-| C | Code Generation | 从 OpenAPI/GraphQL Schema 自动生成客户端代码和类型定义 | Schema 即合约，类型自动生成零手动维护 | 生成代码定制性有限，Schema 变更需重新生成并检查兼容性 |
-| D | Webhook / Event | API 通过 Webhook 回调主动通知客户端。适合异步事件驱动场景 | 解耦，异步通知无需轮询 | Webhook 的签名验证、重试幂等、超时处理 AI 容易遗漏 |
-| Z | 自定义 | (请描述你的集成方案) | - | - |
-
-### 仅lib项目: 消费者使用模式
-
-> 决定消费者如何使用此库的功能。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Import & Call | 直接导入函数/类并调用。最直接的使用方式，零配置即可上手 | 使用方式最简，AI 生成示例代码和测试准确率最高 | 功能扩展时可能需频繁修改公共签名，影响下游消费者 |
-| B | Register & Use | 先注册配置再使用，适合需要初始化和生命周期管理的库 | 初始化与使用阶段分离，AI 可分阶段生成逻辑 | 注册时序和生命周期约束需清晰文档，AI 可能生成错误调用顺序 |
-| C | Decorator / Annotation | 通过装饰器声明行为。适合框架级库，声明式配置减少样板代码 | 声明式代码简洁，意图清晰 | TS 装饰器提案仍在演进，AI 可能混淆旧版和新版语法 |
-| Z | 自定义 | (请描述消费者的使用方式) | - | - |
-
-### 仅mobile项目: 移动端交互模式
-
-> 决定用户在移动设备上如何操作此功能、看到何种反馈。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Standard List / Card | 数据以列表或卡片展示，点击进入详情。适合内容浏览和管理类功能 | 与 Web 端 CRUD Table 类似，AI 生成 FlatList/ScrollView 准确率高 | 大列表须 FlatList 虚拟化；下拉刷新、上拉加载 AI 常遗漏边界处理 |
-| B | Form / Wizard | 多步表单或引导式输入。适合注册、创建流程 | 每步表单独立，AI 可逐步生成字段和校验 | 键盘弹起导致视图遮挡须处理 KeyboardAvoidingView；步骤间数据共享需状态提升 |
-| C | Gesture-Driven | 依赖滑动、长按等手势操作，如左划删除、拖拽排序。适合高频操作的轻量交互 | 手势语义直观，用户操作流畅 | 手势冲突（内部滚动 vs 外部手势）极难调试；跨平台手势库 API 差异大，AI 易混淆 |
-| D | Bottom Sheet / Action Sheet | 点击触发底部滑出面板或操作菜单。适合次级操作、筛选、快速选择 | 无需路由跳转，上下文局部化 | 手势关闭、键盘配合、嵌套滚动须精细处理；iOS/Android 行为差异 AI 常忽略 |
-| Z | 自定义 | (请描述你的移动端交互方案) | - | - |
-
-### 仅miniapp项目: 小程序交互模式
-
-> 决定用户在小程序内如何与此功能交互。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Native Components | 使用平台原生组件（button、input、scroll-view），遵循平台 UI 规范。适合大部分标准功能 | 原生组件有平台保障，AI 生成标准小程序代码准确率高 | 原生组件样式定制受限，CSS 支持不如 Web 完整 |
-| B | Custom Component | 封装自定义组件，提取可复用 UI 单元。适合样式定制要求高或多处复用的场景 | 组件化提高上下文局部性，AI 可独立生成每个组件 | 小程序自定义组件的 slot、properties、triggerEvent 与 Web 组件有细节差异，AI 易混淆 |
-| C | Half-Screen / Full-Screen Popup | 半屏弹窗或全屏覆盖层。适合详情查看、确认操作、筛选面板 | 弹窗结构明确，AI 生成条件渲染逻辑准确 | z-index 层级管理和动画过渡须注意微信小程序的渲染层特殊性 |
-| Z | 自定义 | (请描述你的小程序交互方案) | - | - |
-
-### 仅extension项目: 扩展交互入口模式
-
-> 决定用户通过何种入口与扩展功能交互。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Browser Action Popup | 点击扩展图标弹出小型 Popup 窗口。适合配置面板、快速操作、状态展示 | Popup 是独立 HTML 页面，AI 生成代码与普通 Web 无异 | Popup 宽高有限（约 600×600px），关闭即销毁，须将数据持久化到 chrome.storage |
-| B | Context Menu | 右键菜单注入选项。适合对选中文本/链接/图片的快速处理 | 菜单项注册逻辑简单，AI 一次生成即可 | 菜单显示条件须精确声明；操作结果须通过消息通知用户 |
-| C | Content Injection | 在目标页面注入按钮、浮标、工具栏等 UI 元素。适合页面增强类功能 | 注入 UI 的 HTML/CSS 自成体系，AI 可独立生成 | 须处理页面样式污染（使用 Shadow DOM 隔离）；目标页面 DOM 变化时注入点可能失效 |
-| D | Side Panel | 浏览器侧边栏（Chrome sidePanel API），常驻于浏览器右侧。适合持续使用的工具面板 | 有完整页面空间，与浏览器原生集成，UX 自然 | sidePanel API 较新，跨浏览器兼容性有限；须用户主动开启 |
-| Z | 自定义 | (请描述你的扩展交互方案) | - | - |
-
-### 仅desktop项目: 桌面端交互模式
-
-> 决定用户如何与此桌面应用功能交互，以及使用哪种系统级 UI 范式。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Window-Based UI | 标准应用窗口，UI 与 Web App 相近。适合功能复杂、需要较大操作空间的应用 | AI 生成的 Web UI 代码可直接复用；桌面端增量仅在于 IPC 调用 | 须处理多窗口管理、窗口尺寸记忆等桌面特有细节 |
-| B | Tray / Menu Bar App | 常驻系统托盘或 macOS 菜单栏，点击弹出小型悬浮窗。适合后台服务、快速查看类工具 | 交互面小且固定，AI 可在极小上下文内完成 | 托盘图标随系统主题切换须维护两套图标；悬浮窗尺寸和定位须精确计算 |
-| C | Global Hotkey Trigger | 全局快捷键唤起，跨应用使用。适合 Spotlight 类快速启动工具、剪贴板管理器 | 用户无需切换焦点，体验流畅 | 注册全局热键须系统权限；热键冲突难以预测；macOS/Windows 注册 API 不同 |
-| D | Native Dialogs | 使用系统原生文件选择器、对话框、通知。适合文件操作、系统级提醒场景 | 原生对话框零样式维护成本，用户熟悉 | 原生对话框 API 在 Electron/Tauri 中调用方式不同，须查文档确认 |
-| Z | 自定义 | (请描述你的桌面端交互方案) | - | - |
-
-### 仅ai项目: Agent 交互输出模式
-
-> 决定用户如何触发 AI 能力，以及如何接收 AI 的输出结果。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Chat Interface | 对话式输入/输出，支持多轮上下文。适合开放式问答、辅助创作类功能 | 对话结构线性，AI 可按消息对生成处理逻辑 | 多轮上下文的 Token 管理（裁剪/摘要）易被忽略，超出上下文窗口时响应质量骤降 |
-| B | Command-Driven | 用户发出结构化指令，AI 执行并返回结果。适合 AI 辅助完成特定任务（代码生成、文档整理）的场景 | 指令格式可 Schema 化，AI 生成解析和执行逻辑准确 | 须处理指令解析失败、参数缺失的降级策略；用户须学习指令语法 |
-| C | Streaming Output | AI 输出以流的形式逐步渲染，用户实时看到生成过程。适合生成内容较长的场景 | 流式 API 模式标准（SSE/Stream），主流 SDK 均支持 | 流中断的重试和已渲染内容的回滚较复杂；Markdown 流式渲染的转义 Bug AI 常处理不好 |
-| D | Autonomous Agent | AI 自主规划并执行多步任务，最终返回完整结果。适合复杂工作流自动化 | 无需用户逐步介入，端到端完成任务 | 中间步骤的可观测性（进度展示）、任务失败的部分回滚、成本控制极难正确实现 |
-| Z | 自定义 | (请描述你的 AI 交互输出方案) | - | - |
+**输入接收** — Pure Args | Interactive Prompts | Hybrid | Config File | Stdin/Pipe
+**输出呈现** — Silent | Progress/Spinner | Structured | Human-readable
+**执行模式** — One-shot | REPL | Watch/Daemon | Batch
+**错误处理** — Exit Code Only | Stderr Message | Retry Logic | Interactive Recovery
 
 ---
 
-## 维度 3 · Data Flow
+### `lib` 项目：库 API 设计
 
-**适用条件**: 项目含 `（仅ui且data项目）` 或 `（仅ui且api项目）` 标签时适用；纯 `（仅cli项目）`/`（仅lib项目）` 跳过。
-**约定继承**: `02_tech_stack.md` §9 Data Flow 有值 → 自动继承，不展开选项表。仅当此功能需偏离项目默认时才展开。
-
-### 仅ui项目: 状态同步与数据流
-
-> 数据如何在前端界面和后端之间流转和同步。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Standard Request | 用户操作→发请求→等响应→更新界面。适合大多数标准 CRUD 操作 | 原子操作，无状态，AI 生成 fetch + loading/error 状态处理最可靠 | 每次操作须等网络往返，操作频繁时体感较慢 |
-| B | Optimistic UI | 用户操作后立即更新界面（假设成功），后台同步发请求。适合操作频繁且大概率成功的场景 | 用户体感极快，交互无卡顿 | 回滚逻辑（服务端返回失败时恢复原状态）常被遗忘，AI 容易只写乐观更新不写回滚 |
-| C | Polling / SWR | 定期自动重新获取数据，或窗口聚焦时刷新。适合数据需要准实时但不必毫秒级更新的场景 | React Query/SWR 等库封装完善，AI 只需配置 staleTime/refetchInterval | 轮询间隔和缓存失效策略需平衡，不当配置会造成无意义的请求风暴 |
-| D | Realtime (Socket/SSE) | 服务端主动推送数据到客户端。适合在线聊天、实时协作、股票行情 | 延迟最低，数据实时同步，用户体验最好 | 断线重连、心跳保活、消息顺序保证极难正确实现，AI 生成的 WebSocket 代码常有连接泄漏 |
-| E | Local-First / Offline | 数据优先存本地，联网时与服务端同步。适合弱网/离线必须可用的场景 | 离线可用，不受网络影响 | 冲突解决算法（CRDT/OT）是高阶问题，AI 难以正确实现多端并发冲突合并 |
-| F | Background Job | 用户触发后立即返回，后台异步完成。适合耗时操作（批量处理、文件生成） | 主线程解耦，API 响应快 | 须额外实现任务队列、状态查询和完成通知机制 |
-| Z | 自定义 | (请描述你的数据流方案) | - | - |
+**暴露形态** — Functions | Class/Instance | Builder/Fluent | Config Object | Plugin System
+**消费者接入** — Import & Call | Register & Use | Decorator | Global Registration
+**公开边界** — Full Public | Facade | Internal Heavy
+**错误处理** — Throw on Error | Return Result Type | Error Callback | Event Emitter
+**文档策略** — JSDoc/TSDoc | README Quick Start | API Reference | Examples & Recipes
 
 ---
 
-## 维度 4 · Error Handling（约定继承）
+### `api` 项目：接口契约设计
 
-**约定继承**: `02_tech_stack.md` §9 Error Handling 已确立项目级策略 → 自动继承，不展开选项表。
-仅当此功能有**项目约定未覆盖的特殊异常场景**时，才额外补充（如此功能需 Undo/Redo 但项目约定只有 Fail Fast）。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Fail Fast / Notify | 遇到错误立即中止并通知用户，不尝试恢复。适合大多数非关键操作的默认策略 | 实现最简单（一行 throw + 全局错误处理），AI 几乎不会写错 | 用户体验偏生硬，频繁操作失败时通知轰炸 |
-| B | Form Validation | 用户提交前进行字段级/表单级校验，阻止非法输入到达后端 | Zod/Yup Schema 可同时用于校验和类型推断，AI 从 Schema 生成 UI 反馈准确 | 复杂校验规则（异步唯一性、跨字段依赖）的正则和时序 AI 容易写错 |
-| C | Retry / Recovery | 操作失败后自动重试或提供手动重试按钮。适合网络不稳定或外部服务间歇性故障的场景 | 重试逻辑可封装为通用工具函数，复用度高 | 须确保操作幂等（重复执行不产生副作用），AI 难以验证幂等性 |
-| D | Fallback / Skeleton | 加载失败或数据为空时显示降级 UI（骨架屏、空状态提示）而非白屏 | 骨架屏是标准 UI 模式，AI 生成准确率高 | 须为每个状态（loading/empty/error）维护并行 UI 结构，组件数量翻倍 |
-| E | Draft / Auto-save | 用户编辑过程中自动定期保存草稿，防止意外丢失数据 | 保存逻辑可抽象为通用 Hook/工具函数 | 保存节流（debounce/throttle）、冲突检测须仔细处理 |
-| F | Undo / Redo | 操作后支持撤销/重做。适合用户可能误操作且后果较严重的场景 | 提升用户信心，降低操作焦虑 | 状态快照和历史栈管理逻辑复杂，AI 生成 undo 栈经常有内存泄漏或状态不一致 |
-| Z | 自定义 | (请描述你的错误处理方案) | - | - |
+**协议风格** — RESTful | RPC-Style | GraphQL | gRPC | WebSocket
+**客户端接入** — Direct HTTP | SDK | CodeGen | Webhook
+**版本演进** — URL Versioning | Header Versioning | No Versioning | Deprecation Window
+**安全认证** — API Key | JWT Token | OAuth 2.0 | mTLS
+**限流防护** — Rate Limiting | Quota System | IP Whitelist | Request Signing
 
 ---
 
-## 维度 5 · Access & Scope
+### `mobile` 项目：移动端导航与交互
 
-**适用条件**: 项目含 `仅ui或api项目:` 标签时提问权限控制；含 `仅miniapp项目:` 标签时提问小程序授权模式；含 `仅lib项目:` 标签时提问封装策略；纯 `仅cli项目:` 通常跳过。
-**约定继承**: `02_tech_stack.md` §9 Auth & Access 有值 → 认证**机制**继承（如 JWT/RBAC），但**权限级别**仍为功能级决策（如某功能 Public vs Owner Only）。
-
-### 仅ui或api项目: 权限控制
-
-> 谁能执行此功能的操作、看到什么数据。认证机制继承项目约定，此处仅决定此功能的权限级别。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Public | 完全公开，无需登录即可访问。适合面向匿名用户的公开内容 | 无需鉴权中间件，API 层最简 | 须额外考虑限流防滥用，公开接口易被爬虫和恶意调用 |
-| B | Authenticated | 仅登录用户可访问。适合个人主页、订单列表等需身份验证的场景 | 标准 JWT/Session 中间件即可实现，AI 生成成熟度高 | 须处理 token 过期刷新、多端登录踢出等会话管理逻辑 |
-| C | Owner Only | 仅资源创建者可操作。适合"只有自己能编辑自己的内容"的场景 | 简单的所有权检查，一行代码即可实现 | 如果资源可转让或有代理操作场景，简单 owner 检查不够用 |
-| D | Role Based (RBAC) | 按角色划分权限，如 admin/editor/viewer。适合后台管理、多角色协作系统 | 权限规则明确可枚举，AI 可基于角色矩阵生成守卫逻辑 | 守卫逻辑分散在每个端点，上下文负载高；角色嵌套时权限继承复杂 |
-| E | Team / Shared | 团队/组织成员可访问。适合协作场景、多租户系统 | 权限边界以团队为单位，粒度适中 | 须查询团队成员关系表，涉及复杂 JOIN；跨团队共享进一步复杂化 |
-| F | Tier / Subscription | 按付费等级限制功能。适合 SaaS 产品的分级功能 | 规则可配置化，与业务逻辑解耦 | Mock 支付状态和计费逻辑困难，测试需要大量 fixture 数据 |
-| Z | 自定义 | (请描述你的权限方案) | - | - |
-
-### 仅miniapp项目: 小程序授权模式
-
-> 决定此功能需要哪种平台授权级别。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Anonymous | 无需授权，匿名访问。适合浏览型功能 | 无授权流程，AI 生成最简 | 须额外考虑限流防刷，无用户身份时无法关联历史数据 |
-| B | Platform Auth (openid) | 静默授权获取 openid，不弹授权弹窗。适合大多数需要区分用户但不需要完整资料的场景 | 无需用户操作，code2session 流程标准，AI 生成准确率高 | openid 仅在同一小程序/同一平台下唯一，跨平台或跨小程序须用 unionid |
-| C | Phone Binding | 弹窗授权获取手机号，绑定到业务账号。适合需要真实身份关联或与已有账号系统对接的场景 | 平台处理真实性验证，业务侧仅需存储关联关系 | 手机号授权按钮有严格 UI 限制（须为 button 组件，禁 JS 触发），AI 容易生成不符合规范的触发方式 |
-| D | Full Profile Auth | 请求完整用户资料授权（昵称/头像）。适合社交类功能或需要展示用户信息的场景 | 一次授权获取完整用户信息 | 微信已于 2022 年收紧此授权，须用新版 getUserProfile API，旧版 getUserInfo 已废弃，AI 训练数据中旧版代码较多易混淆 |
-| Z | 自定义 | (请描述你的小程序授权方案) | - | - |
-
-### 仅lib项目: 封装与可见性
-
-> 此功能的代码如何组织封装，对消费者暴露什么。
-
-| ID | 选项 | 说明 | AI+ | AI- |
-|:---|:---|:---|:---|:---|
-| A | Full Public | 所有功能和类型全部公开导出。适合透明度高的小型工具库 | AI 无需猜测哪些是公开 API，所有类型都可追溯 | 公开面过大，任何内部重构都可能是 breaking change |
-| B | Facade / Entry Point | 通过单一入口文件（index.ts）精选导出公共 API，内部实现不直接暴露 | 公共面小且明确，AI 从 index.ts 即可理解全部可用 API | 须持续维护导出列表，新功能须显式添加到 facade |
-| C | Internal / Private | 仅暴露最小公共接口，大量实现标记为 internal。适合核心库、安全敏感模块 | 最小公开面，breaking change 风险最低 | AI 需要修改 internal 代码时缺乏上下文，须频繁阅读源码 |
-| Z | 自定义 | (请描述你的封装策略) | - | - |
+**导航结构** — Stack | Tab | Drawer | Hybrid
+**交互模式** — List/Card | Form/Wizard | Gesture-Driven | Bottom Sheet
+**状态管理** — Local State | Global Store | React Query/SWR | Offline-First
+**离线支持** — Online Only | Cache for Offline | Full Offline Support | Background Sync
+**性能优化** — Lazy Loading | Image Optimization | Code Splitting | Native Modules
 
 ---
 
-> **中间产物**：此 Skill 为子程序，产出推荐行或 Q-table 后控制权交还 `/archi.plan` step_2，由调用方组装进 Task Proposal 的架构建议表。
+### `miniapp` 项目：小程序架构
+
+**页面组织** — Single Page | Multi-Page | Tabbar | WebView Hybrid
+**平台授权** — Anonymous | Silent Auth | Phone Binding | Full Profile
+**数据通信** — Request | WebSocket | EventBus | Storage Sync
+**性能优化** — Lazy Load | Skeleton Screen | Preload Data | Reduce SetData
+
+---
+
+### `extension` 项目：浏览器扩展架构
+
+**逻辑部署** — Background | Content Script | Popup | Full Architecture
+**交互入口** — Browser Action | Context Menu | Content Injection | Side Panel | Keyboard Shortcut
+**跨层通信** — Message Passing | Shared Storage | Native Messaging
+**发布更新** — Manual Update | Auto Update | Chrome Web Store | Enterprise Policy
+
+---
+
+### `desktop` 项目：桌面应用架构
+
+**进程分工** — Main-Centric | Renderer-Centric | Worker Thread | Multi-Process
+**窗口管理** — Single Window | Multi Window | Tray/Menu Bar | Global Hotkey
+**系统集成** — Native Dialogs | File System Access | Hardware Integration | Auto Updater
+**打包分发** — Electron Builder | Tauri CLI | Code Signing | Auto-Update Server
+
+---
+
+### `ai` 项目：LLM 集成与 Agent 设计
+
+**Provider 供应** — Direct API | Provider Abstraction | Local Model | Hybrid Cloud-Edge
+**交互模式** — Chat | Command-Driven | Streaming | Autonomous Agent
+**工具扩展** — No Tools | Function Calling | Code Execution | Multi-Agent | RAG
+**上下文管理** — Full History | Sliding Window | Summarization | Session-Based
+**成本监控** — Token Budgeting | Usage Quota | Request Logging | Performance Metrics
+
+---
+
+### `ui` 项目：界面交互设计（通用附加）
+
+**数据流** — Standard Request | Optimistic UI | Realtime | Offline-First
+**错误处理** — Fail Fast | Retry/Recovery | Fallback UI | Undo/Redo
+**权限控制** — Public | Authenticated | Role-Based | Owner-Only
+**国际化** — i18n Support | RTL Layout | Accessibility | Screen Reader
+
+---
+
+## 输出格式
+
+**推荐行**：`项目类型 @ 核心问题：决策（来源: 约定/推荐）— 理由：...`
+
+> **中间产物**：产出推荐行或 Q-table 后控制权交还 `/archi.plan`，由调用方组装进 Task Proposal。
