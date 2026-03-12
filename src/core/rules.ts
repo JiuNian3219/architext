@@ -196,6 +196,7 @@ export const BRIEF_ASSETS_DIR = "brief-assets";
 export interface EditorCapabilities {
   hasSkills: boolean;
   hasSubagents: boolean;
+  hasCommands: boolean;
 }
 
 /**
@@ -262,6 +263,13 @@ export function resolveCapabilityRefs(
   content = content.replace(
     /\[\[NO-SKILL: ([^\]]+)\]\]/g,
     (_match, desc: string) => (capabilities.hasSkills ? "" : desc),
+  );
+
+  // [[NO-COMMANDS: desc]]：无 Commands → 展开为 desc；有 Commands → 移除
+  // 用于 00_system.md 中的路由表：不支持 Commands 的 IDE 需要路由表，支持的则不需要
+  content = content.replace(
+    /\[\[NO-COMMANDS:\s*([\s\S]*?)\s*\]\]/g,
+    (_match, desc: string) => (capabilities.hasCommands ? "" : desc.trim()),
   );
 
   return content;

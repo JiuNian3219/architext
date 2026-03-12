@@ -1,7 +1,7 @@
 /**
  * @fileoverview Architext 文件模型注册表，用于管理所有 Architext 管理的文件路径。
  *
- * 每个结构版本声明其完整的文件清单（rules/prompts/skills/docTemplates/globalSeeds）。
+ * 每个结构版本声明其完整的文件清单（rules/prompts/skills/docTemplates/globalSeeds/globalDocs）。
  * 给定 (structureVersion + config)，resolveFiles() 可精确计算所有 Architext 管理的文件路径。
  *
  * 版本间差异自动计算：旧模型知道旧文件名，新模型知道新文件名，无需手动维护。
@@ -10,6 +10,11 @@
  * - 新增/删除模板文件时，同步更新对应版本的 FileModel
  * - structureVersion 仅在文件布局变化时递增（新增/删除/重命名文件），内容更新不递增
  * - tests/file-model.test.ts 会校验模型与模板目录的一致性
+ *
+ * v1 → v2 变更摘要：
+ * - rules 从 7 个减少到 2 个（删除 01/03/04/99，移动 02）
+ * - globalSeeds 新增 tech_stack.md（从 rule 降级为 seed）
+ * - 新增 globalDocs 字段：框架拥有的参考文档（可随 update 刷新），部署到 global/references/
  */
 
 import type { ProjectFeature, SupportedEditor } from "../types/index.ts";
@@ -37,6 +42,13 @@ export interface FileModel {
   /** 全局种子文件：init 部署一次，之后为用户数据，update 仅 add-only */
   globalSeeds: GlobalSeedFile[];
 
+  /**
+   * 框架参考文档：框架拥有，可随 update 刷新（非用户数据）。
+   * basenames（含扩展名），对应 templates/{lang}/docs/global/references/{name}，
+   * 部署到 {docDir}/global/references/{name}
+   */
+  globalDocs: string[];
+
   /** 规则更新策略覆盖（未列出的默认 refresh） */
   rulePolicy: Record<string, "templateOnly" | "neverTouch">;
 }
@@ -50,7 +62,7 @@ export interface ResolveConfig {
 
 /** resolveFiles() 的输出：完整的文件路径分类清单 */
 export interface ResolvedFiles {
-  /** Framework 文件路径 — 可安全删除+重部署（rules/prompts/doc-templates/doc-prompts/doc-skills） */
+  /** Framework 文件路径 — 可安全删除+重部署（rules/prompts/doc-templates/doc-prompts/doc-skills/globalDocs） */
   frameworkFiles: string[];
   /** Framework 目录路径 — 整个目录管理（skills） */
   frameworkDirs: string[];
@@ -119,14 +131,70 @@ export const FILE_MODELS: FileModel[] = [
       { file: "env_registry.json", feature: "api" },
       { file: "public_api.json", feature: "lib" },
     ],
+    globalDocs: [],
     rulePolicy: {
       "02_tech_stack": "templateOnly",
       "90_custom_rules": "neverTouch",
     },
   },
+  {
+    version: 2,
+    rules: ["00_system", "90_custom_rules"],
+    prompts: [
+      "start",
+      "inherit",
+      "scope",
+      "plan",
+      "code",
+      "edit",
+      "revise",
+      "audit",
+      "fix",
+      "map",
+      "remove",
+      "help",
+      "recover",
+      "ref",
+    ],
+    skills: [
+      "archi-data-sync",
+      "archi-decompose-roadmap",
+      "archi-design-patterns",
+      "archi-feature-relations",
+      "archi-interview-protocol",
+      "archi-plan-options",
+      "archi-silent-audit",
+      "archi-ui-wireframe",
+    ],
+    docTemplates: [
+      "design.template.md",
+      "plan.template.json",
+      "scope-brief.template.md",
+      "spec.template.md",
+      "ui.template.md",
+    ],
+    globalSeeds: [
+      "dictionary.json",
+      "error_codes.json",
+      "map.json",
+      "roadmap.json",
+      "vision.md",
+      "tech_stack.md",
+      { file: "api_snapshot.json", feature: "api" },
+      { file: "command_api.json", feature: "cli" },
+      { file: "data_snapshot.json", feature: "data" },
+      { file: "design_tokens.json", feature: "ui" },
+      { file: "env_registry.json", feature: "api" },
+      { file: "public_api.json", feature: "lib" },
+    ],
+    globalDocs: ["cli_reference.md"],
+    rulePolicy: {
+      "90_custom_rules": "neverTouch",
+    },
+  },
 ];
 
-export const CURRENT_FILE_MODEL_VERSION = 1;
+export const CURRENT_FILE_MODEL_VERSION = 2;
 
 export function getFileModel(version: number): FileModel | undefined {
   return FILE_MODELS.find((m) => m.version === version);
@@ -217,6 +285,13 @@ export function resolveFiles(
   // ── Doc Templates ──
   for (const tmpl of model.docTemplates) {
     frameworkFiles.push(normalizePath(`${config.docDir}/templates/${tmpl}`));
+  }
+
+  // ── Global Docs (framework-owned references, refreshed on update) ──
+  for (const doc of model.globalDocs) {
+    frameworkFiles.push(
+      normalizePath(`${config.docDir}/global/references/${doc}`),
+    );
   }
 
   // ── Global Seeds ──

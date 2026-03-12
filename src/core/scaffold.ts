@@ -57,6 +57,7 @@ function buildEditorResolver(
       {
         hasSkills: !!editorConfig.skills,
         hasSubagents: !!editorConfig.subagents,
+        hasCommands: !!editorConfig.commands,
       },
       includeBaseDir,
     );
@@ -252,6 +253,20 @@ export async function buildScaffoldOps(
       dest: path.join(targetDir, "global", fileName),
       type: FileOpType.Template,
       replacements,
+      group: "docs",
+    });
+  }
+
+  // ── Global Docs ─────────
+  const globalRefsSource = path.join(sourceDir, "docs", "global", "references");
+
+  for (const doc of model.globalDocs) {
+    frameworkOps.push({
+      src: path.join(globalRefsSource, doc),
+      dest: path.join(targetDir, "global", "references", doc),
+      type: FileOpType.Template,
+      replacements,
+      resolver: docsResolver,
       group: "docs",
     });
   }

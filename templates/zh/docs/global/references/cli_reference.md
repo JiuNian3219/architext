@@ -1,10 +1,3 @@
----
-description: CLI Reference Manual. Working directory rule and command syntax for npx archi task/plan/render.
-globs: **/*
-applyTo: **/*
-alwaysApply: true
----
-
 # CLI Reference
 
 > **Role**: 命令速查手册。提供 `npx archi` 系列命令的语法与参数，供 Terminal Gate 执行时查阅。

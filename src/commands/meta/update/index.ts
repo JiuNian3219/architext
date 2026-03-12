@@ -21,6 +21,7 @@ import {
   CURRENT_FILE_MODEL_VERSION,
   getCurrentFileModel,
 } from "../../../core/file-model.ts";
+import { runMigrationChain } from "../../../core/migrations.ts";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
 import { auditPlans, auditRoadmap } from "./auditor.ts";
@@ -121,6 +122,59 @@ export async function updateCommand(): Promise<void> {
     return;
   }
 
+  // ─── Phase 4.5: 结构迁移 ─────────────────────────────────────
+  let finalStructureVersion = config.structureVersion;
+  if (config.structureVersion < CURRENT_FILE_MODEL_VERSION) {
+    let result;
+    try {
+      result = await runMigrationChain(config, cwd, CURRENT_FILE_MODEL_VERSION);
+    } catch (error: unknown) {
+      // 链断裂等严重错误（如缺少 v2->v3 而目标版本是 v3）
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      logger.error(t("migration_chain_broken", { error: errorMsg }));
+      outro(color.red(t("failed")));
+      return;
+    }
+
+    finalStructureVersion = result.toVersion; // 记录实际完成版本
+    let totalMigrated = 0;
+    let hasError = false;
+
+    for (const step of result.steps) {
+      s.start(
+        t("migrating_structure", {
+          fromVersion: step.from,
+          toVersion: step.to,
+        }),
+      );
+      if (step.error) {
+        s.stop(color.yellow(t("migration_warn")));
+        logger.dim(step.error);
+        hasError = true;
+        break;
+      }
+      if (step.migrated.length > 0) {
+        s.stop(
+          color.green(
+            t("migrated_structure", {
+              fromVersion: step.from,
+              toVersion: step.to,
+              count: step.migrated.length,
+            }),
+          ),
+        );
+        step.migrated.forEach((item) => logger.dim(`  ✓ ${item}`));
+        totalMigrated += step.migrated.length;
+      } else {
+        s.stop(color.dim(t("migration_nothing")));
+      }
+    }
+
+    if (hasError) {
+      logger.warn(t("migration_partial", { done: totalMigrated }));
+    }
+  }
+
   // ─── Phase 5: 清理旧 framework 文件 ───────────────────────────
   s.start(t("removing_old"));
   let removedCount = 0;
@@ -200,10 +254,7 @@ export async function updateCommand(): Promise<void> {
     logger.dim(t("summary_skipped", { list: neverTouchNames.join(", ") }));
   logger.dim(t("summary_global"));
 
-  await saveConfig(
-    { ...config, structureVersion: CURRENT_FILE_MODEL_VERSION },
-    cwd,
-  );
+  await saveConfig({ ...config, structureVersion: finalStructureVersion }, cwd);
 
   outro(color.green(t("success")));
 }

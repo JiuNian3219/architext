@@ -177,6 +177,23 @@ describe("resolveFiles", () => {
     );
   });
 
+  it("globalDocs 路径正确", () => {
+    const result = resolveFiles(model, {
+      editors: ["cursor"],
+      docDir: ".architext",
+    });
+
+    const docsPaths = result.frameworkFiles.filter((f) =>
+      f.startsWith(".architext/global/references/"),
+    );
+    expect(docsPaths).toHaveLength(model.globalDocs.length);
+    if (model.globalDocs.includes("cli_reference.md")) {
+      expect(docsPaths).toContain(
+        ".architext/global/references/cli_reference.md",
+      );
+    }
+  });
+
   it("路径统一使用正斜杠", () => {
     const result = resolveFiles(model, {
       editors: ["cursor"],
@@ -265,12 +282,30 @@ describe("FileModel 与模板目录同步", () => {
 
   it("globalSeeds 列表与模板目录一致", async () => {
     const globalDir = path.join(TEMPLATE_ZH, "docs", "global");
-    const actual = (await fs.readdir(globalDir)).sort();
+    const entries = await fs.readdir(globalDir, { withFileTypes: true });
+    const actual = entries
+      .filter((e) => e.isFile())
+      .map((e) => e.name)
+      .sort();
 
     const modelSeedFiles = model.globalSeeds
       .map((s) => (typeof s === "string" ? s : s.file))
       .sort();
 
     expect(modelSeedFiles).toEqual(actual);
+  });
+
+  it("globalDocs 列表与模板目录一致", async () => {
+    const refsDir = path.join(TEMPLATE_ZH, "docs", "global", "references");
+    const exists = await fs.pathExists(refsDir);
+    if (!exists) {
+      expect(model.globalDocs).toHaveLength(0);
+      return;
+    }
+    const actual = (await fs.readdir(refsDir))
+      .filter((f) => f.endsWith(".md"))
+      .sort();
+
+    expect(model.globalDocs.slice().sort()).toEqual(actual);
   });
 });

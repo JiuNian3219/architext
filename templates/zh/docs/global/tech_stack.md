@@ -1,10 +1,3 @@
----
-description: Technical Standards & Technology Stack. Contains language versions, framework choices, coding conventions, naming rules, and forbidden patterns. Consult when writing code.
-globs: **/*
-applyTo: **/*
-alwaysApply: true
----
-
 # Tech Stack & Engineering Standards: [项目名称]
 
 > **Role:** The "Law" of the codebase. Defines tools, structure, and engineering workflows.
@@ -15,7 +8,7 @@ alwaysApply: true
 ## 1. Global Mandates (全局红线)
 * **No Hardcoding:** 所有的密钥、API地址必须使用环境变量，严禁硬编码。
 * **No Dead Code:** 提交的代码必须是干净的，严禁保留注释掉的代码块或无用的 `TODO`。
-* **Comments for Why:** 注释解释“为什么这么做”（业务背景），而不仅仅是“做了什么”。
+* **Comments for Why:** 注释解释"为什么这么做"（业务背景），而不仅仅是"做了什么"。
 
 ---
 

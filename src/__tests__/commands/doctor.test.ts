@@ -53,7 +53,10 @@ const VALID_ROADMAP = {
 };
 
 const VALID_MAP = {
-  governance: { layers: [] },
+  directoryMapping: [],
+  logicalTopology: [],
+  criticalUserJourneys: [],
+  featureRelations: [],
 };
 
 const VALID_DICTIONARY = {
@@ -213,6 +216,7 @@ describe("runGlobalFileChecks", () => {
           "map.json": JSON.stringify(VALID_MAP),
           "dictionary.json": JSON.stringify(VALID_DICTIONARY),
           "error_codes.json": JSON.stringify({ businessErrors: [] }),
+          "tech_stack.md": "# Tech Stack",
         },
       },
     });
@@ -289,7 +293,7 @@ describe("runGlobalFileChecks", () => {
   it("map.json Schema 不符时：为 warn", async () => {
     await createTestStructure(tempDir, {
       ".architext": {
-        global: { "map.json": JSON.stringify({ unexpected: true }) },
+        global: { "map.json": "[]" },
       },
     });
     const results = await runGlobalFileChecks(BASE_CONFIG, tempDir);
