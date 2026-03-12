@@ -50,7 +50,7 @@
     **Protocol**:
     - **Read First**: Must read target file before modify; follow existing project code style.
     - **Use Existing Stack**: Use only tech and libs declared in `02_tech_stack.md`.
-    - (When this task involves UI) **Design Tokens Only**: Styles strictly use Token/Preset; no hardcoded magic values.
+    - (When this task involves UI) [[INCLUDE: shared/ui-redlines.md]]
     - **Type-Safe**: Complete type definitions; use project type system to guard boundaries.
     - **Code Organization**: Follow `02_tech_stack.md` architecture and file placement.
     - **Comments**: Explain Why, not What.

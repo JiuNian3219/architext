@@ -50,7 +50,7 @@
     **Protocol**:
     - **Read First**: 修改前须读取目标文件；遵循项目现有代码风格。
     - **Use Existing Stack**: 仅用 `02_tech_stack.md` 声明的技术与库。
-    - （本任务涉及ui时） **Design Tokens Only**: 样式严格使用 Token/Preset；禁硬编码魔法值。
+    - （本任务涉及ui时）[[INCLUDE: shared/ui-redlines.md]]
     - **Type-Safe**: 补齐类型定义；用项目技术栈的类型系统守护边界。
     - **Code Organization**: 遵循 `02_tech_stack.md` 架构模式与文件归位策略。
     - **Comments**: 解释 Why 而非 What。
