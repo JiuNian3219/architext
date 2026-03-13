@@ -43,15 +43,17 @@ function getUserRuleBasenames(): string[] {
 }
 
 /**
- * 递归列举目录下所有文件。
+ * 递归列举目录下所有文件，支持排除特定子目录。
  *
  * @param dir - 目录路径
  * @param baseDir - 基础目录路径
+ * @param excludeDirs - 要排除的子目录名列表
  * @returns 文件列表
  */
 async function listFilesRecursive(
   dir: string,
   baseDir?: string,
+  excludeDirs: string[] = [],
 ): Promise<{ fullPath: string; relPath: string }[]> {
   const base = baseDir ?? dir;
   const result: { fullPath: string; relPath: string }[] = [];
@@ -61,7 +63,8 @@ async function listFilesRecursive(
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      result.push(...(await listFilesRecursive(fullPath, base)));
+      if (excludeDirs.includes(entry.name)) continue;
+      result.push(...(await listFilesRecursive(fullPath, base, excludeDirs)));
     } else if (entry.isFile()) {
       result.push({
         fullPath,
@@ -91,7 +94,13 @@ export async function collectUserData(
   for (const sub of docSubDirs) {
     const dir = path.join(docDir, sub);
     if (!(await fs.pathExists(dir))) continue;
-    for (const { fullPath, relPath } of await listFilesRecursive(dir)) {
+    // global 目录排除 references/（框架管理的参考文档）
+    const excludeDirs = sub === "global" ? ["references"] : [];
+    for (const { fullPath, relPath } of await listFilesRecursive(
+      dir,
+      undefined,
+      excludeDirs,
+    )) {
       const content = await fs.readFile(fullPath, "utf-8");
       entries.push({
         path: posix(path.join(config.docDir, sub, relPath)),
@@ -100,11 +109,12 @@ export async function collectUserData(
     }
   }
 
-  // 用户专属规则文件（各编辑器的 90_custom_rules + 02_tech_stack 等）
+  // 用户专属规则文件（90_custom_rules 必须打包；02_tech_stack 如存在也打包用于兼容 v1）
+  const userRuleFiles = [...getUserRuleBasenames(), "02_tech_stack"];
   for (const editor of config.editors) {
     const ec = EDITOR_CONFIGS[editor];
     if (!ec) continue;
-    for (const baseName of getUserRuleBasenames()) {
+    for (const baseName of userRuleFiles) {
       const filePath = path.resolve(
         cwd,
         ec.targetDir,
