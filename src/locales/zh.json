@@ -55,6 +55,9 @@
     "desc": "打包用户数据（文档、任务、自定义规则），用于升级或迁移前备份",
     "output": "输出文件路径（默认: architext-pack.xml）"
   },
+  "notify": {
+    "desc": "发送桌面通知（供 IDE hooks 调用）"
+  },
   "scaffold": {
     "fallback": "未找到 {lang} 模板，回退使用 'zh'",
     "step_docs": "正在初始化文档骨架...",
