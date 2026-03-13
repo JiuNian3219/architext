@@ -1,7 +1,6 @@
 ---
 name: archi-design-patterns
-type: specialist
-description: Architext technical design structured pattern library. Defines standard formats and self-check lists for four core mechanism description patterns (State Machine / Pipeline / Decision Matrix / Protocol). Referenced by /archi.plan step_4 when generating design.md § 2, and by /archi.code step_5 when auditing implementation vs. design consistency.
+description: Apply structured design patterns for technical solutions. Use when writing design documents or reviewing implementation consistency.
 ---
 
 # Technical Design Structured Pattern Library

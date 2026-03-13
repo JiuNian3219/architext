@@ -1,7 +1,6 @@
 ---
 name: archi-plan-options
-type: subprocess
-description: 架构决策选项库。按项目类型列出必须回答的核心问题，输出推荐或待裁决问题。
+description: Generate architecture decision options by project type. Use when planning and need guidance on technical choices.
 ---
 
 # 架构决策选项库

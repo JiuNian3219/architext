@@ -1,7 +1,6 @@
 ---
 name: archi-silent-audit
-type: reviewer
-description: Embedded lightweight review. In an isolated context, reviews main Agent output, filters review dimensions by mode, returns finding list. Must not generate report files. Shares dimension definitions with audit.md but differs in responsibility: audit.md is user-triggered standalone deep review; this Skill is protocol-triggered lightweight check.
+description: Lightweight code and document review. **Must run in isolated context/subagent.** Use when verifying outputs or checking compliance with specifications.
 ---
 
 # Embedded Lightweight Review

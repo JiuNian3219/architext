@@ -1,7 +1,6 @@
 ---
 name: archi-decompose-roadmap
-type: subagent
-description: Architext 任务分解专家。五步分解法：标定项目类型→双视角提取任务→识别 Polish→NFR 路由→依赖优化。产出 Tier 1 Schema 的 roadmap.json。
+description: Decompose project requirements into roadmap tasks. Use when initializing a project or scoping new features.
 ---
 
 # Roadmap 任务分解

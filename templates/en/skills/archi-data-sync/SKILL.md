@@ -1,7 +1,6 @@
 ---
 name: archi-data-sync
-type: reviewer
-description: Data governance sync executor. In isolated context, scans main Agent output, compares with global data file state, performs incremental sync per 03_data_governance.md rules, returns change Diff.
+description: Sync data governance files with main agent output. **Must run in isolated context/subagent.** Use when verifying data consistency between code and global data files.
 ---
 
 # Data Governance Sync Executor

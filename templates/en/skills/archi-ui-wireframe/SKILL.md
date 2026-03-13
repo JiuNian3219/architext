@@ -1,7 +1,6 @@
 ---
 name: archi-ui-wireframe
-type: subagent
-description: UI concept design expert. Generates hi-fi ui_concept.html — the single visual source of truth for the entire project. Supports adopt mode to reverse-capture UI from existing code.
+description: Generate UI concept designs and wireframes.when creating or updating UI screens for web, mobile, or desktop applications. Do not auto-trigger.
 ---
 
 # UI Concept Design

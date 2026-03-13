@@ -1,10 +1,16 @@
 ---
 name: archi-silent-audit
-type: reviewer
-description: 嵌入式轻量审查。在独立上下文中审查主 Agent 产出，按模式筛选审查维度，返回发现列表。禁生成报告文件。与 audit.md 共享维度定义但职责不同：audit.md 是用户主动触发的独立深度审查，本 Skill 是协议自动触发的轻量检查。
+description: Lightweight code and document review. **Must run in isolated context/subagent.** Use when verifying outputs or checking compliance with specifications.
 ---
 
 # 嵌入式轻量审查
+
+## 执行方式
+
+**必须在独立上下文中执行**（Subagent / 子代理模式）：
+- Claude Code: 使用 `context: fork` 或 spawn Subagent 执行
+- Cursor/Windsurf: 作为独立 Agent 会话执行，禁止 inline
+- 其他 IDE: 新建独立会话执行，完成后返回结果
 
 ## 系统流程定位
 

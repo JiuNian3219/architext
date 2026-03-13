@@ -1,7 +1,6 @@
 ---
 name: archi-feature-relations
-type: reviewer
-description: featureRelations linkage handler. In isolated context, handles map.json featureRelations register/check/cleanup, ensures aggregator Tasks maintain correct linkage with their sources.
+description: Manage feature relations linkage in map.json. **Must run in isolated context/subagent.** Use when creating aggregator tasks or verifying task dependencies.
 ---
 
 # featureRelations Linkage Handler
