@@ -16,6 +16,8 @@
     "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
     "yes": "Skip all confirmation prompts (auto-confirm overwrite)",
     "brief": "Generate project-brief.md (use with -y to skip interaction)",
+    "notify": "Enable desktop notifications (default: on)",
+    "noNotify": "Disable desktop notifications",
     "failed": "Initialization failed"
   },
   "update": {
@@ -56,7 +58,9 @@
     "output": "Output file path (default: architext-pack.xml)"
   },
   "notify": {
-    "desc": "Send desktop notification (for IDE hooks)"
+    "desc": "Send desktop notification (for IDE hooks)",
+    "title": "Architext",
+    "defaultMessage": "Awaiting next instruction"
   },
   "scaffold": {
     "fallback": "Template for {lang} not found, falling back to 'zh'",
@@ -209,6 +213,7 @@
       "summary_templated": "02_tech_stack has project customizations, not overwritten. New template saved to {docDir}/templates/02_tech_stack.template.md — compare and merge into your IDE rules dir (e.g. .cursor/rules/, .windsurf/rules/)",
       "summary_skipped": "Skipped: {list}",
       "summary_global": "Global docs (global/) are add-only — delete outdated files manually if needed",
+      "notify_enabled": "Claude Code desktop notifications enabled",
       "schema": {
         "parse_error": "JSON parse failed — file may be corrupted",
         "version_too_new": "File version (v{current}) is newer than CLI expected version (v{expected}). Please upgrade the CLI.",

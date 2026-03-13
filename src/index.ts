@@ -42,6 +42,7 @@ cli
   .option("-t, --type <type>", t("init.type"))
   .option("-y, --yes", t("init.yes"))
   .option("-b, --brief", t("init.brief"))
+  .option("--no-notify", t("init.noNotify"))
   .action(run(initCommand));
 
 // Update 同步最新规则

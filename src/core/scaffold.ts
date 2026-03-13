@@ -299,7 +299,7 @@ export async function scaffold(
   options: ScaffoldOptions,
   runOptions?: ScaffoldRunOptions,
 ) {
-  const { language, docDir, editors, features = [] } = options;
+  const { language, docDir, editors, features = [], notify = true } = options;
 
   const templateRoot = await TemplateManager.getRoot();
   const templateLang = await resolveTemplateLang(templateRoot, language);
@@ -345,8 +345,9 @@ export async function scaffold(
     });
   }
 
-  const { opencodeInstructionsAdded } = await applyIdeIntegrations(editors);
+  const { opencodeInstructionsAdded, opencodeNotifyAdded, claudeNotifyAdded } =
+    await applyIdeIntegrations(editors, notify);
 
   logger.success(t("complete"));
-  return { opencodeInstructionsAdded };
+  return { opencodeInstructionsAdded, opencodeNotifyAdded, claudeNotifyAdded };
 }

@@ -42,6 +42,12 @@ export const ArchitextConfigSchema = z.object({
   updatedAt: z.string().min(1),
   /** 标记 .opencode/rules/*.md 是否为 Architext 添加，uninstall 时据此决定是否移除 */
   opencodeInstructionsAdded: z.boolean().optional(),
+  /** 标记 opencode.json 的 hooks 是否为 Architext 添加 */
+  opencodeNotifyAdded: z.boolean().optional(),
+  /** 标记 .claude/settings.json 的 hooks 是否为 Architext 添加 */
+  claudeNotifyAdded: z.boolean().optional(),
+  /** 是否启用桌面通知功能，默认 true */
+  notify: z.boolean().optional(),
 });
 
 export type ArchitextConfigInferred = z.infer<typeof ArchitextConfigSchema>;
