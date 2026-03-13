@@ -1,7 +1,6 @@
 ---
 name: archi-data-sync
-type: reviewer
-description: 数据治理同步执行器。在独立上下文中扫描主 Agent 产出，对比全局数据文件的现有状态，按 03_data_governance.md 规则执行增量同步，返回变更 Diff。
+description: Sync data governance files with main agent output. **Must run in isolated context/subagent.** Use when verifying data consistency between code and global data files.
 ---
 
 # 数据治理同步执行器

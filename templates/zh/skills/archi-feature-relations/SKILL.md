@@ -1,7 +1,6 @@
 ---
 name: archi-feature-relations
-type: reviewer
-description: featureRelations 联动处理器。在独立上下文中处理 map.json featureRelations 的注册/检查/清理操作，确保聚合型 Task 与其来源的联动关系正确维护。
+description: Manage feature relations linkage in map.json. **Must run in isolated context/subagent.** Use when creating aggregator tasks or verifying task dependencies.
 ---
 
 # featureRelations 联动处理器

@@ -1,7 +1,6 @@
 ---
 name: archi-ui-wireframe
-type: subagent
-description: UI 概念设计专家。生成高保真 ui_concept.html：全应用屏幕的视觉真相源，供 AI 定位屏幕范围、人类浏览器预览。
+description: Generate UI concept designs and wireframes.when creating or updating UI screens for web, mobile, or desktop applications. Do not auto-trigger.
 ---
 
 # UI 概念设计

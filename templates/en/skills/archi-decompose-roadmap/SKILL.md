@@ -1,7 +1,6 @@
 ---
 name: archi-decompose-roadmap
-type: subagent
-description: Architext task decomposition expert. Five-step method produces Tier 1 Schema-compliant roadmap.json tasks.
+description: Decompose project requirements into roadmap tasks. Use when initializing a project or scoping new features.
 ---
 
 # Roadmap Task Decomposition

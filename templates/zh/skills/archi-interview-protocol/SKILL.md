@@ -1,7 +1,6 @@
 ---
 name: archi-interview-protocol
-type: specialist
-description: Architext 补充访谈协议。规范信息缺口的提问方式：选择题优先、AI 推荐 + [推荐] 标注、[Z] 自定义兜底、AI+/AI- 完整分析、选项说明描述具体行为。产出标准 Q-table 和 INPUT 提示行，供 /archi.start、/archi.scope、/archi.plan 的补充确认步骤引用。
+description: Conduct structured interviews to fill information gaps. Use when requirements are unclear or need user clarification.
 ---
 
 # 补充访谈协议

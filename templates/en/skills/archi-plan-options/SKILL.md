@@ -1,7 +1,6 @@
 ---
 name: archi-plan-options
-type: subprocess
-description: Architecture decision option library. Lists core questions by project type that must be answered, outputs recommendation or decision questions.
+description: Generate architecture decision options by project type. Use when planning and need guidance on technical choices.
 ---
 
 # Architecture Decision Option Library

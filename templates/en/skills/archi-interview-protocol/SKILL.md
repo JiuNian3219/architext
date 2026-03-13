@@ -1,7 +1,6 @@
 ---
 name: archi-interview-protocol
-type: specialist
-description: Architext supplementary interview protocol. Standardizes how to ask about information gaps: multiple-choice first, AI recommendation + [Recommended] marking, [Z] Custom fallback, complete AI+/AI- analysis, option descriptions state concrete behavior. Produces standard Q-table and INPUT prompt line, referenced by /archi.start, /archi.scope, and /archi.plan supplementary confirmation steps.
+description: Conduct structured interviews to fill information gaps. Use when requirements are unclear or need user clarification.
 ---
 
 # Supplementary Interview Protocol
