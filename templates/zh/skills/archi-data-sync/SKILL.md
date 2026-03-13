@@ -80,3 +80,8 @@ NO CHANGE:
 ---
 
 > **中间产物**：此 Skill 为审查型子程序，产出变更 Diff 后控制权交还调用方。
+
+## 输出验证
+
+□ 目标全局 JSON 文件已更新（dictionary.json / error_codes.json / data_snapshot.json 等）
+□ Diff 输出已生成，含 ADDED/MODIFIED/NO CHANGE 段

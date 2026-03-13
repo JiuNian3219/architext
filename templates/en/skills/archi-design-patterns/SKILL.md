@@ -137,3 +137,8 @@ Select ≥1 pattern per mechanism characteristic. Same feature may combine multi
 ---
 
 > **Intermediate output**: This Skill is a subroutine; after producing mechanism description + self-check results, control returns to caller (step_4_generate or step_5_audit) to continue.
+
+## Output Verification
+
+□ `design.md` § 2 Core Mechanisms populated with selected pattern(s)
+□ Self-check list all passed for each pattern
