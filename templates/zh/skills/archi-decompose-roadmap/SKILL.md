@@ -213,6 +213,10 @@ Brief → [本 Skill] → roadmap.json → /archi.plan → spec/ui/plan → /arc
 
 `deps` 全部 `done` → `pending`；有未完成 `deps` → `blocked`
 
+## 输出验证
+
+□ `global/roadmap.json` 已生成且含有效 `phases` 数组
+
 ## 产出物
 
 **① 任务数据**：`roadmap.json` `phases[].tasks[]` 结构

@@ -213,6 +213,10 @@ Route by effort weight.
 
 `deps` all `done` → `pending`; has incomplete `deps` → `blocked`
 
+## Output Verification
+
+□ `global/roadmap.json` generated with valid `phases` array
+
 ## Outputs
 
 **① Task Data**: `roadmap.json` `phases[].tasks[]` structure

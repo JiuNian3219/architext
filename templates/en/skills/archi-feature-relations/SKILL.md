@@ -115,3 +115,8 @@ IMPACT: [impact description]
 ---
 
 > **Intermediate output**: This Skill is a review subprogram; after producing result, control returns to caller.
+
+## Output Verification
+
+□ `map.json` `featureRelations` array updated (register/cleanup mode)
+□ Linkage check results output (check mode)

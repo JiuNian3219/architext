@@ -141,6 +141,11 @@ Output summary: aesthetic direction + reference products, screen coverage list (
 
 **User confirmation**: Reply **OK** to complete; otherwise enter Refinement.
 
+## Output Verification
+
+□ `global/ui_concept.html` generated with all screen sections
+□ `global/ui_context.md` generated with screen inventory table
+
 ---
 
 ## Refinement (User Feedback)

@@ -115,3 +115,8 @@ IMPACT: [影响说明]
 ---
 
 > **中间产物**：此 Skill 为审查型子程序，产出结果后控制权交还调用方。
+
+## 输出验证
+
+□ `map.json` `featureRelations` 数组已更新（register/cleanup 模式）
+□ 关联检查结果已输出（check 模式）

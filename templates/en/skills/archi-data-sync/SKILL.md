@@ -80,3 +80,8 @@ When no sync needed: `### Data Sync Results — NO CHANGES`
 ---
 
 > **Intermediate output**: This Skill is a review subprogram; after producing change Diff, control returns to caller.
+
+## Output Verification
+
+□ Target global JSON files updated (dictionary.json / error_codes.json / data_snapshot.json / etc.)
+□ Diff output generated with ADDED/MODIFIED/NO CHANGE sections

@@ -137,3 +137,8 @@ design.md § 2 Core Mechanisms 内容
 ---
 
 > **中间产物**：此 Skill 为子程序，产出机制描述 + 自检结果后控制权交还调用方（step_4_generate 或 step_5_audit），继续后续流程。
+
+## 输出验证
+
+□ `design.md` § 2 核心机制已填充选定模式
+□ 每个模式自检清单全部通过

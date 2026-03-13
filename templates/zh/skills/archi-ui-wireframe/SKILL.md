@@ -141,6 +141,11 @@ S-XX →（触发条件）→ S-YY
 
 **用户确认**：回复 **OK** 完成；非 OK 进入 Refinement。
 
+## 输出验证
+
+□ `global/ui_concept.html` 已生成且含所有屏幕 section
+□ `global/ui_context.md` 已生成且含屏幕索引表
+
 ---
 
 ## Refinement（用户反馈调整）
