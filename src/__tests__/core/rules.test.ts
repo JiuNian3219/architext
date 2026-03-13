@@ -196,7 +196,7 @@ describe("resolveCapabilityRefs", () => {
       const input = "Gate:\n[[INCLUDE: shared/status-gate.md]]\nEnd";
       const result = resolveCapabilityRefs(
         input,
-        { hasSkills: true, hasSubagents: true },
+        { hasSkills: true, hasSubagents: true, hasCommands: true },
         tmpDir,
       );
 
@@ -208,7 +208,7 @@ describe("resolveCapabilityRefs", () => {
       const input = "[[INCLUDE: shared/missing.md]]";
       const result = resolveCapabilityRefs(
         input,
-        { hasSkills: true, hasSubagents: true },
+        { hasSkills: true, hasSubagents: true, hasCommands: true },
         tmpDir,
       );
 
