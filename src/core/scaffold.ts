@@ -9,7 +9,13 @@
 
 import fs from "fs-extra";
 import path from "path";
-import { FileOperation, FileOpType, InitConfig } from "../types/index.ts";
+import {
+  FileOperation,
+  FileOpType,
+  InitConfig,
+  ProjectFeature,
+  SupportedEditor,
+} from "../types/index.ts";
 import { logger } from "../utils/logger.ts";
 import { createT, getSystemLocale } from "../utils/t.ts";
 import {
@@ -70,15 +76,16 @@ function buildEditorResolver(
  * @param includeBaseDir - 基础目录
  * @returns 能力标记解析器
  */
-function buildDocsResolver(editors: string[], includeBaseDir: string) {
-  const hasSkills = editors.some(
-    (e) => !!EDITOR_CONFIGS[e as keyof typeof EDITOR_CONFIGS]?.skills,
-  );
-  const hasSubagents = editors.some(
-    (e) => !!EDITOR_CONFIGS[e as keyof typeof EDITOR_CONFIGS]?.subagents,
-  );
+function buildDocsResolver(editors: SupportedEditor[], includeBaseDir: string) {
+  const hasSkills = editors.some((e) => !!EDITOR_CONFIGS[e]?.skills);
+  const hasSubagents = editors.some((e) => !!EDITOR_CONFIGS[e]?.subagents);
+  const hasCommands = editors.some((e) => !!EDITOR_CONFIGS[e]?.commands);
   return (content: string) =>
-    resolveCapabilityRefs(content, { hasSkills, hasSubagents }, includeBaseDir);
+    resolveCapabilityRefs(
+      content,
+      { hasSkills, hasSubagents, hasCommands },
+      includeBaseDir,
+    );
 }
 
 /**
@@ -118,7 +125,7 @@ export async function buildScaffoldOps(
   const docsSource = path.join(sourceDir, GLOBAL_RULES.PATHS.DOCS_SOURCE);
 
   const model = getCurrentFileModel();
-  const featureSet = new Set<string>(features);
+  const featureSet = new Set<ProjectFeature>(features);
   const featuresLabel = features.length > 0 ? features.join(", ") : "未指定";
 
   const replacements = {

@@ -202,8 +202,13 @@ export async function deployTemplateOnlyRules(
   const hasSubagents = config.editors.some(
     (e) => !!EDITOR_CONFIGS[e]?.subagents,
   );
+  const hasCommands = config.editors.some((e) => !!EDITOR_CONFIGS[e]?.commands);
   const resolver = (content: string) =>
-    resolveCapabilityRefs(content, { hasSkills, hasSubagents }, docsSource);
+    resolveCapabilityRefs(
+      content,
+      { hasSkills, hasSubagents, hasCommands },
+      docsSource,
+    );
 
   const deployed: string[] = [];
   for (const name of templateOnlyNames) {
