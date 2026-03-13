@@ -59,6 +59,8 @@ export async function helpCommand(): Promise<void> {
 
   const aiSection = [
     section(t("section.ai")),
+    `  ${color.dim(t("ai.chatModeHint"))}`,
+    "",
     cmd("/archi.start [file_path]", t("ai.start.desc"), [
       t("ai.start.detail"),
       t("ai.start.example"),
@@ -108,11 +110,16 @@ export async function helpCommand(): Promise<void> {
 
   const cliSection = [
     section(t("section.cli")),
-    cmd("npx archi init [-e editor] [-l lang] [-d path]", t("cli.init.desc"), [
-      `-e, --editor <type>   ${t("cli.init.editor")}`,
-      `-l, --language <lang> ${t("cli.init.lang")}`,
-      `-d, --doc <path>      ${t("cli.init.doc")}`,
-    ]),
+    cmd(
+      "npx archi init [-e editor] [-l lang] [-d path] [--no-notify]",
+      t("cli.init.desc"),
+      [
+        `-e, --editor <type>   ${t("cli.init.editor")}`,
+        `-l, --language <lang> ${t("cli.init.lang")}`,
+        `-d, --doc <path>      ${t("cli.init.doc")}`,
+        `    --no-notify       ${t("cli.init.noNotify")}`,
+      ],
+    ),
     cmd("npx archi update", t("cli.update.desc")),
     cmd("npx archi doctor", t("cli.doctor.desc")),
     cmd("npx archi task [id] [--status <s>] [--check]", t("cli.task.desc"), [
@@ -121,6 +128,9 @@ export async function helpCommand(): Promise<void> {
     ]),
     cmd("npx archi plan <id>", t("cli.plan.desc"), [t("cli.plan.example")]),
     cmd("npx archi render", t("cli.render.desc")),
+    cmd("npx archi pack [-o file]", t("cli.pack.desc"), [
+      t("cli.pack.example"),
+    ]),
     cmd("npx archi template <name>", t("cli.template.desc"), [
       t("cli.template.example"),
     ]),

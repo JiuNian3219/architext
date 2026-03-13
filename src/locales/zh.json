@@ -311,6 +311,7 @@
         "workflow": "Typical Workflow (典型工作流)"
       },
       "ai": {
+        "chatModeHint": "💡 Chat Mode: 可直接用自然语言描述需求，AI 会自动识别意图并执行对应协议。",
         "start": {
           "desc": "新项目冷启动。通过访谈确立愿景、技术栈，生成文档骨架。",
           "detail": "产出: Vision + Tech Stack + Roadmap + 全局文档骨架",
@@ -380,7 +381,8 @@
           "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "指定语言 (zh / en)",
           "doc": "自定义文档目录名 (默认 .architext)",
-          "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)"
+          "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
+          "noNotify": "禁用桌面通知（默认启用）"
         },
         "update": {
           "desc": "同步最新规则模板到项目，保持规则文件与框架版本一致。",
@@ -407,6 +409,10 @@
         },
         "uninstall": {
           "desc": "移除 Architext 框架及其生成的所有文件（规则、文档、配置）。"
+        },
+        "pack": {
+          "desc": "打包用户数据（文档、任务、自定义规则）为 XML 备份文件。",
+          "example": "例: npx archi pack -o backup.xml"
         }
       },
       "quick": {

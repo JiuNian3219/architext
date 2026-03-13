@@ -311,6 +311,7 @@
         "workflow": "Typical Workflow"
       },
       "ai": {
+        "chatModeHint": "💡 Chat Mode: You can describe requirements in natural language. AI will detect intent and execute the appropriate protocol automatically.",
         "start": {
           "desc": "Cold start a new project. Interview vision, tech stack, generate doc skeleton.",
           "detail": "Output: Vision + Tech Stack + Roadmap + Global doc skeleton",
@@ -380,7 +381,8 @@
           "editor": "Target IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "Language (zh / en)",
           "doc": "Custom doc directory name (default: .architext)",
-          "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)"
+          "type": "Project features, comma-separated (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
+          "noNotify": "Disable desktop notifications (default: enabled)"
         },
         "update": {
           "desc": "Sync latest rule templates to project, keep rules aligned with framework version.",
@@ -407,6 +409,10 @@
         },
         "uninstall": {
           "desc": "Remove Architext framework and all generated files (rules, docs, config)."
+        },
+        "pack": {
+          "desc": "Pack user data (docs, tasks, custom rules) into an XML backup file.",
+          "example": "e.g. npx archi pack -o backup.xml"
         }
       },
       "quick": {
