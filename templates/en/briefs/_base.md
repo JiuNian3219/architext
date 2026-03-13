@@ -84,6 +84,13 @@
 **Directory structure**: [already defined → describe key dirs / none (AI generates based on pattern)]
 **Branching strategy**: [e.g.: Trunk-based / Git Flow / GitHub Flow]
 **Commit convention**: [e.g.: Conventional Commits (feat/fix/chore) / custom → describe]
+
+**AI Git Workflow** (Git conventions when AI runs `/archi.code`):
+- **Auto commit**: [Yes - auto git commit after each Task / No - generate commit message only, user commits manually]
+- **Commit granularity**: [Per Task / Per Phase / As needed]
+- **Branching**: [Work directly on main / Create branch per Task `feat/{task-id}`]
+- **Auto push**: [Yes / No]
+
 **Testing preference**: [e.g.: Vitest / Jest / pytest / no special requirements]
 
 ---

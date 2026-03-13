@@ -84,6 +84,13 @@
 **目录结构**: [已有明确结构 → 简述关键目录 / 无（AI 基于架构模式生成）]
 **分支策略**: [例：Trunk-based / Git Flow / GitHub Flow]
 **Commit 规范**: [例：Conventional Commits (feat/fix/chore) / 自定义 → 简述]
+
+**AI Git 工作流** (AI 执行 `/archi.code` 时的提交约定):
+- **自动提交**: [是 - 每个 Task 完成后自动 git commit / 否 - 仅生成 commit message，用户手动提交]
+- **提交粒度**: [Per Task - 每个 Task 一个 commit / Per Phase - 每个 Phase 一个 commit / 按需]
+- **分支策略**: [直接在 main 分支工作 / 每个 Task 新建分支 `feat/{task-id}`]
+- **自动推送**: [是 / 否]
+
 **测试偏好**: [例：Vitest / Jest / pytest / 无特殊要求]
 
 ---
