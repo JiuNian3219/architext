@@ -19,14 +19,26 @@ import type { SupportedEditor } from "../types/index.ts";
  */
 interface OpenCodeConfig {
   instructions?: string[];
-  hooks?: {
-    postCommand?: Array<{
-      command: string;
-      args?: string[];
-      when?: string;
-    }>;
-  };
+  plugin?: string[];
 }
+
+/**
+ * OpenCode 插件内容 - 桌面通知
+ */
+const OPENCODE_NOTIFY_PLUGIN = `/**
+ * Architext 桌面通知插件
+ * 在会话空闲时触发 npx archi notify
+ */
+export const architextNotify = async ({ $ }) => {
+  return {
+    event: async ({ event }) => {
+      if (event.type === "session.idle") {
+        await $\`npx archi notify\`;
+      }
+    }
+  };
+};
+`;
 
 /**
  * 当 editors 包含 opencode 时，在项目根目录生成或更新 opencode.json，
@@ -63,56 +75,51 @@ export async function applyOpenCodeIntegration(): Promise<boolean> {
 }
 
 /**
- * 为 OpenCode 配置桌面通知 hooks
- * 在 opencode.json 中添加任务完成后的通知 hook
+ * 为 OpenCode 配置桌面通知插件
+ * 在 .opencode/plugins/architext-notify.js 创建插件文件
+ *
+ * 注意：OpenCode 会自动加载 .opencode/plugins/ 目录下的插件文件，
+ * 不需要在 opencode.json 中显式配置
  */
 export async function applyOpenCodeNotifyIntegration(): Promise<boolean> {
-  const destPath = path.join(process.cwd(), "opencode.json");
-
-  let config: OpenCodeConfig = {};
-
-  if (await fs.pathExists(destPath)) {
-    try {
-      config = JSON.parse(await fs.readFile(destPath, "utf-8"));
-    } catch {
-      config = {};
-    }
-  }
-
-  if (!config.hooks) config.hooks = {};
-  if (!config.hooks.postCommand) config.hooks.postCommand = [];
+  const pluginDir = path.join(process.cwd(), ".opencode/plugins");
+  const pluginPath = path.join(pluginDir, "architext-notify.js");
 
   // 检查是否已存在
-  const exists = config.hooks.postCommand.some(
-    (h) =>
-      h.command === "npx" &&
-      h.args?.[0] === "archi" &&
-      h.args?.[1] === "notify",
-  );
-  if (exists) return false;
+  if (await fs.pathExists(pluginPath)) {
+    return false;
+  }
 
-  config.hooks.postCommand.push({
-    command: "npx",
-    args: ["archi", "notify"],
-    when: "onIdle",
-  });
+  // 创建插件目录
+  await fs.ensureDir(pluginDir);
 
-  await fs.writeFile(destPath, JSON.stringify(config, null, 2), "utf-8");
+  // 写入插件文件
+  await fs.writeFile(pluginPath, OPENCODE_NOTIFY_PLUGIN, "utf-8");
+
   return true;
 }
 
 /**
- * 清理 opencode.json 中的 Architext 配置（包括 rules 和 hooks）
+ * 清理 OpenCode 中的 Architext 配置（包括 rules 和插件）
  */
 export async function cleanupOpenCodeIntegration(): Promise<void> {
-  const destPath = path.join(process.cwd(), "opencode.json");
+  const configPath = path.join(process.cwd(), "opencode.json");
+  const pluginPath = path.join(
+    process.cwd(),
+    ".opencode/plugins/architext-notify.js",
+  );
   const archiPath = ".opencode/rules/*.md";
 
-  if (!(await fs.pathExists(destPath))) return;
+  // 删除插件文件
+  if (await fs.pathExists(pluginPath)) {
+    await fs.remove(pluginPath);
+  }
+
+  if (!(await fs.pathExists(configPath))) return;
 
   try {
     const content: OpenCodeConfig = JSON.parse(
-      await fs.readFile(destPath, "utf-8"),
+      await fs.readFile(configPath, "utf-8"),
     );
     let modified = false;
 
@@ -131,31 +138,12 @@ export async function cleanupOpenCodeIntegration(): Promise<void> {
       }
     }
 
-    // 清理 hooks
-    if (content.hooks?.postCommand) {
-      const originalLength = content.hooks.postCommand.length;
-      content.hooks.postCommand = content.hooks.postCommand.filter(
-        (h) =>
-          !(
-            h.command === "npx" &&
-            h.args?.[0] === "archi" &&
-            h.args?.[1] === "notify"
-          ),
-      );
-      if (content.hooks.postCommand.length !== originalLength) {
-        modified = true;
-        if (content.hooks.postCommand.length === 0)
-          delete content.hooks.postCommand;
-        if (Object.keys(content.hooks).length === 0) delete content.hooks;
-      }
-    }
-
     if (!modified) return;
 
     if (Object.keys(content).length === 0) {
-      await fs.remove(destPath);
+      await fs.remove(configPath);
     } else {
-      await fs.writeFile(destPath, JSON.stringify(content, null, 2), "utf-8");
+      await fs.writeFile(configPath, JSON.stringify(content, null, 2), "utf-8");
     }
   } catch {
     // JSON 损坏时跳过
@@ -165,21 +153,31 @@ export async function cleanupOpenCodeIntegration(): Promise<void> {
 // ─── Claude Code 集成 ───────────────────────────────────────────────────────
 
 /**
- * Claude Code settings 配置结构
+ * Claude Code hook 配置结构
+ * 符合 https://code.claude.com/docs/zh-CN/hooks 标准
  */
+interface ClaudeHookConfig {
+  type: "command" | "http" | "prompt" | "agent";
+  command?: string;
+  url?: string;
+  timeout?: number;
+  statusMessage?: string;
+}
+
 interface ClaudeSettingsConfig {
   hooks?: {
-    afterCommand?: string[];
+    Stop?: Array<{
+      hooks: ClaudeHookConfig[];
+    }>;
   };
 }
 
 /**
  * 为 Claude Code 配置桌面通知 hooks
- * 在 .claude/settings.json 中添加任务完成后的通知 hook
+ * 在 .claude/settings.json 中添加 Stop 事件 hook（Claude 完成回复时触发）
  */
 export async function applyClaudeNotifyIntegration(): Promise<boolean> {
   const destPath = path.join(process.cwd(), ".claude/settings.json");
-  const hookCommand = "npx archi notify";
 
   await fs.ensureDir(path.dirname(destPath));
 
@@ -194,11 +192,25 @@ export async function applyClaudeNotifyIntegration(): Promise<boolean> {
   }
 
   if (!config.hooks) config.hooks = {};
-  if (!config.hooks.afterCommand) config.hooks.afterCommand = [];
+  if (!config.hooks.Stop) config.hooks.Stop = [];
 
-  if (config.hooks.afterCommand.includes(hookCommand)) return false;
+  // 检查是否已存在相同的 hook
+  const exists = config.hooks.Stop.some((group) =>
+    group.hooks.some(
+      (h) => h.type === "command" && h.command === "npx archi notify",
+    ),
+  );
+  if (exists) return false;
 
-  config.hooks.afterCommand.push(hookCommand);
+  // 添加标准 Stop hook 格式
+  config.hooks.Stop.push({
+    hooks: [
+      {
+        type: "command",
+        command: "npx archi notify",
+      },
+    ],
+  });
 
   await fs.writeFile(destPath, JSON.stringify(config, null, 2), "utf-8");
   return true;
@@ -209,7 +221,6 @@ export async function applyClaudeNotifyIntegration(): Promise<boolean> {
  */
 export async function cleanupClaudeNotifyIntegration(): Promise<void> {
   const destPath = path.join(process.cwd(), ".claude/settings.json");
-  const hookCommand = "npx archi notify";
 
   if (!(await fs.pathExists(destPath))) return;
 
@@ -217,17 +228,19 @@ export async function cleanupClaudeNotifyIntegration(): Promise<void> {
     const config: ClaudeSettingsConfig = JSON.parse(
       await fs.readFile(destPath, "utf-8"),
     );
-    if (!config.hooks?.afterCommand) return;
+    if (!config.hooks?.Stop) return;
 
-    const originalLength = config.hooks.afterCommand.length;
-    config.hooks.afterCommand = config.hooks.afterCommand.filter(
-      (c) => c !== hookCommand,
+    const originalLength = config.hooks.Stop.length;
+    config.hooks.Stop = config.hooks.Stop.filter(
+      (group) =>
+        !group.hooks.some(
+          (h) => h.type === "command" && h.command === "npx archi notify",
+        ),
     );
 
-    if (config.hooks.afterCommand.length === originalLength) return;
+    if (config.hooks.Stop.length === originalLength) return;
 
-    if (config.hooks.afterCommand.length === 0)
-      delete config.hooks.afterCommand;
+    if (config.hooks.Stop.length === 0) delete config.hooks.Stop;
     if (Object.keys(config.hooks).length === 0) delete config.hooks;
 
     if (Object.keys(config).length === 0) {

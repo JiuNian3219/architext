@@ -393,9 +393,22 @@ export async function runIdeNotifyChecks(
     if (await fs.pathExists(claudeSettingsPath)) {
       try {
         const content = await fs.readJSON(claudeSettingsPath);
-        const hooks = content.hooks?.afterCommand;
-        if (Array.isArray(hooks) && hooks.includes("npx archi notify")) {
-          claudeEnabled = true;
+        // 新格式: hooks.Stop[].hooks[].{type, command}
+        const stopHooks = content.hooks?.Stop;
+        if (Array.isArray(stopHooks)) {
+          for (const hookGroup of stopHooks) {
+            if (Array.isArray(hookGroup.hooks)) {
+              for (const hook of hookGroup.hooks) {
+                if (
+                  hook.type === "command" &&
+                  hook.command === "npx archi notify"
+                ) {
+                  claudeEnabled = true;
+                  break;
+                }
+              }
+            }
+          }
         }
       } catch {
         // JSON 解析失败视为未配置
@@ -412,34 +425,26 @@ export async function runIdeNotifyChecks(
 
   // 检查 OpenCode 通知配置
   if (config.editors.includes("opencode")) {
-    const opencodePath = path.join(cwd, "opencode.json");
+    const pluginPath = path.join(cwd, ".opencode/plugins/architext-notify.js");
     let opencodeEnabled = false;
 
-    if (await fs.pathExists(opencodePath)) {
-      try {
-        const content: {
-          hooks?: {
-            postCommand?: Array<{
-              command: string;
-              args?: string[];
-              when?: string;
-            }>;
-          };
-        } = await fs.readJSON(opencodePath);
-        const hooks = content.hooks?.postCommand;
-        if (
-          Array.isArray(hooks) &&
-          hooks.some(
-            (h) =>
-              h.command === "npx" &&
-              h.args?.[0] === "archi" &&
-              h.args?.[1] === "notify",
-          )
-        ) {
-          opencodeEnabled = true;
+    // 检查插件文件是否存在
+    if (await fs.pathExists(pluginPath)) {
+      // 检查 opencode.json 是否引用了该插件
+      const configPath = path.join(cwd, "opencode.json");
+      if (await fs.pathExists(configPath)) {
+        try {
+          const content = await fs.readJSON(configPath);
+          const plugins = content.plugins;
+          if (
+            Array.isArray(plugins) &&
+            plugins.includes("./.opencode/plugins/architext-notify.js")
+          ) {
+            opencodeEnabled = true;
+          }
+        } catch {
+          // JSON 解析失败视为未配置
         }
-      } catch {
-        // JSON 解析失败视为未配置
       }
     }
 
