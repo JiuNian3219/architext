@@ -39,6 +39,12 @@ export async function initCommand(options: InitOptions): Promise<void> {
       ...(result?.opencodeInstructionsAdded && {
         opencodeInstructionsAdded: true,
       }),
+      ...(result?.opencodeNotifyAdded && {
+        opencodeNotifyAdded: true,
+      }),
+      ...(result?.claudeNotifyAdded && {
+        claudeNotifyAdded: true,
+      }),
     });
   } catch (error) {
     if (error instanceof UserCancelError) {

@@ -5,7 +5,8 @@ import color from "picocolors";
 import { loadConfig } from "../../../core/config.ts";
 import { AppError } from "../../../core/errors.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
-import { cleanupOpencodeConfig, resolveUninstallPlan } from "./resolver.ts";
+import { cleanupIdeIntegrations } from "../../../core/ide-integrations.ts";
+import { resolveUninstallPlan } from "./resolver.ts";
 
 const t = createT(getSystemLocale(), "command.uninstall");
 
@@ -34,8 +35,8 @@ export const uninstallCommand = async () => {
   s.start(t("cleaning"));
 
   try {
-    // 处理 opencode.json（在删除配置文件之前）
-    await cleanupOpencodeConfig(config, cwd);
+    // 处理 IDE 集成配置（包括 OpenCode rules/hooks 和 Claude hooks）
+    await cleanupIdeIntegrations(config.editors);
 
     // 删除文件
     for (const file of plan.files) {

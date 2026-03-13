@@ -16,6 +16,8 @@
     "type": "项目特征，逗号分隔 (ui,data,api,cli,lib,mobile,desktop,miniapp,extension,realtime,ai)",
     "yes": "跳过所有确认提示（覆盖已有配置时自动确认）",
     "brief": "生成 project-brief.md（与 -y 配合使用可跳过交互）",
+    "notify": "启用桌面通知（默认开启）",
+    "noNotify": "禁用桌面通知",
     "failed": "初始化失败"
   },
   "update": {
@@ -56,7 +58,9 @@
     "output": "输出文件路径（默认: architext-pack.xml）"
   },
   "notify": {
-    "desc": "发送桌面通知（供 IDE hooks 调用）"
+    "desc": "发送桌面通知（供 IDE hooks 调用）",
+    "title": "Architext",
+    "defaultMessage": "等待下一步指令"
   },
   "scaffold": {
     "fallback": "未找到 {lang} 模板，回退使用 'zh'",
@@ -209,6 +213,7 @@
       "summary_templated": "02_tech_stack 含项目定制，未覆盖。新版模板已写入 {docDir}/templates/02_tech_stack.template.md，请对比并手动合并到你使用的 IDE rules 目录（如 .cursor/rules/、.windsurf/rules/）下对应文件",
       "summary_skipped": "已跳过: {list}",
       "summary_global": "全局文档（global/）只增不减，如需清理过时文件请手动删除",
+      "notify_enabled": "已启用 Claude Code 桌面通知",
       "schema": {
         "parse_error": "JSON 解析失败，文件可能已损坏",
         "version_too_new": "文件版本 (v{current}) 高于 CLI 期望版本 (v{expected})，请先升级 CLI",

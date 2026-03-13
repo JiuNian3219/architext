@@ -4,9 +4,9 @@ import notifier from "node-notifier";
 import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
+import { createT, getSystemLocale } from "../../../utils/t.ts";
 
-const TITLE = "Architext";
-const DEFAULT_MESSAGE = "任务已完成";
+const t = createT(getSystemLocale(), "notify");
 
 /**
  * 获取默认图标路径
@@ -38,11 +38,11 @@ const getDefaultIcon = async (): Promise<string> => {
  * @returns void
  */
 export const notifyCommand = async (message?: string): Promise<void> => {
-  const msg = message || DEFAULT_MESSAGE;
+  const msg = message || t("defaultMessage");
   const icon = await getDefaultIcon();
 
   notifier.notify({
-    title: TITLE,
+    title: t("title"),
     message: msg,
     icon: icon || undefined,
     wait: false,

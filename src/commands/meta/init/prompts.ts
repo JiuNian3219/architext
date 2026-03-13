@@ -168,6 +168,7 @@ export async function collectInitConfig(options: {
   type?: string;
   yes?: boolean;
   brief?: boolean;
+  notify?: boolean;
 }): Promise<InitConfig | null> {
   const existingConfig = await loadConfig();
 
@@ -196,8 +197,11 @@ export async function collectInitConfig(options: {
     generateBrief = response;
   }
 
+  // notify: 默认开启，无交互式询问；--no-notify 可禁用
+  const notify = options.notify !== false;
+
   const docDir =
     options.doc || (existingConfig?.docDir as string) || ".architext";
 
-  return { language, editors, docDir, features, generateBrief };
+  return { language, editors, docDir, features, generateBrief, notify };
 }

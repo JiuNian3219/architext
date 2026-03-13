@@ -86,6 +86,20 @@ export interface ArchitextConfig {
    * 仅当为 true 时，uninstall 才会移除该路径；用户原有配置不会被误删。
    */
   opencodeInstructionsAdded?: boolean;
+  /**
+   * 标记 opencode.json 的 hooks 是否为 Architext 添加。
+   */
+  opencodeNotifyAdded?: boolean;
+  /**
+   * 标记 .claude/settings.json 的 hooks 是否为 Architext 添加。
+   */
+  claudeNotifyAdded?: boolean;
+  /**
+   * 是否启用桌面通知功能。
+   * 启用后会自动配置所选 IDE 的 hooks，在任务完成时发送桌面通知。
+   * 默认: true
+   */
+  notify?: boolean;
 }
 
 /**
@@ -98,6 +112,8 @@ export interface InitOptions {
   type?: string;
   yes?: boolean;
   brief?: boolean;
+  /** 是否启用桌面通知，默认 true */
+  notify?: boolean;
 }
 
 /**
@@ -111,6 +127,8 @@ export interface InitConfig {
   features: ProjectFeature[];
   /** 是否生成 project-brief.md；生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用 */
   generateBrief?: boolean;
+  /** 是否启用桌面通知，默认 true */
+  notify?: boolean;
 }
 
 /**

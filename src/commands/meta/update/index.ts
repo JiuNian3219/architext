@@ -32,6 +32,7 @@ import {
   removeStaleFiles,
 } from "./operations.ts";
 import { checkVersion } from "./version.ts";
+import { applyIdeIntegrations } from "../../../core/ide-integrations.ts";
 
 const t = createT(getSystemLocale(), "command.update");
 
@@ -201,6 +202,16 @@ export async function updateCommand(): Promise<void> {
       t("deployed_new", { framework: frameworkCount, seeds: seedCount }),
     ),
   );
+
+  // ─── Phase 6.5: IDE 集成（notify hooks）───────────────────────
+  const notifyEnabled = config.notify !== false;
+  const { opencodeNotifyAdded, claudeNotifyAdded } = await applyIdeIntegrations(
+    config.editors,
+    notifyEnabled,
+  );
+  if (opencodeNotifyAdded || claudeNotifyAdded) {
+    logger.success(t("notify_enabled"));
+  }
 
   // ─── Phase 7: templateOnly 规则 → 模板副本 ────────────────────
   const templatedRules = await deployTemplateOnlyRules(config);
