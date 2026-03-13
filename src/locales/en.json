@@ -232,7 +232,8 @@
         "config": "Configuration",
         "doc_structure": "Doc Directory Structure",
         "global_files": "Global Files",
-        "ide_rules": "IDE Framework Files"
+        "ide_rules": "IDE Framework Files",
+        "ide_notify": "IDE Notification Config"
       },
       "summary": {
         "result": "Result: {parts}",
@@ -279,6 +280,14 @@
           "dir_hint": "Run npx archi update to restore rule files",
           "file_missing": "Rule file missing",
           "file_hint": "Run npx archi update to restore"
+        },
+        "notify": {
+          "status": "Desktop notification status",
+          "disabled": "Disabled",
+          "claude_label": "[Claude Code] Notification config",
+          "opencode_label": "[OpenCode] Notification config",
+          "not_configured": "Not configured",
+          "hint_run_update": "Run npx archi update to enable notifications"
         }
       }
     },

@@ -358,3 +358,98 @@ export async function runIdeRulesChecks(
 
   return results;
 }
+
+// ─── Group 5: IDE 通知配置 ───────────────────────────────────────────────────
+
+/**
+ * 检查 IDE 通知配置（hooks）是否正确设置。
+ * 当 config.notify 不为 false 且编辑器为 claude/opencode 时，检查对应配置。
+ *
+ * @param config - 配置
+ * @param cwd - 当前工作目录
+ * @returns 检查结果
+ */
+export async function runIdeNotifyChecks(
+  config: ArchitextConfig,
+  cwd: string,
+): Promise<CheckResult[]> {
+  const results: CheckResult[] = [];
+
+  // 如果禁用了通知，跳过检查
+  if (config.notify === false) {
+    results.push({
+      label: t("check.notify.status"),
+      status: "pass",
+      detail: t("check.notify.disabled"),
+    });
+    return results;
+  }
+
+  // 检查 Claude Code 通知配置
+  if (config.editors.includes("claude")) {
+    const claudeSettingsPath = path.join(cwd, ".claude/settings.json");
+    let claudeEnabled = false;
+
+    if (await fs.pathExists(claudeSettingsPath)) {
+      try {
+        const content = await fs.readJSON(claudeSettingsPath);
+        const hooks = content.hooks?.afterCommand;
+        if (Array.isArray(hooks) && hooks.includes("npx archi notify")) {
+          claudeEnabled = true;
+        }
+      } catch {
+        // JSON 解析失败视为未配置
+      }
+    }
+
+    results.push({
+      label: t("check.notify.claude_label"),
+      status: claudeEnabled ? "pass" : "warn",
+      detail: claudeEnabled ? undefined : t("check.notify.not_configured"),
+      hint: claudeEnabled ? undefined : t("check.notify.hint_run_update"),
+    });
+  }
+
+  // 检查 OpenCode 通知配置
+  if (config.editors.includes("opencode")) {
+    const opencodePath = path.join(cwd, "opencode.json");
+    let opencodeEnabled = false;
+
+    if (await fs.pathExists(opencodePath)) {
+      try {
+        const content: {
+          hooks?: {
+            postCommand?: Array<{
+              command: string;
+              args?: string[];
+              when?: string;
+            }>;
+          };
+        } = await fs.readJSON(opencodePath);
+        const hooks = content.hooks?.postCommand;
+        if (
+          Array.isArray(hooks) &&
+          hooks.some(
+            (h) =>
+              h.command === "npx" &&
+              h.args?.[0] === "archi" &&
+              h.args?.[1] === "notify",
+          )
+        ) {
+          opencodeEnabled = true;
+        }
+      } catch {
+        // JSON 解析失败视为未配置
+      }
+    }
+
+    results.push({
+      label: t("check.notify.opencode_label"),
+      status: opencodeEnabled ? "pass" : "warn",
+      detail: opencodeEnabled ? undefined : t("check.notify.not_configured"),
+      hint: opencodeEnabled ? undefined : t("check.notify.hint_run_update"),
+    });
+  }
+
+  return results;
+}

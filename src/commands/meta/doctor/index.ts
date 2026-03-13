@@ -9,6 +9,7 @@ import {
   runDocStructureChecks,
   runGlobalFileChecks,
   runIdeRulesChecks,
+  runIdeNotifyChecks,
 } from "./checks.ts";
 import type { CheckGroup, CheckResult } from "./types.ts";
 
@@ -79,6 +80,12 @@ export async function doctorCommand(): Promise<void> {
   const rulesResults = await runIdeRulesChecks(config, cwd);
   if (rulesResults.length > 0) {
     groups.push({ title: t("group.ide_rules"), checks: rulesResults });
+  }
+
+  // Group 5: IDE 通知配置
+  const notifyResults = await runIdeNotifyChecks(config, cwd);
+  if (notifyResults.length > 0) {
+    groups.push({ title: t("group.ide_notify"), checks: notifyResults });
   }
 
   // 渲染所有组
