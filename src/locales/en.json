@@ -55,6 +55,9 @@
     "desc": "Pack user data (docs, tasks, custom rules) for backup before upgrade or migration",
     "output": "Output file path (default: architext-pack.xml)"
   },
+  "notify": {
+    "desc": "Send desktop notification (for IDE hooks)"
+  },
   "scaffold": {
     "fallback": "Template for {lang} not found, falling back to 'zh'",
     "step_docs": "Scaffolding documentation structure...",

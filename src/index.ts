@@ -12,6 +12,7 @@ import { taskCommand } from "./commands/meta/task/index.ts";
 import { helpCommand } from "./commands/meta/help/index.ts";
 import { templateCommand } from "./commands/meta/template/index.ts";
 import { packCommand } from "./commands/meta/pack/index.ts";
+import { notifyCommand } from "./commands/meta/notify/index.ts";
 import { handleError } from "./core/error-handler.ts";
 import { createT, getSystemLocale } from "./utils/t.ts";
 
@@ -86,6 +87,9 @@ cli
 
 // Help 参考手册
 cli.command("help", t("help.desc")).action(run(helpCommand));
+
+// Notify 桌面通知（供 hooks 调用）
+cli.command("notify [message]", t("notify.desc")).action(run(notifyCommand));
 
 // 保留 --help 标志的默认行为
 cli.help();

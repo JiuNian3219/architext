@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Background -->
+  <rect width="32" height="32" rx="7" fill="#141210"/>
+
+  <!-- Corner registration marks (architectural reference) -->
+  <circle cx="5"  cy="5"  r="1.2" fill="#b88a3f" opacity="0.5"/>
+  <circle cx="27" cy="5"  r="1.2" fill="#b88a3f" opacity="0.5"/>
+  <circle cx="5"  cy="27" r="1.2" fill="#b88a3f" opacity="0.5"/>
+  <circle cx="27" cy="27" r="1.2" fill="#b88a3f" opacity="0.5"/>
+
+  <!-- Geometric "A" letterform -->
+  <path d="M 8 25 L 16 7 L 24 25" stroke="#b88a3f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Crossbar -->
+  <line x1="11.5" y1="19" x2="20.5" y2="19" stroke="#b88a3f" stroke-width="2" stroke-linecap="round"/>
+</svg>
