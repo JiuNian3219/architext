@@ -29,7 +29,7 @@
         | `blocked` | Reject — upstream deps incomplete |
         | `done` | Reject — already done; use `/archi.edit <ID>` for changes |
 
-    3.  **Load**: task docs (spec/ui/design/plan) + project context (tech_stack/design_tokens/data_snapshot/ui_context/ui_concept) + refs (match by tags; load only matched files).
+    3.  **Load**: task docs (spec/ui/design/plan) + project context (tech_stack/design_tokens/data_snapshot/ui_context/screens/) + refs (match by tags; load only matched files).
 
     **Output**: Atomic task list to implement with dependencies and order.
 </step_1_resolve>

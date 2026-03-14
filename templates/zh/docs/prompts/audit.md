@@ -33,7 +33,7 @@
         | `pending` | 拒绝 — 无代码可审查 |
         | `blocked` | 拒绝 — 前置依赖未完成 |
 
-    3.  **Load**: vision.md（方向基准）+ task docs (spec/plan/ui) + 前次 audit.md（对比用）+ project context (tech_stack/design_tokens/data_snapshot/ui_context/ui_concept)。读取该任务对应的所有代码文件。
+    3.  **Load**: vision.md（方向基准）+ task docs (spec/plan/ui) + 前次 audit.md（对比用）+ project context (tech_stack/design_tokens/data_snapshot/ui_context/screens/)。读取该任务对应的所有代码文件。
 
     **项目级 — Load Overview**:
     1.  读取 vision.md、roadmap.json、map.json、02_tech_stack.md。
@@ -60,12 +60,12 @@
     | 7 | **Tech Stack 合规** | 对照 `02_tech_stack.md`：违禁模式、过时 API、硬编码 |
     | 8 | **安全性** | 敏感信息泄露、输入未校验、注入风险、权限检查 |
     | 9 | **性能** | 不必要全量导入/大循环/无用计算/内存泄漏/N+1 查询 |
-    | 10 | （本任务涉及ui时） **Design 合规** | Token 使用；无硬编码魔法值；与 `ui_concept.html` 视觉一致 |
+    | 10 | （本任务涉及ui时） **Design 合规** | Token 使用；无硬编码魔法值；与 `screens/S-XX.html` 视觉一致 |
     | 11 | （本任务涉及data时） **数据一致性** | 字段名/类型与 `data_snapshot.json` 一致 |
     | 12 | （仅i18n项目） **I18n 合规** | 无硬编码字符串；须用 Key/字典引用 |
     | 13 | **Orphan .gitkeep** | 目录已有其他文件时仍存在 `.gitkeep` — 须删除 |
     | 14 | **Spec-Code 漂移** | 接口/类型/行为与 `spec.md` 一致；手动变更已同步文档 |
-    | 15 | （本任务涉及ui时） **UI 引用完整性** | `ui.md` 中 `ref: ui_concept.html#S-XX` 指针是否仍有效 |
+    | 15 | （本任务涉及ui时） **UI 引用完整性** | `ui.md` 中 `ref: screens/S-XX.html` 指针是否仍有效 |
 
     **Output**: 按维度分组的发现列表，每项含级别、位置、描述。进入 step_3_report。
 </step_2a_task>

@@ -359,6 +359,10 @@
           "detail": "影响范围: Vision / Tech Stack / Roadmap / 相关 Task 文档",
           "example": "例: /archi.revise 从 REST 迁移到 GraphQL"
         },
+        "ui": {
+          "desc": "生成或增量更新 UI 概念设计（screens/ 目录）。仅 UI 类项目。",
+          "detail": "全量模式: screens/ 不存在时全量生成。增量模式: screens/ 存在时根据 roadmap 差异更新"
+        },
         "map": {
           "desc": "刷新架构地图。重新扫描目录树，更新 map.json。",
           "detail": "当目录结构发生变化时使用，保持 map.json 与实际文件系统同步"

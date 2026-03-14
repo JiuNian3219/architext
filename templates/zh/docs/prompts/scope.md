@@ -132,7 +132,7 @@
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
-    | （仅ui项目） 推荐 | [[SKILL: archi-ui-wireframe|运行 skill（追加模式）]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]] | 为新增任务追加屏幕到 `ui_concept.html` |
+    | （仅ui项目） 推荐 | `/archi.ui` | 为新增任务增量更新 UI 概念设计（`screens/` 目录） |
     | 1 | `/archi.plan <第一个 pending 任务 ID>` | 对首个可执行任务做深度规划 |
     | 2 | 审查 roadmap | 确认依赖关系和优先级 |
 </step_6_signoff>

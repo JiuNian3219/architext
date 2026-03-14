@@ -68,7 +68,7 @@
     按用户确认的清单修改全局文件。每个文件修改后输出变更摘要。
 
     **（仅ui项目） Phase 1.5 — 设计系统变更检查**:
-    若 `design_tokens.json` 有以下变更，须通知用户需重跑 `archi-ui-wireframe` 重新生成：
+    若 `design_tokens.json` 有以下变更，须通知用户需重跑 `/archi.ui` 重新生成：
 
     | 变更范围 | 影响 |
     |:---|:---|
@@ -83,7 +83,7 @@
     **Phase 2 — 级联更新 Task 文档**:
     对每个受影响的 Task，按 `/archi.edit` 标准执行:
     1.  更新 `spec.md`。
-    2.  （仅ui项目） 更新 `ui.md`；如屏幕结构受影响，[[SKILL: archi-ui-wireframe|运行 skill（局部更新模式）同步更新]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]。
+    2.  （仅ui项目） 更新 `ui.md`；如屏幕结构受影响，[[SKILL: archi-ui-wireframe|运行 skill（局部更新模式）同步更新 `screens/S-XX.html`]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]。
     3.  在 `plan.json` 追加新 Phase: `Phase X: Global Revision — [变更主题] (<Date>)`。
 
     **Output**: 每个文件的变更摘要（全局 + Task）。进入 step_5_verify。
@@ -103,7 +103,7 @@
     **Pre-signoff Checklist** (Gate 通过后、输出前须逐项确认):
     □ step_4 Safety Checkpoint — Git 工作区已确认（无未提交变更或已告知用户）
     □ Phase 1 — 所有确认的全局资产已修改，每个文件有变更摘要输出
-    □ （仅ui项目，设计系统有变更）已通知用户重跑 archi-ui-wireframe
+    □ （仅ui项目，设计系统有变更）已通知用户重跑 `/archi.ui`
     □ Phase 2 — 每个受影响 Task 的 spec.md 已更新 + plan.json 已追加 Revision Phase
     □ Step 5 Silent Audit — 已执行，所有 CRITICAL 问题已修复
     □ 一致性确认: vision ↔ tech_stack ↔ roadmap ↔ map 无孤立引用（旧术语/路径已清理）

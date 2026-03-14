@@ -1,12 +1,12 @@
 ---
-description: 任务级 UI 范围声明 — 描述本任务负责的屏幕/组件范围，屏幕 ID 来自 ui_context.md，视觉原型见 ui_concept.html（人看）。
+description: 任务级 UI 范围声明 — 描述本任务负责的屏幕/组件范围，屏幕 ID 来自 ui_context.md，视觉原型见 screens/（人看）。
 glue: 屏幕 ID 引用自 [[__DOCS_DIR__]]/global/ui_context.md；禁重定义整体布局或全局导航。
 ---
 
 # UI Scope: {FEATURE_NAME}
 
 > **Screen Index**: `[[__DOCS_DIR__]]/global/ui_context.md`（AI 读取屏幕 ID 和导航关系）
-> **Visual Prototype**: `[[__DOCS_DIR__]]/global/ui_concept.html`（人类浏览器预览）
+> **Visual Prototype**: `[[__DOCS_DIR__]]/global/screens/index.html`（人类浏览器预览，各屏幕 `screens/S-XX.html`）
 > **Tokens**: `[[__DOCS_DIR__]]/global/design_tokens.json`
 > **Protocol**: ITP v3.0（仅描述本任务边界内的组件树）
 
@@ -27,15 +27,15 @@ glue: 屏幕 ID 引用自 [[__DOCS_DIR__]]/global/ui_context.md；禁重定义�
 ```text
 [ScreenName > 修改区域名]
   NewComponent [Col, Gap:4]      ← 本任务新增
-    ExistingComponent            ← ref: ui_concept.html S-XX (不修改)
+    ExistingComponent            ← ref: screens/S-XX.html (不修改)
     #NewSubComponents
 ```
 
-> **引用规则**: 已在 `ui_concept.html` 中定义的组件 → `ref: ui_concept.html#S-XX-组件名`；禁复制粘贴其结构。
+> **引用规则**: 已在 `screens/S-XX.html` 中定义的组件 → `ref: screens/S-XX.html#组件名`；禁复制粘贴其结构。
 
 ## 3. Interactions (本任务新增的交互)
 
-<!-- [AI]: 仅列出本任务引入的新交互；ui_concept.html 已有的交互不重复 -->
+<!-- [AI]: 仅列出本任务引入的新交互；screens/S-XX.html 已有的交互不重复 -->
 
 | Trigger | Target | Action |
 |:---|:---|:---|
@@ -43,9 +43,9 @@ glue: 屏幕 ID 引用自 [[__DOCS_DIR__]]/global/ui_context.md；禁重定义�
 
 ## 4. States (本任务负责的状态渲染)
 
-<!-- [AI]: 若 ui_concept.html 的状态已充分描述，此处可省略或仅补充差异 -->
+<!-- [AI]: 若 screens/S-XX.html 的状态已充分描述，此处可省略或仅补充差异 -->
 
-| State | Delta from ui_concept.html |
+| State | Delta from screens/S-XX.html |
 |:---|:---|
-| `loading` | 同 ui_concept.html S-XX loading（无差异）|
+| `loading` | 同 screens/S-XX.html loading（无差异）|
 | `empty` | 本任务空态文案不同："{具体文案}" |

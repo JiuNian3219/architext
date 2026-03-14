@@ -132,7 +132,7 @@
 
     | Priority | Action | Notes |
     |:---|:---|:---|
-    | (UI projects only) Recommended | [[SKILL: archi-ui-wireframe|Run skill (append mode)]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]] | Append screens for new tasks to `ui_concept.html` |
+    | (UI projects only) Recommended | `/archi.ui` | Generate/update UI concept design (`screens/` multi-file structure) |
     | 1 | `/archi.plan <first pending task ID>` | Deep-plan the first executable task |
     | 2 | Review roadmap | Confirm dependency relationships and priorities |
 </step_5_signoff>

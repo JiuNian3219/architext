@@ -212,12 +212,7 @@
     - (Data projects only) `data_snapshot.json`: Extract from schema/migration
     - `error_codes.json`: Extract from error definitions in code
 
-    UI projects only: **UI concept design (Adopt mode)**: [[SKILL: archi-ui-wireframe|Invoke skill (adopt mode) to reverse-generate UI concept design from code.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its Adopt protocol)]]
-    - Read route definitions, page components, layout files from code
-    - Read design_tokens.json written in step_3 (containing CSS variables/theme extracted from code)
-    - When tokens incomplete, triggers skill's built-in guidance flow
-    - Write `ui_concept.html` + `ui_context.md`
-    - Output UI concept design summary; await user confirmation or feedback for adjustments
+    UI projects only: **UI concept design (Adopt mode)**: Skip — completed independently by `/archi.ui`.
 
     **Output**: Write all files, run `npx archi render`. Enter step_4_verify.
 </step_3_constitution>
@@ -239,7 +234,7 @@
     □ tasks/LEG-xx_<Slug>/spec.md — each LEG has a corresponding Stub spec (with related file list)
     □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations all filled
     □ dictionary.json + error_codes.json — extracted from codebase
-    □ (UI projects only) design_tokens.json + ui_concept.html + ui_context.md — Adopt mode executed
+    □ (UI projects only) design_tokens.json — Adopt mode executed
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
 
     **Action** (after Checklist confirmed):

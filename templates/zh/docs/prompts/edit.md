@@ -41,14 +41,14 @@
 <step_2_refine_docs>
     **Action**:
     - 根据 `[context]` 修改 spec.md 和 ui.md。
-    - （ui有修改） [[SKILL: archi-ui-wireframe|按 skill 的协议同步更新 `ui_concept.html` + `ui_context.md`]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md`）]]：
+    - （ui有修改） [[SKILL: archi-ui-wireframe|按 skill 的协议同步更新 `screens/S-XX.html` + `ui_context.md`]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md`）]]：
 
       | 变更类型 | 判定标准 | 处理方式 |
       |:---|:---|:---|
       | 无屏幕影响 | 仅逻辑/数据变更 | 仅改 spec.md |
-      | 轻微 UI 调整 | 新增/修改状态、弹窗、局部区域 | 调用 skill 更新，输出 `MODIFIED: S-XX` |
+      | 轻微 UI 调整 | 新增/修改状态、弹窗、局部区域 | 调用 skill 更新，输出 `MODIFIED: screens/S-XX.html` |
       | 屏幕结构变更 | 布局重构、新增屏幕、导航变化 | 调用 skill 更新 |
-      | 功能缩减 | 屏幕/区域整体移除 | 调用 skill 删除，输出 `REMOVED: S-XX` |
+      | 功能缩减 | 屏幕/区域整体移除 | 调用 skill 删除，输出 `REMOVED: screens/S-XX.html` |
 
     - 需求模糊时向用户提问确认。
 
@@ -79,7 +79,7 @@
 <step_5_summary>
     **Pre-signoff Checklist** (输出前须逐项确认):
     □ spec.md — 已按 context 更新，变更已追踪
-    □ （ui有修改）ui.md + ui_concept.html + ui_context.md — 已同步更新
+    □ （ui有修改）ui.md + screens/S-XX.html + ui_context.md — 已同步更新
     □ plan.json — 新 Phase 已追加（历史任务完整保留）
     □ （原 status=done）roadmap.json — status 已重置为 active
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复

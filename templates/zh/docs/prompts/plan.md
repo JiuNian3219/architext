@@ -165,7 +165,7 @@
          | 偏差类型 | 判定标准 | 处理方式 |
          |:---|:---|:---|
          | 无偏差 | 屏幕索引与设计一致 | 直接写 `ui.md`，引用屏幕 ID |
-         | 轻微增量 | 新增状态/弹窗/局部区域，不改整体布局 | 调用 skill 更新 `ui_concept.html` + `ui_context.md`，注明 `MODIFIED: S-XX` |
+         | 轻微增量 | 新增状态/弹窗/局部区域，不改整体布局 | 调用 skill 更新 `screens/S-XX.html` + `ui_context.md`，注明 `MODIFIED: screens/S-XX.html` |
          | 结构性偏差 | 布局重构、新增独立屏幕、流程路径变化 | **暂停**，向用户输出偏差说明，等待 **OK** 后调用 skill 更新，再写 `ui.md` |
 
       2. 完成偏差处理后，按 `ui.template.md` 填写屏幕范围声明和差异组件。

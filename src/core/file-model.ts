@@ -155,6 +155,7 @@ export const FILE_MODELS: FileModel[] = [
       "help",
       "recover",
       "ref",
+      "ui",
     ],
     skills: [
       "archi-data-sync",

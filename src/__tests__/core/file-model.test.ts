@@ -81,6 +81,12 @@ describe("resolveFiles", () => {
     expect(windsurfRules).toContain(".windsurf/rules/00_system.md");
   });
 
+  it("v2 prompts 包含 ui", () => {
+    const model = getFileModel(2);
+    expect(model).toBeDefined();
+    expect(model!.prompts).toContain("ui");
+  });
+
   it("有 commands 的 editor 应生成 commands 路径", () => {
     const result = resolveFiles(model, {
       editors: ["cursor"],
@@ -93,6 +99,7 @@ describe("resolveFiles", () => {
     expect(cmdPaths).toHaveLength(model.prompts.length);
     expect(cmdPaths).toContain(".cursor/commands/archi.start.md");
     expect(cmdPaths).toContain(".cursor/commands/archi.plan.md");
+    expect(cmdPaths).toContain(".cursor/commands/archi.ui.md");
   });
 
   it("无 commands 的 editor 应生成 docDir/prompts 路径", () => {

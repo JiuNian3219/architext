@@ -165,7 +165,7 @@
          | Divergence Type | Criteria | Handling |
          |:---|:---|:---|
          | No divergence | Screen index matches design | Write `ui.md` directly; reference screen ID |
-         | Minor addition | New state/popup/local area; overall layout unchanged | Call skill to update `ui_concept.html` + `ui_context.md`; note `MODIFIED: S-XX` |
+         | Minor addition | New state/popup/local area; overall layout unchanged | Run `/archi.ui` to update `screens/S-XX.html` + `ui_context.md`; note `MODIFIED: screens/S-XX.html` |
          | Structural divergence | Layout refactor, new standalone screen, flow path change | **Pause** — output divergence summary to user; wait for **OK**; then call skill to update; then write `ui.md` |
 
       2. After resolving divergence, fill screen scope and delta components per `ui.template.md`.

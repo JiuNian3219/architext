@@ -96,6 +96,7 @@ export async function helpCommand(): Promise<void> {
       t("ai.revise.detail"),
       t("ai.revise.example"),
     ]),
+    cmd("/archi.ui", t("ai.ui.desc"), [t("ai.ui.detail")]),
     cmd("/archi.map", t("ai.map.desc"), [t("ai.map.detail")]),
     cmd("/archi.remove <id>", t("ai.remove.desc"), [
       t("ai.remove.detail"),
@@ -151,10 +152,10 @@ export async function helpCommand(): Promise<void> {
   const workflow = [
     section(t("section.workflow")),
     `  ${color.dim(t("workflow.init_flow"))}`,
-    `  ${color.cyan("/archi.start")} ${color.dim("-->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
+    `  ${color.cyan("/archi.start")} ${color.dim("-->")} ${color.cyan("/archi.ui")} ${color.dim("[?UI] -->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
     "",
     `  ${color.dim(t("workflow.new_feature"))}`,
-    `  ${color.cyan("/archi.scope")} ${color.dim("-->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
+    `  ${color.cyan("/archi.scope")} ${color.dim("-->")} ${color.cyan("/archi.ui")} ${color.dim("[?UI] -->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
     "",
     `  ${color.dim(t("workflow.change_spec"))}`,
     `  ${color.cyan("/archi.edit")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,

@@ -359,6 +359,10 @@
           "detail": "Scope: Vision / Tech Stack / Roadmap / Related Task docs",
           "example": "e.g. /archi.revise migrate from REST to GraphQL"
         },
+        "ui": {
+          "desc": "Generate or incrementally update UI concept designs (screens/ directory). UI projects only.",
+          "detail": "Full mode: generates all screens when screens/ doesn't exist. Incremental mode: updates based on roadmap diff when screens/ exists"
+        },
         "map": {
           "desc": "Refresh architecture map. Rescan directory tree, update map.json.",
           "detail": "Use when directory structure changes to keep map.json in sync"

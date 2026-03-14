@@ -33,7 +33,7 @@
         | `pending` | Reject — no code to review |
         | `blocked` | Reject — upstream deps incomplete |
 
-    3.  **Load**: vision.md (direction anchor) + task docs (spec/plan/ui) + prior audit.md (for comparison) + project context (tech_stack/design_tokens/data_snapshot/ui_context/ui_concept). Read all code files for this task.
+    3.  **Load**: vision.md (direction anchor) + task docs (spec/plan/ui) + prior audit.md (for comparison) + project context (tech_stack/design_tokens/data_snapshot/ui_context/screens/). Read all code files for this task.
 
     **Project-level — Load Overview**:
     1.  Read vision.md, roadmap.json, map.json, 02_tech_stack.md.
@@ -60,12 +60,12 @@
     | 7 | **Tech Stack compliance** | Per `02_tech_stack.md`: forbidden patterns, outdated API, hardcoding |
     | 8 | **Security** | Sensitive info leak, unvalidated input, injection risk, permission checks |
     | 9 | **Performance** | Unnecessary full imports, large loops, dead computation, memory leaks, N+1 queries |
-    | 10 | (When this task involves UI) **Design compliance** | Token usage; no hardcoded magic values; visual consistency with `ui_concept.html` |
+    | 10 | (When this task involves UI) **Design compliance** | Token usage; no hardcoded magic values; visual consistency with `screens/S-XX.html` |
     | 11 | (When this task involves data) **Data consistency** | Field names/types match `data_snapshot.json` |
     | 12 | (i18n projects only) **I18n compliance** | No hardcoded strings; must use Key/dictionary refs |
     | 13 | **Orphan .gitkeep** | `.gitkeep` exists when dir has other files — remove |
     | 14 | **Spec-Code drift** | Interface/type/behavior match `spec.md`; manual changes synced to docs |
-    | 15 | (When this task involves UI) **UI ref completeness** | `ui.md` `ref: ui_concept.html#S-XX` pointers still valid |
+    | 15 | (When this task involves UI) **UI ref completeness** | `ui.md` `ref: screens/S-XX.html` pointers still valid |
 
     **Output**: Finding list grouped by dimension; each with level, location, description. Enter step_3_report.
 </step_2a_task>

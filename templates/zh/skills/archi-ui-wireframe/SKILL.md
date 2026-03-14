@@ -1,6 +1,6 @@
 ---
 name: archi-ui-wireframe
-description: Generate UI concept designs and wireframes.when creating or updating UI screens for web, mobile, or desktop applications. Do not auto-trigger.
+description: Generate UI concept designs and wireframes as multi-file screens/ directory. Do not auto-trigger.
 ---
 
 # UI 概念设计
@@ -8,11 +8,11 @@ description: Generate UI concept designs and wireframes.when creating or updatin
 ## 系统流程定位
 
 ```
-/archi.start → [本 Skill] → ui_concept.html (全应用屏幕) → /archi.plan → ui.md (单任务范围)
-/archi.inherit → [本 Skill adopt模式] → ui_concept.html (从代码逆向)
+/archi.ui → [本 Skill] → screens/ (多文件目录) → /archi.plan → ui.md (单任务范围)
+/archi.ui (adopt模式) → [本 Skill] → screens/ (从代码逆向)
 ```
 
-> **产出物**：`ui_concept.html`（全屏高保真预览，含状态切换）+ `ui_context.md`（AI 索引）
+> **产出物**：`screens/` 目录（`index.html` 导航枢纽 + `S-XX.html` 独立屏幕 + `_shared.css` 共享样式）+ `ui_context.md`（AI 索引）
 
 ---
 
@@ -20,10 +20,10 @@ description: Generate UI concept designs and wireframes.when creating or updatin
 
 | 模式 | 触发 | 范围 |
 |:---|:---|:---|
-| 初次生成 | `/archi.start` | 全量，所有屏幕 |
-| 逆向采用 | `/archi.inherit` | 从代码路由/组件逆向生成 |
+| 初次生成 | `/archi.ui` | 全量，所有屏幕 |
+| 逆向采用 | `/archi.ui`（代码已存在时自动检测） | 从代码路由/组件逆向生成 |
 | 重新生成 | 用户手动 | 全量重写（全局重设计） |
-| 追加/修改 | `/archi.scope/edit` | 仅新增/修改指定屏幕 |
+| 追加/修改 | `/archi.scope/edit` 或 `/archi.ui`（增量模式） | 仅新增/修改指定屏幕 |
 | 局部更新 | `/archi.plan` 发现偏差 | 仅更新对应屏幕 |
 
 ---
@@ -50,35 +50,87 @@ check `design_tokens.json`:
 - `primitivePalette.brand` 为空 → 引导填入 Hex
 - 其他空值 → AI 推断，非阻塞
 
-### Step 4 — 生成高保真 HTML
+### Step 4 — 生成多文件 HTML
 
-**输出**：`[[__DOCS_DIR__]]/global/ui_concept.html`
+**输出目录**：`[[__DOCS_DIR__]]/global/screens/`
 
-**结构**（从上到下）：
-1. **顶栏** — 固定，显示项目名 + 当前屏幕名
-2. **内容区** — 可滚动，渲染当前激活的屏幕
-3. **控制栏** — 固定底部，分两部分：
-   - **左侧 States**：当前屏幕状态切换（default/loading/empty/error）
-   - **右侧 Screens**：项目所有屏幕列表（S-01/S-02...），点击切换
+#### 4.1 `_shared.css` — 共享样式
 
-**HTML 结构**：
+从 `design_tokens.json` 提取 CSS 变量 + 基础布局 + 控制栏样式。所有 `S-XX.html` 通过 `<link href="_shared.css">` 引用。
+
+#### 4.2 `S-XX.html` — 独立屏幕文件
+
+每个屏幕一个自包含 HTML 文件，结构：
+
 ```html
-<section id="S-01" class="wf-screen active">
-  <div class="wf-state active" data-state="default">...</div>
-  <div class="wf-state" data-state="loading">...</div>
-</section>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>S-XX · [屏幕名]</title>
+  <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+  <header class="wf-topbar">
+    <a href="index.html" class="wf-back">← 返回索引</a>
+    <span>[项目名] — S-XX · [屏幕名]</span>
+  </header>
 
-<footer class="wf-ctrl-bar">
-  <div><!-- States --></div>
-  <div><!-- Screens --></div>
-</footer>
+  <main class="wf-content">
+    <div class="wf-state active" data-state="default">...</div>
+    <div class="wf-state" data-state="loading">...</div>
+    <div class="wf-state" data-state="empty">...</div>
+    <div class="wf-state" data-state="error">...</div>
+  </main>
+
+  <footer class="wf-ctrl-bar">
+    <div class="wf-states"><!-- 状态切换按钮 --></div>
+  </footer>
+
+  <script>
+    function showState(state) {
+      document.querySelectorAll('.wf-state').forEach(el => el.classList.remove('active'));
+      document.querySelector(`[data-state="${state}"]`).classList.add('active');
+      document.querySelectorAll('.wf-states button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.state === state);
+      });
+    }
+  </script>
+</body>
+</html>
+```
+
+#### 4.3 `index.html` — 导航枢纽
+
+列出所有屏幕，每项链接到对应 `S-XX.html`：
+
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>[项目名] — UI 概念设计</title>
+  <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+  <header class="wf-topbar">
+    <span>[项目名] — UI 概念设计索引</span>
+  </header>
+  <main class="wf-index">
+    <div class="wf-screen-card">
+      <a href="S-01.html">S-01 · [屏幕名]</a>
+      <p>[一句话描述]</p>
+    </div>
+    <!-- 更多屏幕卡片 -->
+  </main>
+</body>
+</html>
 ```
 
 **交互展示原则**（视觉反馈，非业务逻辑）：
 - 按钮/链接/输入框画出，绑点击事件
 - 点击触发**视觉反馈**（弹窗显隐、面板展开、状态切换），不触发**真实业务逻辑**
-- **页面内导航**：侧边栏、Tab、面包屑点击 → `showScreen()`
-- **详情跳转**：卡片、列表项点击 → `showScreen()`，展示"点击→跳转"流程
+- **跨屏幕导航**：侧边栏、Tab、面包屑、卡片点击 → 链接到对应 `S-XX.html`
 - **弹窗表单**：可聚焦、可点击，提交后不真处理数据
 - **目标**：完整展示交互流程和各状态下的界面外观
 
@@ -89,7 +141,7 @@ check `design_tokens.json`:
 | **可点击性** | 所有带 `onclick` 的元素必须有 `cursor: pointer` | 添加 CSS `cursor: pointer` |
 | **data-el 完整性** | 所有可交互元素必须有 `data-el` | 补充 `data-el` 描述 |
 | **状态覆盖** | 每个屏幕必须包含 default/loading/empty（如适用）| 补充缺失的状态 div |
-| **导航连通性** | 侧边栏、卡片等点击须能切换到目标屏幕 | 添加/修复 `onclick="showScreen()"` |
+| **跨文件链接有效性** | `index.html` 链接指向存在的 `S-XX.html`；每个 `S-XX.html` 含返回索引链接 | 修复链接路径 |
 | **反模式红线** | 无紫色渐变、无 emoji、非纯黑白 | 替换为符合审美方向的配色 |
 | **间距一致性** | 使用 CSS 变量，无硬编码魔法数字 | 替换为 `var(--space-*)` |
 
@@ -100,7 +152,7 @@ check `design_tokens.json`:
   └── 否 → 通过
 ```
 
-**检查方式**：扫描 HTML 元素，核对检查项，输出到注释（`<!-- Check: 6/6 passed -->`），失败则修复。
+**检查方式**：扫描各 HTML 文件元素，核对检查项，输出到注释（`<!-- Check: 6/6 passed -->`），失败则修复。
 
 [[INCLUDE: shared/ui-redlines.md]]
 
@@ -121,9 +173,9 @@ check `design_tokens.json`:
 > 平台: [类型] | 生成: YYYY-MM-DD
 
 ## 屏幕索引
-| ID | 名称 | 路由 | 状态 |
-|:---|:---|:---|:---|
-| S-01 | [名] | [路由] | default, loading, empty, error |
+| ID | 名称 | 路由 | 文件 | 状态 |
+|:---|:---|:---|:---|:---|
+| S-01 | [名] | [路由] | screens/S-01.html | default, loading, empty, error |
 
 ## 导航关系
 S-XX →（触发条件）→ S-YY
@@ -131,6 +183,7 @@ S-XX →（触发条件）→ S-YY
 ## 屏幕结构摘要
 ### S-XX · [屏幕名]
 **布局**: [描述，如"左侧边栏 240px + 右内容区"]
+**文件**: screens/S-XX.html
 **状态**: default（核心操作）| loading（骨架屏）| empty | error
 **关键区域**: [data-el 提取：顶部导航栏、主表单区、提交按钮、错误提示区]
 ```
@@ -143,25 +196,27 @@ S-XX →（触发条件）→ S-YY
 
 ## 输出验证
 
-□ `global/ui_concept.html` 已生成且含所有屏幕 section
-□ `global/ui_context.md` 已生成且含屏幕索引表
+□ `global/screens/index.html` 已生成且列出所有屏幕链接
+□ `global/screens/_shared.css` 已生成且含 design_tokens CSS 变量
+□ `global/screens/S-XX.html` 每个屏幕独立文件已生成
+□ `global/ui_context.md` 已生成且屏幕索引含 `screens/S-XX.html` 路径
 
 ---
 
 ## Refinement（用户反馈调整）
 
-用户回复含布局/视觉调整 → 局部更新 `ui_concept.html` + 同步 `ui_context.md` → 重新展示摘要等待确认。
+用户回复含布局/视觉调整 → 局部更新对应 `screens/S-XX.html` + 同步 `ui_context.md` → 重新展示摘要等待确认。
 
 ---
 
 ## Incremental Update（局部更新）
 
-输入屏幕 ID 列表 → 仅处理指定屏幕：保留已有内容，按当前视觉规格生成新增部分；如有新状态，同步更新 `ui_context.md`。
+输入屏幕 ID 列表 → 仅处理指定屏幕：保留已有文件，按当前视觉规格生成新增/更新的 `S-XX.html`；如有新状态，同步更新 `ui_context.md`。更新 `index.html` 导航列表。
 
-输出：`MODIFIED: ui_concept.html S-XX（局部更新）`
+输出：`MODIFIED: screens/S-XX.html`（逐文件标注）
 
 ---
 
 ## Adopt（逆向采用）
 
-输入已有代码 + design_tokens.json → 提取：路由 → 屏幕清单，布局组件 → 导航结构，页面组件 → 核心区域和状态 → 按标准流程生成 HTML + ui_context.md。
+输入已有代码 + design_tokens.json → 提取：路由 → 屏幕清单，布局组件 → 导航结构，页面组件 → 核心区域和状态 → 按标准流程生成 `screens/` 目录 + ui_context.md。
