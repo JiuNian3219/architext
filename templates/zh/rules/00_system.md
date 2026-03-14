@@ -210,7 +210,7 @@ alwaysApply: true
 |:---|:---|:---|:---|:---|
 | `roadmap.json` | 任务进度 DAG：ID/标题/状态(pending/active/done/blocked)/依赖/阶段/描述 | 语义理解时匹配意图对应任务；判定任务状态和依赖；检查 ID 水位 | start 创建；scope 追加；code/fix 完成后更新 status | 结构: `phases[]→tasks[]`，每个 task 须有 id/title/status/deps；deps 引用的 ID 须存在；slug 为 Snake_Case |
 | `vision.md` | 项目愿景、北极星指标、设计哲学、目标用户、边界约束、产品原则 | plan/audit 时对齐方向；评估新需求是否偏离愿景 | start/inherit 创建；revise 时更新 | 禁在 code 阶段修改 |
-| `map.json` | 目录↔模块映射(directoryMapping)、逻辑拓扑(logicalTopology)、用户旅程(criticalUserJourneys)、聚合关系(featureRelations) | 每次新对话强制读取（见前置）；定位代码对应文档；创建新文件判断目录；检查模块依赖 | plan Step 3；inherit；/archi.map；**创建新文件/模块时须立即更新** | directoryMapping 须反映真实文件树；logicalTopology 须注册每个 Task Module 职责；featureRelations 记录聚合关系；代码引用违反拓扑层级时须报错停止 |
+| `map.json` | 目录↔模块映射(directoryMapping)、逻辑拓扑(logicalTopology)、用户旅程(criticalUserJourneys)、影响关联关系(featureRelations) | 每次新对话强制读取（见前置）；定位代码对应文档；创建新文件判断目录；检查模块依赖；修改文件时检查关联网 | plan Step 3；inherit；/archi.map；**创建新文件/模块时须立即更新** | directoryMapping 须反映真实文件树；logicalTopology 须注册每个 Task Module 职责；featureRelations 以网状结构记录影响关联，修改任一文件时检查所属网的其他成员；代码引用违反拓扑层级时须报错停止 |
 | `dictionary.json` | 统一术语表：实体命名(codeName)/禁用同义词(forbiddenSynonyms)/动词规范/工具注册/组件注册 | 命名变量/类/函数时；避免同一概念多种叫法 | plan Step 3 注册新术语；code/fix 后 step_5 自动追加 | codeName 是命名最高权威；禁用 forbiddenSynonyms 中的词；仅注册项目业务域，禁注册框架概念；仅ui项目: components 创建前须搜索复用 |
 | `error_codes.json` | 错误码契约：ERR_MODULE_REASON 格式，含 message 和 recovery | 编写错误处理代码时；注册新业务错误码时 | plan Step 3；code/fix 后 step_5 自动追加 | 格式: `ERR_[MODULE]_[REASON]`；编写错误处理前须先注册；仅注册项目业务域错误，禁注册框架基础设施错误 |
 | `design_tokens.json` | 仅ui项目: 色板(primitivePalette)/语义色(semanticTokens)/字体/圆角/间距/动效(motion)/图标风格 | 写 UI 代码/样式时 | start 创建；设计变更时更新 | Token Only：样式严格使用 Token，禁硬编码 Hex/px/rem；须同时定义 light 和 dark 值 |
@@ -251,4 +251,4 @@ alwaysApply: true
 修改 `[[__DOCS_DIR__]]` 下文件时，保留 YAML Frontmatter + `## 🤖 AI Maintenance Guide` 区域，禁改禁删。
 
 **D. Map 维护**:
-创建新文件或新模块时 → 须更新 `map.json`，在 `directoryMapping`/`logicalTopology` 中建立代码路径与文档路径的映射；映射关系不明确时才询问用户确认。
+创建新文件或新模块时 → 须更新 `map.json`，在 `directoryMapping`/`logicalTopology` 中建立代码路径与文档路径的映射；发现文件间有关联影响时，在 `featureRelations` 中记录影响关系；映射关系不明确时才询问用户确认。
