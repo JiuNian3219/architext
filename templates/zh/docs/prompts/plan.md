@@ -24,7 +24,7 @@
 <step_1_load>
     **Action**:
     1.  **Pre-flight**: 读取 roadmap.json，仅读 `<ID>` 条目及直接 deps 的 `id/title/status`；deps 未完成则拒绝（除非用户强制）。
-    2.  **Load**: vision.md（仅北极星+设计哲学）、02_tech_stack.md（红线 + §9 项目约定，提取 Error Handling/Data Flow/Auth 继承值）、（仅ui项目）design_tokens.json + ui_context.md（定位屏幕 ID，锁定范围供 step_4 填入，禁自行发明新 ID；不存在则跳过）、（仅data项目）data_snapshot.json。
+    2.  **Load**: 读取项目上下文（vision、tech_stack、按需读取 feature 相关 JSON），详见 00_system.md 数据治理规则。
     3.  **Dependency Context** (有依赖时): 仅读依赖任务 spec.md 的 Interface/Type 段；无引用时跳过。Stub 依赖 → 从关联文件提取源码公共接口。
     4.  **Refs** (如有): 读 refs/index.json，按 tags 语义匹配，仅读命中 ref 文件；不存在则跳过。
 
@@ -224,7 +224,13 @@
     □ plan.json — spec § 2 每条 AC → ≥1 task 覆盖（100% 覆盖原则）
     □ plan.json — 每个 task notes 含验证字段（非空，非 title 同义重复）
     □ map.json — tasks/<ID>_<Slug> 已在 directoryMapping 注册
-    □ 全局文件 — 新术语/错误码/Schema 已同步（dictionary/error_codes/data_snapshot）
+    □ 全局文件 — 新术语/错误码/Schema/Token 已同步
+      - dictionary.json + error_codes.json — 必填
+      - （仅ui项目）design_tokens.json + ui_context.md
+      - （仅data项目）data_snapshot.json
+      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅cli项目）command_api.json
+      - （仅lib项目）public_api.json
     □ Step 6 Silent Audit — 已执行，所有 CRITICAL 问题已修复
 
     **Action** (Checklist 全部确认后):

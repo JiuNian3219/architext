@@ -16,7 +16,7 @@
 <step_1_load>
     **Action**:
     1.  **Pre-flight**: 检查 `architext.json` → `features` 是否含 `ui`。不含 → 拒绝（"本项目未启用 UI 特征"）。
-    2.  **Load**: vision.md（平台/用户/北极星）、roadmap.json（UI 相关任务）、design_tokens.json、02_tech_stack.md（平台/导航框架）、ui_context.md（如存在）。
+    2.  **Load**: 读取项目上下文 + UI 相关 JSON（design_tokens、ui_context），详见 00_system.md 数据治理规则。
     3.  **Mode Detection**:
 
         | 条件 | 模式 | 行为 |

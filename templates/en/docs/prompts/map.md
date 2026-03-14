@@ -100,6 +100,7 @@
     □ Stale entries removed from directoryMapping
     □ New entries correctly classified (path + layer + description all filled)
     □ Renamed entries explicitly handled (not silently ignored)
+    □ featureRelations — updated if directory changes affect linkage relations
     □ lastUpdated updated
     □ Terminal Gate — task --check + render passed
 

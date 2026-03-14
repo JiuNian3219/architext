@@ -229,12 +229,16 @@
 
     **Pre-signoff Checklist** (Gate 通过后、输出前须逐项确认):
     □ vision.md — 已填充（无 Brief 时: 推导内容标注了 `(AI 补全 — 建议用户审查)`）
-    □ 02_tech_stack.md — Section 1-8 完整填充
+    □ tech_stack.md — Section 1-8 完整填充
     □ roadmap.json — 每个功能模块对应一条 LEG-xx（status: done, tag: Legacy）
     □ tasks/LEG-xx_<Slug>/spec.md — 每条 LEG 均有对应 Stub spec（含关联文件列表）
     □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations 均已填充
     □ dictionary.json + error_codes.json — 从代码提取完毕
     □ （仅ui项目）design_tokens.json — Adopt 模式已从 CSS 提取
+    □ （仅data项目）data_snapshot.json — 初始实体骨架已写入
+    □ （仅api项目）api_snapshot.json + env_registry.json — 初始 API 端点已注册
+    □ （仅cli项目）command_api.json — 初始 CLI 命令已注册
+    □ （仅lib项目）public_api.json — 初始库导出已注册
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
 
     **Action** (Checklist 全部确认后):

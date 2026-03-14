@@ -34,7 +34,7 @@
 
 <step_1_load>
     **Action**:
-    1.  **Load**: vision.md（仅北极星+Boundaries）、roadmap.json（仅 id/title/status/deps/tag + 当前最大 ID 水位）、02_tech_stack.md、map.json（仅 directoryMapping + featureRelations）。
+    1.  **Load**: 读取项目上下文（vision、roadmap、tech_stack、map），详见 00_system.md 数据治理规则。
     2.  **Scan Tasks**: 扫描 tasks/ 目录 — 了解已有 Task 概要（标题+关键流程，无需全文）。
 
     **Output**: 内部上下文摘要，进入 `<step_2_analysis>`。
@@ -117,7 +117,8 @@
     **Pre-signoff Checklist** (输出前须逐项确认):
     □ 分解方案已获用户明确确认（回复 OK 后才写入 roadmap — step_4 Gate）
     □ roadmap.json — 任务已追加（非覆盖），lastUpdated 已更新
-    □ （有新模块）map.json directoryMapping — 新任务模块路径已预注册
+    □ （有新模块）map.json directoryMapping + logicalTopology — 新任务模块路径已预注册
+    □ featureRelations — 若新任务涉及已有文件的关联影响，已同步更新
     □ step_5 Terminal Gate — task --check + render 已通过
 
     **Action** (Gate 须在 step_5 完成):

@@ -16,8 +16,8 @@
 
 <step_1_scan>
     **Action**:
-    1.  **Read Map**: 读取 `[[__DOCS_DIR__]]/global/map.json` — 当前架构地图。
-    2.  **Read Tech Stack**: 读取 `02_tech_stack.md` — 目录结构约定、架构模式。
+    1.  **Read Map**: 读取 map.json — 当前架构地图。
+    2.  **Read Tech Stack**: 读取 tech_stack — 目录结构约定、架构模式。
     3.  **Scan Directory Tree**: 扫描项目目录结构。
         - **排除**: `.git/`, `node_modules/`, `dist/`, `build/`, `[[__DOCS_DIR__]]/`, 及 `.gitignore` 中声明的路径。
         - **深度**: 跟随 map.json 现有条目的粒度模式。
@@ -100,6 +100,7 @@
     □ 过期条目已从 directoryMapping 移除
     □ 新增条目已正确归类（path + layer + description 均已填写）
     □ 疑似重命名已明确处理（非静默忽略）
+    □ featureRelations — 目录变更若影响关联关系，已同步更新
     □ lastUpdated 已更新
     □ Terminal Gate — task --check + render 通过
 

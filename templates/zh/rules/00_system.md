@@ -250,5 +250,9 @@ alwaysApply: true
 **C. 文件元数据保护**:
 修改 `[[__DOCS_DIR__]]` 下文件时，保留 YAML Frontmatter + `## 🤖 AI Maintenance Guide` 区域，禁改禁删。
 
-**D. Map 维护**:
-创建新文件或新模块时 → 须更新 `map.json`，在 `directoryMapping`/`logicalTopology` 中建立代码路径与文档路径的映射；发现文件间有关联影响时，在 `featureRelations` 中记录影响关系；映射关系不明确时才询问用户确认。
+**D. 关联感知与同步**:
+1. **修改前**: 先查 `map.json` → `featureRelations`，确认是否有其他关联文件需要一起处理
+2. **修改后**: 若发现新的关联关系，及时更新 `featureRelations`
+3. **创建新文件/模块**: 更新 `directoryMapping`/`logicalTopology`；映射关系不明确时才询问用户确认。
+
+> 核心原则：**动一个文件时，自动检查并同步关联文件**。

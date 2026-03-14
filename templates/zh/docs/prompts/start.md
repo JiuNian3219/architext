@@ -161,12 +161,15 @@
 
     **Pre-signoff Checklist** (Gate 通过后、输出前须逐项确认):
     □ vision.md — 所有占位符已替换，无模板示例文字残留
-    □ 02_tech_stack.md — Section 1-9 完整填充，Section 9 Project Conventions 含 Strategy + Rationale
+    □ tech_stack.md — Section 1-9 完整填充，Section 9 Project Conventions 含 Strategy + Rationale
     □ roadmap.json — archi-decompose-roadmap Skill 已执行，任务链已生成
-    □ map.json — 核心目录骨架已预注册（directoryMapping）
+    □ map.json — 核心目录骨架已预注册（directoryMapping + logicalTopology + featureRelations）
     □ dictionary.json + error_codes.json — 领域术语和核心错误码已提取
-    □ （仅ui项目）design_tokens.json — 已生成
+    □ （仅ui项目）design_tokens.json + ui_context.md — 已生成
     □ （仅data项目）data_snapshot.json — 初始实体骨架已写入
+    □ （仅api项目）api_snapshot.json + env_registry.json — 初始 API 端点已注册
+    □ （仅cli项目）command_api.json — 初始 CLI 命令已注册
+    □ （仅lib项目）public_api.json — 初始库导出已注册
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
 
     **Action** (Checklist 全部确认后):

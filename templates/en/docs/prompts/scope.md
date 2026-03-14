@@ -117,7 +117,8 @@
     **Pre-signoff Checklist** (confirm each item before Output):
     □ Decomposition proposal confirmed by user (replied OK before writing to roadmap — step_4 Gate)
     □ roadmap.json — tasks appended (not overwritten), lastUpdated updated
-    □ (new modules) map.json directoryMapping — new task module paths pre-registered
+    □ (new modules) map.json directoryMapping + logicalTopology — new task module paths pre-registered
+    □ featureRelations — synced if new tasks involve impact on existing file linkages
     □ step_5 Terminal Gate — task --check + render passed
 
     **Action** (Gate must complete in step_5):

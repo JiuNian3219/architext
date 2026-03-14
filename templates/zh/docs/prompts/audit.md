@@ -36,7 +36,7 @@
     3.  **Load**: vision.md（方向基准）+ task docs (spec/plan/ui) + 前次 audit.md（对比用）+ project context (tech_stack/design_tokens/data_snapshot/ui_context/screens/)。读取该任务对应的所有代码文件。
 
     **项目级 — Load Overview**:
-    1.  读取 vision.md、roadmap.json、map.json、02_tech_stack.md。
+    1.  读取项目上下文（vision、roadmap、tech_stack、map），详见 00_system.md 数据治理规则。
     2.  扫描 tasks/ 目录结构。
     3.  读取项目代码入口文件与关键模块。
 

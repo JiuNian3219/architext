@@ -79,9 +79,16 @@
 <step_5_summary>
     **Pre-signoff Checklist** (输出前须逐项确认):
     □ spec.md — 已按 context 更新，变更已追踪
-    □ （ui有修改）ui.md + screens/S-XX.html + ui_context.md — 已同步更新
+    □ （仅ui项目，ui有修改）ui.md + screens/S-XX.html + ui_context.md — 已同步更新
     □ plan.json — 新 Phase 已追加（历史任务完整保留）
     □ （原 status=done）roadmap.json — status 已重置为 active
+    □ 全局文件 — 变更涉及的相关 JSON 已同步更新
+      - dictionary.json + error_codes.json — 必检
+      - （仅ui项目）design_tokens.json + ui_context.md
+      - （仅data项目）data_snapshot.json
+      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅cli项目）command_api.json
+      - （仅lib项目）public_api.json
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
     □ Terminal Gate — task --check 无 ERROR（step_3 中已执行）
 
