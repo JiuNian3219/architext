@@ -71,7 +71,7 @@
 
 ### Visual Reference
 
-> Provides aesthetic input for AI—directly impacts `ui_concept.html` visual quality.
+> Provides aesthetic input for AI—directly impacts visual quality of screen prototypes in the `screens/` directory.
 > Any field below is valid; the more you fill, the better AI can match your expected style.
 
 **Competitor/inspiration screenshots**: [paste image / Figma link / URL]

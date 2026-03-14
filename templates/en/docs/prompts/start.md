@@ -140,15 +140,13 @@
     - (UI projects only) `design_tokens.json`: Fill aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens from "Style & Tone" and "Visual Reference"
     - `error_codes.json`: Predefine core error codes from task list
 
+    UI projects only: **UI concept design**: Skip — completed independently by `/archi.ui`. Only ensure `design_tokens.json` is populated.
+
     ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
     - `directoryMapping`: Pre-register core directory skeleton from tech_stack architecture pattern
     - `logicalTopology` / `criticalUserJourneys` / `featureRelations`: Empty array for now
 
-    UI projects only: **UI concept design**: [[SKILL: archi-ui-wireframe|Follow the skill protocol to auto-generate UI concept design.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` and follow its protocol)]]
-    - Start generation without user confirmation
-    - Read the just-written vision.md + roadmap.json + design_tokens.json + 02_tech_stack
-    - Write `ui_concept.html` + `ui_context.md`
-    - Output UI concept design summary; await user confirmation or feedback for adjustments
+    UI projects only: **UI concept design**: Skip — completed independently by `/archi.ui`.
 
     **Output**: Write all files, then run `npx archi render`. Enter step_4_verify.
 </step_3_constitution>
@@ -169,7 +167,7 @@
     □ roadmap.json — archi-decompose-roadmap Skill executed, task chain generated
     □ map.json — core directory skeleton pre-registered (directoryMapping)
     □ dictionary.json + error_codes.json — domain terms and core error codes extracted
-    □ (UI projects only) design_tokens.json + ui_concept.html + ui_context.md — generated
+    □ (UI projects only) design_tokens.json — generated
     □ (Data projects only) data_snapshot.json — initial entity skeleton written
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
 
@@ -185,7 +183,7 @@
 
     | Priority | Action | Notes |
     |:---|:---|:---|
-    | (UI projects only) Recommended | Review ui_concept.html | UI concept design auto-generated; confirm layout and visuals in browser |
+    | (UI projects only) Recommended | `/archi.ui` | Generate UI concept design (`screens/` multi-file structure) |
     | Recommended | `/archi.plan INF-01` | Plan the first infrastructure task |
     | Optional | `/archi.scope <scope-brief.md>` | If more requirements to decompose, append to Roadmap |
 </step_5_signoff>

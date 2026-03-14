@@ -29,7 +29,7 @@
         | `blocked` | 拒绝 — 前置依赖未完成 |
         | `done` | 拒绝 — 已完成，如需修改用 `/archi.edit <ID>` |
 
-    3.  **Load**: task docs (spec/ui/design/plan) + project context (tech_stack/design_tokens/data_snapshot/ui_context/ui_concept) + refs（按 tags 匹配，仅读命中文件）。
+    3.  **Load**: task docs (spec/ui/design/plan) + project context (tech_stack/design_tokens/data_snapshot/ui_context/screens/) + refs（按 tags 匹配，仅读命中文件）。
 
     **Output**: 待实施任务的原子清单，标注依赖与顺序。
 </step_1_resolve>

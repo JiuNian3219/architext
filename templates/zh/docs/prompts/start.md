@@ -140,11 +140,7 @@
     - （仅ui项目） `design_tokens.json`: 基于「风格与调性」和「视觉参考」填充 aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens
     - `error_codes.json`: 基于任务列表预定义核心错误码
 
-    仅ui项目: **UI 概念设计**: [[SKILL: archi-ui-wireframe|按 skill 的协议，自动生成 UI 概念设计。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其协议执行）]]
-    - 无需用户确认即开始生成
-    - 读取刚写入的 vision.md + roadmap.json + design_tokens.json + 02_tech_stack
-    - 写入 `ui_concept.html` + `ui_context.md`
-    - 输出 UI 概念设计摘要，等待用户确认或反馈调整
+    仅ui项目: **UI 概念设计**: 跳过 — 由 `/archi.ui` 独立完成。仅确保 `design_tokens.json` 已填充。
 
     ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
     - `directoryMapping`: 基于 tech_stack 架构模式预注册核心目录骨架
@@ -169,7 +165,7 @@
     □ roadmap.json — archi-decompose-roadmap Skill 已执行，任务链已生成
     □ map.json — 核心目录骨架已预注册（directoryMapping）
     □ dictionary.json + error_codes.json — 领域术语和核心错误码已提取
-    □ （仅ui项目）design_tokens.json + ui_concept.html + ui_context.md — 已生成
+    □ （仅ui项目）design_tokens.json — 已生成
     □ （仅data项目）data_snapshot.json — 初始实体骨架已写入
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
 
@@ -185,7 +181,7 @@
 
     | 优先级 | 行动 | 说明 |
     |:---|:---|:---|
-    | （仅ui项目） 推荐 | 审查 ui_concept.html | UI 概念设计已自动生成；在浏览器中确认布局和视觉效果 |
+    | （仅ui项目） 推荐 | `/archi.ui` | 生成 UI 概念设计（`screens/` 多文件结构） |
     | 推荐 | `/archi.plan INF-01` | 规划第一个基础设施任务 |
     | 可选 | `/archi.scope <scope-brief.md>` | 如有更多需求待分解，追加到 Roadmap |
 </step_5_signoff>

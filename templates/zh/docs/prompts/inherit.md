@@ -212,12 +212,7 @@
     - （仅data项目） `data_snapshot.json`: 从 schema/migration 提取
     - `error_codes.json`: 从代码中的错误定义提取
 
-    仅ui项目: **UI 概念设计（Adopt 模式）**: [[SKILL: archi-ui-wireframe|调用 skill（adopt 模式），从代码逆向生成 UI 概念设计。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md` 并遵循其 Adopt 协议执行）]]
-    - 读取代码中的路由定义、页面组件、布局文件
-    - 读取 step_3 写入的 design_tokens.json（含代码提取的 CSS 变量/theme）
-    - tokens 不完整时触发 skill 内置引导流程
-    - 写入 `ui_concept.html` + `ui_context.md`
-    - 输出 UI 概念设计摘要，等待用户确认或反馈调整
+    仅ui项目: **UI 概念设计**: 跳过 — 由 `/archi.ui` 独立完成。仅确保 `design_tokens.json` 已从 CSS 变量/主题提取填充。
 
     **Output**: 写入所有文件，运行 `npx archi render`。进入 step_4_verify。
 </step_3_constitution>
@@ -239,7 +234,7 @@
     □ tasks/LEG-xx_<Slug>/spec.md — 每条 LEG 均有对应 Stub spec（含关联文件列表）
     □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations 均已填充
     □ dictionary.json + error_codes.json — 从代码提取完毕
-    □ （仅ui项目）design_tokens.json + ui_concept.html + ui_context.md — Adopt 模式已执行
+    □ （仅ui项目）design_tokens.json — Adopt 模式已从 CSS 提取
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
 
     **Action** (Checklist 全部确认后):
@@ -256,6 +251,7 @@
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
     | 1 | 审查 vision.md | 确认 AI 补全的愿景描述是否准确 |
+    | （仅ui项目） 推荐 | `/archi.ui` | 生成 UI 概念设计（`screens/` 多文件结构，Adopt 模式） |
     | 2 | `/archi.edit LEG-xx` | 对核心模块补全完整 spec（自动触发 Enrich 流程） |
     | 3 | `/archi.scope [file_path]` | 规划新功能/大模块 |
     | 4 | `/archi.plan <任务ID>` | 对单个任务做深度规划 |

@@ -95,6 +95,7 @@ alwaysApply: true
 - 管理外部参考资料 → `ref`
 - 恢复备份数据 → `recover`
 - 同步架构地图 → `map`
+- 生成/更新 UI 概念设计 → `ui`
 - "下一步做什么" → `help`
 - 以上都不是 → 进入 ③
 
@@ -161,6 +162,7 @@ alwaysApply: true
 | `/archi.fix` | `[[__PROMPTS_PATH__]]/archi.fix.md` |
 | `/archi.map` | `[[__PROMPTS_PATH__]]/archi.map.md` |
 | `/archi.remove` | `[[__PROMPTS_PATH__]]/archi.remove.md` |
+| `/archi.ui` | `[[__PROMPTS_PATH__]]/archi.ui.md` |
 | `/archi.ref` | `[[__PROMPTS_PATH__]]/archi.ref.md` |
 | `/archi.recover` | `[[__PROMPTS_PATH__]]/archi.recover.md` |
 | `/archi.help` | `[[__PROMPTS_PATH__]]/archi.help.md` |
@@ -212,6 +214,8 @@ alwaysApply: true
 | `dictionary.json` | 统一术语表：实体命名(codeName)/禁用同义词(forbiddenSynonyms)/动词规范/工具注册/组件注册 | 命名变量/类/函数时；避免同一概念多种叫法 | plan Step 3 注册新术语；code/fix 后 step_5 自动追加 | codeName 是命名最高权威；禁用 forbiddenSynonyms 中的词；仅注册项目业务域，禁注册框架概念；仅ui项目: components 创建前须搜索复用 |
 | `error_codes.json` | 错误码契约：ERR_MODULE_REASON 格式，含 message 和 recovery | 编写错误处理代码时；注册新业务错误码时 | plan Step 3；code/fix 后 step_5 自动追加 | 格式: `ERR_[MODULE]_[REASON]`；编写错误处理前须先注册；仅注册项目业务域错误，禁注册框架基础设施错误 |
 | `design_tokens.json` | 仅ui项目: 色板(primitivePalette)/语义色(semanticTokens)/字体/圆角/间距/动效(motion)/图标风格 | 写 UI 代码/样式时 | start 创建；设计变更时更新 | Token Only：样式严格使用 Token，禁硬编码 Hex/px/rem；须同时定义 light 和 dark 值 |
+| `screens/` | 仅ui项目: 多文件 UI 概念设计目录：`index.html`（导航枢纽）+ `S-XX.html`（独立屏幕）+ `_shared.css`（共享样式） | 写 UI 代码时作只读视觉参考 | `/archi.ui` 生成；plan/edit 发现 UI 偏差时增量更新 | 由 archi-ui-wireframe Skill 生成，禁手动修改；每个 `S-XX.html` 可在浏览器独立预览 |
+| `ui_context.md` | 仅ui项目: AI 屏幕索引：屏幕 ID/路由/文件路径/状态/导航关系/结构摘要 | plan/code/audit/edit 读取 UI 结构信息的唯一入口 | `/archi.ui` 生成；plan/edit 发现 UI 偏差时同步更新 | 禁手动修改；屏幕路由引用 `screens/S-XX.html` 路径 |
 | `data_snapshot.json` | 仅data项目: 数据模型快照：models[](名称/字段/类型/约束) + relationships[](1:1/1:N/M:N) | 涉及数据层设计或实现时 | plan 设计 Schema；code 完成后同步变更 | Design First：plan 须精确到字段名与类型，禁写 TBD；code 完成后须同步回此文件 |
 | `api_snapshot.json` | 仅api项目: API 端点快照：endpoints[](路由/方法/参数/owner) | 实现/对接 API 端点时 | plan Step 3 注册；code 同步 | Register First：禁实现未登记端点；owner 标注 Task ID |
 | `env_registry.json` | 仅api项目: 环境变量注册表：每个 env var 的 required/example/描述 | 引入新配置项时；检查已有环境变量时 | code 引入新 env var 后立即追加 | 引入即注册；required/example 必填 |

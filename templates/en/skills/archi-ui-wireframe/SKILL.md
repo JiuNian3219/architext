@@ -1,6 +1,6 @@
 ---
 name: archi-ui-wireframe
-description: Generate UI concept designs and wireframes.when creating or updating UI screens for web, mobile, or desktop applications. Do not auto-trigger.
+description: Generate UI concept designs and wireframes as multi-file screens/ directory. Do not auto-trigger.
 ---
 
 # UI Concept Design
@@ -8,11 +8,11 @@ description: Generate UI concept designs and wireframes.when creating or updatin
 ## System Flow Position
 
 ```
-/archi.start → [This Skill] → ui_concept.html (all screens) → /archi.plan → ui.md (task scope)
-/archi.inherit → [This Skill adopt mode] → ui_concept.html (reverse from code)
+/archi.ui → [This Skill] → screens/ (multi-file directory) → /archi.plan → ui.md (task scope)
+/archi.ui (adopt mode) → [This Skill] → screens/ (reverse from code)
 ```
 
-> **Outputs**: `ui_concept.html` (hi-fi preview with state switching) + `ui_context.md` (AI index)
+> **Outputs**: `screens/` directory (`index.html` navigation hub + `S-XX.html` independent screens + `_shared.css` shared styles) + `ui_context.md` (AI index)
 
 ---
 
@@ -20,10 +20,10 @@ description: Generate UI concept designs and wireframes.when creating or updatin
 
 | Mode | Trigger | Scope |
 |:---|:---|:---|
-| Initial | `/archi.start` | Full — all screens |
-| Adopt | `/archi.inherit` | Reverse from code routes/components |
-| Regenerate | Manual | Full rewrite |
-| Append/Modify | `/archi.scope/edit` | Specified screens only |
+| Initial | `/archi.ui` | Full — all screens |
+| Adopt | `/archi.ui` (auto-detected when code exists) | Reverse from code routes/components |
+| Regenerate | Manual | Full rewrite (global redesign) |
+| Append/Modify | `/archi.scope/edit` or `/archi.ui` (incremental mode) | Specified screens only |
 | Update | `/archi.plan` divergence | Affected screens only |
 
 ---
@@ -50,35 +50,87 @@ check `design_tokens.json`:
 - `primitivePalette.brand` empty → guide for Hex
 - Other empty → AI infers, non-blocking
 
-### Step 4 — Generate Hi-fi HTML
+### Step 4 — Generate Multi-file HTML
 
-**Output**: `[[__DOCS_DIR__]]/global/ui_concept.html`
+**Output directory**: `[[__DOCS_DIR__]]/global/screens/`
 
-**Structure** (top to bottom):
-1. **Top bar** — Fixed, shows project name + current screen name
-2. **Content area** — Scrollable, renders the currently active screen
-3. **Control bar** — Fixed bottom, two sections:
-   - **Left States**: Current screen state switching (default/loading/empty/error)
-   - **Right Screens**: List of all project screens (S-01/S-02...), click to switch
+#### 4.1 `_shared.css` — Shared Styles
 
-**HTML Structure**:
+Extract CSS variables from `design_tokens.json` + base layout + control bar styles. All `S-XX.html` reference via `<link href="_shared.css">`.
+
+#### 4.2 `S-XX.html` — Independent Screen Files
+
+One self-contained HTML file per screen, structure:
+
 ```html
-<section id="S-01" class="wf-screen active">
-  <div class="wf-state active" data-state="default">...</div>
-  <div class="wf-state" data-state="loading">...</div>
-</section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>S-XX · [Screen Name]</title>
+  <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+  <header class="wf-topbar">
+    <a href="index.html" class="wf-back">← Back to Index</a>
+    <span>[Project Name] — S-XX · [Screen Name]</span>
+  </header>
 
-<footer class="wf-ctrl-bar">
-  <div><!-- States --></div>
-  <div><!-- Screens --></div>
-</footer>
+  <main class="wf-content">
+    <div class="wf-state active" data-state="default">...</div>
+    <div class="wf-state" data-state="loading">...</div>
+    <div class="wf-state" data-state="empty">...</div>
+    <div class="wf-state" data-state="error">...</div>
+  </main>
+
+  <footer class="wf-ctrl-bar">
+    <div class="wf-states"><!-- State switching buttons --></div>
+  </footer>
+
+  <script>
+    function showState(state) {
+      document.querySelectorAll('.wf-state').forEach(el => el.classList.remove('active'));
+      document.querySelector(`[data-state="${state}"]`).classList.add('active');
+      document.querySelectorAll('.wf-states button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.state === state);
+      });
+    }
+  </script>
+</body>
+</html>
+```
+
+#### 4.3 `index.html` — Navigation Hub
+
+List all screens, each linking to corresponding `S-XX.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>[Project Name] — UI Concept Design</title>
+  <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+  <header class="wf-topbar">
+    <span>[Project Name] — UI Concept Design Index</span>
+  </header>
+  <main class="wf-index">
+    <div class="wf-screen-card">
+      <a href="S-01.html">S-01 · [Screen Name]</a>
+      <p>[One-line description]</p>
+    </div>
+    <!-- More screen cards -->
+  </main>
+</body>
+</html>
 ```
 
 **Interactive Display Principles** (visual feedback, NOT real business logic):
 - Buttons/links/inputs drawn with click events
 - Click triggers **visual feedback** (modal show/hide, panel expand, state switch), NOT **real business logic**
-- **In-page navigation**: Sidebar, tabs, breadcrumbs → `showScreen()`
-- **Detail navigation**: Cards, list items → `showScreen()`, showing "click → navigate" flow
+- **Cross-screen navigation**: Sidebar, tabs, breadcrumbs, card clicks → link to corresponding `S-XX.html`
 - **Modal forms**: Focusable, clickable, but submission doesn't process data
 - **Goal**: complete display of interaction flow and interface in various states
 
@@ -89,7 +141,7 @@ check `design_tokens.json`:
 | **Clickability** | All elements with `onclick` must have `cursor: pointer` | Add CSS `cursor: pointer` |
 | **data-el completeness** | All interactive elements must have `data-el` | Add `data-el` description |
 | **State coverage** | Each screen must include default/loading/empty (as applicable) | Add missing state divs |
-| **Navigation connectivity** | Sidebar, cards, etc. must switch to target screen on click | Add/fix `onclick="showScreen()"` |
+| **Cross-file link validity** | `index.html` links point to existing `S-XX.html`; each `S-XX.html` contains back-to-index link | Fix link paths |
 | **Anti-pattern red lines** | No purple gradient, no emoji, not pure black/white | Replace with aesthetic-compliant colors |
 | **Spacing consistency** | Use CSS variables, no hardcoded magic numbers | Replace with `var(--space-*)` |
 
@@ -100,7 +152,7 @@ Generate HTML → Run checks → Any failures?
   └── No → Passed
 ```
 
-**Check Method**: Scan HTML elements, output to comment (`<!-- Check: 6/6 passed -->`), repair if failed.
+**Check Method**: Scan HTML file elements, verify against checklist, output to comment (`<!-- Check: 6/6 passed -->`), repair if failed.
 
 [[INCLUDE: shared/ui-redlines.md]]
 
@@ -121,9 +173,9 @@ Generate HTML → Run checks → Any failures?
 > Platform: [type] | Generated: YYYY-MM-DD
 
 ## Screen Inventory
-| ID | Name | Route | States |
-|:---|:---|:---|:---|
-| S-01 | [name] | [route] | default, loading, empty, error |
+| ID | Name | Route | File | States |
+|:---|:---|:---|:---|:---|
+| S-01 | [name] | [route] | screens/S-01.html | default, loading, empty, error |
 
 ## Navigation Graph
 S-XX →（trigger）→ S-YY
@@ -131,6 +183,7 @@ S-XX →（trigger）→ S-YY
 ## Screen Structure Summary
 ### S-XX · [Screen name]
 **Layout**: [e.g. "240px left sidebar + right content"]
+**File**: screens/S-XX.html
 **States**: default (core actions) | loading (skeleton) | empty | error
 **Key regions**: [from data-el: top nav, main form, submit button, error area]
 ```
@@ -143,25 +196,27 @@ Output summary: aesthetic direction + reference products, screen coverage list (
 
 ## Output Verification
 
-□ `global/ui_concept.html` generated with all screen sections
-□ `global/ui_context.md` generated with screen inventory table
+□ `global/screens/index.html` generated with all screen links listed
+□ `global/screens/_shared.css` generated with design_tokens CSS variables
+□ `global/screens/S-XX.html` independent file generated for each screen
+□ `global/ui_context.md` generated with screen inventory containing `screens/S-XX.html` paths
 
 ---
 
 ## Refinement (User Feedback)
 
-User reply contains layout/visual adjustments → partial update `ui_concept.html` + sync `ui_context.md` → re-display summary, await confirmation.
+User reply contains layout/visual adjustments → partial update corresponding `screens/S-XX.html` + sync `ui_context.md` → re-display summary, await confirmation.
 
 ---
 
 ## Incremental Update
 
-Input screen ID list → process specified screens only: preserve existing content, generate new parts per current visual spec; if new states → sync update `ui_context.md`.
+Input screen ID list → process specified screens only: preserve existing files, generate new/updated `S-XX.html` per current visual spec; if new states → sync update `ui_context.md`. Update `index.html` navigation list.
 
-Output: `MODIFIED: ui_concept.html S-XX (incremental)`
+Output: `MODIFIED: screens/S-XX.html` (annotated per file)
 
 ---
 
 ## Adopt (Reverse from Code)
 
-Input existing code + design_tokens.json → extract: routes → screen inventory, layout components → navigation structure, page components → core regions and states → generate HTML + ui_context.md per standard flow.
+Input existing code + design_tokens.json → extract: routes → screen inventory, layout components → navigation structure, page components → core regions and states → generate `screens/` directory + ui_context.md per standard flow.

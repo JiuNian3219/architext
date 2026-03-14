@@ -39,6 +39,7 @@ pnpm-debug.log*
 
 # Architext
 .architext/*
+architext.json
 
 # Astro (website)
 website/.astro

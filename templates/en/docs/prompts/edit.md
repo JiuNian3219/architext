@@ -41,14 +41,14 @@
 <step_2_refine_docs>
     **Action**:
     - Modify spec.md and ui.md per `[context]`.
-    - (UI modified) [[SKILL: archi-ui-wireframe|Follow the skill protocol to sync `ui_concept.html` + `ui_context.md`]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md`)]]:
+    - (UI modified) [[SKILL: archi-ui-wireframe|Follow the skill protocol to sync `screens/S-XX.html` + `ui_context.md`]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-ui-wireframe/SKILL.md`)]]:
 
       | Change Type | Criteria | Handling |
       |:---|:---|:---|
       | No screen impact | Logic/data change only | Update spec.md only |
-      | Minor UI tweak | New/modified state, popup, local area | Call skill to update; output `MODIFIED: S-XX` |
+      | Minor UI tweak | New/modified state, popup, local area | Call skill to update; output `MODIFIED: screens/S-XX.html` |
       | Screen structure change | Layout refactor, new screen, navigation change | Call skill to update |
-      | Task reduction | Screen/region removed entirely | Call skill to remove; output `REMOVED: S-XX` |
+      | Task reduction | Screen/region removed entirely | Call skill to remove; output `REMOVED: screens/S-XX.html` |
 
     - Ask user when requirements are vague.
 
@@ -79,7 +79,7 @@
 <step_5_summary>
     **Pre-signoff Checklist** (confirm each item before Output):
     □ spec.md — updated per context, changes tracked
-    □ (if UI changed) ui.md + ui_concept.html + ui_context.md — synced
+    □ (if UI changed) ui.md + screens/S-XX.html + ui_context.md — synced
     □ plan.json — new Phase appended (history tasks fully preserved)
     □ (if original status=done) roadmap.json — status reset to active
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
