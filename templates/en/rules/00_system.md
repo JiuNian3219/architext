@@ -246,5 +246,9 @@ When this change introduces new business entities/error codes/Schema → Execute
 **C. File Metadata Protection**:
 When modifying files under `[[__DOCS_DIR__]]`, preserve YAML Frontmatter + `## 🤖 AI Maintenance Guide` section, forbidden to modify or delete.
 
-**D. Map Maintenance**:
-When creating new files or modules → Must update `map.json`, establish mapping between code path and doc path in `directoryMapping`/`logicalTopology`; When files have impact relations, record in `featureRelations`; Only ask user confirmation when mapping relationship is unclear.
+**D. Impact Awareness & Sync**:
+1. **Before modifying**: Check `map.json` → `featureRelations` first, confirm if any related files need to be processed together
+2. **After modifying**: If new impact relations are discovered, update `featureRelations` in time
+3. **Creating new files/modules**: Update `directoryMapping`/`logicalTopology`; Only ask user confirmation when mapping relationship is unclear.
+
+> Core principle: **When modifying one file, automatically check and sync related files**.

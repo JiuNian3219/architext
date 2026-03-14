@@ -101,7 +101,15 @@
     **Pre-signoff Checklist** (confirm each item after Gate passes, before Output):
     □ step_4 Safety Checkpoint — Git workspace confirmed (no uncommitted changes or user informed)
     □ Phase 1 — all confirmed global assets modified, change summary output per file
-    □ (UI projects only, design system changed) User notified to re-run archi-ui-wireframe
+    □ Phase 1 — Global files check:
+      - roadmap.json + vision.md + tech_stack.md + map.json — required
+      - dictionary.json + error_codes.json — required
+      - (UI projects only) design_tokens.json + ui_context.md
+      - (Data projects only) data_snapshot.json
+      - (API projects only) api_snapshot.json + env_registry.json
+      - (CLI projects only) command_api.json
+      - (Lib projects only) public_api.json
+    □ (UI projects only, design system changed) User notified to re-run `/archi.ui`
     □ Phase 2 — each affected Task: spec.md updated + plan.json appended Revision Phase
     □ Step 5 Silent Audit — executed, all CRITICAL issues resolved
     □ Consistency confirmed: vision ↔ tech_stack ↔ roadmap ↔ map, no orphan refs (stale terms/paths cleaned)

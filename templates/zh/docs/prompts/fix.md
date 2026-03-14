@@ -23,7 +23,7 @@
         - 无 `<id>`: 分析 `[context]` 搜索最相关模块。
           唯一匹配 → 自动锁定 | 多个匹配 → 列出候选询问 | 无法定位 → 报错请求指定 ID。
     2.  读取目标目录下所有文档与相关代码。
-    3.  读取 02_tech_stack.md（技术红线）和 vision.md（方向基准）。
+    3.  读取项目上下文（tech_stack、vision），详见 00_system.md 数据治理规则。
     4.  分析 `[context]`，结合代码逻辑定位潜在故障点。
     5.  **Hypothesis**: 提出 1-3 个根因假设。
 
@@ -78,6 +78,7 @@
     □ plan.json — Bugfix Phase 已追加（step_2）
     □ 复现测试已创建并验证（Red → Green）
     □ 代码修复仅针对 Bug，无借机重构
+    □ 数据治理同步 — 若修复涉及新术语/错误码，已同步至 dictionary.json / error_codes.json
     □ Step 4 Terminal Gate — 构建/类型检查/Lint/测试全部通过
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
     □ plan.json Bugfix Phase — done 标记已更新（step_5）

@@ -136,7 +136,14 @@
     □ Step 4 — Task Verification executed for each project type with Evidence attached
     □ Step 5A Silent Audit — executed, all CRITICAL issues resolved
     □ Step 5B featureRelations check — executed
-    □ Step 5C data governance sync — executed
+      - Check if modified files affect other linked files
+    □ Step 5C data governance sync — executed:
+      - dictionary.json + error_codes.json — required
+      - (UI projects only) design_tokens.json + ui_context.md
+      - (Data projects only) data_snapshot.json
+      - (API projects only) api_snapshot.json + env_registry.json
+      - (CLI projects only) command_api.json
+      - (Lib projects only) public_api.json
     □ Terminal Gate — npx archi plan <ID> all complete (exempt items only)
 
     **Output**: Completion summary with completed tasks, exempt items (if any), Git Commit suggestion, Next Steps:

@@ -224,7 +224,13 @@
     □ plan.json — every AC in spec § 2 → ≥1 task covering it (100% coverage rule)
     □ plan.json — every task notes includes verification field (not empty, not title paraphrase)
     □ map.json — tasks/<ID>_<Slug> registered in directoryMapping
-    □ Global files — new terms/error codes/schemas synced (dictionary/error_codes/data_snapshot)
+    □ Global files — new terms/error codes/schemas/Tokens synced:
+      - dictionary.json + error_codes.json — required
+      - (UI projects only) design_tokens.json + ui_context.md
+      - (Data projects only) data_snapshot.json
+      - (API projects only) api_snapshot.json + env_registry.json
+      - (CLI projects only) command_api.json
+      - (Lib projects only) public_api.json
     □ Step 6 Silent Audit — executed, all CRITICAL issues resolved
 
     **Action** (after Checklist confirmed):

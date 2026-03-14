@@ -136,7 +136,14 @@
     □ Step 4 — 每种项目类型的 Task Verification 已执行并附 Evidence
     □ Step 5A Silent Audit — 已执行，所有 CRITICAL 问题已修复
     □ Step 5B featureRelations 联动检查 — 已执行
+      - 涉及修改的文件是否影响其他关联文件
     □ Step 5C 数据治理同步 — 已执行
+      - dictionary.json + error_codes.json — 必检
+      - （仅ui项目）design_tokens.json + ui_context.md
+      - （仅data项目）data_snapshot.json
+      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅cli项目）command_api.json
+      - （仅lib项目）public_api.json
     □ Terminal Gate — npx archi plan <ID> 全部完成（仅豁免项除外）
 
     **Output**: 完成摘要，含已完成任务、豁免项(如有)、Git Commit 建议、Next Steps：

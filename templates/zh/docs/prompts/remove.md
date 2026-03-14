@@ -97,6 +97,14 @@
     □ map.json — 模块条目 + featureRelations — 已清理（step_3 操作 #4）
     □ 99_context_glue.md — 关联条目 — 已清理（step_3 操作 #5）
     □ （有独占术语/错误码）dictionary.json + error_codes.json — 已处理
+    □ 全局文件清理检查:
+      - vision.md + tech_stack.md — 必检
+      - dictionary.json + error_codes.json — 必检
+      - （仅ui项目）design_tokens.json + ui_context.md
+      - （仅data项目）data_snapshot.json
+      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅cli项目）command_api.json
+      - （仅lib项目）public_api.json
     □ Terminal Gate — 项目构建通过，无残留 import 引用（step_4）
 
     **Output**: 下线完成摘要：

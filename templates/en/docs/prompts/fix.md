@@ -78,6 +78,7 @@
     □ plan.json — Bugfix Phase appended (step_2)
     □ Reproduction test created and verified (Red → Green)
     □ Code fix targets Bug only, no opportunistic refactoring
+    □ Data governance sync — if fix introduces new terms/error codes, synced to dictionary.json / error_codes.json
     □ Step 4 Terminal Gate — Build / type check / Lint / tests all passed
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
     □ plan.json Bugfix Phase — done flags updated (step_5)

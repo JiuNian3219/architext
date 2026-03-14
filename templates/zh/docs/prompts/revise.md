@@ -103,6 +103,14 @@
     **Pre-signoff Checklist** (Gate 通过后、输出前须逐项确认):
     □ step_4 Safety Checkpoint — Git 工作区已确认（无未提交变更或已告知用户）
     □ Phase 1 — 所有确认的全局资产已修改，每个文件有变更摘要输出
+    □ Phase 1 — 全局文件检查:
+      - roadmap.json + vision.md + tech_stack.md + map.json — 必检
+      - dictionary.json + error_codes.json — 必检
+      - （仅ui项目）design_tokens.json + ui_context.md
+      - （仅data项目）data_snapshot.json
+      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅cli项目）command_api.json
+      - （仅lib项目）public_api.json
     □ （仅ui项目，设计系统有变更）已通知用户重跑 `/archi.ui`
     □ Phase 2 — 每个受影响 Task 的 spec.md 已更新 + plan.json 已追加 Revision Phase
     □ Step 5 Silent Audit — 已执行，所有 CRITICAL 问题已修复

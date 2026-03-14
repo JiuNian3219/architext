@@ -97,6 +97,14 @@
     □ map.json — module entry + featureRelations — cleaned (step_3 action #4)
     □ 99_context_glue.md — association entries — cleaned (step_3 action #5)
     □ (if exclusive terms/codes) dictionary.json + error_codes.json — handled
+    □ Global files cleanup check:
+      - vision.md + tech_stack.md — required
+      - dictionary.json + error_codes.json — required
+      - (UI projects only) design_tokens.json + ui_context.md
+      - (Data projects only) data_snapshot.json
+      - (API projects only) api_snapshot.json + env_registry.json
+      - (CLI projects only) command_api.json
+      - (Lib projects only) public_api.json
     □ Terminal Gate — project build passes, no residual import refs (step_4)
 
     **Output**: Decommission completion summary:

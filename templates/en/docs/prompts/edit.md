@@ -82,6 +82,13 @@
     □ (if UI changed) ui.md + screens/S-XX.html + ui_context.md — synced
     □ plan.json — new Phase appended (history tasks fully preserved)
     □ (if original status=done) roadmap.json — status reset to active
+    □ Global files — related JSON files synced for changes:
+      - dictionary.json + error_codes.json — required
+      - (UI projects only) design_tokens.json + ui_context.md
+      - (Data projects only) data_snapshot.json
+      - (API projects only) api_snapshot.json + env_registry.json
+      - (CLI projects only) command_api.json
+      - (Lib projects only) public_api.json
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
     □ Terminal Gate — task --check no ERROR (executed in step_3)
 
