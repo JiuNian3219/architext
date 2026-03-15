@@ -5,13 +5,6 @@ description: Lightweight code and document review. **Must run in isolated contex
 
 # 嵌入式轻量审查
 
-## 执行方式
-
-**必须在独立上下文中执行**（Subagent / 子代理模式）：
-- Claude Code: 使用 `context: fork` 或 spawn Subagent 执行
-- Cursor/Windsurf: 作为独立 Agent 会话执行，禁止 inline
-- 其他 IDE: 新建独立会话执行，完成后返回结果
-
 ## 系统流程定位
 
 ```
