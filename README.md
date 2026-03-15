@@ -74,8 +74,7 @@ npx archi init
 ✔ Docs deployed      → .architext/
       prompts/  global/  templates/  tasks/
 ✔ Rules deployed     → .cursor/rules/           (Cursor: .mdc)
-      00_system · 01_workflow · 02_tech_stack · 03_data_governance
-      04_cli_tools · 90_custom_rules · 99_context_glue
+      00_system · 90_custom_rules
 ✔ Commands deployed  → .cursor/commands/        (Cursor only)
       archi.start · archi.scope · archi.plan · archi.code · archi.audit · ...
 ✔ Skills deployed    → .cursor/skills/          (Cursor)
@@ -104,10 +103,10 @@ The AI reads the brief, interviews you on key decisions, and generates the proje
 The main trunk of a project lifecycle. Everything happens in your AI chat window.
 
 ```
-project-brief.md → /archi.start → /archi.plan → /archi.code → /archi.audit
-                                         ↑
-                    /archi.scope runs anytime you have NEW feature requirements
-                    (not limited to "right after start" — mid-project, post-release, etc.)
+project-brief.md → /archi.start → [?UI] /archi.ui → /archi.plan → /archi.code → /archi.audit
+                                                               ↑
+                        /archi.scope runs anytime you have NEW feature requirements
+                        (not limited to "right after start" — mid-project, post-release, etc.)
 ```
 
 **Stage 1 — Initialize**
@@ -122,12 +121,12 @@ AI:   [Analyzing project brief...]
       ✔ ADDED:    .architext/global/roadmap.json
       ✔ ADDED:    .architext/global/dictionary.json
       ✔ ADDED:    .architext/global/error_codes.json
+      ✔ ADDED:    .architext/global/env_registry.json
+      ✔ ADDED:    .architext/global/tech_stack.md
       ✔ ADDED:    .architext/global/ui_context.md       (UI projects only)
-      ✔ ADDED:    .architext/global/ui_concept.html     (UI projects only)
-      ✔ MODIFIED: .cursor/rules/02_tech_stack.mdc    (filled with project tech decisions)
       ✔ MODIFIED: .cursor/rules/90_custom_rules.mdc  (filled with team conventions)
 
-      Next: if the brief covers everything → /archi.plan <first-task-id>
+      Next: run /archi.ui to generate UI concept designs → then /archi.plan <first-task-id>
             if you have more requirements → /archi.scope to add tasks first
 ```
 
@@ -209,7 +208,7 @@ AI:   [Reading code + spec + plan + vision + tech_stack...]
       [LOW]    Token expiry not configurable via env var → suggest /archi.edit
 ```
 
-> **Daily development between commands** is driven by natural language **Chat Mode**. Describe what you want in plain language — e.g. "add a login feature" or "fix the auth bug" — and the AI will automatically load and execute the right protocol (scope/plan/code/edit/fix). No need to manually type `/archi.*` slash commands. For questions, trivial edits, and debugging, the AI answers directly. Four of the seven rule files act as always-on base rules: `00_system`, `02_tech_stack`, `90_custom_rules`, `99_context_glue`.
+> **Daily development between commands** is driven by natural language **Chat Mode**. Describe what you want in plain language — e.g. "add a login feature" or "fix the auth bug" — and the AI will automatically load and execute the right protocol (scope/plan/code/edit/fix). No need to manually type `/archi.*` slash commands. For questions, trivial edits, and debugging, the AI answers directly. Two rule files act as always-on base rules: `00_system` and `90_custom_rules`.
 
 ---
 
@@ -222,10 +221,10 @@ Different scenarios, same protocol. Pick the one that matches your situation.
 Your `project-brief.md` already lists all features. No scope needed.
 
 ```
-/archi.start project-brief.md  →  /archi.plan FEAT-001  →  /archi.code FEAT-001  →  ...
+/archi.start project-brief.md  →  [?UI] /archi.ui  →  /archi.plan FEAT-001  →  /archi.code FEAT-001  →  ...
 ```
 
-Start produces a roadmap. Go straight to plan the first task, then code.
+Start produces a roadmap. For UI projects, run `/archi.ui` to generate screen prototypes. Then plan and code as usual.
 
 ---
 
@@ -234,10 +233,10 @@ Start produces a roadmap. Go straight to plan the first task, then code.
 You ran start, but later realize you forgot features or want to add more.
 
 ```
-/archi.start project-brief.md  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-001  →  ...
+/archi.start project-brief.md  →  [?UI] /archi.ui  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-001  →  ...
 ```
 
-Scope appends new tasks to `roadmap.json`. Then plan and code as usual.
+Scope appends new tasks to `roadmap.json`. Then run `/archi.ui` for UI projects, and plan and code as usual.
 
 ---
 
@@ -297,10 +296,11 @@ You can trigger these either by typing `/archi.<command>` or by describing your 
 | `/archi.start [brief]` | Read a project brief and generate foundation docs (vision / roadmap / tech_stack etc.) |
 | `/archi.inherit [brief]` | Reverse-engineer existing codebase; optionally pass project-brief.md to supplement vision/roadmap (skeleton repos) |
 | `/archi.scope [file_path]` | Decompose extra requirements into roadmap tasks; omit file to trigger an interview |
-| `/archi.plan <ID> [context]` | Deep architecture interview → spec / plan ([?UI] also ui.md + ui_concept.html); supply context to reduce questions |
+| `/archi.plan <ID> [context]` | Deep architecture interview → spec / plan ([?UI] also ui.md); supply context to reduce questions |
 | `/archi.code <ID>` | Implement from plan phase by phase; only `active` tasks are allowed |
 | `/archi.edit <ID> [context]` | Update feature spec → append new dev phase; history is preserved |
 | `/archi.revise [context]` | Global arch/stack change → impact assessment → cascade update on confirm |
+| `/archi.ui` | Generate or incrementally update multi-file UI concept designs (`screens/` directory); UI projects only |
 | `/archi.audit [ID]` | Deep code audit; with ID audits a task, without ID does a project-wide health check |
 | `/archi.fix [ID] <context>` | Root-cause diagnosis and bug fix; ID optional, context describes the symptom |
 | `/archi.map` | Diff map.json against actual file tree and sync |
@@ -317,6 +317,7 @@ You can trigger these either by typing `/archi.<command>` or by describing your 
 | `npx archi render` | Generate Markdown views from JSON data |
 | `npx archi task [--check]` | View / validate roadmap task status |
 | `npx archi plan <id>` | Check plan completion status for a feature |
+| `npx archi pack [-o file]` | Pack user data into XML for backup/migration |
 | `npx archi template <name>` | Fetch a template file to project root |
 | `npx archi uninstall` | Remove Architext files from project |
 
