@@ -79,7 +79,7 @@ description: Task Specification for {FEATURE_NAME}.
 
 ## 5. Constraints
 
-<!-- [AI]: Extract red-line constraints relevant to this task from vision.md + 02_tech_stack.md.
+<!-- [AI]: Extract red-line constraints relevant to this task from vision.md + tech_stack.md.
 
   Format:
   - [constraint content] (ref: [source])

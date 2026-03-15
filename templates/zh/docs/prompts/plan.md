@@ -126,7 +126,7 @@
 
     **Action Checklist**:
     1.  **`map.json`**: 在 `directoryMapping` 注册 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>`；在 `logicalTopology` 定义模块职责与依赖。
-    2.  **数据治理同步** (`dictionary.json` / `error_codes.json` / `data_snapshot.json` 等): 按 `03_data_governance.md` 规则，将提案中涉及的新业务术语、错误码、Schema 增量同步至对应全局文件。
+    2.  **数据治理同步**: [[SUBAGENT: archi-data-sync|context: 扫描 Task 提案中引入的新业务实体/错误码/Schema/端点/命令/导出，按 00_system.md 规则增量同步]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`，按其执行协议操作）]]
     3.  **`map.json` featureRelations**: [[SUBAGENT: archi-feature-relations|mode: register, context: 判断本 Task 是否为聚合型，若是则注册 featureRelations 条目]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: register 的逻辑执行）]]
 
     **Output**: 上述文件的变更 Diff (简要)。进入 step_5_generate。
@@ -151,7 +151,7 @@
     > 混合型任务在 § 2 内用子标题区分维度。
 
     **spec § 4 Interface Exports**：INF 任务**必填**，FEAT 任务有下游 deps 时必填。
-    **spec § 5 Constraints**：**必填** — 从 vision.md + 02_tech_stack.md 提取与本任务相关的红线。
+    **spec § 5 Constraints**：**必填** — 从 vision.md + tech_stack.md 提取与本任务相关的红线。
 
     **通用规则**:
     - 禁凭空编造 AC 条目，须对应功能设计中的具体内容。
@@ -224,11 +224,11 @@
     □ plan.json — spec § 2 每条 AC → ≥1 task 覆盖（100% 覆盖原则）
     □ plan.json — 每个 task notes 含验证字段（非空，非 title 同义重复）
     □ map.json — tasks/<ID>_<Slug> 已在 directoryMapping 注册
-    □ 全局文件 — 新术语/错误码/Schema/Token 已同步
-      - dictionary.json + error_codes.json — 必填
+    □ 全局文件 — 新术语/错误码/Schema/Token/环境变量 已同步
+      - dictionary.json + error_codes.json + env_registry.json — 必填
       - （仅ui项目）design_tokens.json + ui_context.md
       - （仅data项目）data_snapshot.json
-      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅api项目）api_snapshot.json
       - （仅cli项目）command_api.json
       - （仅lib项目）public_api.json
     □ Step 6 Silent Audit — 已执行，所有 CRITICAL 问题已修复

@@ -24,7 +24,7 @@ description: Generate architecture decision options by project type. Use when pl
 ## 选用逻辑（三步）
 
 **Step 1 · 约定继承检查**
-读 `02_tech_stack.md` §9。有项目约定 → 直接继承，禁展开（除非功能明确需偏离）。
+读 `tech_stack.md` §9。有项目约定 → 直接继承，禁展开（除非功能明确需偏离）。
 
 **Step 2 · 提取核心问题**
 根据项目标签，从下表提取该类型必须回答的核心问题清单。

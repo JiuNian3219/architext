@@ -24,7 +24,7 @@ Write into Task Proposal architecture recommendation table
 ## Selection Logic (3 Steps)
 
 **Step 1 · Convention Inheritance Check**
-Read `02_tech_stack.md` §9. If project convention exists → inherit directly, do not expand (unless feature explicitly needs to deviate).
+Read `tech_stack.md` §9. If project convention exists → inherit directly, do not expand (unless feature explicitly needs to deviate).
 
 **Step 2 · Extract Core Questions**
 Based on project tags, extract the list of core questions that must be answered for that type from the table below.

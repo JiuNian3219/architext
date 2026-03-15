@@ -17,7 +17,7 @@
     **Action**:
     1.  **Resolve ID**: Parse `<id>` from roadmap.json → Task Name, Slug, status.
     2.  **ID Not Found** → Error and list available task IDs.
-    3.  **Load**: task docs directory, roadmap.json (deps), map.json (architecture reg), 99_context_glue.md (associations).
+    3.  **Load**: task docs directory, roadmap.json (deps), map.json (architecture reg).
 
     **Output**: Target Task info (ID, name, status, associated file count).
 </step_1_resolve>
@@ -37,7 +37,7 @@
 
     ### 2.2 Code file identification
 
-    Locate code files via: context_glue paths, map.json registered modules, plan.json mentioned files, Slug-named or clearly owned files.
+    Locate code files via: map.json registered modules, plan.json mentioned files, Slug-named or clearly owned files.
 
     ### 2.3 Global ref scan
 
@@ -45,7 +45,6 @@
     |:---|:---|
     | `roadmap.json` | Task entry + deps refs |
     | `map.json` | Module entry + featureRelations where deleted Task is aggregator |
-    | `99_context_glue.md` | Association entries |
     | `dictionary.json` | Exclusive terms (mark only) |
     | `error_codes.json` | Exclusive error codes (mark only) |
 
@@ -57,7 +56,7 @@
 
     Scan other Tasks' `spec.md`; check refs to deleted Task's interface/components/data. Mark refs as `[Breaking]`.
 
-    **Output**: Output decommission impact report to user — include Task status, docs and code to delete (file/source table), global ref cleanup items (roadmap/map/context_glue), (if any) term/error code residue (manual confirm needed), (if any) aggregator linkage table, (if any) cross-Task ref [Breaking] table. End: OK to execute / Abort to cancel.
+    **Output**: Output decommission impact report to user — include Task status, docs and code to delete (file/source table), global ref cleanup items (roadmap/map), (if any) term/error code residue (manual confirm needed), (if any) aggregator linkage table, (if any) cross-Task ref [Breaking] table. End: OK to execute / Abort to cancel.
 
     **Gate**: Proceed to step_3 only after user replies OK. Re-warn when `[Breaking]` refs exist.
 </step_2_impact>
@@ -72,8 +71,7 @@
     | 2 | Delete Task docs dir | `[[__DOCS_DIR__]]/tasks/<id>_<slug>/` |
     | 3 | Update `roadmap.json` | Remove task entry; clean deps refs |
     | 4 | Update `map.json` | Remove module entry + featureRelations entry |
-    | 5 | Update `99_context_glue.md` | Remove association entries |
-    | 6 | [?exclusive terms] Update `dictionary.json` | Remove or mark deprecated |
+    | 5 | [?exclusive terms] Update `dictionary.json` | Remove or mark deprecated |
     | 7 | [?exclusive error codes] Update `error_codes.json` | Remove or mark deprecated |
     | 8 | [?aggregator linkage] Check aggregator code | Confirm refs cleaned |
 
@@ -95,21 +93,20 @@
     □ tasks/<id>_<slug>/ doc directory — deleted (step_3 action #2)
     □ roadmap.json — task entry + deps refs — cleaned (step_3 action #3)
     □ map.json — module entry + featureRelations — cleaned (step_3 action #4)
-    □ 99_context_glue.md — association entries — cleaned (step_3 action #5)
     □ (if exclusive terms/codes) dictionary.json + error_codes.json — handled
     □ Global files cleanup check:
       - vision.md + tech_stack.md — required
-      - dictionary.json + error_codes.json — required
+      - dictionary.json + error_codes.json + env_registry.json — required
       - (UI projects only) design_tokens.json + ui_context.md
       - (Data projects only) data_snapshot.json
-      - (API projects only) api_snapshot.json + env_registry.json
+      - (API projects only) api_snapshot.json
       - (CLI projects only) command_api.json
       - (Lib projects only) public_api.json
     □ Terminal Gate — project build passes, no residual import refs (step_4)
 
     **Output**: Decommission completion summary:
     - **Deleted**: N doc files, N code files
-    - **Cleaned**: refs in roadmap / map / context_glue
+    - **Cleaned**: refs in roadmap / map
     - **Build status**: Pass/Fail
     - **[?if any] Manual follow-up**: Term/error code/cross-Task ref residue
     - **Git Commit Suggestion**: `feat(remove): decommission <ID> <Name>`

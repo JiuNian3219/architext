@@ -8,7 +8,7 @@ alwaysApply: true
 # Custom Project Rules
 
 > **Priority:** [High]
-> **Role:** The "House Rules" of this project. When general `02_tech_stack` cannot cover certain details, or there are specific business constraints, this file prevails.
+> **Role:** The "House Rules" of this project. When general `tech_stack` cannot cover certain details, or there are specific business constraints, this file prevails.
 
 ## 1. Team Conventions
 

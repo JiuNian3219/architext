@@ -36,7 +36,7 @@
     3.  **Load**: vision.md (direction anchor) + task docs (spec/plan/ui) + prior audit.md (for comparison) + project context (tech_stack/design_tokens/data_snapshot/ui_context/screens/). Read all code files for this task.
 
     **Project-level — Load Overview**:
-    1.  Read vision.md, roadmap.json, map.json, 02_tech_stack.md.
+    1.  Read vision.md, roadmap.json, map.json, tech_stack.md.
     2.  Scan tasks/ directory structure.
     3.  Read project code entry points and key modules.
 
@@ -57,7 +57,7 @@
     | 4 | **Logic correctness** | Business logic errors, contradictions, missing branches, state machine defects |
     | 5 | **Bug hunting** | null/undefined, race conditions, resource leaks, infinite loops, off-by-one |
     | 6 | **Error handling** | Swallowing, silent failure, error propagation chain, user-visible feedback |
-    | 7 | **Tech Stack compliance** | Per `02_tech_stack.md`: forbidden patterns, outdated API, hardcoding |
+    | 7 | **Tech Stack compliance** | Per `tech_stack.md`: forbidden patterns, outdated API, hardcoding |
     | 8 | **Security** | Sensitive info leak, unvalidated input, injection risk, permission checks |
     | 9 | **Performance** | Unnecessary full imports, large loops, dead computation, memory leaks, N+1 queries |
     | 10 | (When this task involves UI) **Design compliance** | Token usage; no hardcoded magic values; visual consistency with `screens/S-XX.html` |

@@ -17,14 +17,14 @@ Main Agent Signoff (confirm Diff)
 
 > **Skill responsibility boundary**:
 > - Responsible: Scan main Agent output for new business entities/error codes/Schema, compare with global data files, perform incremental sync
-> - Not responsible: Modify `03_data_governance.md` itself (this Skill enforces rules, does not define them)
+> - Not responsible: Modify `00_system.md` itself (this Skill enforces rules, does not define them)
 > - Not responsible: Register framework concepts (Architext framework concepts must not be registered to global data files)
 
 ---
 
 ## Authoritative Rule Source
 
-`03_data_governance.md` is the single authoritative source for data governance. All behavior of this Skill must align with that file.
+`00_system.md` "File Index → Global Data Assets" table is the authoritative rule source for data governance. All behavior of this Skill must align with that file.
 
 ---
 
@@ -32,11 +32,14 @@ Main Agent Signoff (confirm Diff)
 
 | Global file | Sync content | Trigger |
 |:---|:---|:---|
+| `map.json` | New module registration (directoryMapping), dependency relationships (logicalTopology), impact associations (featureRelations) | When creating new code modules/directories |
 | `dictionary.json` | New business entities · actions · shared tools · public components | Output contains unregistered business terms or tools |
 | `error_codes.json` | New business error codes | Output contains unregistered error scenarios |
+| `env_registry.json` | New env vars | Output introduces new `process.env.X` |
+| [?UI] `design_tokens.json` | Style changes | Output has new color/font/spacing/motion definitions |
+| [?UI] `ui_context.md` | Screen index changes | Output has new/modified screens |
 | [?Data] `data_snapshot.json` | Schema changes | Output has data model add/modify |
 | [?API] `api_snapshot.json` | New endpoints | Output has new HTTP/RPC endpoints |
-| [?API] `env_registry.json` | New env vars | Output introduces new `process.env.X` |
 | [?CLI] `command_api.json` | New commands | Output has new CLI commands |
 | [?Lib] `public_api.json` | New public exports | Output has new public exports |
 
@@ -44,18 +47,25 @@ Main Agent Signoff (confirm Diff)
 
 ## Execution Protocol
 
-1. **Read global data files**: Load global files matching project features from table above
-2. **Scan main Agent output**: Identify new business entities, error codes, Schema, endpoints, etc.
-3. **Boundary check**: Do not register framework concepts (scripts, scaffold, roadmap, plan, etc.); sync only project business domain content
-4. **Deduplication**: Compare with existing entries, avoid duplicate registration
-5. **Incremental sync**: Append/modify only, do not delete existing entries
-6. **Output change Diff**
+1. **Read project features**: Read project root `architext.json`, extract `features` field (api/cli/lib/data/ui etc.)
+2. **Read global data files**: Load global files matching project features from table above
+3. **Scan main Agent output**: Identify changes based on file type:
+   - **Code files**: New modules → map.json, new types/interfaces → dictionary.json, new error handling → error_codes.json, new env vars → env_registry.json
+   - **UI code**: New colors/fonts/components → design_tokens.json, new routes/screens → ui_context.md
+   - **Data code**: New models/fields → data_snapshot.json
+   - **API code**: New endpoints → api_snapshot.json
+   - **CLI code**: New commands → command_api.json
+   - **Lib code**: New exports → public_api.json
+4. **Boundary check**: Do not register framework concepts (scripts, scaffold, roadmap, plan, etc.); sync only project business domain content
+5. **Deduplication**: Compare with existing entries, avoid duplicate registration
+6. **Incremental sync**: Append/modify only, do not delete existing entries
+7. **Output change Diff**
 
 ### Hard Boundaries
 
 - **No direct append** — Must check existing content boundary before write, avoid duplicates or conflicts
 - **No framework concept registration** — Sync only project business domain content
-- **No modify `03_data_governance.md`** — This Skill enforces rules, does not define them
+- **No modify `00_system.md`** — This Skill enforces rules, does not define them
 
 ### Output Format
 

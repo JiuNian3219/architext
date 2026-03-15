@@ -101,13 +101,13 @@
 
     ### 信息路由规则
 
-    > 规则文件（`02_tech_stack`、`90_custom_rules` 等）已由 IDE 注入当前上下文，AI 已知其路径，直接写入即可。
+    > 规则文件（`tech_stack`、`90_custom_rules` 等）已由 IDE 注入当前上下文，AI 已知其路径，直接写入即可。
 
     **有 Brief 时**（Brief → 目标文件）:
     | Brief 内容 | 目标文件 |
     |:---|:---|
     | 项目身份、目标用户、成功指标、参考灵感 | `[[__DOCS_DIR__]]/global/vision.md` |
-    | 技术栈、部署目标、第三方库/服务 | 规则文件 `02_tech_stack` |
+    | 技术栈、部署目标、第三方库/服务 | 规则文件 `tech_stack` |
     | 核心任务列表 | `[[__DOCS_DIR__]]/global/roadmap.json`（phase-1/2，调用 archi-decompose-roadmap） |
     | 补充说明中的规则/约定/偏好 | 规则文件 `90_custom_rules` |
     | 风格调性（仅ui） | `design_tokens.json` aestheticDirection 等 |
@@ -116,7 +116,7 @@
     | 信息来源 | 目标文件 |
     |:---|:---|
     | README 描述/特性 | vision.md |
-    | 依赖/配置/代码模式 | 02_tech_stack |
+    | 依赖/配置/代码模式 | tech_stack |
     | 目录结构/模块依赖/用户旅程 | map.json |
     | 领域术语/命名约定 | dictionary.json |
     | eslint/prettier 等规范 | 90_custom_rules |
@@ -129,7 +129,7 @@
     - **无 Brief**：从 README + 项目配置推导，无法推导的项标注 `(AI 补全 — 建议用户审查)`
     - 禁保留模板占位符
 
-    ### 3.2 Tech Stack (规则文件 `02_tech_stack`)
+    ### 3.2 Tech Stack (规则文件 `tech_stack`)
     - **有 Brief**：Brief 确定的 → 直接写入；留空/推荐的 → AI 推荐；代码依赖作补充
     - **无 Brief**：已有依赖/配置 → 直接写入；可见规范 → 写入 Coding Standards
     - 须填充完整 Section 1-8
@@ -210,6 +210,10 @@
     - `dictionary.json`: 从代码提取领域术语
     - （仅ui项目） `design_tokens.json`: 从 CSS 变量/主题提取
     - （仅data项目） `data_snapshot.json`: 从 schema/migration 提取
+    - （仅api项目） `api_snapshot.json`: 从现有 API 路由/控制器代码提取端点
+    - `env_registry.json`: 从代码中 `process.env` 引用提取环境变量
+    - （仅cli项目） `command_api.json`: 从现有 CLI 入口代码提取命令
+    - （仅lib项目） `public_api.json`: 从 package.json exports 或入口文件提取导出
     - `error_codes.json`: 从代码中的错误定义提取
 
     仅ui项目: **UI 概念设计**: 跳过 — 由 `/archi.ui` 独立完成。仅确保 `design_tokens.json` 已从 CSS 变量/主题提取填充。
@@ -233,10 +237,10 @@
     □ roadmap.json — 每个功能模块对应一条 LEG-xx（status: done, tag: Legacy）
     □ tasks/LEG-xx_<Slug>/spec.md — 每条 LEG 均有对应 Stub spec（含关联文件列表）
     □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations 均已填充
-    □ dictionary.json + error_codes.json — 从代码提取完毕
+    □ dictionary.json + error_codes.json + env_registry.json — 从代码提取完毕
     □ （仅ui项目）design_tokens.json — Adopt 模式已从 CSS 提取
     □ （仅data项目）data_snapshot.json — 初始实体骨架已写入
-    □ （仅api项目）api_snapshot.json + env_registry.json — 初始 API 端点已注册
+    □ （仅api项目）api_snapshot.json — 初始 API 端点已注册
     □ （仅cli项目）command_api.json — 初始 CLI 命令已注册
     □ （仅lib项目）public_api.json — 初始库导出已注册
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复

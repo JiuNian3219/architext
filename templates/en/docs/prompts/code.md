@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>` | Auto-loaded by Workflow Dispatch on natural language trigger
-  **Goal**: Complete feature development per `tasks/<id>_<Slug>/plan.json` task list; follow `02_tech_stack.md` (UI projects only: also follow `design_tokens.json`); pass build, types, Lint, format, tests and audit.
+  **Goal**: Complete feature development per `tasks/<id>_<Slug>/plan.json` task list; follow `tech_stack.md` (UI projects only: also follow `design_tokens.json`); pass build, types, Lint, format, tests and audit.
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -49,10 +49,10 @@
 <step_3_implement>
     **Protocol**:
     - **Read First**: Must read target file before modify; follow existing project code style.
-    - **Use Existing Stack**: Use only tech and libs declared in `02_tech_stack.md`.
+    - **Use Existing Stack**: Use only tech and libs declared in `tech_stack.md`.
     - (When this task involves UI) [[INCLUDE: shared/ui-redlines.md]]
     - **Type-Safe**: Complete type definitions; use project type system to guard boundaries.
-    - **Code Organization**: Follow `02_tech_stack.md` architecture and file placement.
+    - **Code Organization**: Follow `tech_stack.md` architecture and file placement.
     - **Comments**: Explain Why, not What.
     - **Naming**: Self-explanatory names; no meaningless names.
     - Complex tasks only: **Design Adherence**: When `design.md` exists, implementation must strictly follow its state machine/pipeline/protocol; params reference § 3 values; must satisfy all § 4 Invariants.
@@ -68,7 +68,7 @@
 </step_3_implement>
 
 <step_4_validate>
-    **Action** (on failure fix and re-run; commands per `02_tech_stack.md` Section 5):
+    **Action** (on failure fix and re-run; commands per `tech_stack.md` Section 5):
 
     **Automated Check**: Run `[[__DOCS_DIR__]]/scripts/validate` (if exists); otherwise execute checklist:
 
@@ -111,7 +111,7 @@
     [[SUBAGENT: archi-feature-relations|mode: check, context: Compare implemented feature with featureRelations sources semantically]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`, follow mode: check logic)]]
 
     **5C. Data governance sync**:
-    [[SUBAGENT: archi-data-sync|context: Scan new business entities/error codes/Schema from implementation; incrementally sync per 03_data_governance.md]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md` and follow its protocol)]]
+    [[SUBAGENT: archi-data-sync|context: Scan new business entities/error codes/Schema from implementation; incrementally sync per 00_system.md]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md` and follow its protocol)]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_5_verify>
@@ -138,10 +138,10 @@
     □ Step 5B featureRelations check — executed
       - Check if modified files affect other linked files
     □ Step 5C data governance sync — executed:
-      - dictionary.json + error_codes.json — required
+      - dictionary.json + error_codes.json + env_registry.json — required
       - (UI projects only) design_tokens.json + ui_context.md
       - (Data projects only) data_snapshot.json
-      - (API projects only) api_snapshot.json + env_registry.json
+      - (API projects only) api_snapshot.json
       - (CLI projects only) command_api.json
       - (Lib projects only) public_api.json
     □ Terminal Gate — npx archi plan <ID> all complete (exempt items only)

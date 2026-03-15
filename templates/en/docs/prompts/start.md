@@ -90,13 +90,13 @@
 
     ### Information Routing Rules
 
-    > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by IDE; AI knows their paths, write directly.
+    > Rule files (`tech_stack`, `90_custom_rules`, etc.) are already injected into context by IDE; AI knows their paths, write directly.
 
     | Brief content | Target file |
     |:---|:---|
     | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
-    | Tech stack, deploy target, 3rd-party libs/services | rule file `02_tech_stack` |
-    | Style/tone — aesthetic direction / density / motion preference | `02_tech_stack` (UI Protocol) + `design_tokens.json` |
+    | Tech stack, deploy target, 3rd-party libs/services | rule file `tech_stack` |
+    | Style/tone — aesthetic direction / density / motion preference | `tech_stack` (UI Protocol) + `design_tokens.json` |
     | (UI projects only) Aesthetic preset + visual reference (brand palette / font / icon / competitor screenshots) | `design_tokens.json` corresponding fields + `vision.md` Visual Reference |
     | (UI projects only) Images in brief-assets/ tagged `[competitor reference]` | `design_tokens.json` aestheticDirection reference + `vision.md` Visual Reference |
     | Core task list | `[[__DOCS_DIR__]]/global/roadmap.json` |
@@ -107,7 +107,7 @@
     | Files in brief-assets/ tagged `[database Schema]` | Parse and write to `data_snapshot.json` |
     | Files in brief-assets/ tagged `[API docs]` | Parse and route to `vision.md` Context + related Roadmap tasks |
     | Boundaries and anti-goals | `vision.md` Boundaries |
-    | Existing resources | `vision.md` + `02_tech_stack` by content |
+    | Existing resources | `vision.md` + `tech_stack` by content |
     | Rules/conventions/preferences from supplementary notes | rule file `90_custom_rules` |
     | Domain terminology from supplementary notes | `dictionary.json` |
     | Other background from supplementary notes | `vision.md` Context |
@@ -118,7 +118,7 @@
     - Fill from Brief: Core Vision / Target Audience / Boundaries / Design & Experience / Product Principles / background context
     - Fill all placeholders; do not retain template example text
 
-    ### 3.2 Tech Stack (rule file `02_tech_stack`)
+    ### 3.2 Tech Stack (rule file `tech_stack`)
     - Brief confirmed → write directly | Blank/"recommend" → AI recommends and mark `(AI Recommended)` + rationale
     - **AX Optimization**: Prefer AI-friendly tech when recommending
     - Fill complete Section 1-9
@@ -139,6 +139,10 @@
     - (Data projects only) `data_snapshot.json`: Initialize core entity skeleton; write empty template if no data description
     - (UI projects only) `design_tokens.json`: Fill aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens from "Style & Tone" and "Visual Reference"
     - `error_codes.json`: Predefine core error codes from task list
+    - (API projects only) `api_snapshot.json`: Initial endpoint registration; extract from Brief if API description exists, otherwise write empty template
+    - `env_registry.json`: Initial env var registration
+    - (CLI projects only) `command_api.json`: Initial command registration; extract from Brief if command description exists, otherwise write empty template
+    - (Lib projects only) `public_api.json`: Initial export registration; extract from Brief if export description exists, otherwise write empty template
 
     UI projects only: **UI concept design**: Skip — completed independently by `/archi.ui`. Only ensure `design_tokens.json` is populated.
 
@@ -163,12 +167,15 @@
 
     **Pre-signoff Checklist** (confirm each item after Gate passes, before Output):
     □ vision.md — all placeholders replaced, no template example text remaining
-    □ 02_tech_stack.md — Sections 1-9 fully filled, Section 9 Project Conventions includes Strategy + Rationale
+    □ tech_stack.md — Sections 1-9 fully filled, Section 9 Project Conventions includes Strategy + Rationale
     □ roadmap.json — archi-decompose-roadmap Skill executed, task chain generated
     □ map.json — core directory skeleton pre-registered (directoryMapping)
-    □ dictionary.json + error_codes.json — domain terms and core error codes extracted
+    □ dictionary.json + error_codes.json + env_registry.json — domain terms, core error codes, env vars extracted
     □ (UI projects only) design_tokens.json — generated
     □ (Data projects only) data_snapshot.json — initial entity skeleton written
+    □ (API projects only) api_snapshot.json — initial API endpoints registered
+    □ (CLI projects only) command_api.json — initial CLI commands registered
+    □ (Lib projects only) public_api.json — initial lib exports registered
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
 
     **Action** (after Checklist confirmed):

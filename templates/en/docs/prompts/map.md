@@ -8,7 +8,7 @@
     <principles>
       1.  **Scan vs Map**: Actual filesystem is Ground Truth; map.json is old snapshot.
       2.  **Smart Granularity**: Directory-level by default; when single file has multiple responsibilities, refine to file-level.
-      3.  **Architecture Inference**: New entry layer/location must reference existing map pattern + `02_tech_stack.md`.
+      3.  **Architecture Inference**: New entry layer/location must reference existing map pattern + `tech_stack.md`.
       4.  **Batch Confirm**: Show all changes at once; user confirms in batch.
       5.  **IDE-Native First**: Leverage IDE native capabilities to drive execution rhythm; this protocol defines quality standards and checkpoints, not fight IDE planning/execution mechanisms.
     </principles>
@@ -17,7 +17,7 @@
 <step_1_scan>
     **Action**:
     1.  **Read Map**: Read `[[__DOCS_DIR__]]/global/map.json` — current architecture map.
-    2.  **Read Tech Stack**: Read `02_tech_stack.md` — directory structure conventions, architecture pattern.
+    2.  **Read Tech Stack**: Read `tech_stack.md` — directory structure conventions, architecture pattern.
     3.  **Scan Directory Tree**: Scan project directory structure.
         - **Exclude**: `.git/`, `node_modules/`, `dist/`, `build/`, `[[__DOCS_DIR__]]/`, and paths in `.gitignore`.
         - **Depth**: Follow granularity pattern of existing map.json entries.
@@ -48,7 +48,7 @@
     ### Classification strategy
 
     1.  **Pattern match**: Reference same-level existing entries in map.json.
-    2.  **Tech Stack conventions**: Directory structure rules in `02_tech_stack.md`.
+    2.  **Tech Stack conventions**: Directory structure rules in `tech_stack.md`.
     3.  **Content inference**: Read file content (imports, exported types).
     4.  **Cannot determine**: Mark `[?]` for user to specify.
 

@@ -1,6 +1,6 @@
 <protocol_code>
   **Trigger**: `/archi.code <id>` | 自然语言触发时由 Workflow Dispatch 自动加载
-  **Goal**: 基于 `tasks/<id>_<Slug>/plan.json` 任务清单，完成功能开发；遵循 `02_tech_stack.md`（仅ui项目: 同时遵循 `design_tokens.json`）；通过构建、类型、Lint、格式化、测试与审计。
+  **Goal**: 基于 `tasks/<id>_<Slug>/plan.json` 任务清单，完成功能开发；遵循 `tech_stack.md`（仅ui项目: 同时遵循 `design_tokens.json`）；通过构建、类型、Lint、格式化、测试与审计。
 
 <meta>
     <style>Deterministic, Type-Safe, SOTA-First</style>
@@ -49,10 +49,10 @@
 <step_3_implement>
     **Protocol**:
     - **Read First**: 修改前须读取目标文件；遵循项目现有代码风格。
-    - **Use Existing Stack**: 仅用 `02_tech_stack.md` 声明的技术与库。
+    - **Use Existing Stack**: 仅用 `tech_stack.md` 声明的技术与库。
     - （本任务涉及ui时）[[INCLUDE: shared/ui-redlines.md]]
     - **Type-Safe**: 补齐类型定义；用项目技术栈的类型系统守护边界。
-    - **Code Organization**: 遵循 `02_tech_stack.md` 架构模式与文件归位策略。
+    - **Code Organization**: 遵循 `tech_stack.md` 架构模式与文件归位策略。
     - **Comments**: 解释 Why 而非 What。
     - **Naming**: 自解释命名；拒绝无意义名。
     - 仅Complex任务: **Design Adherence**: 存在 `design.md` 时，实现须严格遵循其状态机/流水线/协议；参数引用 § 3 的值；须满足 § 4 所有 Invariants。
@@ -68,7 +68,7 @@
 </step_3_implement>
 
 <step_4_validate>
-    **Action** (失败须修复后重跑；命令以 `02_tech_stack.md` Section 5 为准):
+    **Action** (失败须修复后重跑；命令以 `tech_stack.md` Section 5 为准):
 
     **Automated Check**: 运行 `[[__DOCS_DIR__]]/scripts/validate`（如存在）；否则按以下清单逐项执行。
 
@@ -111,7 +111,7 @@
     [[SUBAGENT: archi-feature-relations|mode: check, context: 将本次实现的功能与 featureRelations sources 做语义对比]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，按 mode: check 的逻辑执行）]]
 
     **5C. 数据治理同步**:
-    [[SUBAGENT: archi-data-sync|context: 扫描本次实现引入的新业务实体/错误码/Schema，按 03_data_governance.md 规则增量同步]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`，按其执行协议操作）]]
+    [[SUBAGENT: archi-data-sync|context: 扫描本次实现引入的新业务实体/错误码/Schema，按 00_system.md 规则增量同步]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`，按其执行协议操作）]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_5_verify>
@@ -138,10 +138,10 @@
     □ Step 5B featureRelations 联动检查 — 已执行
       - 涉及修改的文件是否影响其他关联文件
     □ Step 5C 数据治理同步 — 已执行
-      - dictionary.json + error_codes.json — 必检
+      - dictionary.json + error_codes.json + env_registry.json — 必检
       - （仅ui项目）design_tokens.json + ui_context.md
       - （仅data项目）data_snapshot.json
-      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅api项目）api_snapshot.json
       - （仅cli项目）command_api.json
       - （仅lib项目）public_api.json
     □ Terminal Gate — npx archi plan <ID> 全部完成（仅豁免项除外）

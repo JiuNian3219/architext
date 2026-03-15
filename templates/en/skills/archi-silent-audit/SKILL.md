@@ -35,7 +35,7 @@ Review global file quality for new/inherited projects.
 | # | Dimension | Review Points |
 |:---|:---|:---|
 | 1 | **Vision-Roadmap alignment** | Roadmap task direction aligns with vision.md north star |
-| 2 | **Tech Stack consistency** | `02_tech_stack.md` matches actual deps/config |
+| 2 | **Tech Stack consistency** | `tech_stack.md` matches actual deps/config |
 | 3 | **Global file completeness** | Required global files present (vision, roadmap, map, dictionary, tech_stack, custom_rules) |
 | 4 | **Zero info omission** | All Brief/code info routed to corresponding files |
 | 5 | [?UI] **Design Tokens** | `design_tokens.json` has base colors/fonts/spacing |
@@ -48,7 +48,7 @@ Review planning doc (spec/ui/plan) quality.
 |:---|:---|:---|
 | 1 | **Design Fidelity** | spec § 2 fully covers confirmed functional design |
 | 2 | **Dimension Match** | spec § 2 dimension format matches Task Type |
-| 3 | **Tech Consistency** | No tech not declared in `02_tech_stack.md` |
+| 3 | **Tech Consistency** | No tech not declared in `tech_stack.md` |
 | 4 | **WBS Coverage** | plan.json 100% covers each AC in spec |
 | 5 | **Notes Quality** | plan.json each task notes has deliverable+constraint+executable verification |
 | 6 | **Interface Exports** | INF task § 4 filled; interface declared when downstream deps exist |
@@ -64,7 +64,7 @@ Review code implementation quality.
 
 | # | Dimension | Review Points |
 |:---|:---|:---|
-| 1 | **Tech Consistency** | Matches `02_tech_stack.md` (libs/patterns/API style) |
+| 1 | **Tech Consistency** | Matches `tech_stack.md` (libs/patterns/API style) |
 | 2 | **SOTA** | Reject outdated patterns; use tech_stack best practices |
 | 3 | **Security** | No sensitive info leak; input validated |
 | 4 | **Performance** | Avoid unnecessary large deps/full imports/useless computation/memory leaks |
