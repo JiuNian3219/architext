@@ -74,8 +74,7 @@ npx archi init
 ✔ 文档已部署       → .architext/
       prompts/  global/  templates/  tasks/
 ✔ 规则文件已部署   → .cursor/rules/           (Cursor: .mdc)
-      00_system · 01_workflow · 02_tech_stack · 03_data_governance
-      04_cli_tools · 90_custom_rules · 99_context_glue
+      00_system · 90_custom_rules
 ✔ 命令文件已部署   → .cursor/commands/         (仅 Cursor)
       archi.start · archi.scope · archi.plan · archi.code · archi.audit · ...
 ✔ Skills 已部署    → .cursor/skills/           (Cursor)
@@ -104,8 +103,8 @@ AI 读取 Brief，就关键决策向你提问，生成项目的基础文档（`v
 项目全生命周期的主干路径，全部在 AI 对话框中完成。
 
 ```
-project-brief.md → /archi.start → /archi.plan → /archi.code → /archi.audit
-                                        ↑
+project-brief.md → /archi.start → [?UI] /archi.ui → /archi.plan → /archi.code → /archi.audit
+                                                              ↑
               /archi.scope  anytime you have NEW feature requirements
               （不限「start 之后」——项目进行中、发布后均可）
 ```
@@ -122,12 +121,12 @@ AI:   [正在分析项目 Brief...]
       ✔ 新增:    .architext/global/roadmap.json
       ✔ 新增:    .architext/global/dictionary.json
       ✔ 新增:    .architext/global/error_codes.json
+      ✔ 新增:    .architext/global/env_registry.json
+      ✔ 新增:    .architext/global/tech_stack.md
       ✔ 新增:    .architext/global/ui_context.md       (仅 UI 类项目)
-      ✔ 新增:    .architext/global/ui_concept.html     (仅 UI 类项目)
-      ✔ 填充:    .cursor/rules/02_tech_stack.mdc    (写入项目技术决策)
       ✔ 填充:    .cursor/rules/90_custom_rules.mdc  (写入团队编码规范)
 
-      下一步：Brief 已覆盖全部需求 → /archi.plan <首个任务ID>
+      下一步：运行 /archi.ui 生成 UI 概念设计 → 然后 /archi.plan <首个任务ID>
              Brief 之外还有需求 → /archi.scope 先追加任务
 ```
 
@@ -209,7 +208,7 @@ AI:   [正在读取 代码 + spec + plan + vision + tech_stack...]
       [低] Token 过期时间未通过环境变量配置 → 建议运行 /archi.edit
 ```
 
-> **命令之间的日常开发**由自然语言 **Chat Mode** 驱动。用自然语言描述需求（如「加个登录功能」「修一下认证的 bug」），AI 会自动识别意图并加载对应协议（scope/plan/code/edit/fix）执行，**无需手动输入 `/archi.*` 斜杠命令**。提问、琐碎修改、调试则直接回答。7 个规则文件中有 4 个作为始终在线的基底规则：`00_system`、`02_tech_stack`、`90_custom_rules`、`99_context_glue`，AI 不会因会话切换而"失忆"。
+> **命令之间的日常开发**由自然语言 **Chat Mode** 驱动。用自然语言描述需求（如「加个登录功能」「修一下认证的 bug」），AI 会自动识别意图并加载对应协议（scope/plan/code/edit/fix）执行，**无需手动输入 `/archi.*` 斜杠命令**。提问、琐碎修改、调试则直接回答。2 个规则文件作为始终在线的基底规则：`00_system`、`90_custom_rules`，AI 不会因会话切换而"失忆"。
 
 ---
 
@@ -222,10 +221,10 @@ AI:   [正在读取 代码 + spec + plan + vision + tech_stack...]
 `project-brief.md` 已列出所有功能，无需 scope。
 
 ```
-/archi.start project-brief.md  →  /archi.plan FEAT-001  →  /archi.code FEAT-001  →  ...
+/archi.start project-brief.md  →  [?UI] /archi.ui  →  /archi.plan FEAT-001  →  /archi.code FEAT-001  →  ...
 ```
 
-Start 产出 roadmap 后，直接 plan 首个任务，再 code。
+Start 产出 roadmap 后，UI 项目运行 `/archi.ui` 生成屏幕原型，再 plan 首个任务，然后 code。
 
 ---
 
@@ -234,10 +233,10 @@ Start 产出 roadmap 后，直接 plan 首个任务，再 code。
 start 跑完后发现漏了功能，或想追加更多。
 
 ```
-/archi.start project-brief.md  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-001  →  ...
+/archi.start project-brief.md  →  [?UI] /archi.ui  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-001  →  ...
 ```
 
-Scope 向 `roadmap.json` 追加任务，再按 plan → code 继续。
+Scope 向 `roadmap.json` 追加任务，UI 项目运行 `/archi.ui`，再按 plan → code 继续。
 
 ---
 
@@ -297,10 +296,11 @@ Fix 诊断根因，向 plan 追加 Bugfix Phase，并修复代码。
 | `/archi.start [brief]` | 读取需求 Brief，生成项目基础文档（vision / roadmap / tech_stack 等） |
 | `/archi.inherit [brief]` | 逆向分析已有代码库；可选传 project-brief.md 补充愿景/路线图（骨架仓库） |
 | `/archi.scope [file_path]` | 将额外需求拆解为 Roadmap 任务；无文件则自动发起访谈 |
-| `/archi.plan <ID> [context]` | 深度架构访谈 → 生成 spec / plan（[?UI] 附 ui.md + ui_concept.html）；可附加已知上下文减少提问 |
+| `/archi.plan <ID> [context]` | 深度架构访谈 → 生成 spec / plan（[?UI] 附 ui.md）；可附加已知上下文减少提问 |
 | `/archi.code <ID>` | 按 plan 分阶段实现代码；仅 `active` 任务可进入 |
 | `/archi.edit <ID> [context]` | 修改功能规格 → 追加新开发 Phase；不覆盖历史记录 |
 | `/archi.revise [context]` | 全局架构/技术栈变更 → 输出影响评估 → 用户确认后级联更新 |
+| `/archi.ui` | 生成或增量更新多文件 UI 概念设计（`screens/` 目录）；仅 UI 类项目 |
 | `/archi.audit [ID]` | 深度代码审查，输出审计报告；带 ID 审查单任务，不带 ID 做项目级体检 |
 | `/archi.fix [ID] <context>` | 诊断根因并修复 Bug；ID 可选，context 描述问题现象 |
 | `/archi.map` | 对比 map.json 与实际目录树，同步架构地图 |
@@ -317,6 +317,7 @@ Fix 诊断根因，向 plan 追加 Bugfix Phase，并修复代码。
 | `npx archi render` | 将 JSON 数据生成可读 Markdown 视图 |
 | `npx archi task [--check]` | 查看/校验 Roadmap 任务状态 |
 | `npx archi plan <id>` | 检查指定功能的 plan 完成度 |
+| `npx archi pack [-o file]` | 打包用户数据为 XML 备份文件 |
 | `npx archi template <name>` | 获取模板文件到项目根目录 |
 | `npx archi uninstall` | 从项目中移除 Architext 文件 |
 
