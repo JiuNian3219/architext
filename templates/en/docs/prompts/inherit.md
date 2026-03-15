@@ -101,13 +101,13 @@
 
     ### Information Routing Rules
 
-    > Rule files (`02_tech_stack`, `90_custom_rules`, etc.) are already injected into context by IDE; AI knows their paths, write directly.
+    > Rule files (`tech_stack`, `90_custom_rules`, etc.) are already injected into context by IDE; AI knows their paths, write directly.
 
     **With Brief** (Brief → target file):
     | Brief content | Target file |
     |:---|:---|
     | Project identity, target users, success metrics, references | `[[__DOCS_DIR__]]/global/vision.md` |
-    | Tech stack, deploy target, 3rd-party libs/services | rule file `02_tech_stack` |
+    | Tech stack, deploy target, 3rd-party libs/services | rule file `tech_stack` |
     | Core task list | `[[__DOCS_DIR__]]/global/roadmap.json` (phase-1/2, call archi-decompose-roadmap) |
     | Rules/conventions/preferences from supplementary notes | rule file `90_custom_rules` |
     | Style/tone (UI only) | `design_tokens.json` aestheticDirection etc. |
@@ -116,7 +116,7 @@
     | Source | Target file |
     |:---|:---|
     | README description/features | vision.md |
-    | Dependencies/config/code patterns | 02_tech_stack |
+    | Dependencies/config/code patterns | tech_stack |
     | Directory structure/module deps/user journeys | map.json |
     | Domain terminology/naming conventions | dictionary.json |
     | eslint/prettier etc. | 90_custom_rules |
@@ -129,7 +129,7 @@
     - **Without Brief**: Derive from README + project config; mark un-inferrable items `(AI completion — user review suggested)`
     - Do not retain template placeholders
 
-    ### 3.2 Tech Stack (rule file `02_tech_stack`)
+    ### 3.2 Tech Stack (rule file `tech_stack`)
     - **With Brief**: Brief confirmed → write directly; blank/recommend → AI recommends; code deps as supplement
     - **Without Brief**: Existing deps/config → write directly; visible conventions → write to Coding Standards
     - Fill complete Section 1-8
@@ -210,6 +210,10 @@
     - `dictionary.json`: Extract domain terminology from code
     - (UI projects only) `design_tokens.json`: Extract from CSS variables/theme
     - (Data projects only) `data_snapshot.json`: Extract from schema/migration
+    - (API projects only) `api_snapshot.json`: Extract endpoints from existing API routes/controller code
+    - `env_registry.json`: Extract env vars from `process.env` references in code
+    - (CLI projects only) `command_api.json`: Extract commands from existing CLI entry code
+    - (Lib projects only) `public_api.json`: Extract exports from package.json exports or entry files
     - `error_codes.json`: Extract from error definitions in code
 
     UI projects only: **UI concept design (Adopt mode)**: Skip — completed independently by `/archi.ui`.
@@ -229,12 +233,16 @@
 
     **Pre-signoff Checklist** (confirm each item after Gate passes, before Output):
     □ vision.md — filled (without Brief: inferred content annotated `(AI completion — review recommended)`)
-    □ 02_tech_stack.md — Sections 1-8 fully filled
+    □ tech_stack.md — Sections 1-8 fully filled
     □ roadmap.json — each functional module has a corresponding LEG-xx (status: done, tag: Legacy)
     □ tasks/LEG-xx_<Slug>/spec.md — each LEG has a corresponding Stub spec (with related file list)
     □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations all filled
-    □ dictionary.json + error_codes.json — extracted from codebase
+    □ dictionary.json + error_codes.json + env_registry.json — extracted from codebase
     □ (UI projects only) design_tokens.json — Adopt mode executed
+    □ (Data projects only) data_snapshot.json — initial entity skeleton written
+    □ (API projects only) api_snapshot.json — initial API endpoints registered
+    □ (CLI projects only) command_api.json — initial CLI commands registered
+    □ (Lib projects only) public_api.json — initial lib exports registered
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
 
     **Action** (after Checklist confirmed):

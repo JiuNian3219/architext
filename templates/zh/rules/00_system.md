@@ -208,19 +208,19 @@ alwaysApply: true
 
 | 文件 | 包含什么 | 何时读取 | 何时写入 | 治理规则 |
 |:---|:---|:---|:---|:---|
-| `roadmap.json` | 任务进度 DAG：ID/标题/状态(pending/active/done/blocked)/依赖/阶段/描述 | 语义理解时匹配意图对应任务；判定任务状态和依赖；检查 ID 水位 | start 创建；scope 追加；code/fix 完成后更新 status | 结构: `phases[]→tasks[]`，每个 task 须有 id/title/status/deps；deps 引用的 ID 须存在；slug 为 Snake_Case |
-| `vision.md` | 项目愿景、北极星指标、设计哲学、目标用户、边界约束、产品原则 | plan/audit 时对齐方向；评估新需求是否偏离愿景 | start/inherit 创建；revise 时更新 | 禁在 code 阶段修改 |
-| `map.json` | 目录↔模块映射(directoryMapping)、逻辑拓扑(logicalTopology)、用户旅程(criticalUserJourneys)、影响关联关系(featureRelations) | 每次新对话强制读取（见前置）；定位代码对应文档；创建新文件判断目录；检查模块依赖；修改文件时检查关联网 | plan Step 3；inherit；/archi.map；**创建新文件/模块时须立即更新** | directoryMapping 须反映真实文件树；logicalTopology 须注册每个 Task Module 职责；featureRelations 以网状结构记录影响关联，修改任一文件时检查所属网的其他成员；代码引用违反拓扑层级时须报错停止 |
-| `dictionary.json` | 统一术语表：实体命名(codeName)/禁用同义词(forbiddenSynonyms)/动词规范/工具注册/组件注册 | 命名变量/类/函数时；避免同一概念多种叫法 | plan Step 3 注册新术语；code/fix 后 step_5 自动追加 | codeName 是命名最高权威；禁用 forbiddenSynonyms 中的词；仅注册项目业务域，禁注册框架概念；仅ui项目: components 创建前须搜索复用 |
-| `error_codes.json` | 错误码契约：ERR_MODULE_REASON 格式，含 message 和 recovery | 编写错误处理代码时；注册新业务错误码时 | plan Step 3；code/fix 后 step_5 自动追加 | 格式: `ERR_[MODULE]_[REASON]`；编写错误处理前须先注册；仅注册项目业务域错误，禁注册框架基础设施错误 |
-| `design_tokens.json` | 仅ui项目: 色板(primitivePalette)/语义色(semanticTokens)/字体/圆角/间距/动效(motion)/图标风格 | 写 UI 代码/样式时 | start 创建；设计变更时更新 | Token Only：样式严格使用 Token，禁硬编码 Hex/px/rem；须同时定义 light 和 dark 值 |
+| `roadmap.json` | `[[__DOCS_DIR__]]/global/roadmap.json` | 任务进度 DAG：ID/标题/状态(pending/active/done/blocked)/依赖/阶段/描述 | 语义理解时匹配意图对应任务；判定任务状态和依赖；检查 ID 水位 | start 创建；scope 追加；code/fix 完成后更新 status | 结构: `phases[]→tasks[]`，每个 task 须有 id/title/status/deps；deps 引用的 ID 须存在；slug 为 Snake_Case |
+| `vision.md` | `[[__DOCS_DIR__]]/global/vision.md` | 项目愿景、北极星指标、设计哲学、目标用户、边界约束、产品原则 | plan/audit 时对齐方向；评估新需求是否偏离愿景 | start/inherit 创建；revise 时更新 | 禁在 code 阶段修改 |
+| `map.json` | `[[__DOCS_DIR__]]/global/map.json` | 目录↔模块映射(directoryMapping)、逻辑拓扑(logicalTopology)、用户旅程(criticalUserJourneys)、影响关联关系(featureRelations) | 每次新对话强制读取（见前置）；定位代码对应文档；创建新文件判断目录；检查模块依赖；修改文件时检查关联网 | plan Step 3；inherit；/archi.map；**创建新文件/模块时须立即更新** | directoryMapping 须反映真实文件树；logicalTopology 须注册每个 Task Module 职责；featureRelations 以网状结构记录影响关联，修改任一文件时检查所属网的其他成员；代码引用违反拓扑层级时须报错停止 |
+| `dictionary.json` | `[[__DOCS_DIR__]]/global/dictionary.json` | 统一术语表：实体命名(codeName)/禁用同义词(forbiddenSynonyms)/动词规范/工具注册/组件注册 | 命名变量/类/函数时；避免同一概念多种叫法 | plan Step 3 注册新术语；code/fix 后 step_5 自动追加 | codeName 是命名最高权威；禁用 forbiddenSynonyms 中的词；仅注册项目业务域，禁注册框架概念；仅ui项目: components 创建前须搜索复用 |
+| `error_codes.json` | `[[__DOCS_DIR__]]/global/error_codes.json` | 错误码契约：ERR_MODULE_REASON 格式，含 message 和 recovery | 编写错误处理代码时；注册新业务错误码时 | plan Step 3；code/fix 后 step_5 自动追加 | 格式: `ERR_[MODULE]_[REASON]`；编写错误处理前须先注册；仅注册项目业务域错误，禁注册框架基础设施错误 |
+| `design_tokens.json` | `[[__DOCS_DIR__]]/global/design_tokens.json` | 仅ui项目: 色板(primitivePalette)/语义色(semanticTokens)/字体/圆角/间距/动效(motion)/图标风格 | 写 UI 代码/样式时 | start 创建；设计变更时更新 | Token Only：样式严格使用 Token，禁硬编码 Hex/px/rem；须同时定义 light 和 dark 值 |
 | `screens/` | 仅ui项目: 多文件 UI 概念设计目录：`index.html`（导航枢纽）+ `S-XX.html`（独立屏幕）+ `_shared.css`（共享样式） | 写 UI 代码时作只读视觉参考 | `/archi.ui` 生成；plan/edit 发现 UI 偏差时增量更新 | 由 archi-ui-wireframe Skill 生成，禁手动修改；每个 `S-XX.html` 可在浏览器独立预览 |
-| `ui_context.md` | 仅ui项目: AI 屏幕索引：屏幕 ID/路由/文件路径/状态/导航关系/结构摘要 | plan/code/audit/edit 读取 UI 结构信息的唯一入口 | `/archi.ui` 生成；plan/edit 发现 UI 偏差时同步更新 | 禁手动修改；屏幕路由引用 `screens/S-XX.html` 路径 |
-| `data_snapshot.json` | 仅data项目: 数据模型快照：models[](名称/字段/类型/约束) + relationships[](1:1/1:N/M:N) | 涉及数据层设计或实现时 | plan 设计 Schema；code 完成后同步变更 | Design First：plan 须精确到字段名与类型，禁写 TBD；code 完成后须同步回此文件 |
-| `api_snapshot.json` | 仅api项目: API 端点快照：endpoints[](路由/方法/参数/owner) | 实现/对接 API 端点时 | plan Step 3 注册；code 同步 | Register First：禁实现未登记端点；owner 标注 Task ID |
-| `env_registry.json` | 仅api项目: 环境变量注册表：每个 env var 的 required/example/描述 | 引入新配置项时；检查已有环境变量时 | code 引入新 env var 后立即追加 | 引入即注册；required/example 必填 |
-| `command_api.json` | 仅cli项目: CLI 命令注册表：命令/参数/描述/owner | 实现/修改 CLI 命令时 | plan Step 3 注册；code 同步 | 修改即同步；owner 标注 Task ID |
-| `public_api.json` | 仅lib项目: 库导出注册表：exports 的完整 TS 签名/稳定性标记 | 新增/修改公开 API 时 | plan Step 3 注册；code 同步 | stable 变更须走 /archi.edit；完整 TS 签名；owner 标注 Task ID |
+| `ui_context.md` | `[[__DOCS_DIR__]]/global/ui_context.md` | 仅ui项目: AI 屏幕索引：屏幕 ID/路由/文件路径/状态/导航关系/结构摘要 | plan/code/audit/edit 读取 UI 结构信息的唯一入口 | `/archi.ui` 生成；plan/edit 发现 UI 偏差时同步更新 | 禁手动修改；屏幕路由引用 `screens/S-XX.html` 路径 |
+| `data_snapshot.json` | `[[__DOCS_DIR__]]/global/data_snapshot.json` | 仅data项目: 数据模型快照：models[](名称/字段/类型/约束) + relationships[](1:1/1:N/M:N) | 涉及数据层设计或实现时 | plan 设计 Schema；code 完成后同步变更 | Design First：plan 须精确到字段名与类型，禁写 TBD；code 完成后须同步回此文件 |
+| `api_snapshot.json` | `[[__DOCS_DIR__]]/global/api_snapshot.json` | 仅api项目: API 端点快照：endpoints[](路由/方法/参数/owner) | 实现/对接 API 端点时 | plan Step 3 注册；code 同步 | Register First：禁实现未登记端点；owner 标注 Task ID |
+| `env_registry.json` | `[[__DOCS_DIR__]]/global/env_registry.json` | 环境变量注册表：每个 env var 的 required/example/描述 | 引入新配置项时；检查已有环境变量时 | code 引入新 env var 后立即追加 | 引入即注册；required/example 必填 |
+| `command_api.json` | `[[__DOCS_DIR__]]/global/command_api.json` | 仅cli项目: CLI 命令注册表：命令/参数/描述/owner | 实现/修改 CLI 命令时 | plan Step 3 注册；code 同步 | 修改即同步；owner 标注 Task ID |
+| `public_api.json` | `[[__DOCS_DIR__]]/global/public_api.json` | 仅lib项目: 库导出注册表：exports 的完整 TS 签名/稳定性标记 | 新增/修改公开 API 时 | plan Step 3 注册；code 同步 | stable 变更须走 /archi.edit；完整 TS 签名；owner 标注 Task ID |
 
 ---
 
@@ -245,14 +245,18 @@ alwaysApply: true
 - ⚠️ 超出 spec 范围（新接口·改签名·新行为·新场景） → 输出 `⚠️ Spec 漂移`，建议 `/archi.edit <ID>`
 
 **B. 数据治理**:
-本次变更引入新业务实体/错误码/Schema 时 → 按上方文件索引中对应文件的**写入条件**和**治理规则**执行增量同步。
+本次变更引入新模块/实体/错误码/端点/命令/导出/设计令牌/环境变量 等全局数据资产时 → 按上方文件索引中对应文件的**写入条件**和**治理规则**执行增量同步。
 
 **C. 文件元数据保护**:
 修改 `[[__DOCS_DIR__]]` 下文件时，保留 YAML Frontmatter + `## 🤖 AI Maintenance Guide` 区域，禁改禁删。
 
-**D. 关联感知与同步**:
-1. **修改前**: 先查 `map.json` → `featureRelations`，确认是否有其他关联文件需要一起处理
-2. **修改后**: 若发现新的关联关系，及时更新 `featureRelations`
-3. **创建新文件/模块**: 更新 `directoryMapping`/`logicalTopology`；映射关系不明确时才询问用户确认。
+**D. Map 维护**:
+1. **修改前**: 检查 `map.json` 中 `featureRelations`（影响关联）和 `logicalTopology`（模块依赖），确认是否有其他关联文件需要一起处理
+2. **修改后**:
+   - 有新的目录/模块 → 更新 `directoryMapping`
+   - 有新的模块依赖 → 更新 `logicalTopology`
+   - 有新的影响关联 → 更新 `featureRelations`
+   - 有新的用户流程 → 更新 `criticalUserJourneys`
+3. 映射关系不明确时才询问用户确认
 
-> 核心原则：**动一个文件时，自动检查并同步关联文件**。
+> 核心原则：**动一个文件时，自动检查并同步 map.json 相关字段**。

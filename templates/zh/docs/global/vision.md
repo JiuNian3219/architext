@@ -77,6 +77,6 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 **Trigger**: 仅在项目初始化 (`/archi.start`) 或重大战略转型 (`/archi.revise`) 时修改。
 
 **Action**:
-1.  **Alignment**: 确保 Section 3 (Principles) 与 `02_tech_stack.md` 中的技术选型不冲突。
+1.  **Alignment**: 确保 Section 3 (Principles) 与 `tech_stack.md` 中的技术选型不冲突。
 2.  **Completeness**: 必须填满所有 `[ ]` 占位符，严禁保留 "Example" 字样。
 3.  **Consistency**: 所有的 Task Spec (`.spec.md`) 都必须引用此文件的 Vision 以确保不跑题。

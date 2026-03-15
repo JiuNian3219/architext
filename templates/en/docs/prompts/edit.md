@@ -65,8 +65,14 @@
     |:---|:---|:---|
     | 3 | [when status=done] `npx archi task <ID> --status active` | Status reset |
 
-    **Output**: plan.json with new tasks appended; if status transition performed, output `MODIFIED: roadmap.json <ID>.status done→active`. Enter step_4_verify.
+    **Output**: plan.json with new tasks appended; if status transition performed, output `MODIFIED: roadmap.json <ID>.status done→active`. Enter step_4_data_sync.
 </step_3_update_plan>
+
+<step_4_data_sync>
+    **Data governance sync**:
+
+    [[SUBAGENT: archi-data-sync|context: Scan new business entities/error codes/Schema/endpoints/commands/exports from requirement changes, incrementally sync per 00_system.md]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`, follow its execution protocol)]]
+</step_4_data_sync>
 
 <step_4_verify>
     **Role**: Independent Reviewer
@@ -76,24 +82,25 @@
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
-<step_5_summary>
+<step_6_summary>
     **Pre-signoff Checklist** (confirm each item before Output):
     □ spec.md — updated per context, changes tracked
     □ (if UI changed) ui.md + screens/S-XX.html + ui_context.md — synced
     □ plan.json — new Phase appended (history tasks fully preserved)
     □ (if original status=done) roadmap.json — status reset to active
     □ Global files — related JSON files synced for changes:
-      - dictionary.json + error_codes.json — required
+      - dictionary.json + error_codes.json + env_registry.json — required
       - (UI projects only) design_tokens.json + ui_context.md
       - (Data projects only) data_snapshot.json
-      - (API projects only) api_snapshot.json + env_registry.json
+      - (API projects only) api_snapshot.json
       - (CLI projects only) command_api.json
       - (Lib projects only) public_api.json
+    □ Step 4 Data Sync — archi-data-sync executed
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
     □ Terminal Gate — task --check no ERROR (executed in step_3)
 
     **Action** (Gate must complete in step_3):
     **Output**: Task update summary with Spec/UI/Plan change overview and Next Steps table. Recommend running `/archi.code <ID>`.
-</step_5_summary>
+</step_6_summary>
 
 </protocol_edit>

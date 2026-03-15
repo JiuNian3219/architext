@@ -63,6 +63,12 @@
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
+<step_4_5_data_sync>
+    **数据治理同步**:
+
+    [[SUBAGENT: archi-data-sync|context: 扫描 Bug 修复引入的新业务实体/错误码/Schema，按 00_system.md 规则增量同步]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`，按其执行协议操作）]]
+</step_4_5_data_sync>
+
 <step_5_plan_update>
     **Action**:
     1. 更新 plan.json Bugfix Phase 中已完成 tasks 的 `done: true`。
@@ -78,7 +84,7 @@
     □ plan.json — Bugfix Phase 已追加（step_2）
     □ 复现测试已创建并验证（Red → Green）
     □ 代码修复仅针对 Bug，无借机重构
-    □ 数据治理同步 — 若修复涉及新术语/错误码，已同步至 dictionary.json / error_codes.json
+    □ Step 4.5 Data Sync — archi-data-sync 已执行
     □ Step 4 Terminal Gate — 构建/类型检查/Lint/测试全部通过
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
     □ plan.json Bugfix Phase — done 标记已更新（step_5）

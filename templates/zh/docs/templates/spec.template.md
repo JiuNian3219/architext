@@ -79,7 +79,7 @@ description: Task Specification for {FEATURE_NAME}.
 
 ## 5. Constraints
 
-<!-- [AI]: 从 vision.md + 02_tech_stack.md 提取与本任务相关的红线约束。
+<!-- [AI]: 从 vision.md + tech_stack.md 提取与本任务相关的红线约束。
 
   格式:
   - [约束内容] (ref: [来源])

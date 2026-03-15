@@ -42,7 +42,7 @@ description: Lightweight code and document review. **Must run in isolated contex
 | # | 维度 | 审查要点 |
 |:---|:---|:---|
 | 1 | **Vision-Roadmap 对齐** | roadmap 任务方向与 vision.md 北极星指标是否一致 |
-| 2 | **Tech Stack 一致性** | `02_tech_stack.md` 与实际依赖/配置是否一致 |
+| 2 | **Tech Stack 一致性** | `tech_stack.md` 与实际依赖/配置是否一致 |
 | 3 | **全局文件完整性** | 须存在的全局文件是否齐全（vision, roadmap, map, dictionary, tech_stack, custom_rules） |
 | 4 | **信息零遗漏** | Brief/代码中的所有信息是否已路由到对应文件 |
 | 5 | 仅ui项目: **Design Tokens** | `design_tokens.json` 含基础颜色/字体/间距定义 |
@@ -55,7 +55,7 @@ description: Lightweight code and document review. **Must run in isolated contex
 |:---|:---|:---|
 | 1 | **Design Fidelity** | spec § 2 是否完整覆盖确认的功能设计 |
 | 2 | **Dimension Match** | spec § 2 维度格式是否与 Task Type 匹配 |
-| 3 | **Tech Consistency** | 是否用了 `02_tech_stack.md` 未声明的技术 |
+| 3 | **Tech Consistency** | 是否用了 `tech_stack.md` 未声明的技术 |
 | 4 | **WBS Coverage** | plan.json 是否 100% 覆盖 spec 的每个 AC 条目 |
 | 5 | **Notes Quality** | plan.json 每个 task 的 notes 是否含产出物+约束+可执行验证 |
 | 6 | **Interface Exports** | INF 任务 § 4 是否填写；有下游 deps 时是否声明接口 |
@@ -71,7 +71,7 @@ description: Lightweight code and document review. **Must run in isolated contex
 
 | # | 维度 | 审查要点 |
 |:---|:---|:---|
-| 1 | **Tech Consistency** | 与 `02_tech_stack.md` 一致（库/模式/API 风格） |
+| 1 | **Tech Consistency** | 与 `tech_stack.md` 一致（库/模式/API 风格） |
 | 2 | **SOTA** | 拒绝过时模式；采用 tech_stack 最佳实践 |
 | 3 | **Security** | 无敏感信息泄露；输入有校验 |
 | 4 | **Performance** | 避免不必要大依赖/全量导入/无用计算/内存泄漏 |

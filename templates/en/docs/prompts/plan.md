@@ -24,7 +24,7 @@
 <step_1_load>
     **Action**:
     1.  **Pre-flight**: Read roadmap.json; read only `<ID>` entry and direct deps' `id/title/status`; reject if deps incomplete (unless user forces).
-    2.  **Load**: vision.md (North Star + design philosophy only), 02_tech_stack.md (red lines + §9 project conventions; extract Error Handling/Data Flow/Auth inheritance), (UI projects only) design_tokens.json + ui_context.md (locate screen IDs, lock scope for step_4; do not invent new IDs; skip if absent), (Data projects only) data_snapshot.json.
+    2.  **Load**: vision.md (North Star + design philosophy only), tech_stack.md (red lines + §9 project conventions; extract Error Handling/Data Flow/Auth inheritance), (UI projects only) design_tokens.json + ui_context.md (locate screen IDs, lock scope for step_4; do not invent new IDs; skip if absent), (Data projects only) data_snapshot.json.
     3.  **Dependency Context** (when deps exist): Read only dep task spec.md Interface/Type section; skip if no ref. Stub dep → extract public interfaces from associated files.
     4.  **Refs** (if any): Read refs/index.json; match by tag semantics; load only matched ref files; skip if absent.
 
@@ -126,7 +126,7 @@
 
     **Action Checklist**:
     1.  **`map.json`**: Register `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>` in `directoryMapping`; define module responsibility and dependencies in `logicalTopology`.
-    2.  **Data governance sync** (`dictionary.json` / `error_codes.json` / `data_snapshot.json` etc.): Per `03_data_governance.md`, incrementally sync new business terms, error codes, Schema to corresponding global files.
+    2.  **Data governance sync**: [[SUBAGENT: archi-data-sync|context: Scan Task proposal for new business entities/error codes/Schema/endpoints/commands/exports, incrementally sync per 00_system.md]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`, follow its execution protocol)]]
     3.  **`map.json` featureRelations**: [[SUBAGENT: archi-feature-relations|mode: register, context: Determine if this Task is aggregator; if yes register featureRelations entry]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`, follow mode: register logic)]]
 
     **Output**: Diff summary of above files. Enter step_5_generate.
@@ -151,7 +151,7 @@
     > Mixed tasks use sub-headings in § 2 to distinguish dimensions.
 
     **spec § 4 Interface Exports**: INF **required**; FEAT required when has downstream deps.
-    **spec § 5 Constraints**: **Required** — extract relevant red lines from vision.md + 02_tech_stack.md.
+    **spec § 5 Constraints**: **Required** — extract relevant red lines from vision.md + tech_stack.md.
 
     **General rules**:
     - Do not invent AC items; each must map to concrete content in task design.
@@ -224,11 +224,11 @@
     □ plan.json — every AC in spec § 2 → ≥1 task covering it (100% coverage rule)
     □ plan.json — every task notes includes verification field (not empty, not title paraphrase)
     □ map.json — tasks/<ID>_<Slug> registered in directoryMapping
-    □ Global files — new terms/error codes/schemas/Tokens synced:
-      - dictionary.json + error_codes.json — required
+    □ Global files — new terms/error codes/schemas/Tokens/env vars synced:
+      - dictionary.json + error_codes.json + env_registry.json — required
       - (UI projects only) design_tokens.json + ui_context.md
       - (Data projects only) data_snapshot.json
-      - (API projects only) api_snapshot.json + env_registry.json
+      - (API projects only) api_snapshot.json
       - (CLI projects only) command_api.json
       - (Lib projects only) public_api.json
     □ Step 6 Silent Audit — executed, all CRITICAL issues resolved

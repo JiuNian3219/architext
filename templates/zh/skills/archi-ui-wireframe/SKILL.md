@@ -33,7 +33,7 @@ description: Generate UI concept designs and wireframes as multi-file screens/ d
 ### Step 1 — 读取上下文
 
 **Load**: vision.md（平台/用户/北极星）、roadmap.json（UI 任务 → 屏幕映射）、
-design_tokens.json（审美/品牌色）、02_tech_stack.md（平台/导航框架）。
+design_tokens.json（审美/品牌色）、tech_stack.md（平台/导航框架）。
 
 ### Step 2 — 规划屏幕清单
 

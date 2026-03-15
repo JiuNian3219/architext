@@ -34,7 +34,7 @@
 
 <step_1_load>
     **Action**:
-    1.  **Load**: vision.md (North Star + Boundaries only), roadmap.json (id/title/status/deps/tag + max ID watermark only), 02_tech_stack.md, map.json (directoryMapping + featureRelations only).
+    1.  **Load**: vision.md (North Star + Boundaries only), roadmap.json (id/title/status/deps/tag + max ID watermark only), tech_stack.md, map.json (directoryMapping + featureRelations only).
     2.  **Scan Tasks**: Scan tasks/ — understand existing task summaries (title + key flows; full read not needed).
 
     **Output**: Internal context summary, proceed to `<step_2_analysis>`.

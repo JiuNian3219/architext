@@ -23,7 +23,7 @@
         - Without `<id>`: Analyze `[context]` to find most relevant module.
           Single match → auto lock | Multiple matches → list candidates and ask | Cannot locate → error, request ID.
     2.  Read all docs and related code in target directory.
-    3.  Read 02_tech_stack.md (tech red lines) and vision.md (direction anchor).
+    3.  Read tech_stack.md (tech red lines) and vision.md (direction anchor).
     4.  Analyze `[context]` with code logic to locate potential fault points.
     5.  **Hypothesis**: Propose 1–3 root cause hypotheses.
 
@@ -63,6 +63,12 @@
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
+<step_4_5_data_sync>
+    **Data governance sync**:
+
+    [[SUBAGENT: archi-data-sync|context: Scan new business entities/error codes/Schema from Bug fix, incrementally sync per 00_system.md]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`, follow its execution protocol)]]
+</step_4_5_data_sync>
+
 <step_5_plan_update>
     **Action**:
     1. Update plan.json Bugfix Phase completed tasks `done: true`.
@@ -78,7 +84,7 @@
     □ plan.json — Bugfix Phase appended (step_2)
     □ Reproduction test created and verified (Red → Green)
     □ Code fix targets Bug only, no opportunistic refactoring
-    □ Data governance sync — if fix introduces new terms/error codes, synced to dictionary.json / error_codes.json
+    □ Step 4.5 Data Sync — archi-data-sync executed
     □ Step 4 Terminal Gate — Build / type check / Lint / tests all passed
     □ Step 4 Silent Audit — executed, all CRITICAL issues resolved
     □ plan.json Bugfix Phase — done flags updated (step_5)
@@ -89,6 +95,6 @@
     |:---|:---|:---|
     | Recommended | `/archi.audit <ID>` | Re-audit to confirm fix complete |
     | Optional | `/archi.code <ID>` | If incomplete items, continue implementation |
-</step_5_summary>
+</step_6_summary>
 
 </protocol_fix>

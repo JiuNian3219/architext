@@ -17,7 +17,7 @@
     **Action**:
     1.  **Resolve ID**: 从 roadmap.json 解析 `<id>` → Task Name、Slug、状态。
     2.  **ID Not Found** → 报错并列出可用任务 ID。
-    3.  **Load**: task docs 目录、roadmap.json（依赖关系）、map.json（架构注册）、99_context_glue.md（关联）。
+    3.  **Load**: task docs 目录、roadmap.json（依赖关系）、map.json（架构注册）。
 
     **Output**: 目标 Task 基本信息（ID、名称、状态、关联文件数）。
 </step_1_resolve>
@@ -37,7 +37,7 @@
 
     ### 2.2 代码文件识别
 
-    通过以下方式定位代码文件：context_glue 关联路径、map.json 注册模块、plan.json 提及的文件、以 Slug 命名或明确归属的文件。
+    通过以下方式定位代码文件：map.json 注册模块、plan.json 提及的文件、以 Slug 命名或明确归属的文件。
 
     ### 2.3 全局引用扫描
 
@@ -45,7 +45,6 @@
     |:---|:---|
     | `roadmap.json` | 任务条目 + deps 引用 |
     | `map.json` | 模块条目 + featureRelations 中以被删 Task 为 aggregator 的条目 |
-    | `99_context_glue.md` | 关联条目 |
     | `dictionary.json` | 独占术语（仅标记） |
     | `error_codes.json` | 独占错误码（仅标记） |
 
@@ -57,7 +56,7 @@
 
     扫描其他 Task 的 `spec.md`，检查是否引用了被删 Task 的接口/组件/数据。发现引用则标注 `[Breaking]`。
 
-    **Output**: 向用户输出下线影响报告 — 含 Task 状态、将删除的文档和代码（文件/来源表）、全局引用清理项（roadmap/map/context_glue）、（有）术语/错误码残留（须人工确认）、（有）聚合联动表、（有）跨 Task 引用 [Breaking] 表。末尾：OK 确认执行 / 中止取消。
+    **Output**: 向用户输出下线影响报告 — 含 Task 状态、将删除的文档和代码（文件/来源表）、全局引用清理项（roadmap/map）、（有）术语/错误码残留（须人工确认）、（有）聚合联动表、（有）跨 Task 引用 [Breaking] 表。末尾：OK 确认执行 / 中止取消。
 
     **Gate**: 用户回复 OK 后进入 step_3。有 `[Breaking]` 引用时须再次警告。
 </step_2_impact>
@@ -72,8 +71,7 @@
     | 2 | 删除 Task 文档目录 | `[[__DOCS_DIR__]]/tasks/<id>_<slug>/` |
     | 3 | 更新 `roadmap.json` | 移除任务条目；清理 deps 引用 |
     | 4 | 更新 `map.json` | 移除模块条目 + featureRelations 条目 |
-    | 5 | 更新 `99_context_glue.md` | 移除关联条目 |
-    | 6 | [?有独占术语] 更新 `dictionary.json` | 移除或标注废弃 |
+    | 5 | [?有独占术语] 更新 `dictionary.json` | 移除或标注废弃 |
     | 7 | [?有独占错误码] 更新 `error_codes.json` | 移除或标注废弃 |
     | 8 | [?有聚合联动] 检查聚合方代码 | 确认引用已清理 |
 
@@ -95,21 +93,20 @@
     □ tasks/<id>_<slug>/ 文档目录 — 已删除（step_3 操作 #2）
     □ roadmap.json — 任务条目 + deps 引用 — 已清理（step_3 操作 #3）
     □ map.json — 模块条目 + featureRelations — 已清理（step_3 操作 #4）
-    □ 99_context_glue.md — 关联条目 — 已清理（step_3 操作 #5）
     □ （有独占术语/错误码）dictionary.json + error_codes.json — 已处理
     □ 全局文件清理检查:
       - vision.md + tech_stack.md — 必检
-      - dictionary.json + error_codes.json — 必检
+      - dictionary.json + error_codes.json + env_registry.json — 必检
       - （仅ui项目）design_tokens.json + ui_context.md
       - （仅data项目）data_snapshot.json
-      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅api项目）api_snapshot.json
       - （仅cli项目）command_api.json
       - （仅lib项目）public_api.json
     □ Terminal Gate — 项目构建通过，无残留 import 引用（step_4）
 
     **Output**: 下线完成摘要：
     - **已删除**: 文档 N 个文件、代码 N 个文件
-    - **已清理**: roadmap / map / context_glue 中的引用
+    - **已清理**: roadmap / map 中的引用
     - **构建状态**: 通过/失败
     - **[?有]须人工跟进**: 术语/错误码/跨 Task 引用残留
     - **Git Commit Suggestion**: `feat(remove): decommission <ID> <Name>`

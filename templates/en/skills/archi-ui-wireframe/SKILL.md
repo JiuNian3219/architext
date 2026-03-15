@@ -33,7 +33,7 @@ description: Generate UI concept designs and wireframes as multi-file screens/ d
 ### Step 1 — Load Context
 
 **Load**: vision.md (platform/users/north-star), roadmap.json (UI tasks → screen mapping),
-design_tokens.json (aesthetic/brand), 02_tech_stack.md (platform/nav framework).
+design_tokens.json (aesthetic/brand), tech_stack.md (platform/nav framework).
 
 ### Step 2 — Plan Screen Inventory
 

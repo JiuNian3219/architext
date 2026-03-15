@@ -68,6 +68,12 @@
     **Output**: 追加了新任务的 plan.json；若执行状态转换，输出 `MODIFIED: roadmap.json <ID>.status done→active`。进入 step_4_verify。
 </step_3_update_plan>
 
+<step_4_data_sync>
+    **数据治理同步**:
+
+    [[SUBAGENT: archi-data-sync|context: 扫描需求变更引入的新业务实体/错误码/Schema/端点/命令/导出，按 00_system.md 规则增量同步]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`，按其执行协议操作）]]
+</step_4_data_sync>
+
 <step_4_verify>
     **Role**: 独立审查官
 
@@ -76,24 +82,25 @@
     [[INCLUDE: shared/verify-result-handling.md]]
 </step_4_verify>
 
-<step_5_summary>
+<step_6_summary>
     **Pre-signoff Checklist** (输出前须逐项确认):
     □ spec.md — 已按 context 更新，变更已追踪
     □ （仅ui项目，ui有修改）ui.md + screens/S-XX.html + ui_context.md — 已同步更新
     □ plan.json — 新 Phase 已追加（历史任务完整保留）
     □ （原 status=done）roadmap.json — status 已重置为 active
     □ 全局文件 — 变更涉及的相关 JSON 已同步更新
-      - dictionary.json + error_codes.json — 必检
+      - dictionary.json + error_codes.json + env_registry.json — 必检
       - （仅ui项目）design_tokens.json + ui_context.md
       - （仅data项目）data_snapshot.json
-      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅api项目）api_snapshot.json
       - （仅cli项目）command_api.json
       - （仅lib项目）public_api.json
+    □ Step 4 Data Sync — archi-data-sync 已执行
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复
     □ Terminal Gate — task --check 无 ERROR（step_3 中已执行）
 
     **Action** (Gate 须在 step_3 完成):
     **Output**: Task 更新摘要，含 Spec/UI/Plan 变更概要和 Next Steps 表格。推荐运行 `/archi.code <ID>`。
-</step_5_summary>
+</step_6_summary>
 
 </protocol_edit>

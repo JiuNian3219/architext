@@ -8,7 +8,7 @@
     <principles>
       1.  **Scan vs Map**: 以实际文件系统为 Ground Truth，map.json 为旧快照。
       2.  **Smart Granularity**: 默认目录级；单文件承载多职责时须细化到文件级。
-      3.  **Architecture Inference**: 新条目的层级归类须参考现有 map 模式 + `02_tech_stack.md`。
+      3.  **Architecture Inference**: 新条目的层级归类须参考现有 map 模式 + `tech_stack.md`。
       4.  **Batch Confirm**: 所有变更一次性展示，用户批量确认。
       5.  **IDE-Native First**: 利用 IDE 原生能力驱动执行节奏，本协议定义质量标准和检查点，不对抗 IDE 的规划/执行机制。
     </principles>
@@ -48,7 +48,7 @@
     ### 归类策略
 
     1.  **模式匹配**: 参考 map.json 同层级已有条目的归类。
-    2.  **Tech Stack 约定**: `02_tech_stack.md` 中的目录结构规则。
+    2.  **Tech Stack 约定**: `tech_stack.md` 中的目录结构规则。
     3.  **内容推断**: 读取文件内容（import 关系、导出类型）。
     4.  **无法确定**: 标记为 `[?]`，交由用户指定。
 

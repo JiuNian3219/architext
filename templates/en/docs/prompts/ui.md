@@ -16,7 +16,7 @@
 <step_1_load>
     **Action**:
     1.  **Pre-flight**: Check `architext.json` → `features` contains `ui`. If not → reject ("UI feature not enabled for this project").
-    2.  **Load**: vision.md (platform/users/north star), roadmap.json (UI-related tasks), design_tokens.json, 02_tech_stack.md (platform/navigation framework), ui_context.md (if exists).
+    2.  **Load**: vision.md (platform/users/north star), roadmap.json (UI-related tasks), design_tokens.json, tech_stack.md (platform/navigation framework), ui_context.md (if exists).
     3.  **Mode Detection**:
 
         | Condition | Mode | Behavior |

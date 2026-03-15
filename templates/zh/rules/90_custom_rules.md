@@ -8,7 +8,7 @@ alwaysApply: true
 # Custom Project Rules (用户自定义规则)
 
 > **Priority:** [High]
-> **Role:** 本项目的“特殊家规”。当通用的 `02_tech_stack` 无法覆盖某些细节，或有特殊业务约束时，以此文件为准。
+> **Role:** 本项目的“特殊家规”。当通用的 `tech_stack` 无法覆盖某些细节，或有特殊业务约束时，以此文件为准。
 
 ## 1. Team Conventions (团队习惯)
 

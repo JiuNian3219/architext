@@ -19,7 +19,7 @@
 
 <step_1_load>
     **Action**:
-    1.  **Load**: 全部全局资产（vision/roadmap/map/dictionary/error_codes/02_tech_stack + 条件: design_tokens/data_snapshot）。
+    1.  **Load**: 全部全局资产（vision/roadmap/map/dictionary/error_codes/tech_stack + 条件: design_tokens/data_snapshot）。
     2.  **Scan Task Index**: 扫描 tasks/ 目录，建立 Task 索引（ID、名称、状态）。
     3.  **Intent Analysis**: 根据 `[context]`，初步定位受影响的全局资产类别。
 
@@ -105,10 +105,10 @@
     □ Phase 1 — 所有确认的全局资产已修改，每个文件有变更摘要输出
     □ Phase 1 — 全局文件检查:
       - roadmap.json + vision.md + tech_stack.md + map.json — 必检
-      - dictionary.json + error_codes.json — 必检
+      - dictionary.json + error_codes.json + env_registry.json — 必检
       - （仅ui项目）design_tokens.json + ui_context.md
       - （仅data项目）data_snapshot.json
-      - （仅api项目）api_snapshot.json + env_registry.json
+      - （仅api项目）api_snapshot.json
       - （仅cli项目）command_api.json
       - （仅lib项目）public_api.json
     □ （仅ui项目，设计系统有变更）已通知用户重跑 `/archi.ui`

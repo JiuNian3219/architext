@@ -19,7 +19,7 @@
 
 <step_1_load>
     **Action**:
-    1.  **Load**: All global assets (vision/roadmap/map/dictionary/error_codes/02_tech_stack + conditional: design_tokens/data_snapshot).
+    1.  **Load**: All global assets (vision/roadmap/map/dictionary/error_codes/tech_stack + conditional: design_tokens/data_snapshot).
     2.  **Scan Task Index**: Scan tasks/ directory; build Task index (ID, name, status).
     3.  **Intent Analysis**: From `[context]`, identify affected global asset categories.
 
@@ -103,10 +103,10 @@
     □ Phase 1 — all confirmed global assets modified, change summary output per file
     □ Phase 1 — Global files check:
       - roadmap.json + vision.md + tech_stack.md + map.json — required
-      - dictionary.json + error_codes.json — required
+      - dictionary.json + error_codes.json + env_registry.json — required
       - (UI projects only) design_tokens.json + ui_context.md
       - (Data projects only) data_snapshot.json
-      - (API projects only) api_snapshot.json + env_registry.json
+      - (API projects only) api_snapshot.json
       - (CLI projects only) command_api.json
       - (Lib projects only) public_api.json
     □ (UI projects only, design system changed) User notified to re-run `/archi.ui`

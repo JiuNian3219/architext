@@ -90,13 +90,13 @@
 
     ### 信息路由规则
 
-    > 规则文件（`02_tech_stack`、`90_custom_rules` 等）已由 IDE 注入当前上下文，AI 已知其路径，直接写入即可。
+    > 规则文件（`tech_stack`、`90_custom_rules` 等）已由 IDE 注入当前上下文，AI 已知其路径，直接写入即可。
 
     | Brief 内容 | 目标文件 |
     |:---|:---|
     | 项目身份、目标用户、成功指标、参考灵感 | `[[__DOCS_DIR__]]/global/vision.md` |
-    | 技术栈、部署目标、第三方库/服务 | 规则文件 `02_tech_stack` |
-    | 风格调性 — 审美方向/信息密度/动效偏好 | `02_tech_stack` (UI Protocol) + `design_tokens.json` |
+    | 技术栈、部署目标、第三方库/服务 | 规则文件 `tech_stack` |
+    | 风格调性 — 审美方向/信息密度/动效偏好 | `tech_stack` (UI Protocol) + `design_tokens.json` |
     | （仅ui项目）审美方向 preset + 视觉参考（品牌色/字体/图标/竞品截图） | `design_tokens.json` 对应字段 + `vision.md` Visual Reference |
     | （仅ui项目）brief-assets/ 中标记为 `[竞品参考]` 的图片 | `design_tokens.json` aestheticDirection 参考 + `vision.md` Visual Reference |
     | 核心任务列表 | `[[__DOCS_DIR__]]/global/roadmap.json` |
@@ -107,7 +107,7 @@
     | brief-assets/ 中标记为 `[数据库 Schema]` 的文件 | 解析后写入 `data_snapshot.json` |
     | brief-assets/ 中标记为 `[API 文档]` 的文件 | 解析后路由到 `vision.md` Context + 相关 Roadmap 任务 |
     | 边界与反目标 | `vision.md` Boundaries |
-    | 已有资源 | `vision.md` + `02_tech_stack` 按归属 |
+    | 已有资源 | `vision.md` + `tech_stack` 按归属 |
     | 补充说明中的规则/约定/偏好 | 规则文件 `90_custom_rules` |
     | 补充说明中的领域术语 | `dictionary.json` |
     | 补充说明中的其他背景 | `vision.md` Context |
@@ -118,7 +118,7 @@
     - 从 Brief 填充 Core Vision / Target Audience / Boundaries / Design & Experience / Product Principles / 背景上下文
     - 须填满所有占位符，禁保留模板示例文字
 
-    ### 3.2 Tech Stack (规则文件 `02_tech_stack`)
+    ### 3.2 Tech Stack (规则文件 `tech_stack`)
     - Brief 已确定 → 直接写入 | 留空/写"推荐" → AI 推荐并标注 `(AI 推荐)` + 理由
     - **AX Optimization**: 推荐时优先 AI 友好型技术
     - 须填充完整 Section 1-9
@@ -139,6 +139,10 @@
     - （仅data项目） `data_snapshot.json`: 初始化核心实体骨架；无数据描述时写入空模板
     - （仅ui项目） `design_tokens.json`: 基于「风格与调性」和「视觉参考」填充 aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens
     - `error_codes.json`: 基于任务列表预定义核心错误码
+    - （仅api项目） `api_snapshot.json`: 初始端点注册；Brief 有 API 描述时从中提取，否则写入空模板
+    - `env_registry.json`: 初始环境变量注册
+    - （仅cli项目） `command_api.json`: 初始命令注册；Brief 有命令描述时从中提取，否则写入空模板
+    - （仅lib项目） `public_api.json`: 初始导出注册；Brief 有导出描述时从中提取，否则写入空模板
 
     仅ui项目: **UI 概念设计**: 跳过 — 由 `/archi.ui` 独立完成。仅确保 `design_tokens.json` 已填充。
 
@@ -164,10 +168,10 @@
     □ tech_stack.md — Section 1-9 完整填充，Section 9 Project Conventions 含 Strategy + Rationale
     □ roadmap.json — archi-decompose-roadmap Skill 已执行，任务链已生成
     □ map.json — 核心目录骨架已预注册（directoryMapping + logicalTopology + featureRelations）
-    □ dictionary.json + error_codes.json — 领域术语和核心错误码已提取
+    □ dictionary.json + error_codes.json + env_registry.json — 领域术语、核心错误码、环境变量已提取
     □ （仅ui项目）design_tokens.json + ui_context.md — 已生成
     □ （仅data项目）data_snapshot.json — 初始实体骨架已写入
-    □ （仅api项目）api_snapshot.json + env_registry.json — 初始 API 端点已注册
+    □ （仅api项目）api_snapshot.json — 初始 API 端点已注册
     □ （仅cli项目）command_api.json — 初始 CLI 命令已注册
     □ （仅lib项目）public_api.json — 初始库导出已注册
     □ Step 4 Silent Audit — 已执行，所有 CRITICAL 问题已修复

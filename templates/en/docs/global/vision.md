@@ -77,6 +77,6 @@ description: Project Constitution: Vision, Personas, Principles & Boundaries.
 **Trigger**: Only modify during project initialization (`/archi.start`) or major strategic pivot (`/archi.revise`).
 
 **Action**:
-1.  **Alignment**: Ensure Section 3 (Principles) conflicts with technology choices in `02_tech_stack.md`.
+1.  **Alignment**: Ensure Section 3 (Principles) conflicts with technology choices in `tech_stack.md`.
 2.  **Completeness**: Must fill all `[ ]` placeholders, strictly no "Example" text remaining.
 3.  **Consistency**: All Task Specs (`.spec.md`) must reference the Vision in this file to ensure alignment.
