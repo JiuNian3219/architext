@@ -177,6 +177,7 @@ export const FILE_MODELS: FileModel[] = [
     globalSeeds: [
       "dictionary.json",
       "error_codes.json",
+      "error_memory.json",
       "map.json",
       "roadmap.json",
       "env_registry.json",

@@ -63,6 +63,7 @@ Other features (mobile/desktop/miniapp/extension/realtime/ai) and Chinese condit
 ]]
 | Modifying code without reading target file first | **Stop** → Read code first, understand context and style |
 | Executing `npx archi` without confirming working directory | **Stop** → Must be in project root (`[[__DOCS_DIR__]]/` directory) |
+| Before taking action | **Check** → Read `error_memory.json` and match `checkpoints[].before` |
 
 ---
 
@@ -211,6 +212,7 @@ Each protocol's Signoff contains **Next Steps** suggestion, guide user per that 
 | `map.json` | `[[__DOCS_DIR__]]/global/map.json` | Directory↔Module mapping (directoryMapping), logical topology (logicalTopology), user journeys (criticalUserJourneys), impact relations (featureRelations) | **Mandatory read each new conversation** (see Pre-flight); Locate code corresponding docs; Determine directory for new files; Check module dependencies; Check impact relations when modifying files | Step 3 of plan; inherit; /archi.map; **Must update immediately when creating new files/modules** | directoryMapping must reflect actual file tree; logicalTopology must register each Task Module responsibility; featureRelations organizes impact relations as networks, check other members of the same network when modifying any file; Code referencing topology violations must error and stop |
 | `dictionary.json` | `[[__DOCS_DIR__]]/global/dictionary.json` | Unified terminology: entity naming (codeName)/forbidden synonyms (forbiddenSynonyms)/verb standards/tool registry/component registry | When naming variables/classes/functions; Avoid multiple terms for same concept | Step 3 of plan registers new terms; step_5 auto-appends after code/fix | codeName is highest naming authority; Forbidden to use words in forbiddenSynonyms; Only register project business domain, forbidden to register framework concepts; UI projects only: search for reuse before creating components |
 | `error_codes.json` | `[[__DOCS_DIR__]]/global/error_codes.json` | Error code contracts: ERR_MODULE_REASON format, with message and recovery | When writing error handling code; Registering new business error codes | Step 3 of plan; step_5 auto-appends after code/fix | Format: `ERR_[MODULE]_[REASON]`; Must register before writing error handling; Only register project business errors, forbidden to register framework infrastructure errors |
+| `error_memory.json` | `[[__DOCS_DIR__]]/global/error_memory.json` | Error memory bank: keyword signature → historical solutions | Retrieve when encountering errors; Record after resolution | Append after fix succeeds; Path anonymization (relative to project root) | Prevents error loops; Auto-triggered; |
 | `design_tokens.json` | `[[__DOCS_DIR__]]/global/design_tokens.json` | UI projects only: Color palette (primitivePalette)/semantic colors (semanticTokens)/typography/border radius/spacing/motion/icon style | When writing UI code/styles | Created by start; Updated when design changes | Token Only: Styles must use Tokens, forbidden to hardcode Hex/px/rem; Must define both light and dark values |
 | `data_snapshot.json` | `[[__DOCS_DIR__]]/global/data_snapshot.json` | Data projects only: Data model snapshot: models[](name/fields/types/constraints) + relationships[](1:1/1:N/M:N) | When involving data layer design or implementation | Plan designs Schema; Sync changes after code completes | Design First: plan must specify field names and types precisely, forbidden to write TBD; Must sync back to this file after code completes |
 | `api_snapshot.json` | `[[__DOCS_DIR__]]/global/api_snapshot.json` | API projects only: API endpoint snapshot: endpoints[](route/method/params/owner) | When implementing/integrating API endpoints | Step 3 of plan registers; Sync during code | Register First: Forbidden to implement unregistered endpoints; owner marks Task ID |
@@ -256,3 +258,15 @@ When modifying files under `[[__DOCS_DIR__]]`, preserve YAML Frontmatter + `## �
 3. Only ask user confirmation when mapping relationship is unclear
 
 > Core principle: **When modifying one file, automatically check and sync related map.json fields**.
+
+---
+
+## Error Memory — Prevent Error Loops
+
+### Prediction Phase (Before Execution)
+
+## Error Memory — Prevent Error Loops
+
+**Prediction** (before execution): Match `checkpoints[].before` → Output `watchFor` + `lesson` reminder
+**Matching** (after error): Match `errorPatterns[].matchWhen` → Output `cause` + `solution` + `lesson`
+**Recording** (after resolution): Append `errorPatterns[]{id,watchFor,matchWhen,cause,solution,lesson}` + `checkpoints[]{before,check}`
