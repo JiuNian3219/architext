@@ -63,6 +63,7 @@ alwaysApply: true
 ]]
 | 改代码前没读目标文件的现有代码 | **停** → 先读代码，理解上下文和现有风格 |
 | 执行 `npx archi` 前没确认工作目录 | **停** → 须在项目根目录（`[[__DOCS_DIR__]]/` 所在目录）执行 |
+| 行动前 | **查** → 读 `error_memory.json` 匹配 `checkpoints[].before` |
 
 ---
 
@@ -213,6 +214,7 @@ alwaysApply: true
 | `map.json` | `[[__DOCS_DIR__]]/global/map.json` | 目录↔模块映射(directoryMapping)、逻辑拓扑(logicalTopology)、用户旅程(criticalUserJourneys)、影响关联关系(featureRelations) | 每次新对话强制读取（见前置）；定位代码对应文档；创建新文件判断目录；检查模块依赖；修改文件时检查关联网 | plan Step 3；inherit；/archi.map；**创建新文件/模块时须立即更新** | directoryMapping 须反映真实文件树；logicalTopology 须注册每个 Task Module 职责；featureRelations 以网状结构记录影响关联，修改任一文件时检查所属网的其他成员；代码引用违反拓扑层级时须报错停止 |
 | `dictionary.json` | `[[__DOCS_DIR__]]/global/dictionary.json` | 统一术语表：实体命名(codeName)/禁用同义词(forbiddenSynonyms)/动词规范/工具注册/组件注册 | 命名变量/类/函数时；避免同一概念多种叫法 | plan Step 3 注册新术语；code/fix 后 step_5 自动追加 | codeName 是命名最高权威；禁用 forbiddenSynonyms 中的词；仅注册项目业务域，禁注册框架概念；仅ui项目: components 创建前须搜索复用 |
 | `error_codes.json` | `[[__DOCS_DIR__]]/global/error_codes.json` | 错误码契约：ERR_MODULE_REASON 格式，含 message 和 recovery | 编写错误处理代码时；注册新业务错误码时 | plan Step 3；code/fix 后 step_5 自动追加 | 格式: `ERR_[MODULE]_[REASON]`；编写错误处理前须先注册；仅注册项目业务域错误，禁注册框架基础设施错误 |
+| `error_memory.json` | `[[__DOCS_DIR__]]/global/error_memory.json` | 错误记忆库：关键词签名 → 历史解决方案 | 遇到报错时检索；解决后记录 | fix 成功后追加；路径脱敏（相对项目根目录） | 用于防循环错误；自动触发 |
 | `design_tokens.json` | `[[__DOCS_DIR__]]/global/design_tokens.json` | 仅ui项目: 色板(primitivePalette)/语义色(semanticTokens)/字体/圆角/间距/动效(motion)/图标风格 | 写 UI 代码/样式时 | start 创建；设计变更时更新 | Token Only：样式严格使用 Token，禁硬编码 Hex/px/rem；须同时定义 light 和 dark 值 |
 | `screens/` | 仅ui项目: 多文件 UI 概念设计目录：`index.html`（导航枢纽）+ `S-XX.html`（独立屏幕）+ `_shared.css`（共享样式） | 写 UI 代码时作只读视觉参考 | `/archi.ui` 生成；plan/edit 发现 UI 偏差时增量更新 | 由 archi-ui-wireframe Skill 生成，禁手动修改；每个 `S-XX.html` 可在浏览器独立预览 |
 | `ui_context.md` | `[[__DOCS_DIR__]]/global/ui_context.md` | 仅ui项目: AI 屏幕索引：屏幕 ID/路由/文件路径/状态/导航关系/结构摘要 | plan/code/audit/edit 读取 UI 结构信息的唯一入口 | `/archi.ui` 生成；plan/edit 发现 UI 偏差时同步更新 | 禁手动修改；屏幕路由引用 `screens/S-XX.html` 路径 |
@@ -260,3 +262,11 @@ alwaysApply: true
 3. 映射关系不明确时才询问用户确认
 
 > 核心原则：**动一个文件时，自动检查并同步 map.json 相关字段**。
+
+---
+
+## Error Memory — 错误防循环
+
+**预判**（执行前）: 匹配 `checkpoints[].before` → 输出 `watchFor` + `lesson` 提醒
+**匹配**（报错后）: 匹配 `errorPatterns[].matchWhen` → 输出 `cause` + `solution` + `lesson`
+**记录**（解决后）: 同时追加 `errorPatterns[]{id,watchFor,matchWhen,cause,solution,lesson}` + `checkpoints[]{before,check}`
