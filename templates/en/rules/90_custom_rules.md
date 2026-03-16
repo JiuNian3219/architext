@@ -12,6 +12,8 @@ alwaysApply: true
 
 ## 1. Team Conventions
 
+- **Git Commit**: Provide commit suggestions (in Simplified Chinese, following Conventional Commits) after each code or doc change; default not to commit automatically, confirm by user.
+
 
 ## 2. Business Constraints
 
