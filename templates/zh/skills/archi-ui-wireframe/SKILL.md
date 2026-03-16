@@ -56,48 +56,38 @@ check `design_tokens.json`:
 
 #### 4.1 `_shared.css` — 共享样式
 
-从 `design_tokens.json` 提取 CSS 变量 + 基础布局 + 控制栏样式。所有 `S-XX.html` 通过 `<link href="_shared.css">` 引用。
+从 `design_tokens.json` 提取 CSS 变量 + 基础布局 + 底部控制面板样式。所有 `S-XX.html` 通过 `<link href="_shared.css">` 引用。
+
+**底部控制面板**：fixed 定位底部，浮动长条按钮（60×16px，位于面板顶部中央），▲/▼ 切换符号。三列布局：← 索引跳转 | 页面说明 | 状态按钮。收起时内容区 display:none，按钮保持可见。
 
 #### 4.2 `S-XX.html` — 独立屏幕文件
 
 每个屏幕一个自包含 HTML 文件，结构：
 
 ```html
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <title>S-XX · [屏幕名]</title>
-  <link rel="stylesheet" href="_shared.css">
-</head>
 <body>
-  <header class="wf-topbar">
-    <a href="index.html" class="wf-back">← 返回索引</a>
-    <span>[项目名] — S-XX · [屏幕名]</span>
-  </header>
+  <header class="wf-topbar">...</header>
+  <main class="wf-content">...状态切换 div...</main>
 
-  <main class="wf-content">
-    <div class="wf-state active" data-state="default">...</div>
-    <div class="wf-state" data-state="loading">...</div>
-    <div class="wf-state" data-state="empty">...</div>
-    <div class="wf-state" data-state="error">...</div>
-  </main>
-
-  <footer class="wf-ctrl-bar">
-    <div class="wf-states"><!-- 状态切换按钮 --></div>
-  </footer>
+  <!-- 底部控制面板 -->
+  <aside class="wf-panel" id="wfPanel">
+    <button class="wf-panel-toggle" id="toggleBtn" onclick="togglePanel()">▼</button>
+    <div class="wf-panel-content">
+      <span>跳转</span> <a href="index.html">← 索引</a>
+      <span>页面</span> <span>[说明]</span>
+      <span>状态</span> <div class="wf-states">...</div>
+    </div>
+  </aside>
 
   <script>
-    function showState(state) {
-      document.querySelectorAll('.wf-state').forEach(el => el.classList.remove('active'));
-      document.querySelector(`[data-state="${state}"]`).classList.add('active');
-      document.querySelectorAll('.wf-states button').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.state === state);
-      });
-    }
+    function togglePanel() {
+  var panel = document.getElementById('wfPanel');
+  var btn = document.getElementById('toggleBtn');
+  panel.classList.toggle('collapsed');
+  btn.textContent = panel.classList.contains('collapsed') ? '▲' : '▼';
+}
   </script>
 </body>
-</html>
 ```
 
 #### 4.3 `index.html` — 导航枢纽
