@@ -128,7 +128,7 @@
     1.  确认 `plan.json` 各 task `done` 标记已全部更新。
     2.  **Drift Warning**: 对比代码变更与 `spec.md` 关键点位。发现超出 spec 覆盖范围 → 标注 `⚠️ Spec 漂移`，建议 `/archi.edit <ID>`。
     3.  输出完成任务清单与补丁链接。
-    4.  提供下一步建议与 Git Commit Suggestion（Conventional Commits）。
+    4.  提供下一步建议。
 
     **Pre-signoff Checklist** (Output 前须逐项确认):
     □ plan.json — 每个 task done 标记已实时更新（非 signoff 时批量操作）
@@ -146,7 +146,7 @@
       - （仅lib项目）public_api.json
     □ Terminal Gate — npx archi plan <ID> 全部完成（仅豁免项除外）
 
-    **Output**: 完成摘要，含已完成任务、豁免项(如有)、Git Commit 建议、Next Steps：
+    **Output**: 完成摘要，含已完成任务、豁免项(如有)、Next Steps：
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|

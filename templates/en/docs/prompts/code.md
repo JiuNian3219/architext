@@ -128,7 +128,7 @@
     1.  Confirm `plan.json` each task `done` flag updated.
     2.  **Drift Warning**: Compare code changes with `spec.md` key points. If beyond spec coverage → mark `⚠️ Spec drift`, suggest `/archi.edit <ID>`.
     3.  Output completed task list and patch links.
-    4.  Provide next steps and Git Commit Suggestion (Conventional Commits).
+    4.  Provide next steps.
 
     **Pre-signoff Checklist** (confirm each item before Output):
     □ plan.json — every task done flag updated in real-time (not batch-updated at signoff)
@@ -146,7 +146,7 @@
       - (Lib projects only) public_api.json
     □ Terminal Gate — npx archi plan <ID> all complete (exempt items only)
 
-    **Output**: Completion summary with completed tasks, exempt items (if any), Git Commit suggestion, Next Steps:
+    **Output**: Completion summary with completed tasks, exempt items (if any), Next Steps:
 
     | Priority | Action | Notes |
     |:---|:---|:---|
