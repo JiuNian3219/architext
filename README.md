@@ -298,6 +298,7 @@ You can trigger these either by typing `/archi.<command>` or by describing your 
 | `/archi.scope [file_path]` | Decompose extra requirements into roadmap tasks; omit file to trigger an interview |
 | `/archi.plan <ID> [context]` | Deep architecture interview → spec / plan ([?UI] also ui.md); supply context to reduce questions |
 | `/archi.code <ID>` | Implement from plan phase by phase; only `active` tasks are allowed |
+| `/archi.script` | Generate AI automation scripts (validate/dev-up/dev-reset) post-infrastructure |
 | `/archi.edit <ID> [context]` | Update feature spec → append new dev phase; history is preserved |
 | `/archi.revise [context]` | Global arch/stack change → impact assessment → cascade update on confirm |
 | `/archi.ui` | Generate or incrementally update multi-file UI concept designs (`screens/` directory); UI projects only |

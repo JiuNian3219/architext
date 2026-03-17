@@ -96,6 +96,7 @@ Following intents bypass main flow, match directly:
 - Manage external references → `ref`
 - Restore backup data → `recover`
 - Sync architecture map → `map`
+- Generate automation scripts → `script`
 - "What to do next" → `help`
 - None of above → Enter ③
 
@@ -154,6 +155,7 @@ When user input starts with `/archi.`, **skip semantic understanding, load corre
 | `/archi.start` | `[[__PROMPTS_PATH__]]/archi.start.md` |
 | `/archi.inherit` | `[[__PROMPTS_PATH__]]/archi.inherit.md` |
 | `/archi.scope` | `[[__PROMPTS_PATH__]]/archi.scope.md` |
+| `/archi.script` | `[[__PROMPTS_PATH__]]/archi.script.md` |
 | `/archi.plan` | `[[__PROMPTS_PATH__]]/archi.plan.md` |
 | `/archi.edit` | `[[__PROMPTS_PATH__]]/archi.edit.md` |
 | `/archi.revise` | `[[__PROMPTS_PATH__]]/archi.revise.md` |

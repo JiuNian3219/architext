@@ -50,6 +50,7 @@
     **Terminal Gate** (do not skip):
     | Step | Command | Pass Condition |
     |:---|:---|:---|
+    | 0 | Check `scripts/validate` | If exists, must run; results per script |
     | 1 | Run build command | Build success |
     | 2 | Run type check | Zero type errors |
     | 3 | Run Lint/Format | Pass |
@@ -93,6 +94,7 @@
 
     | Priority | Action | Notes |
     |:---|:---|:---|
+    | (If no scripts/) | `/archi.script` | Generate automation validation scripts |
     | Recommended | `/archi.audit <ID>` | Re-audit to confirm fix complete |
     | Optional | `/archi.code <ID>` | If incomplete items, continue implementation |
 </step_6_summary>

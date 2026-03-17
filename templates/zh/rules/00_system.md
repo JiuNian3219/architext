@@ -97,6 +97,7 @@ alwaysApply: true
 - 恢复备份数据 → `recover`
 - 同步架构地图 → `map`
 - 生成/更新 UI 概念设计 → `ui`
+- 生成自动化脚本 → `script`
 - "下一步做什么" → `help`
 - 以上都不是 → 进入 ③
 
@@ -155,6 +156,7 @@ alwaysApply: true
 | `/archi.start` | `[[__PROMPTS_PATH__]]/archi.start.md` |
 | `/archi.inherit` | `[[__PROMPTS_PATH__]]/archi.inherit.md` |
 | `/archi.scope` | `[[__PROMPTS_PATH__]]/archi.scope.md` |
+| `/archi.script` | `[[__PROMPTS_PATH__]]/archi.script.md` |
 | `/archi.plan` | `[[__PROMPTS_PATH__]]/archi.plan.md` |
 | `/archi.edit` | `[[__PROMPTS_PATH__]]/archi.edit.md` |
 | `/archi.revise` | `[[__PROMPTS_PATH__]]/archi.revise.md` |

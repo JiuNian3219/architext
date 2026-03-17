@@ -190,6 +190,7 @@
     |:---|:---|:---|
     | （仅ui项目） 推荐 | `/archi.ui` | 生成 UI 概念设计（`screens/` 多文件结构） |
     | 推荐 | `/archi.plan INF-01` | 规划第一个基础设施任务 |
+    | （INF 完成后） | `/archi.script` | 生成 AI 自动化脚本（validate/dev-up/dev-reset） |
     | 可选 | `/archi.scope <scope-brief.md>` | 如有更多需求待分解，追加到 Roadmap |
 </step_5_signoff>
 

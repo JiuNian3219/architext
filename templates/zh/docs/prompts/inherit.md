@@ -260,6 +260,7 @@
     |:---|:---|:---|
     | 1 | 审查 vision.md | 确认 AI 补全的愿景描述是否准确 |
     | （仅ui项目） 推荐 | `/archi.ui` | 生成 UI 概念设计（`screens/` 多文件结构，Adopt 模式） |
+    | （有基建后） | `/archi.script` | 生成 AI 自动化脚本（validate/dev-up/dev-reset） |
     | 2 | `/archi.edit LEG-xx` | 对核心模块补全完整 spec（自动触发 Enrich 流程） |
     | 3 | `/archi.scope [file_path]` | 规划新功能/大模块 |
     | 4 | `/archi.plan <任务ID>` | 对单个任务做深度规划 |
