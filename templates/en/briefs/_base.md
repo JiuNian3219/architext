@@ -18,14 +18,14 @@
 
 ---
 
-## Core Tasks
+## Functional Requirements
 
-> Must-have tasks, each in one paragraph describing expected behavior.
-> Detailed specs are defined in `/archi.plan`; here just clarify "what to build."
+> Core capabilities to implement—describe "what" not "how."
+> AI will decompose these into implementation tasks; here just clarify the business goal.
 
-1.
-2.
-3.
+-
+-
+-
 
 ---
 

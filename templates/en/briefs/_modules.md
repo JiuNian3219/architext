@@ -10,7 +10,7 @@
 
 > If you already know core data entities and relationships, describe them here. No need for full schema—list entity names and key fields.
 > AI will generate detailed data model in `/archi.plan`; here just clarify "what data exists."
-> Leave blank if not applicable; AI will derive from core tasks.
+> Leave blank if not applicable; AI will derive from core features.
 
 <!-- Format reference:
 - **User**: email, name, role (admin/user), avatar
