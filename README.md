@@ -2,7 +2,7 @@
 
 [简体中文](https://github.com/JiuNian3219/architext/blob/main/README.zh-CN.md) · **English**
 
-# 🏛️ Architext
+# <img src="templates/icon.svg" width="40" height="40" align="top" /> Architext
 
 **The AI Architecture Protocol. Define first, build right.**
 
