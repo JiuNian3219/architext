@@ -58,8 +58,9 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |
-            PUBLIC_UMAMI_WEBSITE_ID=${{ secrets.UMAMI_WEBSITE_ID }}
-            PUBLIC_UMAMI_SCRIPT_URL=${{ secrets.UMAMI_SCRIPT_URL }}
+            UMAMI_WEBSITE_ID=${{ secrets.UMAMI_WEBSITE_ID }}
+            UMAMI_SCRIPT_URL=${{ secrets.UMAMI_SCRIPT_URL }}
+            PUBLIC_BAIDU_SITE_VERIFICATION=${{ secrets.PUBLIC_BAIDU_SITE_VERIFICATION }}
           cache-to: type=inline
 
   deploy-production:

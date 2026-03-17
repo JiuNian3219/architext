@@ -1,11 +1,172 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <!-- Domain redirect: architext.site -> architext.cn -->
+  <script>
+    if (location.hostname === 'architext.site' || location.hostname === 'www.architext.site') {
+      location.replace(location.href.replace('architext.site', 'architext.cn'));
+    }
+  </script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Architext — The AI Architecture Protocol</title>
   <meta name="description" content="A document-driven AI development protocol for small-to-medium apps. Define first, build right.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta name="keywords" content="AI development, document-driven development, software architecture, AI coding assistant, DDAD, Architext, AI protocol">
+  <meta name="author" content="Architext">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <!-- Search Engine Verification: Baidu -->
+  {import.meta.env.PUBLIC_BAIDU_SITE_VERIFICATION && (
+    <meta name="baidu-site-verification" content={import.meta.env.PUBLIC_BAIDU_SITE_VERIFICATION} />
+  )}
+
+  <!-- Mobile & App -->
+  <meta name="theme-color" content="#161210">
+  <meta name="msapplication-TileColor" content="#161210">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Architext">
+
+  <!-- Hreflang: Multilingual support -->
+  <link rel="alternate" hreflang="en" href="https://architext.cn/" />
+  <link rel="alternate" hreflang="zh-CN" href="https://architext.cn/zh/" />
+  <link rel="alternate" hreflang="x-default" href="https://architext.cn/" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://architext.cn/" />
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/favicon.svg" as="image" type="image/svg+xml">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://architext.cn/">
+  <meta property="og:site_name" content="Architext">
+  <meta property="og:title" content="Architext — The AI Architecture Protocol">
+  <meta property="og:description" content="A document-driven AI development protocol for small-to-medium apps. Define first, build right.">
+  <meta property="og:image" content="https://architext.cn/og-image.png">
+  <meta property="og:image:secure_url" content="https://architext.cn/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Architext - The AI Architecture Protocol">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@architext">
+  <meta name="twitter:creator" content="@architext">
+  <meta name="twitter:url" content="https://architext.cn/">
+  <meta name="twitter:title" content="Architext — The AI Architecture Protocol">
+  <meta name="twitter:description" content="A document-driven AI development protocol for small-to-medium apps. Define first, build right.">
+  <meta name="twitter:image" content="https://architext.cn/og-image.png">
+  <meta name="twitter:image:alt" content="Architext - The AI Architecture Protocol">
+
+  <!-- Structured Data: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Architext",
+    "description": "A document-driven AI development protocol for small-to-medium apps",
+    "url": "https://architext.cn",
+    "logo": "https://architext.cn/favicon.svg",
+    "image": "https://architext.cn/og-image.png",
+    "sameAs": [
+      "https://github.com/JiuNian3219/architext"
+    ]
+  }
+  </script>
+
+  <!-- Structured Data: WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Architext",
+    "url": "https://architext.cn",
+    "description": "A document-driven AI development protocol for small-to-medium apps. Define first, build right.",
+    "inLanguage": ["en", "zh-CN"],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Architext"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://architext.cn/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: WebPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Architext — The AI Architecture Protocol",
+    "description": "A document-driven AI development protocol for small-to-medium apps. Define first, build right.",
+    "url": "https://architext.cn/",
+    "inLanguage": "en",
+    "isPartOf": {
+      "@type": "WebSite",
+      "url": "https://architext.cn"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://architext.cn/"
+        }
+      ]
+    }
+  }
+  </script>
+
+  <!-- Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Architext",
+    "description": "A document-driven AI development protocol for small-to-medium apps",
+    "url": "https://architext.cn",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "license": "https://github.com/JiuNian3219/architext/blob/main/LICENSE",
+    "codeRepository": "https://github.com/JiuNian3219/architext",
+    "softwareVersion": "1.0.0",
+    "programmingLanguage": ["TypeScript", "JavaScript"],
+    "featureList": [
+      "Document-driven AI development",
+      "Architecture protocol",
+      "Code generation",
+      "Project scaffolding"
+    ]
+  }
+  </script>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="mask-icon" href="/favicon.svg" color="#d4a853">
+  <link rel="apple-touch-icon" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
@@ -1841,6 +2002,11 @@
       }
     }
   </style>
+
+  <!-- Analytics: Umami -->
+  {import.meta.env.UMAMI_SCRIPT_URL && import.meta.env.UMAMI_WEBSITE_ID && (
+    <script defer src={import.meta.env.UMAMI_SCRIPT_URL} data-website-id={import.meta.env.UMAMI_WEBSITE_ID}></script>
+  )}
 
 </head>
 <body>
