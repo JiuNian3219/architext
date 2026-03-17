@@ -2,7 +2,7 @@
 
 **简体中文** · [English](https://github.com/JiuNian3219/architext/blob/main/README.md)
 
-# 🏛️ Architext
+# <img src="templates/icon.svg" width="40" height="40" align="top" /> Architext
 
 **AI 原生架构协议 · 先想清楚，再让 AI 实现**
 
