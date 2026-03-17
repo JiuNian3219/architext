@@ -216,6 +216,8 @@ describe("runGlobalFileChecks", () => {
           "map.json": JSON.stringify(VALID_MAP),
           "dictionary.json": JSON.stringify(VALID_DICTIONARY),
           "error_codes.json": JSON.stringify({ businessErrors: [] }),
+          "error_memory.json": JSON.stringify({ errors: [] }),
+          "env_registry.json": JSON.stringify({ variables: [] }),
           "tech_stack.md": "# Tech Stack",
         },
       },
