@@ -1,10 +1,158 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <!-- Domain redirect: architext.site -> architext.cn -->
+  <script>
+    if (location.hostname === 'architext.site' || location.hostname === 'www.architext.site') {
+      location.replace(location.href.replace('architext.site', 'architext.cn'));
+    }
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Architext — AI 架构协议</title>
   <meta name="description" content="面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。">
+  <meta name="keywords" content="AI 开发, 文档驱动开发, 软件架构, AI 编程助手, DDAD, Architext">
+  <meta name="author" content="Architext">
+
+  <!-- Robots -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+
+  <!-- Search Engine Verification: Baidu -->
+  {import.meta.env.PUBLIC_BAIDU_SITE_VERIFICATION && (
+    <meta name="baidu-site-verification" content={import.meta.env.PUBLIC_BAIDU_SITE_VERIFICATION} />
+  )}
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://architext.cn/zh/" />
+
+  <!-- Alternate Languages / Hreflang -->
+  <link rel="alternate" hreflang="en" href="https://architext.cn/" />
+  <link rel="alternate" hreflang="zh-CN" href="https://architext.cn/zh/" />
+  <link rel="alternate" hreflang="x-default" href="https://architext.cn/" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Architext">
+  <meta property="og:url" content="https://architext.cn/zh/">
+  <meta property="og:secure_url" content="https://architext.cn/zh/">
+  <meta property="og:title" content="Architext — AI 架构协议">
+  <meta property="og:description" content="面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。">
+  <meta property="og:image" content="https://architext.cn/og-image.png">
+  <meta property="og:image:secure_url" content="https://architext.cn/og-image.png">
+  <meta property="og:image:alt" content="Architext - 文档驱动 AI 开发协议">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="zh_CN">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@architext">
+  <meta name="twitter:creator" content="@architext">
+  <meta name="twitter:url" content="https://architext.cn/zh/">
+  <meta name="twitter:title" content="Architext — AI 架构协议">
+  <meta name="twitter:description" content="面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。">
+  <meta name="twitter:image" content="https://architext.cn/og-image.png">
+  <meta name="twitter:image:alt" content="Architext - 文档驱动 AI 开发协议">
+
+  <!-- Structured Data: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Architext",
+    "url": "https://architext.cn",
+    "logo": "https://architext.cn/favicon.svg",
+    "description": "面向中小型应用的文档驱动 AI 开发协议",
+    "sameAs": [
+      "https://github.com/JiuNian3219/architext"
+    ]
+  }
+  </script>
+
+  <!-- Structured Data: WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Architext",
+    "url": "https://architext.cn",
+    "description": "面向中小型应用的文档驱动 AI 开发协议",
+    "inLanguage": ["zh-CN", "en"],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Architext"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://architext.cn/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: WebPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Architext — AI 架构协议",
+    "description": "面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。",
+    "url": "https://architext.cn/zh/",
+    "inLanguage": "zh-CN",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Architext",
+      "url": "https://architext.cn"
+    },
+    "about": {
+      "@type": "SoftwareApplication",
+      "name": "Architext"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Architext",
+    "description": "面向中小型应用的文档驱动 AI 开发协议",
+    "url": "https://architext.cn/zh/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "softwareVersion": "1.0.0",
+    "inLanguage": ["zh-CN", "en"],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "license": "https://github.com/JiuNian3219/architext/blob/main/LICENSE",
+    "codeRepository": "https://github.com/JiuNian3219/architext",
+    "programmingLanguage": ["TypeScript", "JavaScript"],
+    "runtimePlatform": "Node.js",
+    "author": {
+      "@type": "Organization",
+      "name": "Architext"
+    }
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Mobile App Meta -->
+  <meta name="theme-color" content="#d4a853">
+  <meta name="msapplication-TileColor" content="#d4a853">
+  <meta name="msapplication-TileImage" content="/favicon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Architext">
+
+  <!-- Preconnect / DNS Prefetch -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//registry.npmjs.org">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1785,6 +1933,11 @@
       .step { flex: 0 0 calc(50% - 1rem); }
     }
   </style>
+
+  <!-- Analytics: Umami -->
+  {import.meta.env.UMAMI_SCRIPT_URL && import.meta.env.UMAMI_WEBSITE_ID && (
+    <script defer src={import.meta.env.UMAMI_SCRIPT_URL} data-website-id={import.meta.env.UMAMI_WEBSITE_ID}></script>
+  )}
 
 </head>
 <body>
