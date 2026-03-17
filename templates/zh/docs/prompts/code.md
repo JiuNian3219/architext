@@ -70,7 +70,11 @@
 <step_4_validate>
     **Action** (失败须修复后重跑；命令以 `tech_stack.md` Section 5 为准):
 
-    **Automated Check**: 运行 `[[__DOCS_DIR__]]/scripts/validate`（如存在）；否则按以下清单逐项执行。
+    **Automated Check**: 检查 `scripts/validate`：
+    - **存在** → 必须运行，结果以脚本输出为准
+    - **不存在** → 按以下清单逐项执行
+
+    > **Scripts Check**: 如 `scripts/` 目录不存在 → 建议先运行 `/archi.script` 生成自动化脚本。
 
     | Phase | 检查项 | 要求 |
     |:---|:---|:---|
@@ -150,6 +154,7 @@
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
+    | （如无 scripts/） | `/archi.script` | 生成自动化验证脚本（validate/dev-up/dev-reset） |
     | 推荐 | `/archi.audit <ID>` | 对实现做独立审查 |
     | （有 Spec 漂移时） | `/archi.edit <ID>` | 先更新文档再继续 |
     | （有后续 pending 任务时） | `/archi.plan <下一个 pending ID>` | 规划下一个任务 |

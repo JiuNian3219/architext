@@ -192,6 +192,7 @@
     |:---|:---|:---|
     | (UI projects only) Recommended | `/archi.ui` | Generate UI concept design (`screens/` multi-file structure) |
     | Recommended | `/archi.plan INF-01` | Plan the first infrastructure task |
+    | (Post-INF) | `/archi.script` | Generate AI automation scripts (validate/dev-up/dev-reset) |
     | Optional | `/archi.scope <scope-brief.md>` | If more requirements to decompose, append to Roadmap |
 </step_5_signoff>
 

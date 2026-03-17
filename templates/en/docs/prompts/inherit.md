@@ -259,6 +259,8 @@
     | Priority | Action | Notes |
     |:---|:---|:---|
     | 1 | Review vision.md | Confirm AI-completed vision description |
+    | (UI projects only) Recommended | `/archi.ui` | Generate UI concept design (`screens/` multi-file structure, Adopt mode) |
+    | (Post-INF) | `/archi.script` | Generate AI automation scripts (validate/dev-up/dev-reset) |
     | 2 | `/archi.edit LEG-xx` | Enrich core module stubs into full spec (auto-triggers Enrich flow) |
     | 3 | `/archi.scope [file_path]` | Plan new features/major modules |
     | 4 | `/archi.plan <task ID>` | Deep-plan individual task |

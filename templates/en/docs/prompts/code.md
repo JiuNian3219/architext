@@ -70,7 +70,11 @@
 <step_4_validate>
     **Action** (on failure fix and re-run; commands per `tech_stack.md` Section 5):
 
-    **Automated Check**: Run `[[__DOCS_DIR__]]/scripts/validate` (if exists); otherwise execute checklist:
+    **Automated Check**: Check `scripts/validate`:
+    - **Exists** → Must run, results per script output
+    - **Not exists** → Execute checklist below
+
+    > **Scripts Check**: If `scripts/` directory does not exist → Suggest running `/archi.script` to generate automation scripts first.
 
     | Phase | Check | Requirement |
     |:---|:---|:---|
@@ -150,6 +154,7 @@
 
     | Priority | Action | Notes |
     |:---|:---|:---|
+    | (If no scripts/) | `/archi.script` | Generate automation scripts (validate/dev-up/dev-reset) |
     | Recommended | `/archi.audit <ID>` | Independent review of implementation |
     | (If Spec drift) | `/archi.edit <ID>` | Update docs before continuing |
     | (If next pending task) | `/archi.plan <next pending ID>` | Plan the next task |

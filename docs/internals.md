@@ -113,7 +113,7 @@ prompt 文件是 AI 命令的核心，每个 `/archi.<command>` 对应一个 pro
 | ------ | --------------------------------------------------- | -------------------- |
 | 初始化    | start, inherit                                      | 从零或从已有代码创建项目骨架       |
 | 规划     | scope, plan, edit, revise                           | 分解需求、定义规格、变更         |
-| 执行     | code, fix, audit                                    | 编码、修复、审查             |
+| 执行     | code, fix, audit, script                            | 编码、修复、审查、生成自动化脚本       |
 | 维护     | map, remove, help, recover, ref, ui                 | 同步、下线、问答、恢复、引用、UI 设计 |
 | CLI 工具 | init, update, doctor, task, render, pack, uninstall | 部署、状态管理、健康检查、渲染、备份   |
 
@@ -317,6 +317,27 @@ prompt 文件是 AI 命令的核心，每个 `/archi.<command>` 对应一个 pro
     screens/_shared.css（共享样式）
     ui_context.md（屏幕索引：ID/路由/路径/状态）
 约束: 屏幕 ID 永久不变；视觉严格遵循 design_tokens
+```
+
+**script**
+
+```
+读: tech_stack.md, package.json, 配置文件, CI 配置
+流程:
+  1. Ingest: 提取 tech_stack 中的命令，交叉验证实际代码配置
+  2. Generate: 基于提取的命令生成三个自动化脚本
+     - validate: 聚合检查（Lint → Format → Type Check → Build → Test）
+     - dev-up: 启动环境（Install → Build → Health Check）
+     - dev-reset: 重置环境（Kill → Clean → Reinstall → Rebuild → Health Check）
+  3. Auto-Detect: 自动识别 OS，生成 .sh（Unix）和 .ps1（Windows）
+  4. Write: 写入 scripts/ 目录，仅在有变更时写入
+前置: 基建任务（INF-01 等）完成后，tech_stack 命令已从占位符变为实际值
+写: scripts/validate, scripts/dev-up, scripts/dev-reset
+    scripts/validate.ps1, scripts/dev-up.ps1, scripts/dev-reset.ps1
+约束: Post-Infra Only（仅基建完成后执行）
+      Tech-Stack Driven（严格从 tech_stack.md 提取命令，禁硬编码）
+      Idempotent（多次运行结果一致，有变更才写入）
+注意: 当 scripts/validate 存在时，/archi.code 和 /archi.fix 的验证步骤必须优先运行此脚本
 ```
 
 **map**
