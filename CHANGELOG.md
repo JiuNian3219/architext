@@ -6,7 +6,35 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ---
 
-## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.5...HEAD) / 待发布
+## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.6...HEAD) / 待发布
+
+---
+
+## [0.0.6](https://github.com/JiuNian3219/architext/releases/tag/v0.0.6) - 2026-03-17
+
+### Added / 新增
+
+- `/archi.script` 命令 — 生成自动化脚本 / Added `/archi.script` command for generating automation scripts
+- `error_memory.json` — 错误记忆库，记录关键词签名与历史解决方案 / Added `error_memory.json` for error pattern tracking
+- 桌面通知功能 — 支持 IDE 事件通知 / Added desktop notification support
+- AI Git 工作流相关条目 / Added AI Git workflow entries
+- IDE 通知配置检查功能 / Added IDE notification configuration check
+- UI 概念设计支持多文件生成 / Enhanced UI wireframe with multi-file generation
+
+### Changed / 变更
+
+- 系统文档重构 — 合并分散规则至 00_system.md / Refactored system docs, merged scattered rules into 00_system.md
+- 双层架构与资产体系增强 / Enhanced dual-layer architecture and asset system
+- 网站部署和页面更新 — SEO 优化 / Updated website deployment and pages with SEO optimization
+- 数据治理与文件同步流程优化 / Optimized data governance and file sync flow
+- 技能文档精简与一致性提升 / Streamlined skills documentation
+
+### Fixed / 修复
+
+- 修复 file-model 测试 — 添加缺失的 script prompt 和全局种子文件 / Fixed file-model tests by adding missing script prompts
+- 修复 IDE 和 Claude 通知集成不生效问题 / Fixed IDE and Claude notification integration
+- 修复能力标记解析器 — 命令功能检测 / Fixed capability marker parser for command detection
+- 修复模板表述 — 避免功能被误解为任务 / Fixed template wording to prevent feature-task confusion
 
 ---
 
