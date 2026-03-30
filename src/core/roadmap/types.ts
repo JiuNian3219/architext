@@ -2,38 +2,44 @@
 
 export type TaskStatus = "pending" | "active" | "done" | "blocked";
 
+/** 任务所属阶段 */
+export type TaskPhase = "infra" | "core" | "polish" | "platform";
+
 /** roadmap.json 中的单个任务 */
 export interface Task {
   id: string;
+  phase: TaskPhase;
   title: string;
   status: TaskStatus;
+  description?: string;
   goal?: string;
   deps?: string[];
   tag?: string;
   slug?: string;
+  screens?: string[]; // 仅 ui 项目：屏幕 ID 数组
 }
 
-/** roadmap.json 中的一个阶段 */
-export interface Phase {
-  id: string;
-  name: string;
-  tasks: Task[];
+/** NFR 注入记录 */
+export interface NfrEntry {
+  taskId: string;
+  constraint: string;
+  impact: string[];
 }
 
-/** roadmap.json 的完整结构 */
+/** roadmap.json 的完整结构（扁平 tasks 数组 + nfr 数组） */
 export interface RoadmapData {
   version: number;
   projectStatus: string;
   lastUpdated: string;
-  phases: Phase[];
+  tasks: Task[];
+  nfr?: NfrEntry[];
 }
 
 /**
- * 从嵌套的 phases 结构中提取所有 tasks 的扁平列表。
- * 保持阶段内的顺序。
+ * 获取所有任务的扁平列表（新结构已是扁平，直接返回）。
  */
 export function getAllTasks(data: RoadmapData): Task[] {
-  return data.phases.flatMap((phase) => phase.tasks);
+  return data.tasks;
 }
 
 /**
@@ -42,10 +48,21 @@ export function getAllTasks(data: RoadmapData): Task[] {
  */
 export function buildTaskMap(data: RoadmapData): Map<string, Task> {
   const map = new Map<string, Task>();
-  for (const phase of data.phases) {
-    for (const task of phase.tasks) {
-      map.set(task.id, task);
-    }
+  for (const task of data.tasks) {
+    map.set(task.id, task);
   }
   return map;
+}
+
+/**
+ * 按 phase 分组任务，用于渲染时按阶段展示。
+ */
+export function groupByPhase(data: RoadmapData): Map<TaskPhase, Task[]> {
+  const groups = new Map<TaskPhase, Task[]>();
+  for (const task of data.tasks) {
+    const phase = task.phase;
+    if (!groups.has(phase)) groups.set(phase, []);
+    groups.get(phase)!.push(task);
+  }
+  return groups;
 }

@@ -22,17 +22,12 @@ export interface MigrationStep {
  * 示例（当前无历史迁移，保留结构演示迁移机制）：
  * {
  *   fromVersion: 1,
- *   description: "为 Task 新增 slug 字段（默认空字符串）",
+ *   description: "为 Task 新增 screens 字段（ui 项目专用）",
  *   migrate: (data) => {
- *     const phases = (data.phases as Array<Record<string, unknown>>) ?? [];
+ *     const tasks = (data.tasks as Array<Record<string, unknown>>) ?? [];
  *     return {
  *       ...data,
- *       phases: phases.map((phase) => ({
- *         ...phase,
- *         tasks: ((phase.tasks as Array<Record<string, unknown>>) ?? []).map(
- *           (task) => ({ slug: "", ...task }),
- *         ),
- *       })),
+ *       tasks: tasks.map((task) => ({ screens: [], ...task })),
  *     };
  *   },
  * }

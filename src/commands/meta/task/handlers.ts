@@ -7,12 +7,39 @@ import {
   RoadmapConsistencyError,
   TaskNotFoundError,
 } from "../../../core/errors.ts";
-import type { RoadmapData, TaskStatus } from "../../../core/roadmap/types.ts";
-import { buildTaskMap, getAllTasks } from "../../../core/roadmap/types.ts";
+import type {
+  RoadmapData,
+  TaskStatus,
+  TaskPhase,
+} from "../../../core/roadmap/types.ts";
+import {
+  buildTaskMap,
+  getAllTasks,
+  groupByPhase,
+} from "../../../core/roadmap/types.ts";
 import { logger } from "../../../utils/logger.ts";
 import { createT, getSystemLocale } from "../../../utils/t.ts";
 import { VALID_STATUSES } from "./constants.ts";
 import { formatProgressBar, formatTaskLine } from "./formatter.ts";
+
+/** 阶段 → 显示名称（中文） */
+const PHASE_NAME_ZH: Record<TaskPhase, string> = {
+  infra: "基础设施",
+  core: "核心功能",
+  polish: "质量打磨",
+  platform: "平台支持",
+};
+
+/** 阶段 → 显示名称（英文） */
+const PHASE_NAME_EN: Record<TaskPhase, string> = {
+  infra: "Infrastructure",
+  core: "Core Features",
+  polish: "Quality Polish",
+  platform: "Platform Support",
+};
+
+/** 阶段渲染顺序 */
+const PHASE_ORDER: TaskPhase[] = ["infra", "core", "polish", "platform"];
 
 /**
  * 检查 Roadmap JSON 的数据一致性。
@@ -28,15 +55,13 @@ export async function handleCheck(data: RoadmapData): Promise<void> {
   const issues: string[] = [];
   const taskMap = buildTaskMap(data);
 
-  // A. ID 唯一性检查
+  // A. ID 唯一性检查（扁平结构）
   const seenIds = new Set<string>();
-  for (const phase of data.phases) {
-    for (const task of phase.tasks) {
-      if (seenIds.has(task.id)) {
-        issues.push(`Duplicate task ID: [${task.id}]`);
-      }
-      seenIds.add(task.id);
+  for (const task of data.tasks) {
+    if (seenIds.has(task.id)) {
+      issues.push(`Duplicate task ID: [${task.id}]`);
     }
+    seenIds.add(task.id);
   }
 
   // B. 依赖完整性检查
@@ -91,23 +116,14 @@ export async function handleUpdateStatus(
 
   const taskStatus = status as TaskStatus;
 
-  // 在 phases 中找到并更新目标任务
-  let found = false;
-  for (const phase of data.phases) {
-    for (const task of phase.tasks) {
-      if (task.id === id) {
-        logger.step(t("update.updating", { id, status: taskStatus }));
-        task.status = taskStatus;
-        found = true;
-        break;
-      }
-    }
-    if (found) break;
-  }
-
-  if (!found) {
+  // 在扁平 tasks 数组中找到并更新目标任务
+  const task = data.tasks.find((t) => t.id === id);
+  if (!task) {
     throw new TaskNotFoundError(id);
   }
+
+  logger.step(t("update.updating", { id, status: taskStatus }));
+  task.status = taskStatus;
 
   // 级联解锁：当任务变为 done 时，检查下游依赖是否可解锁
   if (taskStatus === "done") {
@@ -134,20 +150,18 @@ function cascadeUnblock(data: RoadmapData, completedId: string): string[] {
   const taskMap = buildTaskMap(data);
   const unblocked: string[] = [];
 
-  for (const phase of data.phases) {
-    for (const task of phase.tasks) {
-      if (task.status !== "blocked" || !task.deps?.includes(completedId)) {
-        continue;
-      }
-      // 检查该任务的所有 deps 是否都已 done
-      const allDepsDone = task.deps.every((depId) => {
-        const dep = taskMap.get(depId);
-        return dep && dep.status === "done";
-      });
-      if (allDepsDone) {
-        task.status = "pending";
-        unblocked.push(task.id);
-      }
+  for (const task of data.tasks) {
+    if (task.status !== "blocked" || !task.deps?.includes(completedId)) {
+      continue;
+    }
+    // 检查该任务的所有 deps 是否都已 done
+    const allDepsDone = task.deps.every((depId) => {
+      const dep = taskMap.get(depId);
+      return dep && dep.status === "done";
+    });
+    if (allDepsDone) {
+      task.status = "pending";
+      unblocked.push(task.id);
     }
   }
 
@@ -160,6 +174,7 @@ function cascadeUnblock(data: RoadmapData, completedId: string): string[] {
  */
 export function handleList(data: RoadmapData): void {
   const t = createT(getSystemLocale(), "command.task");
+  const locale = getSystemLocale();
   const taskList = getAllTasks(data);
 
   if (taskList.length === 0) {
@@ -180,11 +195,16 @@ export function handleList(data: RoadmapData): void {
   logger.info(formatProgressBar(counts.done, taskList.length));
   logger.info("");
 
-  // 按阶段输出
-  for (const phase of data.phases) {
-    if (phase.tasks.length > 0) {
-      logger.info(pc.dim(`── ${phase.name} ──`));
-      for (const task of phase.tasks) {
+  // 按 phase 分组输出
+  const phaseGroups = groupByPhase(data);
+  const getPhaseName = (phase: TaskPhase) =>
+    locale === "zh" ? PHASE_NAME_ZH[phase] : PHASE_NAME_EN[phase];
+
+  for (const phase of PHASE_ORDER) {
+    const tasks = phaseGroups.get(phase);
+    if (tasks && tasks.length > 0) {
+      logger.info(pc.dim(`── ${getPhaseName(phase)} ──`));
+      for (const task of tasks) {
         logger.info(formatTaskLine(task));
       }
       logger.info("");

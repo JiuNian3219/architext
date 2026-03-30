@@ -172,7 +172,9 @@
         "dep": "Dep",
         "dep_none": "None",
         "tag": "Tag",
-        "slug": "Slug"
+        "slug": "Slug",
+        "description": "Description",
+        "screens": "Screens"
       }
     },
     "update": {

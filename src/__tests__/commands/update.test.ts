@@ -50,12 +50,8 @@ const VALID_ROADMAP = {
   version: EXPECTED_ROADMAP_VERSION,
   projectStatus: "active",
   lastUpdated: "2024-01-01",
-  phases: [
-    {
-      id: "phase-1",
-      name: "Infrastructure",
-      tasks: [{ id: "INF-01", title: "Scaffolding", status: "done" }],
-    },
+  tasks: [
+    { id: "INF-01", phase: "infra", title: "Scaffolding", status: "done" },
   ],
 };
 

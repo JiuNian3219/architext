@@ -9,28 +9,35 @@ export const TaskStatusSchema = z.enum([
   "blocked",
 ]);
 
+/** 合法的任务阶段枚举 */
+export const TaskPhaseSchema = z.enum(["infra", "core", "polish", "platform"]);
+
 /** roadmap.json 中的单个任务 */
 export const TaskSchema = z.object({
   id: z.string().min(1),
+  phase: TaskPhaseSchema,
   title: z.string().min(1),
   status: TaskStatusSchema,
+  description: z.string().max(50).optional(),
   goal: z.string().optional(),
   deps: z.array(z.string()).optional(),
   tag: z.string().optional(),
   slug: z.string().optional(),
+  screens: z.array(z.string()).optional(),
 });
 
-/** roadmap.json 中的一个阶段 */
-export const PhaseSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  tasks: z.array(TaskSchema),
+/** NFR 注入记录 */
+export const NfrEntrySchema = z.object({
+  taskId: z.string().min(1),
+  constraint: z.string().min(1),
+  impact: z.array(z.string()),
 });
 
-/** roadmap.json 的完整结构 */
+/** roadmap.json 的完整结构（扁平 tasks 数组 + nfr 数组） */
 export const RoadmapDataSchema = z.object({
   version: z.number(),
   projectStatus: z.string(),
   lastUpdated: z.string(),
-  phases: z.array(PhaseSchema),
+  tasks: z.array(TaskSchema),
+  nfr: z.array(NfrEntrySchema).optional(),
 });

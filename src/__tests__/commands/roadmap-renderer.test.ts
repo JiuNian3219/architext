@@ -13,24 +13,24 @@ function extractEdges(output: string): string[] {
     .filter((line) => line.includes(" --> "));
 }
 
-/** 构建最小化的 RoadmapData 结构，tasks 扁平放在单个 phase 中 */
+/** 构建最小化的 RoadmapData 结构（扁平 tasks 数组） */
 function buildRoadmap(
-  tasks: Array<{ id: string; title: string; deps?: string[] }>,
+  tasks: Array<{
+    id: string;
+    phase?: "infra" | "core" | "polish" | "platform";
+    title: string;
+    deps?: string[];
+  }>,
 ): RoadmapData {
   return {
     version: 1,
     projectStatus: "active",
     lastUpdated: "2024-01-01",
-    phases: [
-      {
-        id: "phase-1",
-        name: "Test Phase",
-        tasks: tasks.map((t) => ({
-          ...t,
-          status: "pending" as const,
-        })),
-      },
-    ],
+    tasks: tasks.map((t) => ({
+      ...t,
+      phase: t.phase ?? "core",
+      status: "pending" as const,
+    })),
   };
 }
 
@@ -186,18 +186,13 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase",
-            tasks: [
-              {
-                id: "T1",
-                title: "Project Scaffolding",
-                status: "done",
-                goal: "Setup complete",
-              },
-            ],
+            id: "T1",
+            phase: "core",
+            title: "Project Scaffolding",
+            status: "done",
+            goal: "Setup complete",
           },
         ],
       };
@@ -212,18 +207,13 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "p1",
-            name: "P",
-            tasks: [
-              {
-                id: "T1",
-                title: "Task",
-                status: "pending",
-                goal: "Step A; Step B; Step C",
-              },
-            ],
+            id: "T1",
+            phase: "core",
+            title: "Task",
+            status: "pending",
+            goal: "Step A; Step B; Step C",
           },
         ],
       };
@@ -237,18 +227,13 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "p1",
-            name: "P",
-            tasks: [
-              {
-                id: "T1",
-                title: "任务",
-                status: "pending",
-                goal: "步骤A；步骤B；步骤C",
-              },
-            ],
+            id: "T1",
+            phase: "core",
+            title: "任务",
+            status: "pending",
+            goal: "步骤A；步骤B；步骤C",
           },
         ],
       };
@@ -262,18 +247,13 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "p1",
-            name: "P",
-            tasks: [
-              {
-                id: "T1",
-                title: "Task",
-                status: "pending",
-                goal: "Do A. Do B.",
-              },
-            ],
+            id: "T1",
+            phase: "core",
+            title: "Task",
+            status: "pending",
+            goal: "Do A. Do B.",
           },
         ],
       };
@@ -287,18 +267,13 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "p1",
-            name: "P",
-            tasks: [
-              {
-                id: "T1",
-                title: "任务",
-                status: "pending",
-                goal: "做A。做B。",
-              },
-            ],
+            id: "T1",
+            phase: "core",
+            title: "任务",
+            status: "pending",
+            goal: "做A。做B。",
           },
         ],
       };
@@ -319,18 +294,13 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase",
-            tasks: [
-              {
-                id: "T1",
-                title: 'Title with "quotes"',
-                status: "pending",
-                goal: 'Goal with "quotes"',
-              },
-            ],
+            id: "T1",
+            phase: "core",
+            title: 'Title with "quotes"',
+            status: "pending",
+            goal: 'Goal with "quotes"',
           },
         ],
       };
@@ -355,17 +325,86 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
       expect(output).toContain("<!-- VISUAL_END -->");
     });
 
-    it("空 phases 时 Mermaid 图应生成但无节点和边", () => {
+    it("空 tasks 时 Mermaid 图应生成但无节点和边", () => {
       const data: RoadmapData = {
         version: 1,
         projectStatus: "planning",
         lastUpdated: "2024-01-01",
-        phases: [],
+        tasks: [],
       };
       const output = renderRoadmap(data);
       const edges = extractEdges(output);
       expect(output).toContain("```mermaid");
       expect(edges).toHaveLength(0);
+    });
+
+    it("应按 phase 分组显示任务列表", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          { id: "INF-01", phase: "infra", title: "Infra Task", status: "done" },
+          {
+            id: "FEAT-01",
+            phase: "core",
+            title: "Core Task",
+            status: "pending",
+          },
+          {
+            id: "POLISH-01",
+            phase: "polish",
+            title: "Polish Task",
+            status: "pending",
+          },
+        ],
+      };
+      const output = renderRoadmap(data);
+      // 验证阶段标题按顺序出现
+      const infraIdx = output.indexOf("## 阶段: 基础设施");
+      const coreIdx = output.indexOf("## 阶段: 核心功能");
+      const polishIdx = output.indexOf("## 阶段: 质量打磨");
+      expect(infraIdx).toBeLessThan(coreIdx);
+      expect(coreIdx).toBeLessThan(polishIdx);
+    });
+
+    it("description 字段应被渲染", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T1",
+            phase: "core",
+            title: "Task with description",
+            status: "pending",
+            description: "This is a description",
+          },
+        ],
+      };
+      const output = renderRoadmap(data);
+      expect(output).toContain("This is a description");
+    });
+
+    it("screens 字段应被渲染", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T1",
+            phase: "core",
+            title: "Task with screens",
+            status: "pending",
+            screens: ["S-01", "S-02"],
+          },
+        ],
+      };
+      const output = renderRoadmap(data);
+      expect(output).toContain("[S-01]");
+      expect(output).toContain("[S-02]");
     });
   });
 });

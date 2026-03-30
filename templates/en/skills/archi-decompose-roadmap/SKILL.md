@@ -5,232 +5,257 @@ description: Decompose project requirements into roadmap tasks. Use when initial
 
 # Roadmap Task Decomposition
 
-## System Flow Context
+## Invocation Modes
 
-```
-Brief → [This Skill] → roadmap.json → /archi.plan → spec/ui/plan → /archi.code
-```
-
-**Skill Boundary**:
-- Owns: task what, done criteria (goal), dependency chain, design decision injection
-- Does NOT own: file paths (map.json), variable naming (dictionary.json), test cases (plan.json), UI structure (ui.md)
+- **From Scratch** (`/archi.start`): Brief feature list + ui_context → Generate complete Roadmap. No EDIT tasks.
+- **Incremental** (`/archi.scope`): Brief + existing Roadmap → Append new tasks. No modification of existing tasks; ID follows watermark.
 
 **Schema Constraint (Tier 1)**: roadmap.json validated by CLI Zod; no add/remove fields.
 
-## Invocation Modes
+---
 
-| Mode | Source | Input | Constraint |
-|:---|:---|:---|:---|
-| From Scratch | `/archi.start` | Brief task list | No EDIT tasks |
-| Incremental | `/archi.scope` | Brief + existing Roadmap | Never modify existing; continue ID watermark |
+## Core Philosophy: Minimal Deliverable Vertical Slice
 
-## Decomposition Framework (5 Steps)
+**One Task completed → Start project to verify a complete feature path.**
 
-### Step 0 · Project Type Calibration
+Vertical slice = End-to-end delivery unit from data layer to user touchpoint. Each Task includes all code for that slice (Schema / API / state management / page / routing); after completion, can independently verify without depending on later Tasks.
 
-Identify project type; establish infrastructure checklist to prevent Step 2 omissions.
+**Four Baselines**:
 
-| Project Type | Scaffold Must Include |
-|:---|:---|
-| Web SPA / PWA | Routing skeleton + App Shell (layout / Provider / theme injection) |
-| Full-Stack Web | Routing conventions + API Routes + global layout + Auth Session; [UI] theme injection |
-| CLI Tool | Logger + AppError + command registration entry |
-| API Service | Router layer + middleware + DB connection + global error handling; [GraphQL] Schema + DataLoader |
-| Mobile App | Navigation skeleton + platform adapter + env config |
-| Mini Program | Page routing config + app.js/ts + request wrapper |
-| Browser Extension | manifest + Background SW + Content Script + message bus |
-| Desktop App | Main process entry + IPC bridge + system capabilities |
-| Web + Desktop (Hybrid) | Web base + desktop runtime; **desktop integration as separate INF subtask** (OS differences) |
-| Library / SDK | Dual output (CJS+ESM) + barrel index + types + Changelog; **no business Tasks** |
-| Real-time / Collaborative | WebSocket layer + event Schema + room management; [CRDT] conflict resolution |
-| AI Agent / MCP | LLM abstraction + Prompt templates + Tool Schema + Memory; [MCP] MCP adapter |
+1. **Runnable**: Task done → Start project to walk through at least one feature path
+2. **Cohesive**: Shared component/state/module code must be within same Task
+3. **Controllable**: Single Task involves 3-6 new files/modules, AI can complete in one session
+4. **Verifiable**: Task done → Has corresponding automated test proving correctness (AI code must have test coverage)
 
-**Actions**:
-1. Write scaffold checklist into INF-01 description
-2. Limit Step 1 scenario phrasing by project type:
+---
 
-| Project Type | Scenario Template | Forbidden Terms |
-|:---|:---|:---|
-| CLI | `User can [run command/args] → [terminal output]` | page, route, component, UI |
-| Library / SDK | `Caller can [invoke API X] → [return Y]` | user, interface, interaction |
-| API Service | `Client can [HTTP METHOD /path] → [response]` | frontend, page, component |
-| Mini Program | `User can [page name] [action] → [visible result]` | backend route, REST |
-| Web/Mobile/Desktop | `User can [action] → [perceivable result]` | — |
+## Decomposition Framework
 
-### Step 1 · PM Perspective → Business Tasks
+### Step 0 · Project Type + Slice Strategy
 
-Extract scenarios from Brief; convert to pattern: `User can [action] → [perceivable result]`
+Choose slice dimension based on project's highest-layer feature. Multi-feature projects take highest priority: **ui > cli > api > lib**.
 
-**Merge Condition**: Share same core flow (same UI view, same data entity, shared state flow)
-> "Shared domain/theme" ≠ "Shared core flow". Same domain but distinct UI/implementation domains → split.
+| Project feature | Slice dimension | Atomic unit | Acceptance template |
+| --- | --- | --- | --- |
+| ui (Web/Mobile/Desktop/Mini Program) | User journey sub-flow | Coupled pages group + corresponding API + shared state | Start project, walk through a complete path on interface |
+| cli | Command group | Complete implementation of one command (parse+process+output+error) | Terminal execute command to get correct output |
+| api | Resource domain | Complete endpoint set of one entity + middleware + validation | Request all endpoints of that resource return correct response |
+| lib | Public API facet | Related export functions/classes group + types + implementation | Import and call, types and behavior correct |
 
-**Split Signals**:
-| Signal | Action |
-|:---|:---|
-| Description contains "and" (two independent concerns) | Split |
-| DoD has > 4 acceptance criteria | Split |
-| Spans > 3 independent UI areas or implementation domains | Split |
-| Single spec.md cannot describe in one `/archi.plan` | Split |
-| Two tasks have >50% file overlap | Merge |
+**Scaffold (INF-01) Whitelist — Only Allow Following Content**:
 
-> If "A must complete before B makes sense", that's dependency; **do not merge**; declare `deps: [A]` for B in Step 4.
+- **ui**: Framework initialization + routing shell + App Shell + global layout
+- **cli**: Entry + command registration framework + logger + AppError
+- **api**: Routing layer shell + global error handling + middleware mount point
+- **lib**: Dual output config (CJS+ESM) + barrel index + type declaration
+- **Common (as needed)**: Package manager + monorepo structure / DB connection pool + ORM config (no schema and migration files) / Docker dev environment / Linter + Formatter
 
-**Dual-Perspective Judgment** (independent; either triggers split):
+**INF-01 Extra Include (as needed)**: Test infrastructure — test framework config (Vitest / Jest / Playwright config) + test utils (test utils, DB test container setup), ensure subsequent FEAT can write tests directly.
 
-| Perspective | Signal | Action | Example |
-|:---|:---|:---|:---|
-| Behavior (PM) | Description contains "and", DoD >4 items, spans 3+ UI areas | Split | User management + Order management → separate |
-| Engineering | Task contains ≥2 **implementation domains**, each independently testable | Split | Pure compute layer + UI render layer → separate |
-| Engineering | Implementation requires ≥3 independent technical concerns | Split | Char rendering + State machine + Animation API → three things |
-| Engineering | One concern has independent boundary complexity | Extract that concern | Input capture + IME as separate task |
+**INF-01 Forbidden Include**: Business Schema and migration / Auth / Third-party SDK / Rendering pipeline / Business middleware. These all belong to first FEAT using them (see Step 3 INF blacklist).
 
-> Behavior describes "what user sees"; Engineering describes "what AI must grasp when implementing". A task behaviorally cohesive but spanning multiple domains will cause AI to lose focus in `/archi.code`.
+---
 
-**Granularity Cap**:
+### Step 1 · Identify Feature Domains
 
-> Roadmap Task = **smallest functional unit that AI can produce a cohesive spec.md without further decomposition** (HTN Primitive executability).
+Extract feature domains from Brief by Step 0 slice dimension (ui = user journey grouping; api = entity endpoint set; cli = command group; lib = export set). Cross-entity shared mechanisms (auth, permissions) = Independent feature domain.
 
-| Proxy Metric | Cap | Action if exceeded |
-|:---|:---|:---|
-| Independent user operation flows | ≤ 3 | Split |
-| Independent data entities (each with state flow) | ≤ 2 | Split |
-| "and/or/and also" connecting concerns | ≤ 1 | Split |
-| Cannot validate without running another business Task | — | Check coupling, redraw interface boundary (INVEST-I) |
+---
 
-> If `/archi.plan` estimates spec.md Scenario > 6 or plan.json Phase > 4, pause and prompt to return to `/archi.scope` for re-split.
+### Step 2 · Feature Domain → Task (Merge and Split)
 
-**DoD Format**:
-| Type | Format |
-|:---|:---|
-| `FEAT-xx` | `When done, user can <verifiable behavior>; boundary: <out of scope>` |
-| `INF-xx` | `When done, <deliverable>, verified by <command>; boundary: <out of scope>` |
-| `POLISH-xx` | `When done, <metric> improves from <baseline> to <target>; boundary: <out of scope>` |
+Each feature domain first as candidate Task, then execute split and merge checks.
 
-> DoD is basis for `/archi.plan` to generate spec.md acceptance criteria and plan.json test cases. Do not write implementation details (file paths, function names decided at plan stage).
+#### Split Check (Task too large?)
 
-Exempt (belong to parent): lightweight result/completion/empty pages, confirmation modals (without independent data viz or complex animation)
-> **Exception**: Result page with independent data visualization (chart lib), complex animation logic, or independent business logic → standalone Task.
+Split when: Involves >6 new files | Contains multiple independently verifiable sub-flows | Needs handle >2 different concerns simultaneously.
 
-### Step 2 · Architect Perspective → Infra Tasks
+Split method: Split by **independently deliverable sub-flows**, each sub-task after completion can independently verify and internal code highly coupled. Split subtasks imply grouping relationship via ID prefix (e.g. `FEAT-01-01`, `FEAT-01-02` share `FEAT-01` prefix), no explicit parent task record. Every task is executable.
 
-Derive shared foundations: multiple Tasks depend on X and X must exist before Task → X is Infra.
+```
+Feature domain: Auth system
+├── FEAT-02-01: Login flow (login page + auth store + route guard + navbar state + login API)
+├── FEAT-02-02: Register flow (register page + register API + auto login after register)
+└── FEAT-02-03: Password reset (reset page + send/reset API)
+```
 
-| Infra Type | Criteria |
-|:---|:---|
-| Project scaffold / global Schema | All business Tasks depend; must cover Step 0 checklist |
-| Shared core engine | Either: ① 2+ business Tasks directly call; ② pure logic, independently testable, UI-decoupled. `tag` can label `Core`/`Engine` |
-| Third-party integration | Multiple business Tasks reuse same external service |
+#### Merge Check (Task too fragmented?)
 
-**Shared Engine Planning Contract**: Shared core engine INF tasks must declare main export interfaces (function signatures or key interface names) at end of `description`. Downstream `/archi.plan` can align to that interface without reading upstream implementation.
+Merge when: Two Tasks share same component/state | Output incomplete after completion | Only involves 1-2 files | After split one side heavily refactors other side's code.
 
-**Infra Task Granularity: avoid over-fragmentation, forbid cross-layer stacking**:
-- **No over-fragmentation**: Same-layer configs (ESLint + Prettier + TS strict) → merge
-- **No cross-layer stacking**: Each layer as separate task; cross-layer stacking lengthens critical path and delays business Tasks
+```
+❌ FEAT-03-01: Create article (editor+create API)
+   FEAT-03-02: Edit article (modify editor+edit API) ← Needs modify 03-01's form
+✅ FEAT-03-01: Article create and edit (editor + create/edit/save API + form + draft state)
+```
 
-> **Architecture Layer Reference** (each independent boundary): Project scaffold | Data layer | Auth layer | API router layer | Frontend infrastructure | Third-party integration
+#### Shared Data Model Ownership
 
-| Signal | Action |
-|:---|:---|
-| Related config items within same layer | Merge |
-| Spans independent layers (e.g. DB + Auth) | Split |
-| Completely different tech stacks | Split |
-| Involves OS-level API (tray, hotkey) | **Force split** (Step 0 rule) |
-| Deliverable directly called by ≥2 business Tasks | Standalone (must declare export interface) |
+When multiple Tasks involve same Schema, **first writer** creates base fields (including fields needed by other Tasks for reading), subsequent Tasks only extend fields, and note in goal: "Extend <Model> Schema: Add <field list>". First writer = Earliest Task in dependency chain performing write operation on that Schema.
 
-**Implicit Standard Feature Scan** (often absent from Brief; proactively add):
+#### Granularity Verification Checklist
 
-| Check | Trigger | Assignment |
-|:---|:---|:---|
-| User Profile / account settings page | Has Auth | FEAT-xx (Phase 2) |
-| Account security / password settings | Has Auth and can change password/bind third-party | FEAT-xx (Phase 2) |
-| Notification center / message list | Has notification infra and read/unread state | FEAT-xx (Phase 2) |
-| Notification infrastructure | Task mentions "notification" but no INF | INF-xx (Phase 1) |
-| Search infrastructure | 2+ business Tasks describe "search" | INF-xx (Phase 1) |
-| RBAC permission management | Has Auth and 2+ roles | INF-xx (Phase 1) |
-| File storage (S3/OSS) | Task involves file upload/download/preview | INF-xx (Phase 1) |
-| Email/SMS/payment integration | Task mentions corresponding feature | INF-xx (Phase 1) |
+Besides four baselines, each Task extra check:
 
-### Step 3 · NFR Filtering and Polish Identification
+- [ ]  **Not incomplete**: No "clearly missing piece after completion"?
+- [ ]  **Not cross-boundary**: Won't heavily modify other Task's existing code?
+- [ ]  **Verification self-contained**: Every capability referenced in verification method, already implemented in this Task or deps chain?
+- [ ]  **Boundary no blind spot**: Boundary says "No X (B's job)", confirmed B explicitly includes X?
 
-Route by effort weight.
+---
 
-> **"First task" definition** (for NFR injection): In dependency chain, task whose `deps` only include INF layer (no business pre-deps) and earliest to involve that NFR. If multiple candidates in same layer, take smallest ID.
+### Step 3 · INF / POLISH / PLATFORM
 
-**Criteria**:
-| Signal | Action |
-|:---|:---|
-| Only needs "do in passing" (e.g. use i18n key) | **NFR inject** — append to first task goal: `[NFR] <description>` |
-| Needs standalone infrastructure (e.g. integrate i18n framework) | **INF task** — Phase 1 |
-| Independently measurable (e.g. Lighthouse ≥ 90) | **POLISH task** — Phase 3 |
+#### INF Tasks
 
-| Type | Lightweight → NFR inject | Heavyweight → Standalone |
-|:---|:---|:---|
-| Internationalization | Use i18n key within business Task | Integrate framework → `INF-xx`; full translation → `POLISH-xx` |
-| Visual theme (config) | Brand color Token into scaffold | — |
-| Visual theme (functional) | — | Dark/light toggle + OS preference detection → `FEAT-xx` |
-| Animation style | Transition duration into first Task with animation | — |
-| Performance optimization | Lazy load / cache within single Task | LCP < 2s, bundle size → `POLISH-xx` |
-| Accessibility | ARIA attributes within single Task | Full a11y audit → `POLISH-xx` |
-| Packaging / distribution | — | Desktop packaging + auto-update → `POLISH-xx` |
+INF four conditions (all met): Pure backend + No UI + Physical blocker + Used by 2+ FEAT. Only used by 1 FEAT → Merge into that FEAT. Whitelist see Step 0 scaffold section.
 
-### Step 4 · Dependencies and Parallel Optimization
+**INF Blacklist (Belong to FEAT, no matter how many Tasks use)**: Auth / Third-party SDK / Rendering pipeline / Business middleware / Schema + migration. Reason: Cannot verify without business scenario.
 
-- **Real dependency chain**: forbid all business Tasks only on `INF-01`; reflect real business relationships
-- **Business entity dependency (overrides minimal deps)**: If B's core subject produced by A, B depends on A. Example: Usage Log records Prompt; Prompt created by FEAT-Prompt_Create → Usage Log Task depends on Prompt Task
-- **Minimal dependency**: no unnecessary deps; maximize parallelism
+No "Full Schema" INF — Business tables created by FEAT as needed (see Step 2 shared data model ownership).
 
-## Task Rules
+**INF Granularity Rule (Independent from FEAT rules)**:
 
-1. **ID Prefixes**: `INF-xx` (infrastructure) | `FEAT-xx` (business feature) | `POLISH-xx` (quality polish) | `EDIT-xx` (edit, incremental only)
+INF doesn't apply Step 2 split/merge check. INF splits by **independently verifiable infrastructure layer**. Method: Group INF whitelist content by "whether has independent verification command" — content verifiable via different commands belongs to different layer, must split; content must split to verify separately belongs to same layer. Split condition: Single INF involves ≥2 independently verifiable layers must split. Same layer content merges into one INF. After split INFs ensure stacking order via deps. Project only involves single layer → Keep single INF-01. Each INF's goal must include specific verification command for that layer.
 
-2. **Phase Structure**:
-| Phase | ID | Content |
-|:---|:---|:---|
-| Phase 1 | `phase-infra` | INF-xx (scaffold, data layer, auth, API skeleton) |
-| Phase 2 | `phase-core` | FEAT-xx (business features) |
-| Phase 3 | `phase-polish` | POLISH-xx (quality optimization); omit if Brief has no polish needs |
+#### POLISH / PLATFORM
 
-3. **tag field**: business domain label (e.g. Core, Auth, Data); does NOT determine task type
+POLISH: Independently measurable quality optimization (Lighthouse, translation, a11y, packaging), put in phase-polish. PLATFORM: CI/CD, logging, monitoring etc. ops capabilities, put in phase-platform, not participate in FEAT dependency chain.
 
-4. **Design decision injection**: Brief decisions → inject into task goal end: `[User Preset] <content>`; do not repeat same decision across tasks
+#### NFR Injection
 
-5. **Slug**: `Pascal_Snake_Case`, maps to `tasks/<slug>/` folder
+Lightweight NFR → Dual track: ① First related FEAT's goal append `[NFR] <description>`; ② Top-level `nfr[]` array record (taskId + constraint + impact). First task = deps only contains INF and earliest involves that NFR, same layer take smallest ID.
 
-## Task JSON Schema (Tier 1, no add/remove fields)
+#### Test Injection
+
+Tests deliver with features synchronously, no "finish first then add tests".
+
+- Each FEAT's goal end append `[TEST]` block, list **specific test scenarios** (not just "write tests" three words)
+- FEAT involving user-perceivable paths must have at least one E2E
+- INF-01 includes test infrastructure config (framework config + test utils)
+
+`[TEST]` block format: `[TEST] Unit: <scenario> | Component: <scenario> (ui type) | E2E: <verify path>`
+
+#### Seed Data Strategy
+
+- Data-intensive projects (blog, CMS, e-commerce): First FEAT creating Schema also includes seed script
+- Data-simple projects: Each FEAT builds own data in test setup
+- Goal must note verification data prerequisite (e.g. "Verification prerequisite: Need N articles with different statuses")
+
+#### Design Spec Injection (ui projects)
+
+- **INF-01** includes design Token system (CSS variables / Tailwind config), goal list Token values
+- **First ui FEAT** inject `[DESIGN]` global visual constraints (motion, radius, shadow, breakpoints)
+- Subsequent FEAT only append `[DESIGN]` when involving special visual handling
+
+---
+
+### Step 4 · Dependency Chain
+
+**Sequential Development Principle**: Assume single-person sequential development, don't actively parallelize.
+
+Dependency determination rules:
+
+- B's code calls A's module → B deps A
+- B's data entity created by A → B deps A
+- B and A operate different data entities, code doesn't cross → No dependency (default still sequence order)
+- Sub-tasks of same feature domain → Usually have dependency, order by sub-flow sequence
+
+**Content-type project browse-create dependency**: Browse-type Task verification needs content data exists. Two approaches: ① Browse Task deps Create Task (recommended, reflects real business flow); ② Verification method uses seed data (manual insert DB), but must note in goal "Verification prerequisite: Need manually insert test data". Forbidden verification method reference capability not existing in this Task and deps chain.
+
+**Forbidden** all business Tasks only hang INF-01, must reflect real business relationships.
+
+---
+
+### Step 5 · Output Assembly
+
+#### Top-level Structure
+
+Flat `tasks` array + `nfr` array, execution order derived from deps topological sort.
+
+#### Task Fields
+
+Required: `id` (`INF-xx`/`FEAT-xx`/`FEAT-xx-01`/`POLISH-xx`/`PLATFORM-xx`/`EDIT-xx`), `phase` (`infra`/`core`/`polish`/`platform`), `title`, `status` (generated as `pending`), `description` (≤50 chars, don't repeat goal), `goal` (format below), `deps` (ID array), `tag` (business tag), `slug` (`Pascal_Snake_Case` → `tasks/<slug>/`). Optional: `screens` (ui only, screen ID array).
+
+#### goal Format
+
+```jsx
+When done, <acceptance sentence (by project type)>.
+Involves: <logical unit names, no file paths. Example: login page + auth store + route guard + POST /auth/login>
+Implementation hints: <key tech choices and implementation points, help executing AI avoid detours. Example: password hash use argon2; session store PG; email unique constraint need handle OAuth-first-register conflict>
+Verification method: <specific step-by-step verification, not result description. Example: visit /dashboard → redirected to /login → login with GitHub → jump back to /dashboard → navbar shows username>
+Boundary: <explicitly not doing, and note which Task handles. Example: No register flow (FEAT-02-02), No password reset (FEAT-02-03)>
+[TEST]
+- Unit: <specific test scenario>
+- E2E: <specific verify path>
+```
+
+Acceptance sentence by project type: ui = `User can [action] → [perceivable result]`; cli = `User can [run command] → [terminal output]`; api = `Client can [HTTP METHOD /path] → [response structure]`; lib = `Caller can [call API] → [return result]`.
+
+INF/POLISH/PLATFORM goal also needs "Verification method" and "Boundary".
+
+Brief has design decisions → Inject goal: `[User preset] <content>`, same decision forbidden across multiple Tasks.
+
+#### Task JSON Example
 
 ```json
 {
-  "id": "FEAT-01",
-  "title": "Task Title",
-  "status": "pending | blocked",
-  "description": "1-2 sentences. Shared engine tasks must declare main exports at end",
-  "goal": "When done, user can <behavior>; boundary: <out of scope>",
+  "id": "FEAT-02-01",
+  "phase": "core",
+  "title": "Login flow",
+  "status": "blocked",
+  "description": "OAuth login + session + route guard + navbar state",
+  "goal": "When done, user can login via OAuth on login page, navbar shows avatar after login, access protected page without login redirects. Involves: login page + auth store + route guard + navbar user state area + login API + User/Session Schema (first writer). Implementation hints: Use Lucia Auth v3 + arctic handle OAuth flow; session store PG; admin role via ADMIN_EMAILS env whitelist. Verification method: visit /dashboard → redirected to /login → click GitHub login → OAuth callback → jump back to /dashboard → navbar shows username → click logout → session invalid → visit /dashboard again → redirected. Boundary: No register (FEAT-02-02), No password reset (FEAT-02-03). [TEST] Unit: validateRequest() valid/invalid/expired session three cases; admin email whitelist logic. E2E: access protected page without login → redirect → login → jump back → logout → session invalid.",
   "deps": ["INF-01"],
-  "tag": "business domain label",
-  "slug": "Task_Slug"
+  "screens": ["S-03"],
+  "tag": "Auth",
+  "slug": "Auth_Login_Flow"
 }
 ```
 
-`deps` all `done` → `pending`; has incomplete `deps` → `blocked`
+---
+
+## Example: Blog Project (ui + api + data)
+
+**Brief**: User can browse articles, register/login, create/edit/publish articles, comment interact.
+
+**Step 0**: Full-stack Web (SSR), highest feature = ui → Slice dimension = user journey sub-flow
+
+**Step 1 — Feature domains**: Content creation(S-05,S-06) | Content browsing(S-01,S-02) | Auth(S-03,S-04,navbar) | Interaction(S-02 comment area)
+
+**Step 2 — Task list**:
+
+- **INF-01: Project structure + framework shell** — pnpm workspace + Turborepo + Next.js App Router shell + App Shell + global layout + design Token. Verify: `pnpm dev` → blank page accessible
+- **INF-02: Data layer environment** — Docker Compose + Drizzle ORM config + DB connection pool. deps: INF-01. Verify: `docker-compose up` → `drizzle-kit push` connect success
+- **INF-03: Toolchain + test infrastructure** — ESLint/Prettier/commitlint + Vitest config + test utils. deps: INF-01. Verify: `pnpm lint` + `pnpm test` empty suite pass
+- **FEAT-01-01: Article create and edit** — Editor page + form + draft auto-save + Article Schema create (first writer). deps: INF-02 + INF-03. ~5 files
+    - **FEAT-01-02: Article publish and manage** — Publish/hide/delete API + manage list + status transition (extend Article fields). ~4 files
+- **FEAT-02: Article browse** — Home list(S-01) + detail page(S-02) + read API + pagination. deps: FEAT-01-02. ~4 files
+- **FEAT-03-01: Login flow** — Login page(S-03) + auth store + route guard + navbar state + login API + Reader Schema create. deps: INF-02 + INF-03. ~5 files
+    - **FEAT-03-02: Register flow** — Register page(S-04) + register API + reuse auth store. ~3 files
+- **FEAT-04: Comment and interaction** — Comment area + like/bookmark + related API + Comment/Like/Bookmark Schema create + personal center record. deps: FEAT-02 + FEAT-03-01. ~6 files
+
+> Note: INF split into three by layer (framework / data / toolchain), each has independent verify command. FEAT deps point to actually needed INF (need DB point INF-02, need test point INF-03). FEAT-02 (browse) deps FEAT-01-02 (create) reflects browse-create dependency pattern. FEAT-04 merged comment and like/bookmark (after split like/bookmark only ~2 files too fragmented).
+>
+
+**Dependency chain**:
+
+```jsx
+INF-01 → INF-02 → FEAT-01-01 → FEAT-01-02 → FEAT-02
+INF-01 → INF-03
+INF-02 + INF-03 → FEAT-03-01 → FEAT-03-02
+FEAT-02 + FEAT-03-01 → FEAT-04
+```
+
+---
 
 ## Output Verification
 
-□ `global/roadmap.json` generated with valid `phases` array
-
-## Outputs
-
-**① Task Data**: `roadmap.json` `phases[].tasks[]` structure
-
-**② NFR Merge List** (roadmap `nfr` top-level field):
-| NFR | Inject Task | Constraint Summary | Affected |
-|:---|:---|:---|:---|
-| i18n | FEAT-01 | All copy via i18n key | FEAT-02, FEAT-03 |
-
-**③ Parallel Batches** (DAG topological layers):
-```
-Layer 0 ║ INF-01
-Layer 1 ║ INF-02 · INF-03
-Layer 2 ║ FEAT-01 · FEAT-02
-Layer 3 ║ FEAT-03
-Layer 4 ║ POLISH-01 · POLISH-02
-```
+- [ ]  `roadmap.json` has valid flat `tasks[]` array + `nfr[]`
+- [ ]  Each Task passes four baselines + granularity verification checklist
+- [ ]  Each FEAT's goal has: Verification method + Boundary (note Task ID) + Implementation hints + `[TEST]` (specific scenarios)
+- [ ]  INF only has whitelist content; No "full Schema" INF
+- [ ]  Dependency chain reflects real business relationships (not all hang INF-01)
+- [ ]  Subtask ID prefix consistent (FEAT-01-01, FEAT-01-02)
+- [ ]  ui project: INF-01 has Token + test infrastructure; First ui FEAT has `[DESIGN]`
+- [ ]  Data-intensive: First Schema FEAT has seed

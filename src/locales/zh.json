@@ -172,7 +172,9 @@
         "dep": "依赖",
         "dep_none": "无",
         "tag": "标签",
-        "slug": "目录"
+        "slug": "目录",
+        "description": "描述",
+        "screens": "屏幕"
       }
     },
     "update": {

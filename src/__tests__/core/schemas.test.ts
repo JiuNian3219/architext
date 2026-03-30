@@ -21,20 +21,15 @@ function makeValidRoadmap(): RoadmapData {
     version: 1,
     projectStatus: "planning",
     lastUpdated: "2024-01-01",
-    phases: [
+    tasks: [
       {
-        id: "phase-1",
-        name: "Infrastructure",
-        tasks: [
-          {
-            id: "INF-01",
-            title: "Scaffolding",
-            status: "pending",
-            deps: [],
-            tag: "Infra",
-            slug: "Scaffolding",
-          },
-        ],
+        id: "INF-01",
+        phase: "infra",
+        title: "Scaffolding",
+        status: "pending",
+        deps: [],
+        tag: "Infra",
+        slug: "Scaffolding",
       },
     ],
   };
@@ -70,10 +65,10 @@ describe("Tier 1: RoadmapDataSchema", () => {
       "roadmap.json",
     );
     expect(result.version).toBe(1);
-    expect(result.phases[0].tasks[0].id).toBe("INF-01");
+    expect(result.tasks[0].id).toBe("INF-01");
   });
 
-  it("缺少 phases 字段应抛出 AppError", () => {
+  it("缺少 tasks 字段应抛出 AppError", () => {
     const data = {
       version: 1,
       projectStatus: "planning",
@@ -86,8 +81,7 @@ describe("Tier 1: RoadmapDataSchema", () => {
 
   it("task.status 为非法值应抛出 AppError", () => {
     const data = makeValidRoadmap();
-    (data.phases[0].tasks[0] as unknown as Record<string, unknown>).status =
-      "finished";
+    (data.tasks[0] as unknown as Record<string, unknown>).status = "finished";
     expect(() => validateJson(RoadmapDataSchema, data, "roadmap.json")).toThrow(
       AppError,
     );
@@ -95,7 +89,7 @@ describe("Tier 1: RoadmapDataSchema", () => {
 
   it("task.id 为空字符串应抛出 AppError", () => {
     const data = makeValidRoadmap();
-    data.phases[0].tasks[0].id = "";
+    data.tasks[0].id = "";
     expect(() => validateJson(RoadmapDataSchema, data, "roadmap.json")).toThrow(
       AppError,
     );
@@ -103,23 +97,23 @@ describe("Tier 1: RoadmapDataSchema", () => {
 
   it("task.title 为空字符串应抛出 AppError", () => {
     const data = makeValidRoadmap();
-    data.phases[0].tasks[0].title = "";
+    data.tasks[0].title = "";
     expect(() => validateJson(RoadmapDataSchema, data, "roadmap.json")).toThrow(
       AppError,
     );
   });
 
-  it("phase.id 为空字符串应抛出 AppError", () => {
+  it("task.phase 为非法值应抛出 AppError", () => {
     const data = makeValidRoadmap();
-    data.phases[0].id = "";
+    (data.tasks[0] as unknown as Record<string, unknown>).phase = "invalid";
     expect(() => validateJson(RoadmapDataSchema, data, "roadmap.json")).toThrow(
       AppError,
     );
   });
 
-  it("可选字段 (goal/deps/tag/slug) 缺失时应通过校验", () => {
+  it("可选字段 (goal/deps/tag/slug/description/screens) 缺失时应通过校验", () => {
     const data = makeValidRoadmap();
-    const task = data.phases[0].tasks[0];
+    const task = data.tasks[0];
     delete (task as unknown as Record<string, unknown>).goal;
     delete (task as unknown as Record<string, unknown>).deps;
     delete (task as unknown as Record<string, unknown>).tag;
@@ -130,17 +124,17 @@ describe("Tier 1: RoadmapDataSchema", () => {
       data,
       "roadmap.json",
     );
-    expect(result.phases[0].tasks[0].goal).toBeUndefined();
+    expect(result.tasks[0].goal).toBeUndefined();
   });
 
-  it("空 phases 数组应通过校验", () => {
-    const data = { ...makeValidRoadmap(), phases: [] };
+  it("空 tasks 数组应通过校验", () => {
+    const data = { ...makeValidRoadmap(), tasks: [] };
     const result = validateJson<RoadmapData>(
       RoadmapDataSchema,
       data,
       "roadmap.json",
     );
-    expect(result.phases).toHaveLength(0);
+    expect(result.tasks).toHaveLength(0);
   });
 
   it("错误信息应包含文件名和具体路径", () => {
@@ -148,7 +142,7 @@ describe("Tier 1: RoadmapDataSchema", () => {
       version: "not-a-number",
       projectStatus: "x",
       lastUpdated: "x",
-      phases: [],
+      tasks: [],
     };
     try {
       validateJson(RoadmapDataSchema, data, "roadmap.json");

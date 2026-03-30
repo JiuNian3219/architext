@@ -5,232 +5,257 @@ description: Decompose project requirements into roadmap tasks. Use when initial
 
 # Roadmap 任务分解
 
-## 系统流程定位
+## 调用模式
 
-```
-Brief → [本 Skill] → roadmap.json → /archi.plan → spec/ui/plan → /archi.code
-```
-
-**Skill 边界**：
-- 负责：任务 what、done 标准（goal）、依赖链、设计决策注入
-- 不负责：文件路径（map.json）、变量命名（dictionary.json）、测试用例（plan.json）、UI 结构（ui.md）
+- **从零建立**（`/archi.start`）：Brief 功能列表 + ui_context → 生成完整 Roadmap。禁生成 EDIT 任务。
+- **增量追加**（`/archi.scope`）：Brief + 已有 Roadmap → 追加新任务。禁改已有任务，ID 沿用水位。
 
 **Schema 约束（Tier 1）**：roadmap.json 由 CLI Zod 校验，禁增删字段。
 
-## 调用模式
+---
 
-| 模式 | 来源 | 输入 | 限制 |
-|:---|:---|:---|:---|
-| 从零建立 | `/archi.start` | Brief 功能列表 | 禁生成 EDIT 任务 |
-| 增量追加 | `/archi.scope` | Brief + 已有 Roadmap | 禁改已有任务，ID 沿用水位 |
+## 核心理念：最小可交付垂直切片
 
-## 分解框架（五步）
+**一个 Task 完成后，启动项目能验证一条完整的功能路径。**
 
-### Step 0 · 项目类型标定
+垂直切片 = 从数据层到用户触达层的端到端交付单元。每个 Task 包含该切片所需的全部代码（Schema / API / 状态管理 / 页面 / 路由），做完后不依赖后续 Task 就能独立验证。
 
-识别项目类型，确定基建清单，防止 Step 2 遗漏框架性 Infra。
+**四条底线**：
 
-| 项目类型 | 脚手架须包含 |
-|:---|:---|
-| Web SPA / PWA | 路由骨架 + App Shell（布局 / Provider / 主题注入）|
-| 全栈 Web（SSR/SSG）| 路由约定 + API Routes + 全局布局 + Auth Session；仅ui项目: 主题注入 |
-| CLI 工具 | logger + AppError + 命令注册入口 |
-| API 服务 | 路由层 + 中间件 + DB 连接 + 全局错误处理；仅GraphQL项目: Schema + DataLoader |
-| 移动端 App | 导航骨架 + 平台适配层 + 环境配置 |
-| 小程序 | 页面路由配置 + app.js/ts + 请求封装层 |
-| 浏览器扩展 | manifest + Background SW + Content Script + 消息总线 |
-| 桌面端 App | 主进程入口 + IPC 桥 + 系统级能力 |
-| Web + 桌面端（Hybrid）| Web 基础 + 桌面运行时；**桌面集成须独立为 INF 子任务**（OS 差异大）|
-| 库 / SDK | 双产物（CJS+ESM）+ barrel index + 类型声明 + Changelog；**禁建业务 Task** |
-| 实时 / 协作型 | WebSocket 服务层 + 事件 Schema + 房间管理；仅CRDT项目: 冲突解决层 |
-| AI Agent / MCP | LLM 客户端抽象 + Prompt 模板 + Tool Schema + Memory；仅MCP项目: MCP 适配器 |
+1. **可运行**：Task 做完，启动项目能走通至少一条功能路径
+2. **内聚**：共享组件/状态/模块的代码必须在同一 Task 内
+3. **可控**：单个 Task 涉及 3-6 个新文件/模块，AI 能在一次会话内完成
+4. **可验证**：Task 做完，有对应的自动化测试证明功能正确（AI 写的代码必须有测试兜底）
 
-**操作**：
-1. 将对应类型清单写入 INF-01 描述
-2. 按项目类型限定 Step 1 场景句式约束：
+---
 
-| 项目类型 | 场景句式模板 | 禁止词汇 |
-|:---|:---|:---|
-| CLI | `用户可 [运行命令/传参] → [终端输出结果]` | 页面、路由、组件、UI |
-| 库 / SDK | `调用方可 [调用 API X] → [返回 Y]` | 用户、界面、交互 |
-| API 服务 | `客户端可 [HTTP METHOD /path] → [响应结构]` | 前端、页面、组件 |
-| 小程序 | `用户可在 [页面名] [操作] → [微信端可见结果]` | 后端路由、REST |
-| Web/移动端/桌面端 | `用户可 [动作] → [可感知结果]` | — |
+## 分解框架
 
-### Step 1 · PM 视角 → 业务 Task
+### Step 0 · 项目类型 + 切片策略
 
-从 Brief 提取场景，转化为句式：`用户可 [动作] → [可感知结果]`
+根据项目最高层 feature 选择切片维度。多 feature 项目按优先级取最高层：**ui > cli > api > lib**。
 
-**合并条件**：共享同一核心流程（同一 UI 视图、同一数据实体、共享状态流转）
-> 「共享功能域/主题」≠「共享核心流程」。同一功能域但各自有独立 UI 和实现域的场景，须拆分。
+| 项目 feature | 切片维度 | 原子单位 | 验收模板 |
+| --- | --- | --- | --- |
+| ui（Web/Mobile/Desktop/小程序） | 用户旅程子流程 | 一组耦合页面 + 对应 API + 共享状态 | 启动项目，在界面上走通一条完整路径 |
+| cli | 命令组 | 一个命令的完整实现（解析+处理+输出+错误） | 终端执行命令得到正确输出 |
+| api | 资源域 | 一个实体的完整端点集 + 中间件 + 校验 | 请求该资源所有端点均返回正确响应 |
+| lib | 公共 API 面 | 一组相关的导出函数/类 + 类型 + 实现 | 导入并调用，类型和行为正确 |
 
-**拆分信号**：
-| 信号 | 动作 |
-|:---|:---|
-| 描述含"和"（两个独立关注点）| 拆分 |
-| DoD 超过 4 条验收标准 | 拆分 |
-| 横跨 3 个以上独立 UI 区域或实现域 | 拆分 |
-| 一次 `/archi.plan` 难以在单一 spec.md 描述 | 拆分 |
-| 两任务文件集合 >50% 重叠 | 合并 |
+**脚手架（INF-01）白名单——只允许包含以下内容**：
 
-> 若"A 完成后 B 才有意义"，这是依赖关系，**禁合并**；在 Step 4 为 B 声明 `deps: [A]`。
+- **ui**：框架初始化 + 路由空壳 + App Shell + 全局布局
+- **cli**：入口 + 命令注册框架 + logger + AppError
+- **api**：路由层空壳 + 全局错误处理 + 中间件挂载点
+- **lib**：双产物配置 + barrel index + 类型声明
+- **通用（按需）**：包管理器 + monorepo 结构 / DB 连接池 + ORM 配置（不含 schema 和 migration 文件）/ Docker 开发环境 / Linter + Formatter
 
-**双视角判定**（独立判断，任一触发即拆分）：
+**INF-01 额外包含（按需）**：测试基础设施——测试框架配置（Vitest / Jest / Playwright config）+ 测试辅助工具（test utils、DB test container setup），确保后续 FEAT 可直接写测试。
 
-| 视角 | 信号 | 动作 | 示例 |
-|:---|:---|:---|:---|
-| 行为（PM）| 描述含"和"、DoD >4 条、跨 3+ UI 区域 | 拆分 | 用户管理 + 订单管理 → 各自独立 |
-| 工程 | 任务内含 ≥2 **实现域**，各域可独立单测 | 拆分 | 纯计算层 + UI 渲染层 → 各自独立 |
-| 工程 | 实现时需同时掌握 ≥3 个独立技术关注点 | 拆分 | 字符渲染 + 状态机 + 动效 API → 三件事 |
-| 工程 | 某关注点有独立边界复杂度 | 独立出该关注点 | 输入捕获 + IME 单独成任务 |
+**INF-01 禁止包含**：业务 Schema 和 migration / 认证鉴权 / 第三方 SDK / 渲染管线 / 业务中间件。这些一律归入首个使用它的 FEAT（详见 Step 3 INF 黑名单）。
 
-> 行为视角描述"用户看到什么"；工程视角描述"AI 实现时需同时掌握什么"。任务行为上内聚但工程上横跨多域时，AI 在 `/archi.code` 会因上下文过宽而失焦。
+---
 
-**粒度上限**：
+### Step 1 · 识别功能域
 
-> Roadmap Task = **AI 可不再分解、直接产出一个内聚 spec.md** 的最小功能单元（HTN Primitive 可执行性）。
+从 Brief 按 Step 0 切片维度提取功能域（ui = 用户旅程分组；api = 实体端点集；cli = 命令组；lib = 导出集）。跨实体共享机制（认证、权限）= 独立功能域。
 
-| 代理指标 | 上限 | 超出动作 |
-|:---|:---|:---|
-| 独立用户操作流程数 | ≤ 3 | 拆分 |
-| 独立数据实体数（各有状态流转）| ≤ 2 | 拆分 |
-| "和/并/以及"连接的关注点 | ≤ 1 | 拆分 |
-| 验收无法在不运行另一业务 Task 的情况下独立完成 | — | 检查耦合，重划接口边界（INVEST-I）|
+---
 
-> `/archi.plan` 预估 spec.md Scenario > 6 或 plan.json Phase > 4，须暂停并提示返回 `/archi.scope` 重新拆分。
+### Step 2 · 功能域 → Task（合并与拆分）
 
-**DoD 格式**：
-| 类型 | goal 格式 |
-|:---|:---|
-| `FEAT-xx` | `完成后，用户可 <可验证的用户行为>；边界：<明确不做的事>` |
-| `INF-xx` | `完成后，<基础设施产出物>，通过 <验证命令> 验证；边界：<不做的事>` |
-| `POLISH-xx` | `完成后，<质量指标> 从 <基线> 提升至 <目标>；边界：<不做的事>` |
+每个功能域先作为一个候选 Task，然后执行拆分和合并检查。
 
-> DoD 是 `/archi.plan` 生成 spec.md 验收标准和 plan.json 测试用例的基准。禁写实现细节（文件路径、函数名由 plan 阶段决定）。
+#### 拆分检查（Task 太大？）
 
-豁免（归属父任务）：轻量结果页 / 完成页 / 空状态 / 确认弹窗（不含独立数据可视化或复杂动效时）
-> **例外**：结果页含独立数据可视化组件（图表库）、复杂动效逻辑或独立业务计算时，须独立成 Task。
+当出现以下信号时拆分：涉及 >6 个新文件 | 包含多个独立可验证的子流程 | 需同时处理 >2 个不同关注点。
 
-### Step 2 · 架构师视角 → Infra 任务
+拆分方法：按**独立可交付的子流程**拆分，每个子 Task 做完后能独立验证且内部代码高度耦合。拆分后的子任务通过 ID 前缀隐含分组关系（如 `FEAT-01-01`、`FEAT-01-02` 共享 `FEAT-01` 前缀），无需显式父任务记录。每条任务都是可执行的。
 
-反推共享基础：多个 Task 同时依赖 X 且 X 须在 Task 前存在 → X 是 Infra。
+```
+功能域：认证体系
+├── FEAT-02-01: 登录流程（登录页 + auth store + 路由守卫 + navbar 状态 + 登录 API）
+├── FEAT-02-02: 注册流程（注册页 + 注册 API + 注册后自动登录）
+└── FEAT-02-03: 密码重置（重置页 + 发送/重置 API）
+```
 
-| Infra 类型 | 判断标准 |
-|:---|:---|
-| 项目脚手架 / 全局 Schema | 所有业务 Task 依赖；须覆盖 Step 0 清单 |
-| 共享核心引擎 | 满足**任一**：① 2+ 业务 Task 直接调用；② 纯逻辑、可独立单测、与 UI 解耦。`tag` 可标注 `Core`/`Engine` |
-| 第三方集成层 | 多个业务 Task 复用同一外部服务 |
+#### 合并检查（Task 太碎？）
 
-**共享引擎规划契约**：共享核心引擎 INF 任务的 `description` 末尾须声明主要导出接口（函数签名或关键 interface 名称）。下游 Task 的 `/archi.plan` 可直接对接该接口，无需读上游实现。
+当出现以下信号时合并：两个 Task 共享同一组件/状态 | 做完后产出物残缺 | 只涉及 1-2 个文件 | 拆开后一方会大幅重构另一方代码。
 
-**Infra 任务粒度原则：避免微粒化，但禁止跨层堆积**：
-- **禁微粒化**：同层配置项（如 ESLint + Prettier + TS strict）→ 合并
-- **禁跨层堆积**：每层独立成任务；跨层堆积会拉长关键路径、推迟业务 Task 启动
+```
+❌ FEAT-03-01: 新建文章（编辑器+新建API）
+   FEAT-03-02: 编辑文章（改编辑器+编辑API）← 要改 03-01 的表单
+✅ FEAT-03-01: 文章创建与编辑（编辑器 + 新建/编辑/保存 API + 表单 + 草稿状态）
+```
 
-> **架构层参考**（每层独立实现边界）：项目脚手架 | 数据层 | 认证层 | API 路由层 | 前端基础设施 | 第三方集成
+#### 共享数据模型归属
 
-| 信号 | 动作 |
-|:---|:---|
-| 同架构层内关联配置项 | 合并 |
-| 跨独立架构层（如 DB + Auth）| 拆分 |
-| 技术栈完全不同 | 拆分 |
-| 含 OS 级 API（托盘、热键）| **强制拆分**（Step 0 规则）|
-| 被 ≥2 业务 Task 直接调用 | 独立成任务（须声明导出接口）|
+多个 Task 涉及同一 Schema 时，由**首个写入者**创建基础字段（含其他 Task 读取所需的字段），后续 Task 只扩展字段，并在 goal 中注明「扩展 <Model> Schema：新增 <字段列表>」。首个写入者 = 依赖链中最早对该 Schema 执行写入操作的 Task。
 
-**隐式标准功能扫描**（Brief 常遗漏，须主动补充）：
+#### 粒度验证清单
 
-| 检查项 | 触发条件 | 归属 |
-|:---|:---|:---|
-| 用户 Profile / 账号设置页 | 含 Auth | FEAT-xx（Phase 2）|
-| 账号安全 / 密码设置页 | 含 Auth 且可修改密码/绑定第三方 | FEAT-xx（Phase 2）|
-| 通知中心 / 消息列表页 | 含通知基础设施且有已读/未读状态 | FEAT-xx（Phase 2）|
-| 通知基础设施 | Task 口头提及"通知"但未建 INF | INF-xx（Phase 1）|
-| 搜索基础设施 | 2+ 业务 Task 描述"搜索" | INF-xx（Phase 1）|
-| RBAC 权限管理 | 含 Auth 且有 2+ 种角色 | INF-xx（Phase 1）|
-| 文件存储集成（S3/OSS）| Task 涉及文件上传/下载/预览 | INF-xx（Phase 1）|
-| 邮件/短信/支付集成 | Task 提及对应功能 | INF-xx（Phase 1）|
+四条底线之外，每个 Task 额外检查：
 
-### Step 3 · NFR 过滤与 Polish 识别
+- [ ]  **不残缺**：不存在「做完后明显缺一块」？
+- [ ]  **不越界**：不会大幅改其他 Task 已产出的代码？
+- [ ]  **验证自洽**：验证方式引用的每个能力，在本 Task 或 deps 链中已实现？
+- [ ]  **边界无死角**：边界写「不做 X（B 的事）」，已确认 B 显式包含 X？
 
-横切关注点按**工作量权重**决定处理方式。
+---
 
-> **"首个任务"定义**（用于 NFR 注入）：依赖链中 `deps` 仅含 INF 层（无业务前置依赖）且最早涉及该 NFR 的任务。同层多个候选时取 ID 最小。
+### Step 3 · INF / POLISH / PLATFORM
 
-**判定标准**：
-| 信号 | 处理 |
-|:---|:---|
-| 仅需"顺手做"（如用 i18n key）| **NFR 注入** — 写入首个相关任务 goal：`[NFR] <说明>` |
-| 需独立基础设施（如集成 i18n 框架）| **INF 任务** — Phase 1 |
-| 可独立度量（如 Lighthouse ≥ 90）| **POLISH 任务** — Phase 3 |
+#### INF 任务
 
-| 类型 | 轻量级 → NFR 注入 | 重量级 → 独立任务 |
-|:---|:---|:---|
-| 国际化 | 业务 Task 内用 i18n key | 集成框架 → `INF-xx`；全量翻译 → `POLISH-xx` |
-| 视觉主题（配置型）| 品牌色 Token 注入脚手架 | — |
-| 视觉主题（功能型）| — | 深色/浅色切换 + OS 偏好检测 → `FEAT-xx` |
-| 动效风格 | 过渡时长约定注入首个含动效 Task | — |
-| 性能优化 | 单个 Task 内懒加载/缓存 | 首屏 < 2s、包体积 → `POLISH-xx` |
-| 可访问性 | 单个 Task 内 ARIA 属性 | 全面 a11y 审计 → `POLISH-xx` |
-| 打包分发 | — | 桌面端打包 + 自动更新 → `POLISH-xx` |
+INF 四条件（全满足）：纯底层 + 无 UI + 物理阻塞 + 被 2+ FEAT 共用。只被 1 个 FEAT 用的融入该 FEAT。白名单见 Step 0 脚手架部分。
 
-### Step 4 · 依赖与并行优化
+**INF 黑名单（归 FEAT，无论几个 Task 用）**：认证鉴权 / 第三方 SDK / 渲染管线 / 业务中间件 / Schema + migration。理由：脱离业务场景无法验收。
 
-- **真实依赖链**：禁所有业务 Task 只挂 `INF-01`，须反映真实业务关系
-- **业务实体依赖（优先于最小依赖）**：若 B 的核心操作主体由 A 产生，则 B 须依赖 A。例：Usage Log 记录 Prompt，Prompt 由 FEAT-Prompt_Create 创建 → Usage Log Task 依赖 Prompt Task
-- **最小依赖原则**：能并行的不加多余依赖，最大化 Batch 并行度
+禁止「全量 Schema」INF——业务表由 FEAT 按需创建（见 Step 2 共享数据模型归属）。
 
-## 任务规则
+**INF 粒度判定（独立于 FEAT 规则）**：
 
-1. **ID 前缀**：`INF-xx`（基础设施）| `FEAT-xx`（业务功能）| `POLISH-xx`（质量打磨）| `EDIT-xx`（修改，仅增量模式）
+INF 不适用 Step 2 的拆分/合并检查。INF 按**可独立验证的基础设施层级**拆分。判定方法：将 INF 白名单内容按「是否有独立验证命令」分组——能用不同命令各自验证的内容属于不同层级，必须拆开后各自验证的内容属于同一层级。拆分条件：单个 INF 涉及 ≥2 个可独立验证的层级时必须拆分。同层级内容合并为一个 INF。拆分后 INF 之间通过 deps 保证叠加顺序。项目仅涉及单一层级时保持单个 INF-01。每个 INF 的 goal 必须包含该层级的具体验证命令。
 
-2. **Phase 结构**：
-| Phase | ID | 内容 |
-|:---|:---|:---|
-| Phase 1 | `phase-infra` | INF-xx（脚手架、数据层、认证、API 骨架）|
-| Phase 2 | `phase-core` | FEAT-xx（业务功能）|
-| Phase 3 | `phase-polish` | POLISH-xx（质量优化）；Brief 无打磨需求时省略 |
+#### POLISH / PLATFORM
 
-3. **tag 字段**：业务领域标签（如 Core, Auth, Data），不决定任务类型
+POLISH：可独立度量的质量优化（Lighthouse、翻译、a11y、打包），放 phase-polish。PLATFORM：CI/CD、日志、监控等运维能力，放 phase-platform，不参与 FEAT 依赖链。
 
-4. **设计决策注入**：Brief 已有决策 → 注入对应任务 goal 末尾：`[用户预设] <内容>`；同一条决策禁在多任务重复
+#### NFR 注入
 
-5. **Slug**：`Pascal_Snake_Case`，对应 `tasks/<slug>/` 文件夹名
+轻量 NFR → 双轨：① 首个相关 FEAT 的 goal 加 `[NFR] <说明>`；② 顶层 `nfr[]` 数组记录（taskId + constraint + impact）。首个任务 = deps 仅含 INF 且最早涉及该 NFR，同层取 ID 最小。
 
-## Task JSON Schema（Tier 1，禁增删字段）
+#### 测试注入
+
+测试与功能同步交付，不允许「先写完再补测」。
+
+- 每个 FEAT 的 goal 末尾追加 `[TEST]` 块，列出**具体测试场景**（不是「写测试」三个字）
+- 涉及用户可感知路径的 FEAT 必须有至少一条 E2E
+- INF-01 包含测试基础设施配置（框架 config + test utils）
+
+`[TEST]` 块格式：`[TEST] 单元：<场景> | 组件：<场景>（ui 类） | E2E：<验证路径>`
+
+#### Seed Data 策略
+
+- 数据密集型项目（博客、CMS、电商）：首个创建 Schema 的 FEAT 同时包含 seed 脚本
+- 数据简单项目：各 FEAT 在测试 setup 中自建数据
+- goal 中须注明验证的数据前提（如「验证前提：需要 N 篇不同状态的文章」）
+
+#### 设计规格注入（ui 项目）
+
+- **INF-01** 包含设计 Token 体系（CSS 变量 / Tailwind config），goal 中列出 Token 值
+- **首个 ui FEAT** 注入 `[DESIGN]` 全局视觉约束（动效、圆角、阴影、断点）
+- 后续 FEAT 仅在涉及特殊视觉处理时追加 `[DESIGN]`
+
+---
+
+### Step 4 · 依赖链
+
+**顺序开发原则**：假设单人顺序开发，不主动并行。
+
+依赖判定规则：
+
+- B 的代码调用 A 的模块 → B deps A
+- B 的数据实体由 A 创建 → B deps A
+- B 和 A 操作不同数据实体、代码不交叉 → 无依赖（默认仍顺序排列）
+- 同功能域的子 Task → 通常有依赖，按子流程顺序排列
+
+**内容型项目的浏览-创作依赖**：浏览类 Task 的验证需要内容数据存在。两种处理：① 浏览 Task deps 创作 Task（推荐，反映真实业务流）；② 验证方式改用 seed data（手动插 DB），但须在 goal 中注明「验证前提：需手动插入测试数据」。禁止验证方式引用本 Task 及 deps 链中不存在的能力。
+
+**禁止**所有业务 Task 只挂 INF-01，必须反映真实业务关系。
+
+---
+
+### Step 5 · 输出组装
+
+#### 顶层结构
+
+扁平 `tasks` 数组 + `nfr` 数组，执行顺序由 deps 拓扑排序推导。
+
+#### Task 字段
+
+必填：`id`（`INF-xx`/`FEAT-xx`/`FEAT-xx-01`/`POLISH-xx`/`PLATFORM-xx`/`EDIT-xx`）、`phase`（`infra`/`core`/`polish`/`platform`）、`title`、`status`（生成时 `pending`）、`description`（≤50字，不重复 goal）、`goal`（格式见下）、`deps`（ID 数组）、`tag`（业务标签）、`slug`（`Pascal_Snake_Case` → `tasks/<slug>/`）。可选：`screens`（ui 专用，屏幕 ID 数组）。
+
+#### goal 格式
+
+```jsx
+完成后，<验收句式（按项目类型）>。
+涉及：<逻辑单元名称，禁写文件路径。示例：登录页 + auth store + 路由守卫 + POST /auth/login>
+实现提示：<关键技术选型和实现要点，帮助执行 AI 少走弯路。示例：密码哈希用 argon2；session 存 PG；邮箱唯一约束需处理 OAuth 先注册的冲突>
+验证方式：<具体步骤式验证，不是结果描述。示例：访问 /dashboard → 被重定向到 /login → 用 GitHub 登录 → 跳回 /dashboard → navbar 显示用户名>
+边界：<明确不做的事，且标注由哪个 Task 负责。示例：不含注册流程（FEAT-02-02）、不含密码重置（FEAT-02-03）>
+[TEST]
+- 单元：<具体测试场景>
+- E2E：<具体验证路径>
+```
+
+验收句式按项目类型：ui = `用户可 [动作] → [可感知结果]`；cli = `用户可 [运行命令] → [终端输出]`；api = `客户端可 [HTTP METHOD /path] → [响应结构]`；lib = `调用方可 [调用 API] → [返回结果]`。
+
+INF/POLISH/PLATFORM 的 goal 同样需要「验证方式」和「边界」。
+
+Brief 已有设计决策 → 注入 goal：`[用户预设] <内容>`，同一决策禁多 Task 重复。
+
+#### Task JSON 示例
 
 ```json
 {
-  "id": "FEAT-01",
-  "title": "Task Title",
-  "status": "pending | blocked",
-  "description": "1-2 句说明。共享引擎类任务须在末尾声明主要导出接口",
-  "goal": "完成后，用户可 <行为>；边界：<不做的事>",
+  "id": "FEAT-02-01",
+  "phase": "core",
+  "title": "登录流程",
+  "status": "blocked",
+  "description": "OAuth 登录 + session + 路由守卫 + navbar 状态",
+  "goal": "完成后，用户可在登录页通过 OAuth 登录，登录后 navbar 显示头像，未登录访问受保护页面被重定向。涉及：登录页 + auth store + 路由守卫 + navbar 用户状态区 + 登录 API + User/Session Schema（首个写入者）。实现提示：用 Lucia Auth v3 + arctic 处理 OAuth flow；session 存 PG；admin 角色通过 ADMIN_EMAILS 环境变量白名单判断。验证方式：访问 /dashboard → 被重定向到 /login → 点击 GitHub 登录 → OAuth 回调 → 跳回 /dashboard → navbar 显示用户名 → 点击 logout → session 失效 → 再访问 /dashboard → 被重定向。边界：不含注册（FEAT-02-02）、不含密码重置（FEAT-02-03）。[TEST] 单元：validateRequest() 有效/无效/过期 session 三种情况；admin email 白名单判断逻辑。E2E：未登录访问受保护页 → 重定向 → 登录 → 跳回 → 注销 → session 失效。",
   "deps": ["INF-01"],
-  "tag": "业务领域标签",
-  "slug": "Task_Slug"
+  "screens": ["S-03"],
+  "tag": "Auth",
+  "slug": "Auth_Login_Flow"
 }
 ```
 
-`deps` 全部 `done` → `pending`；有未完成 `deps` → `blocked`
+---
+
+## 示例：博客项目（ui + api + data）
+
+**Brief**：用户可浏览文章、注册登录、创建编辑发布文章、评论互动。
+
+**Step 0**：全栈 Web（SSR），最高层 feature = ui → 切片维度 = 用户旅程子流程
+
+**Step 1 — 功能域**：内容创作(S-05,S-06) | 内容浏览(S-01,S-02) | 认证(S-03,S-04,navbar) | 互动(S-02 评论区)
+
+**Step 2 — Task 列表**：
+
+- **INF-01: 项目结构 + 框架空壳** — pnpm workspace + Turborepo + Next.js App Router 空壳 + App Shell + 全局布局 + 设计 Token。验证：`pnpm dev` → 空白页可访问
+- **INF-02: 数据层环境** — Docker Compose + Drizzle ORM 配置 + DB 连接池。deps: INF-01。验证：`docker-compose up` → `drizzle-kit push` 连接成功
+- **INF-03: 工具链 + 测试基础设施** — ESLint/Prettier/commitlint + Vitest config + test utils。deps: INF-01。验证：`pnpm lint` + `pnpm test` 空套件通过
+- **FEAT-01-01: 文章创建与编辑** — 编辑器页 + 表单 + 草稿自动保存 + Article Schema 创建（首个写入者）。deps: INF-02 + INF-03。~5 文件
+    - **FEAT-01-02: 文章发布与管理** — 发布/隐藏/删除 API + 管理列表 + 状态流转（扩展 Article 字段）。~4 文件
+- **FEAT-02: 文章浏览** — 首页列表(S-01) + 详情页(S-02) + 读取 API + 分页。deps: FEAT-01-02。~4 文件
+- **FEAT-03-01: 登录流程** — 登录页(S-03) + auth store + 路由守卫 + navbar 状态 + 登录 API + Reader Schema 创建。deps: INF-02 + INF-03。~5 文件
+    - **FEAT-03-02: 注册流程** — 注册页(S-04) + 注册 API + 复用 auth store。~3 文件
+- **FEAT-04: 评论与互动** — 评论区 + 点赞/收藏 + 相关 API + Comment/Like/Bookmark Schema 创建 + 个人中心记录。deps: FEAT-02 + FEAT-03-01。~6 文件
+
+> 注意：INF 按层级拆分为三个（框架 / 数据 / 工具链），各有独立验证命令。FEAT deps 指向实际依赖的 INF（需要 DB 的指 INF-02，需要测试的指 INF-03）。FEAT-02（浏览）deps FEAT-01-02（创作）体现浏览-创作依赖模式。FEAT-04 合并了评论和点赞收藏（拆开后点赞收藏仅 ~2 文件太碎）。
+> 
+
+**依赖链**：
+
+```jsx
+INF-01 → INF-02 → FEAT-01-01 → FEAT-01-02 → FEAT-02
+INF-01 → INF-03
+INF-02 + INF-03 → FEAT-03-01 → FEAT-03-02
+FEAT-02 + FEAT-03-01 → FEAT-04
+```
+
+---
 
 ## 输出验证
 
-□ `global/roadmap.json` 已生成且含有效 `phases` 数组
-
-## 产出物
-
-**① 任务数据**：`roadmap.json` `phases[].tasks[]` 结构
-
-**② NFR 归并清单**（roadmap `nfr` 顶层字段）：
-| NFR | 注入任务 | 约束摘要 | 影响范围 |
-|:---|:---|:---|:---|
-| i18n | FEAT-01 | 文案须 i18n key | FEAT-02, FEAT-03 |
-
-**③ 并行批次**（DAG 拓扑层次）：
-```
-Layer 0 ║ INF-01
-Layer 1 ║ INF-02 · INF-03
-Layer 2 ║ FEAT-01 · FEAT-02
-Layer 3 ║ FEAT-03
-Layer 4 ║ POLISH-01 · POLISH-02
-```
+- [ ]  `roadmap.json` 含有效 `tasks[]` 扁平数组 + `nfr[]`
+- [ ]  每个 Task 通过四条底线 + 粒度验证清单
+- [ ]  每个 FEAT 的 goal 含：验证方式 + 边界（标注 Task ID）+ 实现提示 + `[TEST]`（具体场景）
+- [ ]  INF 仅含白名单内容；无「全量 Schema」INF
+- [ ]  依赖链反映真实业务关系（非全挂 INF-01）
+- [ ]  子任务 ID 前缀一致（FEAT-01-01、FEAT-01-02）
+- [ ]  ui 项目：INF-01 含 Token + 测试基础设施；首个 ui FEAT 含 `[DESIGN]`
+- [ ]  数据密集型：首个 Schema FEAT 含 seed

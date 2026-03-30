@@ -4,8 +4,10 @@ import type {
   RoadmapData,
   Task,
   TaskStatus,
+  TaskPhase,
 } from "../../../core/roadmap/types.ts";
 import { createT } from "../../../utils/t.ts";
+import { groupByPhase } from "../../../core/roadmap/types.ts";
 
 /** 任务状态 → checkbox 标记 */
 const STATUS_CHECK: Record<TaskStatus, string> = {
@@ -29,6 +31,22 @@ const STATUS_CLASS: Record<TaskStatus, string> = {
   active: "active",
   done: "done",
   blocked: "blocked",
+};
+
+/** 阶段 → 显示名称（中文） */
+const PHASE_NAME_ZH: Record<TaskPhase, string> = {
+  infra: "基础设施",
+  core: "核心功能",
+  polish: "质量打磨",
+  platform: "平台支持",
+};
+
+/** 阶段 → 显示名称（英文） */
+const PHASE_NAME_EN: Record<TaskPhase, string> = {
+  infra: "Infrastructure",
+  core: "Core Features",
+  polish: "Quality Polish",
+  platform: "Platform Support",
 };
 
 /** 转义单段文本中会破坏 Mermaid 节点语法的双引号。 */
@@ -66,6 +84,16 @@ function buildNodeLabel(task: Task): string {
 }
 
 /**
+ * 获取阶段显示名称
+ */
+function getPhaseName(phase: TaskPhase, lang: LocaleLang): string {
+  return lang === "zh" ? PHASE_NAME_ZH[phase] : PHASE_NAME_EN[phase];
+}
+
+/** 阶段渲染顺序 */
+const PHASE_ORDER: TaskPhase[] = ["infra", "core", "polish", "platform"];
+
+/**
  * 将 RoadmapData 渲染为完整的 Markdown 文件内容。
  * 包含：任务列表 + Mermaid 依赖图。
  * @param data Roadmap 数据
@@ -86,13 +114,21 @@ export function renderRoadmap(
     `> **${t("roadmap.status")}**: ${data.projectStatus} | **${t("roadmap.updated")}**: ${data.lastUpdated}\n`,
   );
 
+  // 按 phase 分组
+  const phaseGroups = groupByPhase(data);
+
   // ── Task List ──
   lines.push(`<!-- TASKS_START -->\n`);
 
-  for (const phase of data.phases) {
-    lines.push(`## ${t("roadmap.phase")}: ${phase.name}\n`);
-    for (const task of phase.tasks) {
+  for (const phase of PHASE_ORDER) {
+    const tasks = phaseGroups.get(phase);
+    if (!tasks || tasks.length === 0) continue;
+
+    lines.push(`## ${t("roadmap.phase")}: ${getPhaseName(phase, lang)}\n`);
+    for (const task of tasks) {
       lines.push(renderTaskLine(task));
+      if (task.description)
+        lines.push(`  - 📝 ${t("roadmap.description")}: ${task.description}`);
       if (task.goal) lines.push(`  - 🎯 ${t("roadmap.goal")}: ${task.goal}`);
       if (task.deps && task.deps.length > 0) {
         lines.push(
@@ -103,6 +139,11 @@ export function renderRoadmap(
       }
       if (task.tag) lines.push(`  - 🏷️ ${t("roadmap.tag")}: ${task.tag}`);
       if (task.slug) lines.push(`  - 📁 ${t("roadmap.slug")}: ${task.slug}`);
+      if (task.screens && task.screens.length > 0) {
+        lines.push(
+          `  - 🖥️ ${t("roadmap.screens")}: ${task.screens.map((s) => `[${s}]`).join(", ")}`,
+        );
+      }
     }
     lines.push("");
   }
@@ -122,8 +163,7 @@ export function renderRoadmap(
   lines.push("    classDef blocked fill:#fca5a5,stroke:#dc2626,color:#000;");
   lines.push("");
 
-  // 收集所有任务用于生成图
-  const allTasks: Task[] = data.phases.flatMap((p) => p.tasks);
+  const allTasks = data.tasks;
 
   // 节点定义 — 标题 + goal（如有）双行显示
   for (const task of allTasks) {

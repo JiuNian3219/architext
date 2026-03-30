@@ -1,7 +1,11 @@
-/** @fileoverview RoadmapParser 单元测试，验证 JSON 解析、getAllTasks/buildTaskMap 辅助函数。 */
+/** @fileoverview RoadmapParser 单元测试，验证 JSON 解析、getAllTasks/buildTaskMap/groupByPhase 辅助函数。 */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { RoadmapParser } from "../../core/roadmap/parser.ts";
-import { getAllTasks, buildTaskMap } from "../../core/roadmap/types.ts";
+import {
+  getAllTasks,
+  buildTaskMap,
+  groupByPhase,
+} from "../../core/roadmap/types.ts";
 import type { RoadmapData } from "../../core/roadmap/types.ts";
 import {
   createTempDir,
@@ -35,26 +39,32 @@ describe("RoadmapParser", () => {
   // --- 基本 JSON 解析 ---
 
   describe("基本 JSON 解析", () => {
-    it("应正确解析包含单个 phase 的 roadmap", async () => {
+    it("应正确解析包含多个任务的 roadmap（扁平结构）", async () => {
       const input: RoadmapData = {
         version: 1,
         projectStatus: "planning",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Infrastructure",
-            tasks: [
-              {
-                id: "INF-01",
-                title: "Project Scaffolding",
-                status: "done",
-                goal: "Setup complete",
-                deps: [],
-                tag: "Infra",
-                slug: "Project_Scaffolding",
-              },
-            ],
+            id: "INF-01",
+            phase: "infra",
+            title: "Project Scaffolding",
+            status: "done",
+            description: "初始化项目结构",
+            goal: "Setup complete",
+            deps: [],
+            tag: "Infra",
+            slug: "Project_Scaffolding",
+          },
+          {
+            id: "FEAT-01",
+            phase: "core",
+            title: "Core Feature",
+            status: "pending",
+            goal: "Implement core feature",
+            deps: ["INF-01"],
+            tag: "Core",
+            slug: "Core_Feature",
           },
         ],
       };
@@ -64,57 +74,48 @@ describe("RoadmapParser", () => {
       expect(result.version).toBe(1);
       expect(result.projectStatus).toBe("planning");
       expect(result.lastUpdated).toBe("2024-01-01");
-      expect(result.phases).toHaveLength(1);
-      expect(result.phases[0].id).toBe("phase-1");
-      expect(result.phases[0].name).toBe("Infrastructure");
-      expect(result.phases[0].tasks).toHaveLength(1);
+      expect(result.tasks).toHaveLength(2);
+      expect(result.tasks[0].id).toBe("INF-01");
+      expect(result.tasks[0].phase).toBe("infra");
+      expect(result.tasks[1].id).toBe("FEAT-01");
+      expect(result.tasks[1].phase).toBe("core");
     });
 
-    it("应正确解析包含多个 phase 的 roadmap", async () => {
+    it("应正确解析不同 phase 的任务", async () => {
       const input: RoadmapData = {
         version: 1,
-        projectStatus: "planning",
+        projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
+          { id: "INF-01", phase: "infra", title: "Infra Task", status: "done" },
           {
-            id: "phase-1",
-            name: "Infrastructure",
-            tasks: [
-              { id: "INF-01", title: "Scaffolding", status: "done", deps: [] },
-              {
-                id: "INF-02",
-                title: "Core Entities",
-                status: "active",
-                deps: ["INF-01"],
-              },
-            ],
+            id: "FEAT-01",
+            phase: "core",
+            title: "Core Task",
+            status: "active",
           },
           {
-            id: "phase-2",
-            name: "Core Features",
-            tasks: [
-              {
-                id: "FEAT-01",
-                title: "User Auth",
-                status: "blocked",
-                deps: ["INF-02"],
-              },
-              {
-                id: "FEAT-02",
-                title: "Dashboard",
-                status: "pending",
-                deps: ["INF-02"],
-              },
-            ],
+            id: "POLISH-01",
+            phase: "polish",
+            title: "Polish Task",
+            status: "pending",
+          },
+          {
+            id: "PLATFORM-01",
+            phase: "platform",
+            title: "Platform Task",
+            status: "pending",
           },
         ],
       };
 
       const result = await parseRoadmap(input);
+      const tasks = result.tasks;
 
-      expect(result.phases).toHaveLength(2);
-      expect(result.phases[0].tasks).toHaveLength(2);
-      expect(result.phases[1].tasks).toHaveLength(2);
+      expect(tasks[0].phase).toBe("infra");
+      expect(tasks[1].phase).toBe("core");
+      expect(tasks[2].phase).toBe("polish");
+      expect(tasks[3].phase).toBe("platform");
     });
 
     it("应正确保留任务的完整 metadata", async () => {
@@ -122,35 +123,35 @@ describe("RoadmapParser", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-06-15",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Setup",
-            tasks: [
-              {
-                id: "T-001",
-                title: "Setup project",
-                status: "pending",
-                goal: "Initialize project structure",
-                deps: [],
-                tag: "Infra",
-                slug: "Project_Setup",
-              },
-            ],
+            id: "FEAT-01",
+            phase: "core",
+            title: "User Auth",
+            status: "pending",
+            description: "OAuth login + session",
+            goal: "Initialize project structure",
+            deps: ["INF-01"],
+            tag: "Auth",
+            slug: "User_Auth",
+            screens: ["S-01", "S-02"],
           },
         ],
       };
 
       const result = await parseRoadmap(input);
-      const task = result.phases[0].tasks[0];
+      const task = result.tasks[0];
 
-      expect(task.id).toBe("T-001");
-      expect(task.title).toBe("Setup project");
+      expect(task.id).toBe("FEAT-01");
+      expect(task.phase).toBe("core");
+      expect(task.title).toBe("User Auth");
       expect(task.status).toBe("pending");
+      expect(task.description).toBe("OAuth login + session");
       expect(task.goal).toBe("Initialize project structure");
-      expect(task.deps).toEqual([]);
-      expect(task.tag).toBe("Infra");
-      expect(task.slug).toBe("Project_Setup");
+      expect(task.deps).toEqual(["INF-01"]);
+      expect(task.tag).toBe("Auth");
+      expect(task.slug).toBe("User_Auth");
+      expect(task.screens).toEqual(["S-01", "S-02"]);
     });
 
     it("应正确解析不同状态的任务", async () => {
@@ -158,22 +159,31 @@ describe("RoadmapParser", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Tasks",
-            tasks: [
-              { id: "T-TODO", title: "Todo task", status: "pending" },
-              { id: "T-ACTIVE", title: "Active task", status: "active" },
-              { id: "T-DONE", title: "Done task", status: "done" },
-              { id: "T-BLOCKED", title: "Blocked task", status: "blocked" },
-            ],
+            id: "T-TODO",
+            phase: "core",
+            title: "Todo task",
+            status: "pending",
+          },
+          {
+            id: "T-ACTIVE",
+            phase: "core",
+            title: "Active task",
+            status: "active",
+          },
+          { id: "T-DONE", phase: "core", title: "Done task", status: "done" },
+          {
+            id: "T-BLOCKED",
+            phase: "core",
+            title: "Blocked task",
+            status: "blocked",
           },
         ],
       };
 
       const result = await parseRoadmap(input);
-      const tasks = result.phases[0].tasks;
+      const tasks = result.tasks;
 
       expect(tasks[0].status).toBe("pending");
       expect(tasks[1].status).toBe("active");
@@ -186,59 +196,49 @@ describe("RoadmapParser", () => {
         version: 1,
         projectStatus: "planning",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [
-              { id: "T-001", title: "First", status: "done", deps: [] },
-              {
-                id: "T-002",
-                title: "Second",
-                status: "active",
-                deps: ["T-001"],
-              },
-              {
-                id: "T-003",
-                title: "Third",
-                status: "pending",
-                deps: ["T-001", "T-002"],
-              },
-            ],
+            id: "T-001",
+            phase: "infra",
+            title: "First",
+            status: "done",
+            deps: [],
+          },
+          {
+            id: "T-002",
+            phase: "core",
+            title: "Second",
+            status: "active",
+            deps: ["T-001"],
+          },
+          {
+            id: "T-003",
+            phase: "core",
+            title: "Third",
+            status: "pending",
+            deps: ["T-001", "T-002"],
           },
         ],
       };
 
       const result = await parseRoadmap(input);
-      const tasks = result.phases[0].tasks;
+      const tasks = result.tasks;
 
       expect(tasks[0].deps).toEqual([]);
       expect(tasks[1].deps).toEqual(["T-001"]);
       expect(tasks[2].deps).toEqual(["T-001", "T-002"]);
     });
 
-    it("应正确解析空 phases 数组", async () => {
+    it("应正确解析空 tasks 数组", async () => {
       const input: RoadmapData = {
         version: 1,
         projectStatus: "planning",
         lastUpdated: "2024-01-01",
-        phases: [],
+        tasks: [],
       };
 
       const result = await parseRoadmap(input);
-      expect(result.phases).toHaveLength(0);
-    });
-
-    it("应正确解析含空 tasks 的 phase", async () => {
-      const input: RoadmapData = {
-        version: 1,
-        projectStatus: "planning",
-        lastUpdated: "2024-01-01",
-        phases: [{ id: "phase-1", name: "Empty Phase", tasks: [] }],
-      };
-
-      const result = await parseRoadmap(input);
-      expect(result.phases[0].tasks).toHaveLength(0);
+      expect(result.tasks).toHaveLength(0);
     });
 
     it("应正确解析省略可选字段的任务", async () => {
@@ -246,50 +246,75 @@ describe("RoadmapParser", () => {
         version: 1,
         projectStatus: "planning",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Minimal",
-            tasks: [{ id: "T-001", title: "Minimal task", status: "pending" }],
+            id: "T-001",
+            phase: "core",
+            title: "Minimal task",
+            status: "pending",
           },
         ],
       };
 
       const result = await parseRoadmap(input);
-      const task = result.phases[0].tasks[0];
+      const task = result.tasks[0];
 
       expect(task.id).toBe("T-001");
+      expect(task.phase).toBe("core");
       expect(task.title).toBe("Minimal task");
       expect(task.status).toBe("pending");
+      expect(task.description).toBeUndefined();
       expect(task.goal).toBeUndefined();
       expect(task.deps).toBeUndefined();
       expect(task.tag).toBeUndefined();
       expect(task.slug).toBeUndefined();
+      expect(task.screens).toBeUndefined();
+    });
+
+    it("应正确解析 nfr 数组", async () => {
+      const input: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          { id: "INF-01", phase: "infra", title: "Infra", status: "done" },
+          {
+            id: "FEAT-01",
+            phase: "core",
+            title: "Core",
+            status: "pending",
+            deps: ["INF-01"],
+          },
+        ],
+        nfr: [
+          {
+            taskId: "FEAT-01",
+            constraint: "All copy via i18n key",
+            impact: ["FEAT-01", "FEAT-02"],
+          },
+        ],
+      };
+
+      const result = await parseRoadmap(input);
+      expect(result.nfr).toHaveLength(1);
+      expect(result.nfr?.[0].taskId).toBe("FEAT-01");
+      expect(result.nfr?.[0].constraint).toBe("All copy via i18n key");
+      expect(result.nfr?.[0].impact).toEqual(["FEAT-01", "FEAT-02"]);
     });
   });
 
   // --- getAllTasks ---
 
   describe("getAllTasks", () => {
-    it("应将多个 phase 的任务扁平化为一个列表", () => {
+    it("应返回 tasks 数组（扁平结构直接返回）", () => {
       const data: RoadmapData = {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
-          {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [
-              { id: "A-01", title: "Task A1", status: "done" },
-              { id: "A-02", title: "Task A2", status: "active" },
-            ],
-          },
-          {
-            id: "phase-2",
-            name: "Phase 2",
-            tasks: [{ id: "B-01", title: "Task B1", status: "pending" }],
-          },
+        tasks: [
+          { id: "A-01", phase: "infra", title: "Task A1", status: "done" },
+          { id: "A-02", phase: "core", title: "Task A2", status: "active" },
+          { id: "B-01", phase: "core", title: "Task B1", status: "pending" },
         ],
       };
 
@@ -301,52 +326,26 @@ describe("RoadmapParser", () => {
       expect(tasks[2].id).toBe("B-01");
     });
 
-    it("空 phases 应返回空数组", () => {
+    it("空 tasks 应返回空数组", () => {
       const data: RoadmapData = {
         version: 1,
         projectStatus: "planning",
         lastUpdated: "2024-01-01",
-        phases: [],
+        tasks: [],
       };
 
       expect(getAllTasks(data)).toHaveLength(0);
     });
 
-    it("含空 tasks 的 phase 应被正确跳过", () => {
-      const data: RoadmapData = {
-        version: 1,
-        projectStatus: "planning",
-        lastUpdated: "2024-01-01",
-        phases: [
-          { id: "phase-1", name: "Empty", tasks: [] },
-          {
-            id: "phase-2",
-            name: "Has tasks",
-            tasks: [{ id: "T-01", title: "Only task", status: "pending" }],
-          },
-        ],
-      };
-
-      const tasks = getAllTasks(data);
-      expect(tasks).toHaveLength(1);
-      expect(tasks[0].id).toBe("T-01");
-    });
-
-    it("应保持阶段内的任务顺序", () => {
+    it("应保持任务顺序", () => {
       const data: RoadmapData = {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
-          {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [
-              { id: "C-03", title: "Third", status: "pending" },
-              { id: "A-01", title: "First", status: "done" },
-              { id: "B-02", title: "Second", status: "active" },
-            ],
-          },
+        tasks: [
+          { id: "C-03", phase: "core", title: "Third", status: "pending" },
+          { id: "A-01", phase: "infra", title: "First", status: "done" },
+          { id: "B-02", phase: "core", title: "Second", status: "active" },
         ],
       };
 
@@ -363,19 +362,24 @@ describe("RoadmapParser", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [
-              { id: "INF-01", title: "Scaffolding", status: "done" },
-              { id: "INF-02", title: "Core Entities", status: "active" },
-            ],
+            id: "INF-01",
+            phase: "infra",
+            title: "Scaffolding",
+            status: "done",
           },
           {
-            id: "phase-2",
-            name: "Phase 2",
-            tasks: [{ id: "FEAT-01", title: "User Auth", status: "pending" }],
+            id: "INF-02",
+            phase: "infra",
+            title: "Core Entities",
+            status: "active",
+          },
+          {
+            id: "FEAT-01",
+            phase: "core",
+            title: "User Auth",
+            status: "pending",
           },
         ],
       };
@@ -393,18 +397,13 @@ describe("RoadmapParser", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [
-              {
-                id: "T-001",
-                title: "Task One",
-                status: "done",
-                deps: ["T-002"],
-              },
-            ],
+            id: "T-001",
+            phase: "core",
+            title: "Task One",
+            status: "done",
+            deps: ["T-002"],
           },
         ],
       };
@@ -417,12 +416,12 @@ describe("RoadmapParser", () => {
       expect(map.get("T-001")?.deps).toEqual(["T-002"]);
     });
 
-    it("空 phases 应返回空 Map", () => {
+    it("空 tasks 应返回空 Map", () => {
       const data: RoadmapData = {
         version: 1,
         projectStatus: "planning",
         lastUpdated: "2024-01-01",
-        phases: [],
+        tasks: [],
       };
 
       const map = buildTaskMap(data);
@@ -434,23 +433,79 @@ describe("RoadmapParser", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [{ id: "DUP-01", title: "Original", status: "pending" }],
+            id: "DUP-01",
+            phase: "infra",
+            title: "Original",
+            status: "pending",
           },
-          {
-            id: "phase-2",
-            name: "Phase 2",
-            tasks: [{ id: "DUP-01", title: "Overridden", status: "done" }],
-          },
+          { id: "DUP-01", phase: "core", title: "Overridden", status: "done" },
         ],
       };
 
       const map = buildTaskMap(data);
       expect(map.size).toBe(1);
       expect(map.get("DUP-01")?.title).toBe("Overridden");
+    });
+  });
+
+  // --- groupByPhase ---
+
+  describe("groupByPhase", () => {
+    it("应按 phase 分组任务", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          { id: "INF-01", phase: "infra", title: "Infra 1", status: "done" },
+          { id: "INF-02", phase: "infra", title: "Infra 2", status: "active" },
+          { id: "FEAT-01", phase: "core", title: "Core 1", status: "pending" },
+          {
+            id: "POLISH-01",
+            phase: "polish",
+            title: "Polish 1",
+            status: "pending",
+          },
+        ],
+      };
+
+      const groups = groupByPhase(data);
+
+      expect(groups.size).toBe(3);
+      expect(groups.get("infra")?.length).toBe(2);
+      expect(groups.get("core")?.length).toBe(1);
+      expect(groups.get("polish")?.length).toBe(1);
+      expect(groups.get("platform")).toBeUndefined();
+    });
+
+    it("空 tasks 应返回空 Map", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "planning",
+        lastUpdated: "2024-01-01",
+        tasks: [],
+      };
+
+      const groups = groupByPhase(data);
+      expect(groups.size).toBe(0);
+    });
+
+    it("单一 phase 应返回单组", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          { id: "FEAT-01", phase: "core", title: "Core 1", status: "pending" },
+          { id: "FEAT-02", phase: "core", title: "Core 2", status: "pending" },
+        ],
+      };
+
+      const groups = groupByPhase(data);
+      expect(groups.size).toBe(1);
+      expect(groups.get("core")?.length).toBe(2);
     });
   });
 });

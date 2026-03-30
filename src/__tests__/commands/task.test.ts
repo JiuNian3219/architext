@@ -76,7 +76,7 @@ describe("resolveRoadmapPath", () => {
         updatedAt: new Date().toISOString(),
       }),
       custom: {
-        "my-roadmap.json": JSON.stringify({ version: 1, phases: [] }),
+        "my-roadmap.json": JSON.stringify({ version: 1, tasks: [] }),
       },
     });
 
@@ -94,7 +94,7 @@ describe("resolveRoadmapPath", () => {
       }),
       "my-docs": {
         global: {
-          "roadmap.json": JSON.stringify({ version: 1, phases: [] }),
+          "roadmap.json": JSON.stringify({ version: 1, tasks: [] }),
         },
       },
     });
@@ -109,7 +109,7 @@ describe("resolveRoadmapPath", () => {
     await createTestStructure(tempDir, {
       ".architext": {
         global: {
-          "roadmap.json": JSON.stringify({ version: 1, phases: [] }),
+          "roadmap.json": JSON.stringify({ version: 1, tasks: [] }),
         },
       },
     });
@@ -122,7 +122,7 @@ describe("resolveRoadmapPath", () => {
 
   it("应回退到扁平路径 roadmap.json", async () => {
     await createTestStructure(tempDir, {
-      "roadmap.json": JSON.stringify({ version: 1, phases: [] }),
+      "roadmap.json": JSON.stringify({ version: 1, tasks: [] }),
     });
 
     const result = await resolveRoadmapPath(tempDir);
@@ -132,7 +132,7 @@ describe("resolveRoadmapPath", () => {
   it("应回退到扁平路径 global/roadmap.json（根目录）", async () => {
     await createTestStructure(tempDir, {
       global: {
-        "roadmap.json": JSON.stringify({ version: 1, phases: [] }),
+        "roadmap.json": JSON.stringify({ version: 1, tasks: [] }),
       },
     });
 
@@ -191,6 +191,7 @@ describe("Formatter", () => {
     it("应包含图标、ID 和标题", () => {
       const task: Task = {
         id: "T-001",
+        phase: "core",
         title: "Setup project",
         status: "pending",
       };
@@ -202,10 +203,20 @@ describe("Formatter", () => {
 
     it("应正确格式化不同状态的任务", () => {
       const tasks: Task[] = [
-        { id: "T-001", title: "Pending task", status: "pending" },
-        { id: "T-002", title: "Active task", status: "active" },
-        { id: "T-003", title: "Done task", status: "done" },
-        { id: "T-004", title: "Blocked task", status: "blocked" },
+        {
+          id: "T-001",
+          phase: "core",
+          title: "Pending task",
+          status: "pending",
+        },
+        { id: "T-002", phase: "core", title: "Active task", status: "active" },
+        { id: "T-003", phase: "core", title: "Done task", status: "done" },
+        {
+          id: "T-004",
+          phase: "core",
+          title: "Blocked task",
+          status: "blocked",
+        },
       ];
 
       tasks.forEach((task) => {
@@ -226,68 +237,66 @@ describe("Formatter", () => {
 describe("Handlers", () => {
   let tempDir: string;
 
-  /** 标准测试用 Roadmap JSON */
+  /** 标准测试用 Roadmap JSON（扁平 tasks 结构） */
   const SAMPLE_ROADMAP: RoadmapData = {
     version: 1,
     projectStatus: "active",
     lastUpdated: "2024-01-01",
-    phases: [
+    tasks: [
       {
-        id: "phase-1",
-        name: "Infrastructure",
-        tasks: [
-          {
-            id: "INF-01",
-            title: "Project Scaffolding",
-            status: "done",
-            goal: "Initialize project structure",
-            deps: [],
-            tag: "Infra",
-            slug: "Project_Scaffolding",
-          },
-          {
-            id: "INF-02",
-            title: "Core Calculator Domain",
-            status: "done",
-            goal: "Define core domain models",
-            deps: ["INF-01"],
-            tag: "Infra",
-            slug: "Core_Calculator_Domain",
-          },
-        ],
+        id: "INF-01",
+        phase: "infra",
+        title: "Project Scaffolding",
+        status: "done",
+        description: "Initialize project",
+        goal: "Initialize project structure",
+        deps: [],
+        tag: "Infra",
+        slug: "Project_Scaffolding",
       },
       {
-        id: "phase-2",
-        name: "Core Features",
-        tasks: [
-          {
-            id: "FEAT-01",
-            title: "Basic Calculator UI",
-            status: "pending",
-            goal: "Implement basic calculator",
-            deps: ["INF-02"],
-            tag: "Core",
-            slug: "Basic_Calculator_UI",
-          },
-          {
-            id: "FEAT-02",
-            title: "History & Persistence",
-            status: "pending",
-            goal: "Implement history feature",
-            deps: ["INF-02"],
-            tag: "Core",
-            slug: "History_Persistence",
-          },
-          {
-            id: "FEAT-03",
-            title: "Responsive Layout",
-            status: "pending",
-            goal: "Mobile-first responsive design",
-            deps: ["FEAT-01"],
-            tag: "UI",
-            slug: "Responsive_Layout",
-          },
-        ],
+        id: "INF-02",
+        phase: "infra",
+        title: "Core Calculator Domain",
+        status: "done",
+        description: "Define domain models",
+        goal: "Define core domain models",
+        deps: ["INF-01"],
+        tag: "Infra",
+        slug: "Core_Calculator_Domain",
+      },
+      {
+        id: "FEAT-01",
+        phase: "core",
+        title: "Basic Calculator UI",
+        status: "pending",
+        description: "Calculator UI",
+        goal: "Implement basic calculator",
+        deps: ["INF-02"],
+        tag: "Core",
+        slug: "Basic_Calculator_UI",
+      },
+      {
+        id: "FEAT-02",
+        phase: "core",
+        title: "History & Persistence",
+        status: "pending",
+        description: "History feature",
+        goal: "Implement history feature",
+        deps: ["INF-02"],
+        tag: "Core",
+        slug: "History_Persistence",
+      },
+      {
+        id: "FEAT-03",
+        phase: "core",
+        title: "Responsive Layout",
+        status: "pending",
+        description: "Responsive design",
+        goal: "Mobile-first responsive design",
+        deps: ["FEAT-01"],
+        tag: "UI",
+        slug: "Responsive_Layout",
       },
     ],
   };
@@ -322,19 +331,20 @@ describe("Handlers", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [
-              { id: "T-001", title: "First", status: "pending", deps: [] },
-              {
-                id: "T-002",
-                title: "Depends on ghost",
-                status: "active",
-                deps: ["T-001", "T-GHOST"],
-              },
-            ],
+            id: "T-001",
+            phase: "infra",
+            title: "First",
+            status: "pending",
+            deps: [],
+          },
+          {
+            id: "T-002",
+            phase: "core",
+            title: "Depends on ghost",
+            status: "active",
+            deps: ["T-001", "T-GHOST"],
           },
         ],
       };
@@ -360,17 +370,14 @@ describe("Handlers", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [{ id: "DUP-01", title: "Original", status: "pending" }],
+            id: "DUP-01",
+            phase: "infra",
+            title: "Original",
+            status: "pending",
           },
-          {
-            id: "phase-2",
-            name: "Phase 2",
-            tasks: [{ id: "DUP-01", title: "Duplicate", status: "done" }],
-          },
+          { id: "DUP-01", phase: "core", title: "Duplicate", status: "done" },
         ],
       };
 
@@ -395,13 +402,12 @@ describe("Handlers", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Phase 1",
-            tasks: [
-              { id: "T-001", title: "Bad status", status: "invalid_status" },
-            ],
+            id: "T-001",
+            phase: "core",
+            title: "Bad status",
+            status: "invalid_status",
           },
         ],
       } as unknown as RoadmapData;
@@ -413,6 +419,31 @@ describe("Handlers", () => {
         expect(error).toBeInstanceOf(AppError);
         expect((error as AppError).code).toBe("SCHEMA_VALIDATION_ERROR");
         expect((error as AppError).message).toContain("status");
+      }
+    });
+
+    it("无效的 phase 值应在 Schema 校验阶段报错", async () => {
+      const badData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T-001",
+            phase: "invalid_phase",
+            title: "Bad phase",
+            status: "pending",
+          },
+        ],
+      } as unknown as RoadmapData;
+
+      try {
+        await setupRoadmap(badData);
+        expect.fail("Should have thrown");
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).code).toBe("SCHEMA_VALIDATION_ERROR");
+        expect((error as AppError).message).toContain("phase");
       }
     });
   });
@@ -446,10 +477,10 @@ describe("Handlers", () => {
       await handleUpdateStatus(data, roadmapPath, "FEAT-01", "done");
 
       const updated: RoadmapData = await fs.readJSON(roadmapPath);
-      const task = updated.phases[1].tasks[0];
+      const task = updated.tasks.find((t) => t.id === "FEAT-01");
 
-      expect(task.id).toBe("FEAT-01");
-      expect(task.status).toBe("done");
+      expect(task?.id).toBe("FEAT-01");
+      expect(task?.status).toBe("done");
     });
 
     it("应正确更新任务状态到 active", async () => {
@@ -457,9 +488,9 @@ describe("Handlers", () => {
       await handleUpdateStatus(data, roadmapPath, "FEAT-01", "active");
 
       const updated: RoadmapData = await fs.readJSON(roadmapPath);
-      const task = updated.phases[1].tasks[0];
+      const task = updated.tasks.find((t) => t.id === "FEAT-01");
 
-      expect(task.status).toBe("active");
+      expect(task?.status).toBe("active");
     });
 
     it("应正确更新任务状态到 blocked", async () => {
@@ -467,9 +498,9 @@ describe("Handlers", () => {
       await handleUpdateStatus(data, roadmapPath, "FEAT-02", "blocked");
 
       const updated: RoadmapData = await fs.readJSON(roadmapPath);
-      const task = updated.phases[1].tasks[1];
+      const task = updated.tasks.find((t) => t.id === "FEAT-02");
 
-      expect(task.status).toBe("blocked");
+      expect(task?.status).toBe("blocked");
     });
 
     it("应更新 lastUpdated 时间戳", async () => {
@@ -485,30 +516,20 @@ describe("Handlers", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Infrastructure",
-            tasks: [
-              {
-                id: "INF-01",
-                title: "Scaffolding",
-                status: "active",
-                deps: [],
-              },
-            ],
+            id: "INF-01",
+            phase: "infra",
+            title: "Scaffolding",
+            status: "active",
+            deps: [],
           },
           {
-            id: "phase-2",
-            name: "Features",
-            tasks: [
-              {
-                id: "FEAT-01",
-                title: "Feature A",
-                status: "blocked",
-                deps: ["INF-01"],
-              },
-            ],
+            id: "FEAT-01",
+            phase: "core",
+            title: "Feature A",
+            status: "blocked",
+            deps: ["INF-01"],
           },
         ],
       };
@@ -517,8 +538,10 @@ describe("Handlers", () => {
       await handleUpdateStatus(data, roadmapPath, "INF-01", "done");
 
       const updated: RoadmapData = await fs.readJSON(roadmapPath);
-      expect(updated.phases[0].tasks[0].status).toBe("done");
-      expect(updated.phases[1].tasks[0].status).toBe("pending");
+      const infraTask = updated.tasks.find((t) => t.id === "INF-01");
+      const featTask = updated.tasks.find((t) => t.id === "FEAT-01");
+      expect(infraTask?.status).toBe("done");
+      expect(featTask?.status).toBe("pending");
     });
 
     it("多依赖未全部完成时不应解锁下游任务", async () => {
@@ -526,36 +549,27 @@ describe("Handlers", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Infrastructure",
-            tasks: [
-              {
-                id: "INF-01",
-                title: "Scaffolding",
-                status: "active",
-                deps: [],
-              },
-              {
-                id: "INF-02",
-                title: "Core Domain",
-                status: "pending",
-                deps: [],
-              },
-            ],
+            id: "INF-01",
+            phase: "infra",
+            title: "Scaffolding",
+            status: "active",
+            deps: [],
           },
           {
-            id: "phase-2",
-            name: "Features",
-            tasks: [
-              {
-                id: "FEAT-01",
-                title: "Feature A",
-                status: "blocked",
-                deps: ["INF-01", "INF-02"],
-              },
-            ],
+            id: "INF-02",
+            phase: "infra",
+            title: "Core Domain",
+            status: "pending",
+            deps: [],
+          },
+          {
+            id: "FEAT-01",
+            phase: "core",
+            title: "Feature A",
+            status: "blocked",
+            deps: ["INF-01", "INF-02"],
           },
         ],
       };
@@ -565,7 +579,8 @@ describe("Handlers", () => {
 
       const updated: RoadmapData = await fs.readJSON(roadmapPath);
       // INF-02 还未 done，FEAT-01 应仍为 blocked
-      expect(updated.phases[1].tasks[0].status).toBe("blocked");
+      const featTask = updated.tasks.find((t) => t.id === "FEAT-01");
+      expect(featTask?.status).toBe("blocked");
     });
 
     it("多依赖全部完成后应解锁下游任务", async () => {
@@ -573,31 +588,27 @@ describe("Handlers", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Infrastructure",
-            tasks: [
-              { id: "INF-01", title: "Scaffolding", status: "done", deps: [] },
-              {
-                id: "INF-02",
-                title: "Core Domain",
-                status: "active",
-                deps: [],
-              },
-            ],
+            id: "INF-01",
+            phase: "infra",
+            title: "Scaffolding",
+            status: "done",
+            deps: [],
           },
           {
-            id: "phase-2",
-            name: "Features",
-            tasks: [
-              {
-                id: "FEAT-01",
-                title: "Feature A",
-                status: "blocked",
-                deps: ["INF-01", "INF-02"],
-              },
-            ],
+            id: "INF-02",
+            phase: "infra",
+            title: "Core Domain",
+            status: "active",
+            deps: [],
+          },
+          {
+            id: "FEAT-01",
+            phase: "core",
+            title: "Feature A",
+            status: "blocked",
+            deps: ["INF-01", "INF-02"],
           },
         ],
       };
@@ -606,7 +617,8 @@ describe("Handlers", () => {
       await handleUpdateStatus(data, roadmapPath, "INF-02", "done");
 
       const updated: RoadmapData = await fs.readJSON(roadmapPath);
-      expect(updated.phases[1].tasks[0].status).toBe("pending");
+      const featTask = updated.tasks.find((t) => t.id === "FEAT-01");
+      expect(featTask?.status).toBe("pending");
     });
 
     it("非 blocked 的下游任务不应被级联修改", async () => {
@@ -614,30 +626,20 @@ describe("Handlers", () => {
         version: 1,
         projectStatus: "active",
         lastUpdated: "2024-01-01",
-        phases: [
+        tasks: [
           {
-            id: "phase-1",
-            name: "Infrastructure",
-            tasks: [
-              {
-                id: "INF-01",
-                title: "Scaffolding",
-                status: "active",
-                deps: [],
-              },
-            ],
+            id: "INF-01",
+            phase: "infra",
+            title: "Scaffolding",
+            status: "active",
+            deps: [],
           },
           {
-            id: "phase-2",
-            name: "Features",
-            tasks: [
-              {
-                id: "FEAT-01",
-                title: "Feature A",
-                status: "active",
-                deps: ["INF-01"],
-              },
-            ],
+            id: "FEAT-01",
+            phase: "core",
+            title: "Feature A",
+            status: "active",
+            deps: ["INF-01"],
           },
         ],
       };
@@ -647,7 +649,8 @@ describe("Handlers", () => {
 
       const updated: RoadmapData = await fs.readJSON(roadmapPath);
       // FEAT-01 是 active 而非 blocked，不应被改
-      expect(updated.phases[1].tasks[0].status).toBe("active");
+      const featTask = updated.tasks.find((t) => t.id === "FEAT-01");
+      expect(featTask?.status).toBe("active");
     });
   });
 
@@ -664,7 +667,7 @@ describe("Handlers", () => {
         version: 1,
         projectStatus: "planning",
         lastUpdated: "2024-01-01",
-        phases: [],
+        tasks: [],
       };
 
       const { data } = await setupRoadmap(emptyData);
