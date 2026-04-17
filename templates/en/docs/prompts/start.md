@@ -131,10 +131,24 @@
     ### 3.3 Custom Rules (rule file `90_custom_rules`)
     - Extract rule-like content from Brief supplementary notes + convert tech red lines to prohibitions
 
-    ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    [[SKILL: archi-decompose-roadmap|Follow the skill protocol to generate task chain from Brief task list, write to roadmap.json; proceed to next step immediately without user confirmation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
+    ### 3.4 UI Context (UI projects only)
+    **Action**: Extract UI screen planning from Brief "core tasks", generate `ui_context.md`.
 
-    ### 3.5 Other global docs (as needed)
+    **Screen Planning Rules**:
+    - Extract screens (S-01, S-02...) from Brief feature list by user journey
+    - Each screen corresponds to a core interaction scenario (e.g., login, home, detail)
+    - Screen IDs are permanent; later Roadmap tasks map via `screens` field
+
+    **Output**: `[[__DOCS_DIR__]]/global/ui_context.md`
+
+    [[INCLUDE: shared/ui-context-format.md]]
+
+    **Output**: ui_context.md generated, proceed to 3.5 Roadmap.
+
+    ### 3.5 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+    [[SKILL: archi-decompose-roadmap|Follow the skill protocol to generate task chain from Brief task list + ui_context (UI projects only), write to roadmap.json. Proceed to next step immediately without user confirmation.]][[NO-SKILL: (Skill not installed: read `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` and follow its protocol)]]
+
+    ### 3.6 Other global docs (as needed)
     - `dictionary.json`: Extract domain terms from Brief
     - (Data projects only) `data_snapshot.json`: Initialize core entity skeleton; write empty template if no data description
     - (UI projects only) `design_tokens.json`: Fill aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens from "Style & Tone" and "Visual Reference"
@@ -144,13 +158,9 @@
     - (CLI projects only) `command_api.json`: Initial command registration; extract from Brief if command description exists, otherwise write empty template
     - (Lib projects only) `public_api.json`: Initial export registration; extract from Brief if export description exists, otherwise write empty template
 
-    UI projects only: **UI concept design**: Skip — completed independently by `/archi.ui`. Only ensure `design_tokens.json` is populated.
-
-    ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
+    ### 3.7 Map (`[[__DOCS_DIR__]]/global/map.json`)
     - `directoryMapping`: Pre-register core directory skeleton from tech_stack architecture pattern
     - `logicalTopology` / `criticalUserJourneys` / `featureRelations`: Empty array for now
-
-    UI projects only: **UI concept design**: Skip — completed independently by `/archi.ui`.
 
     **Output**: Write all files, then run `npx archi render`. Enter step_4_verify.
 </step_3_constitution>
@@ -172,6 +182,7 @@
     □ map.json — core directory skeleton pre-registered (directoryMapping)
     □ dictionary.json + error_codes.json + env_registry.json — domain terms, core error codes, env vars extracted
     □ (UI projects only) design_tokens.json — generated
+    □ (UI projects only) ui_context.md — screen planning generated (S-01, S-02...)
     □ (Data projects only) data_snapshot.json — initial entity skeleton written
     □ (API projects only) api_snapshot.json — initial API endpoints registered
     □ (CLI projects only) command_api.json — initial CLI commands registered
@@ -190,7 +201,7 @@
 
     | Priority | Action | Notes |
     |:---|:---|:---|
-    | (UI projects only) Recommended | `/archi.ui` | Generate UI concept design (`screens/` multi-file structure) |
+    | (UI projects only) Recommended | `/archi.ui` | Generate UI concept design files (`screens/` directory) |
     | Recommended | `/archi.plan INF-01` | Plan the first infrastructure task |
     | (Post-INF) | `/archi.script` | Generate AI automation scripts (validate/dev-up/dev-reset) |
     | Optional | `/archi.scope <scope-brief.md>` | If more requirements to decompose, append to Roadmap |

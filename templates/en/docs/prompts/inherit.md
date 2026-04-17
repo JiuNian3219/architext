@@ -138,9 +138,23 @@
     - **With Brief**: Merge supplementary notes + code eslint/prettier
     - **Without Brief**: Extract from eslint/prettier/editorconfig; identify team conventions from code patterns
 
-    ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+    ### 3.4 UI Context (UI projects only)
+    **Action**: Extract screen planning from existing UI code, generate `ui_context.md`.
 
-    **With Brief**: [[SKILL: archi-decompose-roadmap|Generate phase-1/2 task chain from Brief task list]]; code functional modules → phase-0 LEG-xx (status=done). Merge both.
+    **Extraction Rules**:
+    - Extract screens (S-01, S-02...) from route config/page components
+    - Each page/route corresponds to one screen
+    - Screen IDs are permanent; later Roadmap tasks map via `screens` field
+
+    **Output**: `[[__DOCS_DIR__]]/global/ui_context.md`
+
+    [[INCLUDE: shared/ui-context-format.md]]
+
+    **Output**: ui_context.md generated, proceed to 3.5 Roadmap.
+
+    ### 3.5 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+
+    **With Brief**: [[SKILL: archi-decompose-roadmap|Generate phase-1/2 task chain from Brief task list + ui_context (UI projects only)]]; code functional modules → phase-0 LEG-xx (status=done). Merge both.
     **Without Brief**: Code functional modules only → phase-0 LEG-xx; phase-1/2 remain empty skeletons.
 
     **Structure**:
@@ -176,7 +190,7 @@
     - Shared/infrastructure code does not enter roadmap; only map.json directoryMapping
     - Dependencies between LEG tasks must be in deps
 
-    ### 3.5 Task Stub Specs
+    ### 3.6 Task Stub Specs
 
     Create `[[__DOCS_DIR__]]/tasks/LEG-xx_<Slug>/spec.md` for each LEG task:
 
@@ -198,7 +212,7 @@
 
     > Stub is starting point, not final state. Enrich later via `/archi.edit` (auto-triggers `step_1_5_enrich` flow).
 
-    ### 3.6 map.json population
+    ### 3.7 map.json population
     - `directoryMapping`: Each core directory → `{ "path", "layer", "responsibility", "publicAPI" }`
     - `logicalTopology`: Inter-module dependencies → `{ "from", "to", "type" }` (imports / calls / extends)
     - `criticalUserJourneys`: Core flows → `{ "name", "steps": ["module → module → ..."] }`
@@ -206,7 +220,7 @@
       **Recognition pattern**: Module that iterates/enumerates/dynamic-loads same-type modules, or described as "aggregating/listing/registering all X".
       Record format: `{ "aggregator", "sources", "evidence", "checkNote" }`
 
-    ### 3.7 Other global docs (as needed)
+    ### 3.8 Other global docs (as needed)
     - `dictionary.json`: Extract domain terminology from code
     - (UI projects only) `design_tokens.json`: Extract from CSS variables/theme
     - (Data projects only) `data_snapshot.json`: Extract from schema/migration
@@ -215,8 +229,6 @@
     - (CLI projects only) `command_api.json`: Extract commands from existing CLI entry code
     - (Lib projects only) `public_api.json`: Extract exports from package.json exports or entry files
     - `error_codes.json`: Extract from error definitions in code
-
-    UI projects only: **UI concept design (Adopt mode)**: Skip — completed independently by `/archi.ui`.
 
     **Output**: Write all files, run `npx archi render`. Enter step_4_verify.
 </step_3_constitution>
@@ -239,6 +251,7 @@
     □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations all filled
     □ dictionary.json + error_codes.json + env_registry.json — extracted from codebase
     □ (UI projects only) design_tokens.json — Adopt mode executed
+    □ (UI projects only) ui_context.md — screen planning extracted from routes/page components
     □ (Data projects only) data_snapshot.json — initial entity skeleton written
     □ (API projects only) api_snapshot.json — initial API endpoints registered
     □ (CLI projects only) command_api.json — initial CLI commands registered
@@ -259,7 +272,7 @@
     | Priority | Action | Notes |
     |:---|:---|:---|
     | 1 | Review vision.md | Confirm AI-completed vision description |
-    | (UI projects only) Recommended | `/archi.ui` | Generate UI concept design (`screens/` multi-file structure, Adopt mode) |
+    | (UI projects only) Recommended | `/archi.ui` | Generate UI concept design files (`screens/` directory, Adopt mode) |
     | (Post-INF) | `/archi.script` | Generate AI automation scripts (validate/dev-up/dev-reset) |
     | 2 | `/archi.edit LEG-xx` | Enrich core module stubs into full spec (auto-triggers Enrich flow) |
     | 3 | `/archi.scope [file_path]` | Plan new features/major modules |

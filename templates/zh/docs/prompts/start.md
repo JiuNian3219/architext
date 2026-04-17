@@ -131,10 +131,24 @@
     ### 3.3 Custom Rules (规则文件 `90_custom_rules`)
     - 从 Brief 补充说明提取规则性内容 + 技术红线转化禁止规则
 
-    ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
-    [[SKILL: archi-decompose-roadmap|按 skill 的协议，基于 Brief 任务列表生成任务链，写入 roadmap.json，生成后直接进入下一步，无需用户确认。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
+    ### 3.4 UI Context（仅ui项目）
+    **Action**: 基于 Brief「核心任务」提取 UI 屏幕规划，生成 `ui_context.md`。
 
-    ### 3.5 其他全局文档 (按需)
+    **屏幕规划规则**:
+    - 从 Brief 功能列表按用户旅程提取屏幕（S-01, S-02...）
+    - 每个屏幕对应一个核心交互场景（如登录、首页、详情）
+    - 屏幕 ID 永久不变，后续 Roadmap 任务通过 `screens` 字段映射
+
+    **产出物**: `[[__DOCS_DIR__]]/global/ui_context.md`
+
+    [[INCLUDE: shared/ui-context-format.md]]
+
+    **Output**: ui_context.md 已生成，进入 3.5 Roadmap。
+
+    ### 3.5 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+    [[SKILL: archi-decompose-roadmap|按 skill 的协议，基于 Brief 任务列表 + ui_context（仅ui项目）生成任务链，写入 roadmap.json。生成后直接进入下一步，无需用户确认。]][[NO-SKILL: （Skill 未安装：请阅读 `[[__DOCS_DIR__]]/skills/archi-decompose-roadmap/SKILL.md` 并遵循其协议执行）]]
+
+    ### 3.6 其他全局文档 (按需)
     - `dictionary.json`: 从 Brief 提取领域术语
     - （仅data项目） `data_snapshot.json`: 初始化核心实体骨架；无数据描述时写入空模板
     - （仅ui项目） `design_tokens.json`: 基于「风格与调性」和「视觉参考」填充 aestheticDirection / primitivePalette / mode / motion / illustration / semanticTokens
@@ -144,9 +158,7 @@
     - （仅cli项目） `command_api.json`: 初始命令注册；Brief 有命令描述时从中提取，否则写入空模板
     - （仅lib项目） `public_api.json`: 初始导出注册；Brief 有导出描述时从中提取，否则写入空模板
 
-    仅ui项目: **UI 概念设计**: 跳过 — 由 `/archi.ui` 独立完成。仅确保 `design_tokens.json` 已填充。
-
-    ### 3.6 Map (`[[__DOCS_DIR__]]/global/map.json`)
+    ### 3.7 Map (`[[__DOCS_DIR__]]/global/map.json`)
     - `directoryMapping`: 基于 tech_stack 架构模式预注册核心目录骨架
     - `logicalTopology` / `criticalUserJourneys` / `featureRelations`: 暂为空数组
 
@@ -169,7 +181,8 @@
     □ roadmap.json — archi-decompose-roadmap Skill 已执行，任务链已生成
     □ map.json — 核心目录骨架已预注册（directoryMapping + logicalTopology + featureRelations）
     □ dictionary.json + error_codes.json + env_registry.json — 领域术语、核心错误码、环境变量已提取
-    □ （仅ui项目）design_tokens.json + ui_context.md — 已生成
+    □ （仅ui项目）design_tokens.json — 已生成
+    □ （仅ui项目）ui_context.md — 屏幕规划已生成（S-01, S-02...）
     □ （仅data项目）data_snapshot.json — 初始实体骨架已写入
     □ （仅api项目）api_snapshot.json — 初始 API 端点已注册
     □ （仅cli项目）command_api.json — 初始 CLI 命令已注册
@@ -188,7 +201,7 @@
 
     | 优先级 | 行动 | 说明 |
     |:---|:---|:---|
-    | （仅ui项目） 推荐 | `/archi.ui` | 生成 UI 概念设计（`screens/` 多文件结构） |
+    | （仅ui项目） 推荐 | `/archi.ui` | 生成 UI 概念设计文件（`screens/` 目录） |
     | 推荐 | `/archi.plan INF-01` | 规划第一个基础设施任务 |
     | （INF 完成后） | `/archi.script` | 生成 AI 自动化脚本（validate/dev-up/dev-reset） |
     | 可选 | `/archi.scope <scope-brief.md>` | 如有更多需求待分解，追加到 Roadmap |

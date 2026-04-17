@@ -138,9 +138,23 @@
     - **有 Brief**：从补充说明 + 代码 eslint/prettier 合并
     - **无 Brief**：从 eslint/prettier/editorconfig 提取，从代码模式识别团队约定
 
-    ### 3.4 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+    ### 3.4 UI Context（仅ui项目）
+    **Action**: 从已有 UI 代码提取屏幕规划，生成 `ui_context.md`。
 
-    **有 Brief 时**：[[SKILL: archi-decompose-roadmap|基于 Brief 任务列表生成 phase-1/2 任务链]]；代码功能模块 → phase-0 LEG-xx（status=done）。合并两者。
+    **提取规则**:
+    - 从路由配置/页面组件提取屏幕（S-01, S-02...）
+    - 每个页面/路由对应一个屏幕
+    - 屏幕 ID 永久不变，后续 Roadmap 任务通过 `screens` 字段映射
+
+    **产出物**: `[[__DOCS_DIR__]]/global/ui_context.md`
+
+    [[INCLUDE: shared/ui-context-format.md]]
+
+    **Output**: ui_context.md 已生成，进入 3.5 Roadmap。
+
+    ### 3.5 Roadmap (`[[__DOCS_DIR__]]/global/roadmap.json`)
+
+    **有 Brief 时**：[[SKILL: archi-decompose-roadmap|基于 Brief 任务列表 + ui_context（仅ui项目）生成 phase-1/2 任务链]]；代码功能模块 → phase-0 LEG-xx（status=done）。合并两者。
     **无 Brief 时**：仅代码功能模块 → phase-0 LEG-xx；phase-1/2 保留空骨架。
 
     **结构**:
@@ -176,7 +190,7 @@
     - 共享/基建代码不进 roadmap，仅进 map.json directoryMapping
     - LEG 间如有依赖关系须在 deps 中体现
 
-    ### 3.5 Task Stub Specs
+    ### 3.6 Task Stub Specs
 
     为每个 LEG 任务创建 `[[__DOCS_DIR__]]/tasks/LEG-xx_<Slug>/spec.md`：
 
@@ -198,7 +212,7 @@
 
     > Stub 是起点，非终态。后续通过 `/archi.edit` 触发补全（自动进入 `step_1_5_enrich` 流程）。
 
-    ### 3.6 map.json 填充
+    ### 3.7 map.json 填充
     - `directoryMapping`: 每个核心目录 → `{ "path", "layer", "responsibility", "publicAPI" }`
     - `logicalTopology`: 模块间依赖 → `{ "from", "to", "type" }` (imports / calls / extends)
     - `criticalUserJourneys`: 核心流程 → `{ "name", "steps": ["module → module → ..."] }`
@@ -206,7 +220,7 @@
       **识别特征**: 某模块遍历/枚举/动态加载同类模块，或其描述为「汇总/列举/注册所有 X」。
       每条记录格式: `{ "aggregator", "sources", "evidence", "checkNote" }`
 
-    ### 3.7 其他全局文档（按需）
+    ### 3.8 其他全局文档（按需）
     - `dictionary.json`: 从代码提取领域术语
     - （仅ui项目） `design_tokens.json`: 从 CSS 变量/主题提取
     - （仅data项目） `data_snapshot.json`: 从 schema/migration 提取
@@ -215,8 +229,6 @@
     - （仅cli项目） `command_api.json`: 从现有 CLI 入口代码提取命令
     - （仅lib项目） `public_api.json`: 从 package.json exports 或入口文件提取导出
     - `error_codes.json`: 从代码中的错误定义提取
-
-    仅ui项目: **UI 概念设计**: 跳过 — 由 `/archi.ui` 独立完成。仅确保 `design_tokens.json` 已从 CSS 变量/主题提取填充。
 
     **Output**: 写入所有文件，运行 `npx archi render`。进入 step_4_verify。
 </step_3_constitution>
@@ -239,6 +251,7 @@
     □ map.json — directoryMapping + logicalTopology + criticalUserJourneys + featureRelations 均已填充
     □ dictionary.json + error_codes.json + env_registry.json — 从代码提取完毕
     □ （仅ui项目）design_tokens.json — Adopt 模式已从 CSS 提取
+    □ （仅ui项目）ui_context.md — 从路由/页面组件提取屏幕规划已生成
     □ （仅data项目）data_snapshot.json — 初始实体骨架已写入
     □ （仅api项目）api_snapshot.json — 初始 API 端点已注册
     □ （仅cli项目）command_api.json — 初始 CLI 命令已注册
@@ -259,7 +272,7 @@
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
     | 1 | 审查 vision.md | 确认 AI 补全的愿景描述是否准确 |
-    | （仅ui项目） 推荐 | `/archi.ui` | 生成 UI 概念设计（`screens/` 多文件结构，Adopt 模式） |
+    | （仅ui项目） 推荐 | `/archi.ui` | 生成 UI 概念设计文件（`screens/` 目录，Adopt 模式） |
     | （有基建后） | `/archi.script` | 生成 AI 自动化脚本（validate/dev-up/dev-reset） |
     | 2 | `/archi.edit LEG-xx` | 对核心模块补全完整 spec（自动触发 Enrich 流程） |
     | 3 | `/archi.scope [file_path]` | 规划新功能/大模块 |

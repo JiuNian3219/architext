@@ -154,29 +154,13 @@ Generate HTML → Run checks → Any failures?
 
 **Self-drawn SVG** (no icon library): stroke="currentColor", stroke-width 1.5-2, fill="currentColor", width="1em" height="1em"
 
-### Step 5 — Generate AI Index
+### Step 5 — Update AI Index
 
-**Output**: `[[__DOCS_DIR__]]/global/ui_context.md`
+**Prerequisite**: `ui_context.md` was initialized by `/archi.start` with screen IDs and names. This step updates screen structure summary and file paths.
 
-```markdown
-# UI Context
-> Platform: [type] | Generated: YYYY-MM-DD
+**Update Content**: `[[__DOCS_DIR__]]/global/ui_context.md`
 
-## Screen Inventory
-| ID | Name | Route | File | States |
-|:---|:---|:---|:---|:---|
-| S-01 | [name] | [route] | screens/S-01.html | default, loading, empty, error |
-
-## Navigation Graph
-S-XX →（trigger）→ S-YY
-
-## Screen Structure Summary
-### S-XX · [Screen name]
-**Layout**: [e.g. "240px left sidebar + right content"]
-**File**: screens/S-XX.html
-**States**: default (core actions) | loading (skeleton) | empty | error
-**Key regions**: [from data-el: top nav, main form, submit button, error area]
-```
+[[INCLUDE: ../../docs/shared/ui-context-format.md]]
 
 ### Step 6 — Output Gate
 
@@ -189,7 +173,7 @@ Output summary: aesthetic direction + reference products, screen coverage list (
 □ `global/screens/index.html` generated with all screen links listed
 □ `global/screens/_shared.css` generated with design_tokens CSS variables
 □ `global/screens/S-XX.html` independent file generated for each screen
-□ `global/ui_context.md` generated with screen inventory containing `screens/S-XX.html` paths
+□ `global/ui_context.md` screen structure summary updated with file paths and key regions
 
 ---
 

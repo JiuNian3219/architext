@@ -154,29 +154,13 @@ check `design_tokens.json`:
 
 **自绘 SVG**（无图标库时）：stroke="currentColor"，stroke-width 1.5-2，fill="currentColor"，width="1em" height="1em"
 
-### Step 5 — 生成 AI 索引
+### Step 5 — 更新 AI 索引
 
-**输出**：`[[__DOCS_DIR__]]/global/ui_context.md`
+**前置**：`ui_context.md` 已由 `/archi.start` 初始化屏幕 ID 和名称。本步骤更新屏幕结构摘要和文件路径。
 
-```markdown
-# UI Context
-> 平台: [类型] | 生成: YYYY-MM-DD
+**更新内容**：`[[__DOCS_DIR__]]/global/ui_context.md`
 
-## 屏幕索引
-| ID | 名称 | 路由 | 文件 | 状态 |
-|:---|:---|:---|:---|:---|
-| S-01 | [名] | [路由] | screens/S-01.html | default, loading, empty, error |
-
-## 导航关系
-S-XX →（触发条件）→ S-YY
-
-## 屏幕结构摘要
-### S-XX · [屏幕名]
-**布局**: [描述，如"左侧边栏 240px + 右内容区"]
-**文件**: screens/S-XX.html
-**状态**: default（核心操作）| loading（骨架屏）| empty | error
-**关键区域**: [data-el 提取：顶部导航栏、主表单区、提交按钮、错误提示区]
-```
+[[INCLUDE: ../../docs/shared/ui-context-format.md]]
 
 ### Step 6 — Output Gate
 
@@ -189,7 +173,7 @@ S-XX →（触发条件）→ S-YY
 □ `global/screens/index.html` 已生成且列出所有屏幕链接
 □ `global/screens/_shared.css` 已生成且含 design_tokens CSS 变量
 □ `global/screens/S-XX.html` 每个屏幕独立文件已生成
-□ `global/ui_context.md` 已生成且屏幕索引含 `screens/S-XX.html` 路径
+□ `global/ui_context.md` 屏幕结构摘要已更新，含文件路径和关键区域
 
 ---
 
