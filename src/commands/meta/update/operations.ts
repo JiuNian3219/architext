@@ -203,11 +203,13 @@ export async function deployTemplateOnlyRules(
     (e) => !!EDITOR_CONFIGS[e]?.subagents,
   );
   const hasCommands = config.editors.some((e) => !!EDITOR_CONFIGS[e]?.commands);
+  const whenContext = { features: config.features ?? [] };
   const resolver = (content: string) =>
     resolveCapabilityRefs(
       content,
       { hasSkills, hasSubagents, hasCommands },
       docsSource,
+      whenContext,
     );
 
   const deployed: string[] = [];

@@ -23,6 +23,7 @@ import {
   GLOBAL_RULES,
   getPromptsPathForEditor,
   resolveCapabilityRefs,
+  type WhenContext,
 } from "./rules.ts";
 import { getCurrentFileModel } from "./file-model.ts";
 import { TemplateManager } from "./template.ts";
@@ -51,12 +52,15 @@ const t = createT(getSystemLocale(), "scaffold");
  *
  * @param editorConfig - 编辑器配置
  * @param includeBaseDir - 基础目录
+ * @param features - 项目特征标签（用于 WHEN 条件判断）
  * @returns 能力标记解析器
  */
 function buildEditorResolver(
   editorConfig: (typeof EDITOR_CONFIGS)[keyof typeof EDITOR_CONFIGS],
   includeBaseDir: string,
+  features: ProjectFeature[] = [],
 ) {
+  const whenContext: WhenContext = { features };
   return (content: string) =>
     resolveCapabilityRefs(
       content,
@@ -66,6 +70,7 @@ function buildEditorResolver(
         hasCommands: !!editorConfig.commands,
       },
       includeBaseDir,
+      whenContext,
     );
 }
 
@@ -74,17 +79,24 @@ function buildEditorResolver(
  *
  * @param editors - 编辑器列表
  * @param includeBaseDir - 基础目录
+ * @param features - 项目特征标签（用于 WHEN 条件判断）
  * @returns 能力标记解析器
  */
-function buildDocsResolver(editors: SupportedEditor[], includeBaseDir: string) {
+function buildDocsResolver(
+  editors: SupportedEditor[],
+  includeBaseDir: string,
+  features: ProjectFeature[] = [],
+) {
   const hasSkills = editors.some((e) => !!EDITOR_CONFIGS[e]?.skills);
   const hasSubagents = editors.some((e) => !!EDITOR_CONFIGS[e]?.subagents);
   const hasCommands = editors.some((e) => !!EDITOR_CONFIGS[e]?.commands);
+  const whenContext: WhenContext = { features };
   return (content: string) =>
     resolveCapabilityRefs(
       content,
       { hasSkills, hasSubagents, hasCommands },
       includeBaseDir,
+      whenContext,
     );
 }
 
@@ -150,7 +162,7 @@ export async function buildScaffoldOps(
         docDir,
       ),
     };
-    const editorResolver = buildEditorResolver(ec, docsSource);
+    const editorResolver = buildEditorResolver(ec, docsSource, features);
     const editorDir = path.join(cwd, ec.targetDir);
 
     for (const rule of model.rules) {
@@ -171,7 +183,7 @@ export async function buildScaffoldOps(
   for (const editor of editors) {
     const ec = EDITOR_CONFIGS[editor];
     if (!ec) continue;
-    const editorResolver = buildEditorResolver(ec, docsSource);
+    const editorResolver = buildEditorResolver(ec, docsSource, features);
 
     for (const prompt of model.prompts) {
       const src = path.join(promptsSource, `${prompt}.md`);
@@ -235,7 +247,7 @@ export async function buildScaffoldOps(
 
   // ── Doc Templates ─────────────────────────────────────────────────────────
   const templatesSource = path.join(sourceDir, "docs", "templates");
-  const docsResolver = buildDocsResolver(editors, docsSource);
+  const docsResolver = buildDocsResolver(editors, docsSource, features);
 
   for (const tmpl of model.docTemplates) {
     frameworkOps.push({

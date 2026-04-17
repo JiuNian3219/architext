@@ -190,6 +190,8 @@ export const BRIEF_ASSETS_DIR = "brief-assets";
  * - `[[SKILL: name|args]]`：Specialist Skill（协作型），同上下文执行
  * - `[[SUBAGENT: name|args]]`：Reviewer Skill（审查型），独立子代理执行
  * - `[[NO-SKILL: desc]]`：无 Skill 支持 → 展开为 `desc`；有 Skill → 移除
+ * - `[[NO-SUBAGENT: desc]]`：无 Subagent 支持 → 展开为 `desc`；有 Subagent → 移除
+ * - `[[WHEN: features | desc]]...[[/WHEN]]`：条件渲染块，features 匹配时展开为 desc + 内容
  *
  * SUBAGENT 降级策略：hasSubagents=false 时降级为同上下文 Skill 调用。
  */
@@ -200,18 +202,83 @@ export interface EditorCapabilities {
 }
 
 /**
+ * 条件渲染上下文，用于 `[[WHEN:]]` 指令的条件判断。
+ */
+export interface WhenContext {
+  /** 项目特征标签（来自 architext.json 的 features 字段） */
+  features: ProjectFeature[];
+}
+
+/**
+ * 检查项目特征是否满足 WHEN 条件。
+ *
+ * @param conditionFeatures 条件中的特征标签（逗号分隔，如 "ui,data"）
+ * @param projectFeatures 项目实际的特征标签
+ * @returns true 表示所有条件特征都在项目特征中
+ */
+function checkWhenCondition(
+  conditionFeatures: string,
+  projectFeatures: ProjectFeature[],
+): boolean {
+  const requiredFeatures = conditionFeatures
+    .split(",")
+    .map((f) => f.trim() as ProjectFeature);
+
+  // 所有条件特征都必须在项目特征中
+  return requiredFeatures.every((f) => projectFeatures.includes(f));
+}
+
+/**
+ * 解析 `[[WHEN: features | desc]]` 条件渲染指令。
+ *
+ * 语法：
+ * - `[[WHEN: ui | 仅UI项目: ]]` — 单特征
+ * - `[[WHEN: ui,data | 仅UI+Data项目: ]]` — 多特征（逗号分隔，必须全部匹配）
+ *
+ * 展开规则：
+ * - 条件匹配 → 展开为 `desc`
+ * - 条件不匹配 → 移除整块
+ *
+ * @param content 模板文件内容
+ * @param whenContext 条件渲染上下文（包含项目特征）
+ * @returns 处理后的内容
+ */
+export function resolveWhenRefs(
+  content: string,
+  whenContext: WhenContext,
+): string {
+  // [[WHEN: features | desc]] — 条件渲染
+  // 使用 (?:(?!\]\]).)*? 匹配任意字符直到遇到 ]]，允许 desc 包含单个 ]
+  content = content.replace(
+    /\[\[WHEN:\s*([^|]+)\s*\|\s*((?:(?!\]\]).)*?)\s*\]\]/g,
+    (_match, features: string, desc: string) => {
+      if (checkWhenCondition(features, whenContext.features)) {
+        // 条件匹配：展开为 desc
+        return desc;
+      }
+      // 条件不匹配：移除
+      return "";
+    },
+  );
+
+  return content;
+}
+
+/**
  * 根据编辑器能力集，解析模板中所有能力标记。
  *
- * 处理顺序：`[[INCLUDE:]]` → `[[SUBAGENT:]]` → `[[SKILL:]]` → `[[NO-SKILL:]]`
+ * 处理顺序：`[[INCLUDE:]]` → `[[WHEN:]]` → `[[SUBAGENT:]]` → `[[NO-SUBAGENT:]]` → `[[SKILL:]]` → `[[NO-SKILL:]]` → `[[NO-COMMANDS:]]`
  *
  * @param content 模板文件内容（已完成常规变量替换）
  * @param capabilities 目标编辑器能力集
  * @param includeBaseDir 共享片段的基础目录（`docs/` 源目录），用于解析 `[[INCLUDE: path]]`
+ * @param whenContext 条件渲染上下文（可选，用于 `[[WHEN:]]` 指令）
  */
 export function resolveCapabilityRefs(
   content: string,
   capabilities: EditorCapabilities,
   includeBaseDir?: string,
+  whenContext?: WhenContext,
 ): string {
   // [[INCLUDE: path]]：部署时展开为目标文件的完整内容
   if (includeBaseDir) {
@@ -226,6 +293,11 @@ export function resolveCapabilityRefs(
         }
       },
     );
+  }
+
+  // [[WHEN: features | desc]]...[[/WHEN]]：条件渲染块
+  if (whenContext) {
+    content = resolveWhenRefs(content, whenContext);
   }
 
   // [[SUBAGENT: name|args]]：Reviewer Skill，优先子代理执行
@@ -250,6 +322,13 @@ export function resolveCapabilityRefs(
     },
   );
 
+  // [[NO-SUBAGENT: desc]]：无 Subagent → 展开为 desc；有 Subagent → 移除
+  // 用于 SUBAGENT 降级时的提示文本：有子代理能力时移除，无子代理时展开
+  content = content.replace(
+    /\[\[NO-SUBAGENT:\s*((?:(?!\]\]).)*?)\s*\]\]/g,
+    (_match, desc: string) => (capabilities.hasSubagents ? "" : desc),
+  );
+
   // [[SKILL: name|args]]：Specialist Skill（协作型），同上下文执行
   content = content.replace(
     /\[\[SKILL: ([^|]+)\|(.+?)\]\]/g,
@@ -261,7 +340,7 @@ export function resolveCapabilityRefs(
 
   // [[NO-SKILL: desc]]：无 Skill → 展开为 desc；有 Skill → 移除
   content = content.replace(
-    /\[\[NO-SKILL: ([^\]]+)\]\]/g,
+    /\[\[NO-SKILL:\s*((?:(?!\]\]).)*?)\s*\]\]/g,
     (_match, desc: string) => (capabilities.hasSkills ? "" : desc),
   );
 

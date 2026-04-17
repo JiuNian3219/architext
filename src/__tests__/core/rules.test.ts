@@ -134,6 +134,52 @@ describe("resolveCapabilityRefs", () => {
 
       expect(result).toBe("请手动阅读文档执行");
     });
+
+    it("should allow single ] in desc", () => {
+      const input = "[[NO-SKILL: [错误码: ERR-001]]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: false,
+        hasSubagents: false,
+        hasCommands: false,
+      });
+
+      expect(result).toBe("[错误码: ERR-001]");
+    });
+  });
+
+  describe("[[NO-SUBAGENT:]] marker", () => {
+    it("should be removed when hasSubagents=true", () => {
+      const input = "[[NO-SUBAGENT: 无子代理支持]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      expect(result).toBe("");
+    });
+
+    it("should expand to desc when hasSubagents=false", () => {
+      const input = "[[NO-SUBAGENT: 无子代理支持]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: false,
+        hasCommands: false,
+      });
+
+      expect(result).toBe("无子代理支持");
+    });
+
+    it("should allow single ] in desc", () => {
+      const input = "[[NO-SUBAGENT: [降级到 Skill 调用]]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: false,
+        hasCommands: false,
+      });
+
+      expect(result).toBe("[降级到 Skill 调用]");
+    });
   });
 
   describe("SUBAGENT + NO-SKILL combined (real-world pattern)", () => {
@@ -387,6 +433,133 @@ after`;
       expect(result).toContain("**[子代理]**");
       expect(result).not.toContain("[[SUBAGENT:");
       expect(result).not.toContain("[[INCLUDE:");
+    });
+  });
+
+  describe("[[WHEN:]] marker", () => {
+    it("should expand description when single feature matches", () => {
+      const input = "[[WHEN: ui | 仅UI项目: ]]内容";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: ["ui", "data"] },
+      );
+
+      // 注意：description 尾部空格会被正则 \s* 消费掉
+      expect(result).toBe("仅UI项目:内容");
+    });
+
+    it("should remove entire marker when single feature does not match", () => {
+      const input = "前面[[WHEN: ui | 仅UI项目: ]]内容后面";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: ["api", "cli"] }, // 不含 ui
+      );
+
+      expect(result).toBe("前面内容后面");
+      expect(result).not.toContain("仅UI项目");
+    });
+
+    it("should expand when multiple features all match", () => {
+      const input = "[[WHEN: ui,data | 仅UI+Data项目: ]]";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: ["ui", "data", "api"] }, // 同时含 ui 和 data
+      );
+
+      // 注意：description 尾部空格会被正则 \s* 消费掉
+      expect(result).toBe("仅UI+Data项目:");
+    });
+
+    it("should remove when not all features match", () => {
+      const input = "[[WHEN: ui,data | 仅UI+Data项目: ]]";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: ["ui", "api"] }, // 含 ui 但不含 data
+      );
+
+      expect(result).toBe("");
+    });
+
+    it("should handle empty features list (no match)", () => {
+      const input = "[[WHEN: ui | 仅UI项目: ]]内容";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: [] },
+      );
+
+      expect(result).toBe("内容");
+    });
+
+    it("should handle empty description", () => {
+      const input = "[[WHEN: ui | ]]内容";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: ["ui"] },
+      );
+
+      expect(result).toBe("内容");
+    });
+
+    it("should handle multiple WHEN markers in same content", () => {
+      const input =
+        "A: [[WHEN: ui | UI标记]]B: [[WHEN: api | API标记]]C: [[WHEN: cli | CLI标记]]";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: ["ui", "api"] },
+      );
+
+      expect(result).toBe("A: UI标记B: API标记C: ");
+    });
+
+    it("should work without whenContext (no WHEN processing)", () => {
+      const input = "[[WHEN: ui | 仅UI项目: ]]内容";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      // 没有 whenContext 时，WHEN 标记保持原样
+      expect(result).toBe("[[WHEN: ui | 仅UI项目: ]]内容");
+    });
+
+    it("should allow single ] in description", () => {
+      // 允许 description 中包含单个 ]，只有 ]] 才是结束标记
+      const input = "[[WHEN: ui | 这是测试]内容]]";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: ["ui"] },
+      );
+
+      expect(result).toBe("这是测试]内容");
+    });
+
+    it("should handle description with multiple single brackets", () => {
+      const input = "[[WHEN: api | [状态码: 200] 或 [错误]]]";
+      const result = resolveCapabilityRefs(
+        input,
+        { hasSkills: true, hasSubagents: true, hasCommands: false },
+        undefined,
+        { features: ["api"] },
+      );
+
+      expect(result).toBe("[状态码: 200] 或 [错误]");
     });
   });
 });
