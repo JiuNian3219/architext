@@ -123,6 +123,8 @@ Output: Change Diff for above files (brief). Enter step_5_generate.
 </step_4_global_sync>
 
 <step_5_generate>
+[[INCLUDE: shared/test-quality.md]]
+
 **Input**: Confirmed Unified Proposal (functional design + architecture recommendations) + Updated global context + Task Type detected in step_2.
 
 Generate standard documents under `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/`.

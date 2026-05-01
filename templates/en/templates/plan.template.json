@@ -85,13 +85,13 @@
       {
         "id": "t1",
         "title": "[Verification Scenario 1: Happy Path]",
-        "notes": "",
+        "notes": "[Input/Precondition] → [Action] → [Precise expected result]; Map to spec §2 AC",
         "done": false
       },
       {
         "id": "t2",
         "title": "[Verification Scenario 2: Edge Cases]",
-        "notes": "",
+        "notes": "[Boundary/Error input] → [Action] → [Error type/state/output]; Prohibit only asserting existence or call counts",
         "done": false
       }
     ],

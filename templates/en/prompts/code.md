@@ -48,6 +48,8 @@
 </step_2_plan>
 
 <step_3_implement>
+[[INCLUDE: shared/test-quality.md]]
+
     **Protocol**:
     - **Read First**: Must read target file before modifying; follow project's existing code style.
     - **Use Existing Stack**: Only use technologies and libraries declared in `tech_stack.md`.

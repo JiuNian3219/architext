@@ -17,6 +17,8 @@
 }
 ```
 
+`tests` must be written as executable, assertable scenarios, specifying input, action, expected result; prohibit placeholder sentences like "add tests", "run tests", "cover logic" that cannot be verified.
+
 Each Task must be verifiable (has clear done criteria), do not write subjective items without done signals like "optimize X".
 
 # Special Phase Templates

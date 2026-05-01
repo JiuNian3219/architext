@@ -60,6 +60,8 @@ Only executed when Step 2 finds "Required" or "Can supplement" level gaps. Quest
 </step_3_supplementary>
 
 <step_4_decompose>
+[[INCLUDE: shared/test-quality.md]]
+
 **Input**: Brief full text + project context + supplementary answers (if any).
 
 [[SUBAGENT: archi-decompose-roadmap | brief_data + existing_roadmap[[WHEN: ui | + ui_context]] ]]

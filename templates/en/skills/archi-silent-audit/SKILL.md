@@ -42,6 +42,7 @@ Symbol legend:
 | 13 | `DESIGN_TRACE` | Design Trace | P | WARNING | `runtime: is_complex` | design.md § 6 trace table has AC not mapped to design node |
 | 14 | `PARAMETER_SPECIFICITY` | Parameter Specificity | P | INFO | `runtime: is_complex` | design.md § 3 parameter table has "appropriately", "reasonably", "as needed", "per situation", "some" etc vague quantifiers |
 | 15 | `DESIGN_SELF_CHECK` | Design Self-Check | P | CRITICAL | `runtime: is_complex` | design.md § 2 mechanism self-check list any item marked ✗ or empty unchecked |
+| 15.5 | `TEST_PLAN_QUALITY` | Test Plan Quality | P | WARNING | — | plan.json tests / task notes only write "add tests", "run tests", "cover logic" etc placeholder sentences; or not mapped to spec AC / bug reproduction steps |
 | 16 | `TECH_STACK_STYLE_MATCH` | Tech Stack Style Consistent | C | WARNING | — | Code pattern / API style deviates from tech_stack.md declaration (e.g. declared ESM but uses CommonJS, declared hooks-first but uses class component)|
 | 17 | `SOTA` | SOTA | C | WARNING | — | Appears in tech_stack explicitly listed anti-pattern; or uses deprecated API replaced by same stack |
 | 18 | `SECURITY` | Security | C | CRITICAL | — | Code has hardcoded secrets / plaintext passwords; or external input unvalidated directly into DB / FS / shell / eval |
@@ -52,6 +53,7 @@ Symbol legend:
 | 23 | `DESIGN_COMPLIANCE_STATE` | Design Compliance State | C | CRITICAL | `runtime: is_complex` | Code state transition / flow / protocol inconsistent with design.md § 2 |
 | 24 | `INVARIANT_ENFORCEMENT` | Invariant Enforcement | C | CRITICAL | `runtime: is_complex` | design.md § 4 invariants not enforced in code via assert / runtime check / type guard |
 | 25 | `PARAMETER_ALIGNMENT` | Parameter Alignment | C | CRITICAL | `runtime: is_complex` | Code values / thresholds inconsistent with design.md § 3 parameter table |
+| 26 | `TEST_BEHAVIOR_QUALITY` | Test Behavior Quality | C | WARNING | — | New/modified tests only assert mock call counts, file exists, object non-empty, JSON parseable; lacking behavior results, boundary/error paths or Red→Green reproduction evidence |
 
 ## Execution Protocol
 

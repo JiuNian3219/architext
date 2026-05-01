@@ -57,6 +57,7 @@ Review dimension by dimension, each finding must have `file:line` + code snippet
 | 12 | I18n compliance | If I18n required, no hardcoded strings; must use Key/dictionary references |
 | 13 | Orphan .gitkeep | Directory has other files but .gitkeep still exists — must delete |
 | 14 | Spec-Code drift | Interfaces/types/behavior consistent with spec.md; manual changes synced to docs |
+| 17 | Test effectiveness | Do new/existing tests verify real behavior; exist issues of only testing call counts, file exists, object non-empty, JSON parseable, lacking boundary/error paths |
 [[WHEN: ui |
 | 10 | Design compliance | Token usage; no magic values; visually consistent with screens/S-XX.html |
 | 15 | UI reference integrity | ui.md ref: screens/S-XX.html pointers still valid |

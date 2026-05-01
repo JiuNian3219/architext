@@ -142,6 +142,8 @@ Tests delivered synchronously with features, do not allow "finish first then add
 - Each FEAT's goal end appends `[TEST]` block, listing **specific test scenarios** (not just "write tests")
 - FEATs involving user-perceivable paths must have at least one E2E
 - INF-01 contains test infrastructure config (framework config + test utils)
+- Test scenarios must specify input / action / expected result, and cover normal path + at least one boundary or error path
+- Prohibit only writing "call succeeds", "file exists", "tests pass", "cover logic" etc descriptions that cannot prove behavior
 
 `[TEST]` block format: `[TEST] Unit: <scenario> | Component: <scenario> (ui type) | E2E: <verification path>`
 

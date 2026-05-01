@@ -36,6 +36,8 @@ Propose 1-3 root cause Hypotheses, each must include: failure hypothesis descrip
 </step_2_diagnose>
 
 <step_3_plan>
+[[INCLUDE: shared/test-quality.md]]
+
 Append a Bugfix Phase to plan.json, mandatory three-piece set (Reproduction Test → Fix Implementation → Regression Test).
 
 [[INCLUDE: prompts/change/shared/plan-phase-append.md]]
