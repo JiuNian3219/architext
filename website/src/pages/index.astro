@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Architext — The AI Architecture Protocol</title>
-  <meta name="description" content="A document-driven AI development protocol for small-to-medium apps. Define first, build right.">
+  <meta name="description" content="A document-driven AI development protocol installed in your repo. You decide; Architext asks, records, and keeps AI executing against the docs.">
   <meta name="keywords" content="AI development, document-driven development, software architecture, AI coding assistant, DDAD, Architext, AI protocol">
   <meta name="author" content="Architext">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -50,7 +50,7 @@
   <meta property="og:url" content="https://architext.cn/">
   <meta property="og:site_name" content="Architext">
   <meta property="og:title" content="Architext — The AI Architecture Protocol">
-  <meta property="og:description" content="A document-driven AI development protocol for small-to-medium apps. Define first, build right.">
+  <meta property="og:description" content="A document-driven AI development protocol installed in your repo. You decide; Architext asks, records, and keeps AI executing against the docs.">
   <meta property="og:image" content="https://architext.cn/og-image.png">
   <meta property="og:image:secure_url" content="https://architext.cn/og-image.png">
   <meta property="og:image:width" content="1200">
@@ -64,7 +64,7 @@
   <meta name="twitter:creator" content="@architext">
   <meta name="twitter:url" content="https://architext.cn/">
   <meta name="twitter:title" content="Architext — The AI Architecture Protocol">
-  <meta name="twitter:description" content="A document-driven AI development protocol for small-to-medium apps. Define first, build right.">
+  <meta name="twitter:description" content="A document-driven AI development protocol installed in your repo. You decide; Architext asks, records, and keeps AI executing against the docs.">
   <meta name="twitter:image" content="https://architext.cn/og-image.png">
   <meta name="twitter:image:alt" content="Architext - The AI Architecture Protocol">
 
@@ -91,7 +91,7 @@
     "@type": "WebSite",
     "name": "Architext",
     "url": "https://architext.cn",
-    "description": "A document-driven AI development protocol for small-to-medium apps. Define first, build right.",
+    "description": "A document-driven AI development protocol installed in your repo. You decide; Architext asks, records, and keeps AI executing against the docs.",
     "inLanguage": ["en", "zh-CN"],
     "publisher": {
       "@type": "Organization",
@@ -114,7 +114,7 @@
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Architext — The AI Architecture Protocol",
-    "description": "A document-driven AI development protocol for small-to-medium apps. Define first, build right.",
+    "description": "A document-driven AI development protocol installed in your repo. You decide; Architext asks, records, and keeps AI executing against the docs.",
     "url": "https://architext.cn/",
     "inLanguage": "en",
     "isPartOf": {
@@ -192,11 +192,11 @@
 
       const centerY = 160;
       const nodes = [
-        { x: 150, cmd: '/archi.start', desc: 'Build constitution', top: true },
+        { x: 150, cmd: '/archi.init', desc: 'Build constitution', top: true },
         { x: 300, cmd: '/archi.ui', desc: 'Generate UI concepts', top: false },
-        { x: 450, cmd: '/archi.plan', desc: 'Architecture interview', top: true },
+        { x: 450, cmd: '/archi.plan', desc: 'Decompose / plan', top: true },
         { x: 600, cmd: '/archi.code', desc: 'Implement phase by phase', top: false },
-        { x: 750, cmd: '/archi.audit', desc: 'Deep review', top: true }
+        { x: 750, cmd: '/archi.review', desc: 'Deep review', top: true }
       ];
 
       // 颜色
@@ -1380,6 +1380,11 @@
       transition: all 0.3s ease;
     }
 
+    .init-cards.single .init-card {
+      max-width: 520px;
+      width: 100%;
+    }
+
     .init-card:hover {
       border-color: var(--accent-gold);
       transform: translateY(-4px);
@@ -1753,7 +1758,7 @@
       color: var(--accent-gold);
     }
 
-    /* Path Branch */
+    /* Unified Path */
     .path-branch {
       margin-top: 4rem;
     }
@@ -1767,8 +1772,10 @@
 
     .path-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 2rem;
+      max-width: 760px;
+      margin: 0 auto;
     }
 
     .path-card {
@@ -2061,7 +2068,7 @@
     <h1>The <em>AI Architecture</em><br>Protocol</h1>
 
     <p class="hero-tagline">
-      Define first, build right. A document-driven methodology that upgrades your AI from random code generator to rigorous architect.
+      You decide; Architext asks, records, and constrains execution. Requirements, architecture, tasks, and acceptance criteria live in your repo so AI can keep working from the docs.
     </p>
 
     <!-- IDE chips -->
@@ -2069,12 +2076,12 @@
       <div class="ide-row" style="justify-content: center;">
         <div class="ide-chip supported">
           <div class="ide-dot"></div>
-          Cursor <span style="margin-left:.3rem;opacity:.5;font-size:.7rem">recommended</span>
+          Cursor
         </div>
         <div class="ide-chip"><div class="ide-dot"></div> Windsurf</div>
         <div class="ide-chip"><div class="ide-dot"></div> Trae</div>
         <div class="ide-chip"><div class="ide-dot"></div> VS Code</div>
-        <div class="ide-chip"><div class="ide-dot"></div> Claude Code</div>
+        <div class="ide-chip"><div class="ide-dot"></div> Claude Code  <span style="margin-left:.3rem;opacity:.5;font-size:.7rem">recommended</span></div>
         <div class="ide-chip"><div class="ide-dot"></div> OpenCode</div>
       </div>
     </div>
@@ -2105,7 +2112,7 @@
         <div><span class="tc-green">✔</span> <span class="tc-text">project-brief.md</span>   <span class="tc-dim">→ project root</span></div>
         <div>&nbsp;</div>
         <div><span class="tc-cyan">◆</span> Fill in <span class="tc-gold">project-brief.md</span></div>
-        <div><span class="tc-dim">   Then in your IDE's AI chat, type: <span class="tc-gold">/archi.start</span> and run it</span></div>
+        <div><span class="tc-dim">   Then in your IDE's AI chat, type: <span class="tc-gold">/archi.init</span> and run it</span></div>
       </div>
     </div>
   </section>
@@ -2138,99 +2145,84 @@
         </div>
       </div>
 
-      <!-- Branch: Choose Your Path -->
+      <!-- Unified Path -->
       <div class="path-branch">
-        <p class="branch-label">Then choose your starting point</p>
+        <p class="branch-label">One path. init decides the starting mode.</p>
         <div class="path-grid">
-          <!-- Path A: New Project -->
           <div class="path-card">
             <div class="path-header">
-              <span class="path-tag">Path A</span>
-              <h3>New Project</h3>
+              <span class="path-tag">Unified workflow</span>
+              <h3>From initialization to implementation</h3>
             </div>
             <div class="path-flow">
               <div class="flow-step">
-                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">Fill brief</span>
-                <span>Complete project-brief.md</span>
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">Brief / existing code / pack</span>
+                <span>Prepare input or let init inspect the project</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step">
-                <code>/archi.start</code>
-                <span>Build constitution from brief</span>
+                <code>/archi.init</code>
+                <span>Create or restore foundation assets</span>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">Confirm foundation docs</span>
+                <span>Review roadmap, vision, and tech stack first</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step optional">
                 <code>/archi.ui</code>
-                <span>Generate UI concepts (UI projects)</span>
-              </div>
-              <div class="flow-arrow">↓</div>
-              <div class="flow-step">
-                <code>/archi.plan</code>
-                <span>Architecture interview</span>
-              </div>
-              <div class="flow-arrow">↓</div>
-              <div class="flow-step">
-                <code>/archi.code</code>
-                <span>Implement phase by phase</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Path B: Existing Code -->
-          <div class="path-card">
-            <div class="path-header">
-              <span class="path-tag">Path B</span>
-              <h3>Existing Codebase</h3>
-            </div>
-            <div class="path-flow">
-              <div class="flow-step">
-                <code>/archi.inherit</code>
-                <span>Reverse-engineer codebase</span>
+                <span>Optional for UI projects: screens / ui_context</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step optional">
-                <code>/archi.ui</code>
-                <span>Generate UI concepts (UI projects)</span>
-              </div>
-              <div class="flow-arrow">↓</div>
-              <div class="flow-step">
-                <code>/archi.scope</code>
-                <span>New requirements</span>
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">Confirm UI docs</span>
+                <span>Approve screens and ui context first</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step">
                 <code>/archi.plan</code>
-                <span>Plan features</span>
+                <span>Decompose new requirements or detail an existing task</span>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">Confirm task docs</span>
+                <span>Approve spec / plan before implementation</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step">
                 <code>/archi.code</code>
-                <span>Implement</span>
+                <span>Implement phase by phase from plan</span>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step optional">
+                <code>/archi.review</code>
+                <span>Review implementation; use /archi.change when adjustments are needed</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Other Common Commands -->
+            <!-- Other Common Commands -->
       <div class="day2-ops">
         <p class="ops-label">Other Common Commands</p>
         <div class="ops-grid" style="grid-template-columns: repeat(5, 1fr); max-width: 1000px; margin: 0 auto;">
           <div class="op-item">
-            <code>/archi.edit</code>
+            <code>/archi.change</code>
             <span>Change spec</span>
           </div>
           <div class="op-item">
-            <code>/archi.fix</code>
+            <code>/archi.change</code>
             <span>Fix bugs</span>
           </div>
           <div class="op-item">
-            <code>/archi.audit</code>
+            <code>/archi.review</code>
             <span>Code review</span>
           </div>
           <div class="op-item">
-            <code>/archi.script</code>
-            <span>Generate scripts</span>
+            <code>/archi.ref</code>
+            <span>References</span>
           </div>
           <div class="op-item">
             <code>/archi.help</code>
@@ -2243,7 +2235,7 @@
       <div class="chat-mode-card" style="margin-top: 3rem; padding: 2rem; background: var(--bg-surface); border: 1px solid var(--line-default); border-radius: 12px; text-align: center;">
         <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;">Chat Mode <span style="color: var(--text-muted); font-size: 0.6rem;">(beta)</span></div>
         <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; color: var(--text-primary); margin-bottom: 0.75rem;">No slash commands needed</h3>
-        <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 0.75rem; line-height: 1.6;">Describe needs naturally (e.g. "add login", "fix auth bug"). AI auto-detects intent and runs the right protocol.</p>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 0.75rem; line-height: 1.6;">Describe needs naturally (e.g. "add login", "fix auth bug"). AI normalizes intent, fetches minimal context, and runs the right aggregate protocol.</p>
         <p style="font-size: 0.75rem; color: var(--text-muted); max-width: 500px; margin: 0 auto; line-height: 1.5;">Still in development. Results may vary.</p>
       </div>
     </div>
@@ -2271,12 +2263,12 @@
             <tr>
               <td class="label">Core assumption</td>
               <td class="bad">AI knows what you want</td>
-              <td class="good">You define it, AI executes it</td>
+              <td class="good">You decide; AI fills context gaps</td>
             </tr>
             <tr>
               <td class="label">Your role</td>
               <td class="bad">Reviewer — see it after</td>
-              <td class="good">Decision-maker — before build</td>
+              <td class="good">Decision-maker — confirm before execution</td>
             </tr>
             <tr>
               <td class="label">Context</td>
@@ -2286,7 +2278,7 @@
             <tr>
               <td class="label">Architecture</td>
               <td class="bad">AI decides implicitly</td>
-              <td class="good">You own every decision</td>
+              <td class="good">You define it; AI follows the docs</td>
             </tr>
           </tbody>
         </table>
@@ -2306,7 +2298,7 @@
           </div>
           <div class="value-card">
             <h3>Built for small-to-medium apps</h3>
-            <p>Document-driven development for small teams + AI. AI always understands your project, you always own the architecture decisions.</p>
+            <p>For solo developers or small teams + AI. You own product and architecture decisions; Architext records them in the repo so AI executes from the same facts.</p>
           </div>
         </div>
       </div>
@@ -2322,31 +2314,17 @@
       <!-- Phase 1: Initialize -->
       <div class="lifecycle-phase">
         <h3 class="phase-title">Phase 1: Initialize</h3>
-        <div class="init-cards">
+        <div class="init-cards single">
           <div class="init-card">
             <div class="init-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"/>
+                <path d="M4 4h16v16H4z"/>
+                <path d="M8 9h8M8 13h5"/>
               </svg>
             </div>
-            <code>/archi.start</code>
-            <span class="init-label">New Project</span>
-            <span class="init-desc">Create from scratch with vision, roadmap, and tech stack</span>
-          </div>
-          <div class="init-divider">
-            <span>OR</span>
-          </div>
-          <div class="init-card">
-            <div class="init-icon inherit">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-            </div>
-            <code>/archi.inherit</code>
-            <span class="init-label">Existing Codebase</span>
-            <span class="init-desc">Adopt existing code into architext framework</span>
+            <code>/archi.init</code>
+            <span class="init-label">Unified initialization entry</span>
+            <span class="init-desc">Briefs, existing codebases, and pack XML all start here; after foundation assets are created, review roadmap and related docs.</span>
           </div>
         </div>
       </div>
@@ -2371,7 +2349,7 @@
             </div>
             <div class="ui-output">
               <span class="output-label">Outputs:</span>
-              <span class="output-items">screens/, ui context</span>
+              <span class="output-items">screens/, ui_context.md; confirm before plan</span>
             </div>
           </div>
         </div>
@@ -2392,7 +2370,7 @@
               </div>
               <code>/archi.plan</code>
               <span class="stage-title">Plan</span>
-              <span class="stage-output">Outputs: spec, plan, task docs</span>
+              <span class="stage-output">Outputs: spec and plan; confirm task docs before code</span>
             </div>
           </div>
           <!-- Arrow 1 -->
@@ -2431,9 +2409,9 @@
                   <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
                 </svg>
               </div>
-              <code>/archi.audit</code>
-              <span class="stage-title">Audit</span>
-              <span class="stage-output">Outputs: review report, fixes</span>
+              <code>/archi.review</code>
+              <span class="stage-title">Review</span>
+              <span class="stage-output">Outputs: review.md, fix suggestions</span>
             </div>
           </div>
           <!-- Loop arrow back to Plan -->
@@ -2453,29 +2431,29 @@
         <h3 class="phase-title">Phase 4: Iterate & Maintain</h3>
         <div class="iterate-grid">
           <div class="iterate-card">
-            <span class="cmd">/archi.scope</span>
+            <span class="cmd">/archi.plan</span>
             <h4>Add Requirements</h4>
-            <p>Decompose new requirements into roadmap tasks</p>
+            <p>Without an ID, decomposes new requirements into roadmap tasks</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.edit</span>
+            <span class="cmd">/archi.change</span>
             <h4>Change Spec</h4>
-            <p>Update a feature's spec while preserving history</p>
+            <p>Edit sub-protocol updates docs while preserving history</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.fix</span>
+            <span class="cmd">/archi.change</span>
             <h4>Fix Bug</h4>
-            <p>Root-cause diagnosis against spec, then surgical fix</p>
+            <p>Fix sub-protocol reproduces, repairs, and regresses</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.revise</span>
+            <span class="cmd">/archi.change</span>
             <h4>Revise Architecture</h4>
-            <p>Project-wide change with impact analysis</p>
+            <p>Revise sub-protocol performs impact analysis and cascades docs</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.map</span>
-            <h4>Sync Codebase</h4>
-            <p>Scan and synchronize map.json with actual code</p>
+            <span class="cmd">/archi.review map</span>
+            <h4>Sync Map</h4>
+            <p>Compare directory structure and synchronize map.json</p>
           </div>
           <div class="iterate-card">
             <span class="cmd">/archi.ref</span>
@@ -2483,14 +2461,14 @@
             <p>Manage external references and dependencies</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.recover</span>
+            <span class="cmd">/archi.init pack.xml</span>
             <h4>Recover Data</h4>
-            <p>Restore user data from pack.xml after upgrade or migration</p>
+            <p>Restore user data from a pack XML</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.script</span>
-            <h4>Generate Scripts</h4>
-            <p>Create automation scripts (validate/dev-up/dev-reset) post-infrastructure</p>
+            <span class="cmd">/archi.help</span>
+            <h4>Next Step</h4>
+            <p>Recommend the next action from current project state</p>
           </div>
         </div>
       </div>

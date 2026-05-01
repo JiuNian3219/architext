@@ -10,7 +10,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Architext — AI 架构协议</title>
-  <meta name="description" content="面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。">
+  <meta name="description" content="放进仓库里的文档驱动 AI 开发协议。你做决定，Architext 提问、记录并让 AI 照着文档执行。">
   <meta name="keywords" content="AI 开发, 文档驱动开发, 软件架构, AI 编程助手, DDAD, Architext">
   <meta name="author" content="Architext">
 
@@ -36,7 +36,7 @@
   <meta property="og:url" content="https://architext.cn/zh/">
   <meta property="og:secure_url" content="https://architext.cn/zh/">
   <meta property="og:title" content="Architext — AI 架构协议">
-  <meta property="og:description" content="面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。">
+  <meta property="og:description" content="放进仓库里的文档驱动 AI 开发协议。你做决定，Architext 提问、记录并让 AI 照着文档执行。">
   <meta property="og:image" content="https://architext.cn/og-image.png">
   <meta property="og:image:secure_url" content="https://architext.cn/og-image.png">
   <meta property="og:image:alt" content="Architext - 文档驱动 AI 开发协议">
@@ -50,7 +50,7 @@
   <meta name="twitter:creator" content="@architext">
   <meta name="twitter:url" content="https://architext.cn/zh/">
   <meta name="twitter:title" content="Architext — AI 架构协议">
-  <meta name="twitter:description" content="面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。">
+  <meta name="twitter:description" content="放进仓库里的文档驱动 AI 开发协议。你做决定，Architext 提问、记录并让 AI 照着文档执行。">
   <meta name="twitter:image" content="https://architext.cn/og-image.png">
   <meta name="twitter:image:alt" content="Architext - 文档驱动 AI 开发协议">
 
@@ -62,7 +62,7 @@
     "name": "Architext",
     "url": "https://architext.cn",
     "logo": "https://architext.cn/favicon.svg",
-    "description": "面向中小型应用的文档驱动 AI 开发协议",
+    "description": "放进仓库里的文档驱动 AI 开发协议",
     "sameAs": [
       "https://github.com/JiuNian3219/architext"
     ]
@@ -76,7 +76,7 @@
     "@type": "WebSite",
     "name": "Architext",
     "url": "https://architext.cn",
-    "description": "面向中小型应用的文档驱动 AI 开发协议",
+    "description": "放进仓库里的文档驱动 AI 开发协议",
     "inLanguage": ["zh-CN", "en"],
     "publisher": {
       "@type": "Organization",
@@ -96,7 +96,7 @@
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Architext — AI 架构协议",
-    "description": "面向中小型应用的文档驱动 AI 开发协议。为 1 人 + AI 助手协作设计。先定义，再构建。",
+    "description": "放进仓库里的文档驱动 AI 开发协议。你做决定，Architext 提问、记录并让 AI 照着文档执行。",
     "url": "https://architext.cn/zh/",
     "inLanguage": "zh-CN",
     "isPartOf": {
@@ -117,7 +117,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Architext",
-    "description": "面向中小型应用的文档驱动 AI 开发协议",
+    "description": "放进仓库里的文档驱动 AI 开发协议",
     "url": "https://architext.cn/zh/",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any",
@@ -178,11 +178,11 @@
 
       const centerY = 160;
       const nodes = [
-        { x: 150, cmd: '/archi.start', desc: '建立项目宪法', top: true },
+        { x: 150, cmd: '/archi.init', desc: '建立项目宪法', top: true },
         { x: 300, cmd: '/archi.ui', desc: '生成 UI 概念', top: false },
-        { x: 450, cmd: '/archi.plan', desc: '架构访谈', top: true },
+        { x: 450, cmd: '/archi.plan', desc: '分解 / 规划', top: true },
         { x: 600, cmd: '/archi.code', desc: '逐步实现', top: false },
-        { x: 750, cmd: '/archi.audit', desc: '深度审查', top: true }
+        { x: 750, cmd: '/archi.review', desc: '深度审查', top: true }
       ];
 
       const gold = '#b88a3f';
@@ -1319,6 +1319,11 @@
       transition: all 0.3s ease;
     }
 
+    .init-cards.single .init-card {
+      max-width: 520px;
+      width: 100%;
+    }
+
     .init-card:hover {
       border-color: var(--accent-gold);
       transform: translateY(-4px);
@@ -1689,7 +1694,7 @@
       color: var(--accent-gold);
     }
 
-    /* Path Branch */
+    /* Unified Path */
     .path-branch {
       margin-top: 4rem;
     }
@@ -1703,8 +1708,10 @@
 
     .path-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 2rem;
+      max-width: 760px;
+      margin: 0 auto;
     }
 
     .path-card {
@@ -1989,7 +1996,7 @@
     <h1><em>AI 架构</em> 协议</h1>
 
     <p class="hero-tagline">
-      先定义，再构建。一种文档驱动的开发方法论，让你的 AI 从随机代码生成器升级为严格的架构师。
+      你做决定，Architext 提问、记录并约束执行。把需求、架构、任务和验收标准写进仓库，让 AI 照着文档继续工作。
     </p>
 
     <!-- IDE chips -->
@@ -1997,12 +2004,12 @@
       <div class="ide-row" style="justify-content: center;">
         <div class="ide-chip supported">
           <div class="ide-dot"></div>
-          Cursor <span style="margin-left:.3rem;opacity:.5;font-size:.7rem">推荐</span>
+          Cursor
         </div>
         <div class="ide-chip"><div class="ide-dot"></div> Windsurf</div>
         <div class="ide-chip"><div class="ide-dot"></div> Trae</div>
         <div class="ide-chip"><div class="ide-dot"></div> VS Code</div>
-        <div class="ide-chip"><div class="ide-dot"></div> Claude Code</div>
+        <div class="ide-chip"><div class="ide-dot"></div> Claude Code <span style="margin-left:.3rem;opacity:.5;font-size:.7rem">推荐</span></div>
         <div class="ide-chip"><div class="ide-dot"></div> OpenCode</div>
       </div>
     </div>
@@ -2033,7 +2040,7 @@
         <div><span class="tc-green">✔</span> <span class="tc-text">project-brief.md</span> <span class="tc-dim">→ 项目根目录</span></div>
         <div>&nbsp;</div>
         <div><span class="tc-cyan">◆</span> 填写 <span class="tc-gold">project-brief.md</span></div>
-        <div><span class="tc-dim">   然后在 IDE 的AI对话框中输入: <span class="tc-gold">/archi.start</span> 并执行</span></div>
+        <div><span class="tc-dim">   然后在 IDE 的AI对话框中输入: <span class="tc-gold">/archi.init</span> 并执行</span></div>
       </div>
     </div>
   </section>
@@ -2064,99 +2071,84 @@
         </div>
       </div>
 
-      <!-- Branch: Choose Your Path -->
+      <!-- Unified Path -->
       <div class="path-branch">
-        <p class="branch-label">然后选择你的起点</p>
+        <p class="branch-label">同一条路径，init 自动判断起点</p>
         <div class="path-grid">
-          <!-- Path A: New Project -->
           <div class="path-card">
             <div class="path-header">
-              <span class="path-tag">路径 A</span>
-              <h3>新项目</h3>
+              <span class="path-tag">统一工作流</span>
+              <h3>从初始化到实现</h3>
             </div>
             <div class="path-flow">
               <div class="flow-step">
-                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">填写 brief</span>
-                <span>完善 project-brief.md</span>
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">Brief / 已有代码 / pack</span>
+                <span>准备输入或直接让 init 识别当前项目</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step">
-                <code>/archi.start</code>
-                <span>从 brief 建立项目宪法</span>
+                <code>/archi.init</code>
+                <span>生成或恢复项目基础资产</span>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">确认基础文档</span>
+                <span>重点确认 roadmap、vision 和 tech_stack</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step optional">
                 <code>/archi.ui</code>
-                <span>生成 UI 概念设计（仅UI项目）</span>
-              </div>
-              <div class="flow-arrow">↓</div>
-              <div class="flow-step">
-                <code>/archi.plan</code>
-                <span>架构访谈</span>
-              </div>
-              <div class="flow-arrow">↓</div>
-              <div class="flow-step">
-                <code>/archi.code</code>
-                <span>按阶段逐步实现</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Path B: Existing Code -->
-          <div class="path-card">
-            <div class="path-header">
-              <span class="path-tag">路径 B</span>
-              <h3>已有代码库</h3>
-            </div>
-            <div class="path-flow">
-              <div class="flow-step">
-                <code>/archi.inherit</code>
-                <span>逆向分析代码</span>
+                <span>UI 项目可选：生成 screens / ui_context</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step optional">
-                <code>/archi.ui</code>
-                <span>生成 UI 概念设计（仅UI项目）</span>
-              </div>
-              <div class="flow-arrow">↓</div>
-              <div class="flow-step">
-                <code>/archi.scope</code>
-                <span>新需求</span>
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">确认 UI 文档</span>
+                <span>确认 screens 和 ui_context 符合心意</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step">
                 <code>/archi.plan</code>
-                <span>规划功能</span>
+                <span>分解新需求，或细化已有任务</span>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">
+                <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold)">确认任务文档</span>
+                <span>确认 spec / plan 符合心意后再实现</span>
               </div>
               <div class="flow-arrow">↓</div>
               <div class="flow-step">
                 <code>/archi.code</code>
-                <span>实现</span>
+                <span>按 plan 分阶段实现</span>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step optional">
+                <code>/archi.review</code>
+                <span>审查实现；需要调整时回到 /archi.change</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 其他常见指令 -->
+            <!-- 其他常见指令 -->
       <div class="day2-ops">
         <p class="ops-label">其他常见指令</p>
         <div class="ops-grid" style="grid-template-columns: repeat(5, 1fr); max-width: 1000px; margin: 0 auto;">
           <div class="op-item">
-            <code>/archi.edit</code>
+            <code>/archi.change</code>
             <span>变更规格</span>
           </div>
           <div class="op-item">
-            <code>/archi.fix</code>
+            <code>/archi.change</code>
             <span>修复缺陷</span>
           </div>
           <div class="op-item">
-            <code>/archi.audit</code>
+            <code>/archi.review</code>
             <span>代码审查</span>
           </div>
           <div class="op-item">
-            <code>/archi.script</code>
-            <span>生成脚本</span>
+            <code>/archi.ref</code>
+            <span>引用管理</span>
           </div>
           <div class="op-item">
             <code>/archi.help</code>
@@ -2169,7 +2161,7 @@
       <div class="chat-mode-card" style="margin-top: 3rem; padding: 2rem; background: var(--bg-surface); border: 1px solid var(--line-default); border-radius: 12px; text-align: center;">
         <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;">Chat Mode <span style="color: var(--text-muted); font-size: 0.6rem;">(beta)</span></div>
         <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; color: var(--text-primary); margin-bottom: 0.75rem;">无需斜杠命令</h3>
-        <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 0.75rem; line-height: 1.6;">用自然语言描述需求（如「加个登录功能」「修一下认证的 bug」），AI 会自动识别意图并加载对应协议执行。</p>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 0.75rem; line-height: 1.6;">用自然语言描述需求（如「加个登录功能」「修一下认证的 bug」），AI 会先做意图归一化，再读取必要上下文并加载对应聚合协议。</p>
         <p style="font-size: 0.75rem; color: var(--text-muted); max-width: 500px; margin: 0 auto; line-height: 1.5;">仍在调试中，效果不一定太好。</p>
       </div>
     </div>
@@ -2197,12 +2189,12 @@
             <tr>
               <td class="label">核心假设</td>
               <td class="bad">AI 知道你想要什么</td>
-              <td class="good">你来定义，AI 来执行</td>
+              <td class="good">你负责决定，AI 补齐上下文</td>
             </tr>
             <tr>
               <td class="label">你的角色</td>
               <td class="bad">审阅者 — 事后看结果</td>
-              <td class="good">决策者 — 构建前确认</td>
+              <td class="good">决策者 — 确认后再执行</td>
             </tr>
             <tr>
               <td class="label">上下文</td>
@@ -2212,7 +2204,7 @@
             <tr>
               <td class="label">架构</td>
               <td class="bad">AI 隐式决定</td>
-              <td class="good">你显式拥有每一个决策</td>
+              <td class="good">你显式定义，AI 按文档执行</td>
             </tr>
           </tbody>
         </table>
@@ -2232,7 +2224,7 @@
           </div>
           <div class="value-card">
             <h3>面向中小型应用</h3>
-            <p>小团队 + AI 开发的文档驱动方案。AI 始终理解你的项目，你始终掌握架构决策。</p>
+            <p>适合个人或小团队 + AI。你决定产品和架构，Architext 把决定沉淀到仓库，让 AI 按同一套事实执行。</p>
           </div>
         </div>
       </div>
@@ -2247,31 +2239,17 @@
       <!-- Phase 1: Initialize -->
       <div class="lifecycle-phase">
         <h3 class="phase-title">阶段 1: 初始化</h3>
-        <div class="init-cards">
+        <div class="init-cards single">
           <div class="init-card">
             <div class="init-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"/>
+                <path d="M4 4h16v16H4z"/>
+                <path d="M8 9h8M8 13h5"/>
               </svg>
             </div>
-            <code>/archi.start</code>
-            <span class="init-label">新项目</span>
-            <span class="init-desc">从零开始创建，包含愿景、路线图和技术栈</span>
-          </div>
-          <div class="init-divider">
-            <span>或</span>
-          </div>
-          <div class="init-card">
-            <div class="init-icon inherit">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-            </div>
-            <code>/archi.inherit</code>
-            <span class="init-label">现有代码库</span>
-            <span class="init-desc">将现有代码纳入 architext 框架管理</span>
+            <code>/archi.init</code>
+            <span class="init-label">统一初始化入口</span>
+            <span class="init-desc">Brief、已有代码库或 pack XML 都从这里开始；生成基础资产后，先确认 roadmap 等文档。</span>
           </div>
         </div>
       </div>
@@ -2296,7 +2274,7 @@
             </div>
             <div class="ui-output">
               <span class="output-label">产出:</span>
-              <span class="output-items">页面, UI 上下文</span>
+              <span class="output-items">screens/, ui_context.md；确认后再进入 plan</span>
             </div>
           </div>
         </div>
@@ -2317,7 +2295,7 @@
               </div>
               <code>/archi.plan</code>
               <span class="stage-title">规划</span>
-              <span class="stage-output">产出: 规格, 计划, 任务文档</span>
+              <span class="stage-output">产出: 规格, 计划；确认任务文档后再实现</span>
             </div>
           </div>
           <!-- Arrow 1 -->
@@ -2356,9 +2334,9 @@
                   <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
                 </svg>
               </div>
-              <code>/archi.audit</code>
+              <code>/archi.review</code>
               <span class="stage-title">审查</span>
-              <span class="stage-output">产出: 审查报告, 修复建议</span>
+              <span class="stage-output">产出: review.md, 修复建议</span>
             </div>
           </div>
           <!-- Loop arrow back to Plan -->
@@ -2378,29 +2356,29 @@
         <h3 class="phase-title">阶段 4: 迭代与维护</h3>
         <div class="iterate-grid">
           <div class="iterate-card">
-            <span class="cmd">/archi.scope</span>
+            <span class="cmd">/archi.plan</span>
             <h4>追加需求</h4>
-            <p>将新需求增量分解为路线图任务</p>
+            <p>无 ID 时将新需求分解为路线图任务</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.edit</span>
+            <span class="cmd">/archi.change</span>
             <h4>变更规格</h4>
-            <p>更新功能规格，历史永久保留</p>
+            <p>edit 子协议更新功能规格，历史永久保留</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.fix</span>
+            <span class="cmd">/archi.change</span>
             <h4>修复缺陷</h4>
-            <p>对照规格进行根因诊断，精准修复</p>
+            <p>fix 子协议先复现再修复并回归</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.revise</span>
+            <span class="cmd">/archi.change</span>
             <h4>调整架构</h4>
-            <p>项目级变更：影响分析 + 级联更新</p>
+            <p>revise 子协议做影响分析与级联更新</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.map</span>
-            <h4>同步代码库</h4>
-            <p>扫描代码并同步 map.json 映射</p>
+            <span class="cmd">/archi.review map</span>
+            <h4>同步地图</h4>
+            <p>对比目录结构并同步 map.json</p>
           </div>
           <div class="iterate-card">
             <span class="cmd">/archi.ref</span>
@@ -2408,14 +2386,14 @@
             <p>管理外部参考和依赖资料</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.recover</span>
+            <span class="cmd">/archi.init pack.xml</span>
             <h4>恢复数据</h4>
-            <p>从 pack.xml 还原数据，用于升级或迁移</p>
+            <p>从 pack XML 还原用户数据</p>
           </div>
           <div class="iterate-card">
-            <span class="cmd">/archi.script</span>
-            <h4>生成脚本</h4>
-            <p>基建完成后生成自动化脚本（验证/启动/重置）</p>
+            <span class="cmd">/archi.help</span>
+            <h4>下一步</h4>
+            <p>根据当前状态推荐下一步动作</p>
           </div>
         </div>
       </div>

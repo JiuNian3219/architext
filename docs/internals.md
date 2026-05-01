@@ -1,533 +1,260 @@
 # Architext 架构参考
 
-> **受众**：希望深入理解 Architext 内部机制的贡献者，以及需要精确了解命令行为的 AI 助手。
-> **定位**：本文档是 Architext 命令层与资产层的精确技术参考，不是入门教程。
-> 如需快速上手，请先阅读 [README](../README.zh-CN.md)；如需贡献代码，请先阅读 [CONTRIBUTING](../CONTRIBUTING.md)。
+> **受众**：希望理解 Architext 内部机制的贡献者，以及需要精确了解命令行为的 AI 助手。
+> **定位**：本文档描述当前命令层、模板资产、resolver 与 scaffold 的真实结构；入门请先看 [README.zh-CN](../README.zh-CN.md)。
 
 ---
 
-## 1. 系统概述
+## 1. 系统概览
 
-### 双层架构
+Architext 分为两层：
 
+| 层次 | 触发方式 | 职责 |
+|:---|:---|:---|
+| CLI 工具层 | `npx archi <command>` | 部署/更新框架文件，管理任务状态，校验、渲染、打包与恢复用户数据 |
+| AI 协议层 | `/archi.<command>` 或自然语言 | 读取项目上下文，生成/更新文档，规划任务，写代码，审查与维护 |
 
-| 层次      | 触发方式                  | 工具            | 职责                                               |
-| ------- | --------------------- | ------------- | ------------------------------------------------ |
-| CLI 工具层 | `npx archi <command>` | 终端命令          | 部署 prompt/规则/Skills、初始化项目、状态变更、健康检查、渲染 JSON、备份恢复 |
-| AI 命令层  | `/archi.<command>`    | AI 编辑器 Prompt | 文档生成、架构规划、代码实现、审查修复                              |
+CLI 层只负责把规则、prompts、skills、模板和全局种子文件放到用户项目；AI 协议层在这些文件上执行工作流。
 
+### 入口模型
 
-CLI 层负责将 AI 命令层所需的 prompt 文件、规则文件、Skills 等部署到用户项目。AI 层在这些文件的基础上驱动 AI 完成开发工作。
+当前公开 AI 命令是聚合入口：
 
-### 项目类型标记
+| 公开命令 | 子协议 | 用途 |
+|:---|:---|:---|
+| `/archi.init` | start / inherit / recover | 初始化新项目、纳管已有代码、从 pack 恢复 |
+| `/archi.plan` | decompose / detail | 新需求分解，或已有任务深度规划 |
+| `/archi.change` | fix / edit / revise | 修 bug、改单任务文档、做全局变更 |
+| `/archi.review` | task / project / map | 任务审查、项目体检、map 同步 |
+| `/archi.ref` | add / list / update / remove | 管理外部知识引用 |
+| `/archi.code` | 单协议 | 按 plan 实现 active 任务 |
+| `/archi.ui` | 单协议 | 生成/增量更新 UI 概念设计 |
+| `/archi.remove` | 单协议 | 下线任务，删除前必须确认影响范围 |
+| `/archi.help` | 单协议 | 推荐下一步或定位信息回答问题 |
 
-协议与模板中通过项目类型标记来决定是否执行特定内容：
-
-
-| feature | 含义                     |
-| ------- | ---------------------- |
-| ui      | 有用户界面（Web/移动端/桌面端/小程序） |
-| data    | 有数据层（数据库/ORM/本地存储）     |
-| api     | 有 HTTP/RPC/GraphQL 接口  |
-| cli     | 有命令行入口                 |
-| lib     | 作为库/SDK/NPM 包发布        |
-
-
-其他 feature（mobile/desktop/miniapp/extension/realtime/ai）及中文条件按字面含义判定。
-
----
-
-## 2. 资产体系
-
-### 全局资产
-
-
-| 类别         | 文件                 | 用途                                                                          | 写入时机                                                          |
-| ---------- | ------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **宪法级**    | vision.md          | 项目愿景、北极星指标、设计哲学、目标用户、边界约束                                                   | start/inherit 填充，revise 更新                                    |
-|            | tech_stack.md      | 技术选型、编码规范、命名规则、目录结构、Anti-Patterns                                           | start/inherit 填充，revise 更新                                    |
-|            | 90_custom_rules.md | 团队习惯、业务约束，黑名单                                                               | start/inherit 填充，用户维护，revise 更新                               |
-| **进度与结构**  | roadmap.json       | 任务进度 DAG：ID/标题/状态/依赖/阶段                                                     | start/inherit 填充，scope 追加，plan/code/fix 完成后更新 status          |
-|            | map.json           | 架构地图：directoryMapping/logicalTopology/criticalUserJourneys/featureRelations | start/inherit 填充，plan/code/map/revise等 追加、更新，remove 清理        |
-| **领域索引**   | dictionary.json    | 统一术语表：codeName、forbiddenSynonyms、动词规范、组件注册                                  | start/inherit 提取填充，plan 注册，code/edit/fix 同步                   |
-|            | error_codes.json   | 错误码契约：ERR_MODULE_REASON 格式                                                  | start/inherit 提取填充，plan 注册，code/edit/fix 同步                   |
-|            | error_memory.json  | 错误记忆库：错误模式 + 检查点，AI 从错误中学习                                                  | 错误解决后追加，AI 自动维护 checkpoints                                   |
-|            | data_snapshot.json | 数据模型快照：models/relationships                                                 | data 项目：start/inherit 提取填充，plan 注册，code/edit/fix 同步，remove 清理 |
-|            | api_snapshot.json  | API 端点快照：endpoints                                                          | api 项目：start/inherit 提取填充，plan 注册，code/edit/fix 同步，remove 清理  |
-|            | env_registry.json  | 环境变量注册表                                                                     | start/inherit 提取填充，code 引入新 env 时追加，code/edit/fix 同步          |
-|            | command_api.json   | CLI 命令注册表                                                                   | cli 项目：start/inherit 提取填充，plan 注册，code/edit/fix 同步，remove 清理  |
-|            | public_api.json    | 库导出注册表                                                                      | lib 项目：start/inherit 提取填充，plan 注册，code/edit/fix 同步，remove 清理  |
-| **UI 资产链** | design_tokens.json | 色板、语义色、字体、圆角、间距、动效                                                          | start/inherit 填充，ui 生成，revise 更新                              |
-| (仅ui项目)    | screens/           | 多文件 UI 概念设计：index.html + S-XX.html + _shared.css                            | ui 命令生成                                                       |
-|            | ui_context.md      | AI 屏幕索引：ID/路由/路径/状态                                                         | ui 命令生成，plan/edit 同步                                          |
-| **外部引用**   | refs/index.json    | 外部引用索引                                                                      | ref add/update/remove 管理                                      |
-|            | refs/{id}.{ext}    | 外部知识摘要                                                                      | ref add/update 时写入                                            |
-
-
-### Task 文档
-
-每个任务的专属文档：
-
-
-| 文件        | 用途                                  | 写入时机                            |
-| --------- | ----------------------------------- | ------------------------------- |
-| spec.md   | 功能规格：Gherkin 场景 / 配置契约 / 接口定义 / 约束  | plan 创建，edit 修改，inherit 创建 Stub |
-| plan.json | 实施计划：Phase/Task / decisions / notes | plan 创建，code/edit/fix 追加        |
-| ui.md     | 任务级 UI 范围声明                         | plan 创建，edit 修改                 |
-| design.md | 核心机制技术方案（Complex 任务）                | plan 创建（可选）                     |
-| audit.md  | 审查报告：发现列表 / 修复工单                    | audit 输出                        |
-
-
-### 执行必读
-
-所有命令执行时必读：
-
-- `00_system.md` — 系统协议
-- `map.json` — 用于寻址和依赖检查
-- `error_memory.json` — 错误记忆，行动前预判
+旧的 `/archi.start`、`/archi.scope`、`/archi.audit`、`/archi.fix`、`/archi.edit`、`/archi.revise`、`/archi.map` 不再作为公开根入口维护；它们对应的能力由聚合命令路由到子协议。
 
 ---
 
-## 3. Prompt 规范
+## 2. 文件模型
 
-prompt 文件是 AI 命令的核心，每个 `/archi.<command>` 对应一个 prompt 文件。
+`src/core/file-model.ts` 是部署资产的单一事实来源。
 
-**文件位置**：`[[__DOCS_DIR__]]/prompts/<command>.md`
+| 字段 | 来源 | 部署目标 | 说明 |
+|:---|:---|:---|:---|
+| `rules` | `templates/<lang>/rules/*.md` | 编辑器规则目录 | 例如 `00_system`、`90_custom_rules` |
+| `prompts` | `templates/<lang>/prompts/*.md` | 命令目录或 `<docDir>/prompts/<editor>/` | 根聚合命令 |
+| `promptDirs` | `templates/<lang>/prompts/<dir>/` | `<docDir>/prompts/<dir>/` | 子协议目录，供聚合命令 INCLUDE/读取 |
+| `skills` | `templates/<lang>/skills/<name>/` | 编辑器 skills 目录或 `<docDir>/skills/` | 能力说明与执行协议 |
+| `docTemplates` | `templates/<lang>/templates/*` | `<docDir>/templates/` | spec/plan/design/ui/scope brief 模板 |
+| `globalSeeds` | `templates/<lang>/global/*` | `<docDir>/global/` | 用户数据，init 创建，update 不覆盖已有内容 |
+| `globalDocs` | `templates/<lang>/global/references/*` | `<docDir>/global/references/` | 框架拥有，可随 update 刷新 |
+| `globalGuides` | `templates/<lang>/global/guides/*` | `<docDir>/global/guides/` | 结构化 JSON 的短字段说明，框架拥有 |
 
-**结构规范**：
+### 目录约定
 
-- `protocol_<name>`：根标签
-- `meta`：风格、语言、原则
-- `step`_*：执行步骤
-- `Pre-signoff Checklist`：输出前必检项
-- `Terminal Gate`：必须通过的检查点
-
----
-
-## 4. 命令体系
-
-### 分类概览
-
-
-| 类别     | 命令                                                  | 说明                   |
-| ------ | --------------------------------------------------- | -------------------- |
-| 初始化    | start, inherit                                      | 从零或从已有代码创建项目骨架       |
-| 规划     | scope, plan, edit, revise                           | 分解需求、定义规格、变更         |
-| 执行     | code, fix, audit, script                            | 编码、修复、审查、生成自动化脚本       |
-| 维护     | map, remove, help, recover, ref, ui                 | 同步、下线、问答、恢复、引用、UI 设计 |
-| CLI 工具 | init, update, doctor, task, render, pack, uninstall | 部署、状态管理、健康检查、渲染、备份   |
-
-
-### AI 命令详解
-
-**start** `[project-brief.md]`
+用户项目中默认文档目录为 `.architext`：
 
 ```
-读: project-brief.md（或 fallback 访谈），扫描 brief-assets/，提取外部引用
-流程:
-  1. Ingest: 解析 Brief，扫描资源，检查资源可达性
-  2. Gap Analysis: 检查项目身份/目标用户/核心任务/技术栈完整性，分级缺口
-  3. Supplementary: 针对"必须"和"可补"级缺口访谈（≤6题，含[Z]自定义）
-  4. Constitution: 按路由规则生成 vision/tech_stack/roadmap/map 等全局资产
-  5. Verify: Silent Audit 审查生成的全局文件
-  6. Signoff: Terminal Gate（task --check + render）
-写: vision.md, tech_stack.md, 90_custom_rules.md, map.json
-    roadmap.json, dictionary.json, error_codes.json, env_registry.json
-    仅ui项目: design_tokens.json
-    仅api项目: api_snapshot.json
-    仅cli项目: command_api.json
-    仅lib项目: public_api.json
-    仅data项目: data_snapshot.json
-调用: archi-decompose-roadmap Skill → 生成任务链
-```
-
-**inherit** `[brief_path]`
-
-```
-读: package.json / README / 目录结构 / 核心模块（brief 可选，补充愿景）
-流程:
-  1. 扫描代码库结构，提取技术栈信息
-  2. 识别已有功能模块，生成 LEG-xx 任务（status=done）
-  3. 生成 vision.md（填充项目身份、目标用户）
-  4. 生成 tech_stack.md（基于代码检测技术选型）
-  5. 生成 map.json（基于实际目录结构）
-  6. 生成 Stub 级 spec.md（轻量快照，关联源码路径）
-  7. 提取领域术语填充 dictionary.json
-  8. 提取错误码填充 error_codes.json
-写: vision.md, tech_stack.md, map.json
-    roadmap.json (LEG-xx status=done)
-    tasks/LEG-xx_*/spec.md (Stub)
-    dictionary.json, error_codes.json, env_registry.json
-    仅ui项目: design_tokens.json
-    仅data项目: data_snapshot.json
-    仅api项目: api_snapshot.json
-    仅cli项目: command_api.json
-    仅lib项目: public_api.json
-```
-
-**scope** `[scope-brief.md]`
-
-```
-读: vision.md, roadmap.json, map.json, tasks/ 扫描
-流程:
-  1. 解析 scope-brief，识别新增需求
-  2. 对比现有 roadmap，避免重复
-  3. 增量追加新任务（禁重写已有任务）
-  4. 更新 map.json 注册新任务目录
-调用: archi-decompose-roadmap Skill → 分解需求为任务链
-写: roadmap.json（增量追加）
-    map.json（新任务目录注册）
-```
-
-**plan** `<ID>`
-
-```
-前置: Status Gate（仅 roadmap 中 pending 任务可 plan）
-读: vision.md, tech_stack.md, map.json, 依赖任务 spec+plan
-    仅ui项目: design_tokens.json, screens/, ui_context.md
-    仅data项目: data_snapshot.json
-流程:
-  1. Load: 读取项目上下文 + 依赖任务文档
-  2. Complexity: 检测任务类型（INF/FEAT/POLISH/EDIT），评估复杂度（Simple/Standard/Standard+Design）
-  3. Interview: Unified Proposal（功能设计 + 架构建议），用户确认或反馈
-  3.5 Refinement: 用户反馈非 OK 时刷新提案
-  4. Global Sync: 更新 map.json，数据治理同步（dictionary/error_codes/data_snapshot等）
-  5. Generate: 生成 spec.md, plan.json, 仅ui项目: ui.md, 仅Complex任务: design.md
-  6. Verify: Silent Audit 审查生成的文档
-  7. Signoff: Terminal Gate（task <ID> --status active），输出 Next Steps
-写: tasks/<ID>_*/spec.md, tasks/<ID>_*/plan.json
-    仅ui项目: tasks/<ID>_*/ui.md
-    仅Complex任务: tasks/<ID>_*/design.md
-更新: map.json, dictionary.json, error_codes.json, env_registry.json
-      仅data项目: data_snapshot.json
-      仅api项目: api_snapshot.json
-```
-
-**code** `<ID>`
-
-```
-前置: Status Gate（仅 status=active 任务可 code）
-读: spec.md, ui.md, plan.json, tech_stack.md, roadmap.json
-    本任务涉及ui时: design_tokens.json
-    本任务涉及data时: data_snapshot.json
-流程:
-  1. Resolve: 解析任务 ID，Status Gate 检查，加载任务上下文
-  2. Plan: 生成执行蓝图（Phase A Domain/Data/API → Phase B UI → Phase C Integration）
-  3. Implement: 按 Phase 逐项实施，实时更新 plan.json done 标记
-  4. Validate: 构建/类型检查/Lint/格式化/测试，Task Verification（按项目类型执行验证）
-  5. Verify: Silent Audit 代码审查 + featureRelations 联动检查 + Data Sync 数据治理
-  6. Signoff: Terminal Gate（plan <ID> 全部完成 + task <ID> --status done）
-写: 代码文件（遵循 Code Organization 和 Type-Safe 原则）
-    plan.json（Phase done 标记实时更新）
-更新: dictionary.json, error_codes.json, env_registry.json
-      本任务涉及data时: data_snapshot.json
-      本任务涉及api时: api_snapshot.json
-```
-
-**fix** `<ID>` `[context]`
-
-```
-读: spec.md, ui.md, plan.json, 相关代码, error_memory.json
-流程:
-  1. Diagnose: 解析/定位任务，读取代码，分析 context，提出 1-3 个根因假设
-  2. Plan Fix: 追加 Bugfix Phase 到 plan.json（复现测试 → 修复 → 回归测试）
-  3. Execute Fix: 按 Plan 修复代码，禁借机重构
-  4. Verify: 构建/类型检查/Lint/测试全部通过，Silent Audit 审查修复代码
-  4.5 Data Sync: 扫描修复引入的新业务实体/错误码，增量同步全局文件
-  5. Plan Update: 更新 plan.json done 标记，未通过项重置 status=active
-  6. Summary: 输出修复摘要（根因/修复内容/新增测试）和 Next Steps
-写: 修复的代码文件
-    plan.json（Bugfix Phase 追加 + done 标记更新）
-约束: Spec Immutable（禁改 spec.md/ui.md，除非 Bug 是文档错误）
-      Reproduction First（须先构想复现步骤或测试用例）
-      Root Cause（分析根因，非表面修补）
-```
-
-**edit** `<ID>` `[context]`
-
-```
-读: tasks/<ID>_*/spec.md, ui.md, plan.json
-    本任务涉及ui时: ui_context.md
-流程:
-  1. Load: 读取 Task 文档，检测 Spec-Status（Full → step_2 | Stub → step_1.5）
-  1.5 Enrich: Stub 状态须先补全完整 spec（读取源码提取接口，生成完整 Gherkin Scenarios）
-  2. Refine Docs: 根据 context 修改 spec.md/ui.md，UI 偏差时调用 wireframe Skill
-  3. Update Plan: 追加新 Phase，原 status=done 时重置为 active
-  4. Data Sync: 扫描需求变更引入的新实体/错误码/Schema，增量同步
-  4. Verify: Silent Audit 审查更新的文档和 Plan
-  6. Summary: 输出更新摘要和 Next Steps（推荐 /archi.code <ID>）
-写: 修改后的 spec.md, ui.md
-    plan.json（新 Phase 追加，历史保留）
-更新: 本任务涉及变更的全局 JSON（dictionary/error_codes/env_registry等）
-约束: Doc First（须先改文档再生成 Plan，禁跳过文档直接改代码）
-      Incremental（仅追加新 Task，保留已完成历史）
-```
-
-**revise** `[context]`
-
-```
-读: 全部全局资产（vision/tech_stack/map/roadmap/dictionary/error_codes等）
-    tasks/ 目录索引
-流程:
-  1. Load: 加载全局资产，扫描 Task 索引，分析变更意图
-  2. Interview: 澄清变更边界（范围/动机/排除清单），歧义时提问确认
-  3. Impact: 输出变更影响评估书（全局资产变更清单 + 受影响 Task 清单 + 需决策项）
-  3.5 Refinement: 用户反馈非 OK 时刷新影响评估，等待再次确认
-  4. Execute:
-     - Safety Checkpoint: Git 工作区状态检查
-     - Phase 1: 修改全局资产
-     - Phase 1.5（仅ui项目）: 设计系统变更检查，通知重跑 /archi.ui
-     - Phase 2: 级联更新受影响 Task（按 edit 标准更新 spec/ui/plan）
-  5. Verify: Silent Audit 审查级联更新的 Task 文档
-  6. Summary: Terminal Gate + 输出 Global Revision Summary
-写: 更新的全局资产
-    受影响 Task 的 spec.md, ui.md, plan.json（追加 Revision Phase）
-约束: User Gate（须经用户逐项确认后才执行，禁擅自修改）
-      Impact First（先输出完整影响分析，后执行修改）
-      Doc Cascade（全局资产变更后须同步更新受影响 Task）
-```
-
-**audit** `<ID>`
-
-```
-读: 代码, spec.md, plan.json, ui.md, vision.md, tech_stack.md
-流程:
-  1. 代码质量审查（Tech/SOTA/Security/Performance/Spec 符合性）
-  2. 跨维度检查（本任务涉及ui时: UI Redlines，本任务涉及data时: Schema 一致性）
-  3. 生成发现列表（CRITICAL/WARNING/INFO 分级）
-  4. 生成修复工单（每个发现对应修复建议）
-写: audit.md（审查报告，只读不修改代码）
-产出: 发现列表 + 修复建议 + Next Steps（推荐 /archi.fix <ID>）
-```
-
-**ui** `[incremental]`
-
-```
-读: design_tokens.json, roadmap.json
-    增量模式: ui_context.md（已有屏幕索引）
-流程:
-  1. 自动检测全量/增量模式
-  2. 全量: 基于 design_tokens 生成完整屏幕集
-  3. 增量: 对比已有屏幕，识别新增/变更
-  4. 生成 screens/ 多文件结构（index.html + S-XX.html + _shared.css）
-  5. 更新 ui_context.md 屏幕索引
-调用: archi-ui-wireframe Skill
-写: screens/index.html（导航枢纽）
-    screens/S-XX.html（独立屏幕，ID 永久不变）
-    screens/_shared.css（共享样式）
-    ui_context.md（屏幕索引：ID/路由/路径/状态）
-约束: 屏幕 ID 永久不变；视觉严格遵循 design_tokens
-```
-
-**script**
-
-```
-读: tech_stack.md, package.json, 配置文件, CI 配置
-流程:
-  1. Ingest: 提取 tech_stack 中的命令，交叉验证实际代码配置
-  2. Generate: 基于提取的命令生成三个自动化脚本
-     - validate: 聚合检查（Lint → Format → Type Check → Build → Test）
-     - dev-up: 启动环境（Install → Build → Health Check）
-     - dev-reset: 重置环境（Kill → Clean → Reinstall → Rebuild → Health Check）
-  3. Auto-Detect: 自动识别 OS，生成 .sh（Unix）和 .ps1（Windows）
-  4. Write: 写入 scripts/ 目录，仅在有变更时写入
-前置: 基建任务（INF-01 等）完成后，tech_stack 命令已从占位符变为实际值
-写: scripts/validate, scripts/dev-up, scripts/dev-reset
-    scripts/validate.ps1, scripts/dev-up.ps1, scripts/dev-reset.ps1
-约束: Post-Infra Only（仅基建完成后执行）
-      Tech-Stack Driven（严格从 tech_stack.md 提取命令，禁硬编码）
-      Idempotent（多次运行结果一致，有变更才写入）
-注意: 当 scripts/validate 存在时，/archi.code 和 /archi.fix 的验证步骤必须优先运行此脚本
-```
-
-**map**
-
-```
-读: map.json, tech_stack.md, 实际目录树
-流程:
-  1. 比对 map.json directoryMapping 与实际目录结构
-  2. 识别未注册的目录和新文件
-  3. 识别孤立映射（目录已删除但 map 中仍有记录）
-  4. 同步更新 directoryMapping
-  5. 检查 logicalTopology 一致性
-  6. 输出变更摘要
-写: 更新的 map.json（比对模式同步）
-    新增目录注册到 directoryMapping
-    更新 logicalTopology（如职责变更）
-```
-
-**remove** `<ID>`
-
-```
-前置: 依赖安全检查（无 active/done 下游依赖）
-读: roadmap.json, map.json, tasks/
-流程:
-  1. 检查下游依赖状态（有 active/done 依赖则阻塞）
-  2. 删除 Task 代码文件
-  3. 删除 Task 文档目录
-  4. 更新 roadmap.json（移除或标记 deprecated）
-  5. 更新 map.json（清理目录映射）
-  6. 清理全局 JSON 引用（dictionary/error_codes 等）
-操作: 删除 Task 代码+文档
-更新: roadmap.json, map.json
-      dictionary.json, error_codes.json, env_registry.json（清理引用）
-      仅data项目: data_snapshot.json（清理模型）
-      仅api项目: api_snapshot.json（清理端点）
-      仅cli项目: command_api.json（清理命令）
-      仅lib项目: public_api.json（清理导出）
-```
-
-**ref** `add|list|update|remove <id>`
-
-```
-读: 文件/URL/粘贴内容（add/update 时）
-    refs/index.json
-流程:
-  add:    读取外部内容 → 生成摘要 → 写入 refs/{id}.md → 更新 index.json
-  list:   读取 index.json → 输出引用列表（含 tags 摘要）
-  update: 重新读取外部内容 → 更新摘要 → 更新 refs/{id}.md
-  remove: 删除 refs/{id}.md → 从 index.json 移除条目
-写: refs/{id}.md（外部知识摘要）
-    refs/index.json（引用索引：id/tags/path/lastUpdated）
-```
-
-**recover** `<pack-file>`
-
-```
-读: pack XML 文件（architext-backup-*.xml）
-流程:
-  1. 解析 XML 结构，验证完整性
-  2. 恢复 global/ 目录下所有全局资产
-  3. 恢复 tasks/ 目录下所有 Task 文档
-  4. 恢复 scripts/ 目录（如有）
-  5. 恢复 refs/ 目录（如有）
-  6. 重建 map.json 引用关系
-  7. 运行 npx archi render 生成可视化视图
-写: global/, tasks/, scripts/, refs/（完整恢复）
-```
-
-**help** `[query]`
-
-```
-读: roadmap.json, tasks/ 目录, map.json
-流程:
-  1. 分析当前项目状态（活跃任务、已完成任务、阻塞任务）
-  2. 无 query 时: 输出项目状态概览 + 下一步行动建议
-  3. 有 query 时: 搜索相关任务/文档，提供针对性建议
-产出: 命令行建议（无文件变更）
-输出格式:
-  - 当前活跃任务列表
-  - 推荐下一步动作（按优先级排序）
-  - 相关命令示例
-```
-
-### CLI 工具详解
-
-**init** `[-e editor] [-l lang] [-d path] [-t type]`
-
-```
-写: 空的文档骨架（global/, tasks/, refs/ 结构）
-    IDE 规则（.cursor/ 或 .claude/）
-    Skills 定义
-```
-
-**update** `[--dry-run]`
-
-```
-读: 远程/本地模板版本
-写: prompts/, templates/（静默更新，不影响用户数据）
-```
-
-**doctor**
-
-```
-读: global/, tasks/, 配置文件
-产出: 健康检查报告（schema 校验/缺失检测/一致性检查）
-```
-
-**task** `[id] [--status <s>] [--check]`
-
-```
-读: roadmap.json
-写: roadmap.json（status 字段，唯一直接修改工具）
---check: 依赖完整性验证
-```
-
-**render**
-
-```
-读: roadmap.json
-写: roadmap.md（可视化视图）
-```
-
-**pack** `[-o file]`
-
-```
-读: global/, tasks/, scripts/, refs/
-写: architext-backup-*.xml（打包备份）
-```
-
-**uninstall**
-
-```
-操作: 移除所有部署文件（保留用户数据）
+.architext/
+  global/
+    roadmap.json
+    map.json
+    dictionary.json
+    tech_stack.md
+    vision.md
+    guides/
+    references/
+  prompts/
+    change/
+    init/
+    plan/
+    ref/
+    review/
+  refs/
+  skills/
+  tasks/
+  templates/
 ```
 
 ---
 
-## 5. 工作流程
+## 3. Front Pipeline
 
-### 阶段顺序
+`templates/zh/rules/00_system.md` 是所有 AI 协议前的入口纪律。
 
-**初始化 → 设计（可选）→ 规划 → 编码 → 审查（可选）→ 循环**
+新命令开始时，AI 先执行两步：
 
+1. **Intent Normalization**：调用 `archi-intent-normalizer`，把用户原话转成 Intent Card，判断公开命令、子协议、目标 ID/文件、置信度与歧义。
+2. **Context Fetch**：调用 `archi-context-fetch`，按 Intent Card 读取最小必要上下文，输出 Context Pack。
 
-| 顺序  | 阶段      | 命令             | 产出                                     | 说明              |
-| --- | ------- | -------------- | -------------------------------------- | --------------- |
-| 1   | **初始化** | `/archi.start` | vision.md, roadmap.json, tech_stack.md | 建立项目宪法          |
-| 2   | **设计**  | `/archi.ui`    | screens/, ui_context.md                | UI 概念设计，仅 UI 项目 |
-| 3   | **规划**  | `/archi.plan`  | spec.md, plan.json, map.json           | 架构访谈，定义规格       |
-| 4   | **编码**  | `/archi.code`  | 可运行代码                                  | 按阶段逐步实现         |
-| 5   | **审查**  | `/archi.audit` | audit.md                               | 深度审查，建议执行       |
-| ↺   | **循环**  | 返回 plan        | —                                      | 继续下一任务          |
+聚合命令只消费 Intent Card + Context Pack 做路由，不应在 router 内重复全量读取项目文件。
 
+### Skill 调用纪律
 
-### 分支路径
-
-**已有代码项目**
-
-```
-inherit → scope → plan → code
-```
-
-**追加新需求**
-
-```
-scope → plan → code
-```
-
-**补全遗留模块**
-
-```
-inherit → edit → code
-```
-
-**Bug 修复**
-
-```
-fix
-```
-
-### Gate 重定向
-
-
-| 命令       | 检查条件               | 处理方式                         |
-| -------- | ------------------ | ---------------------------- |
-| `code`   | `status=pending`   | 拒绝，要求先 `/archi.plan <ID>`    |
-| `code`   | `status=done`      | 拒绝，要求用 `/archi.edit <ID>` 修改 |
-| `plan`   | 依赖任务未完成            | 拒绝，要求先完成依赖任务                 |
-| `remove` | 有 active/done 下游依赖 | 阻塞，要求先解耦                     |
-
+- `archi-intent-normalizer`、`archi-context-fetch` 是自动前置技能。
+- 重型协议技能（如 decompose、silent-audit、data-sync、feature-relations）优先在独立上下文或子代理中执行。
+- 不能使用子代理但支持 Skill 时，`NO-SUBAGENT` 可降级为内联 Skill。
+- 不支持 Skill 时，`NO-SKILL` 展开为“当前上下文如何手动执行”的说明。
 
 ---
 
+## 4. Resolver 规则
+
+能力标记由 `src/core/capability-resolver.ts` 处理。解析顺序固定为：
+
+```
+INCLUDE → WHEN → SUBAGENT → NO-SUBAGENT → SKILL → NO-SKILL → NO-COMMANDS
+```
+
+| 标记 | 语义 |
+|:---|:---|
+| `[[INCLUDE: path]]` | 从 `templates/<lang>` 或部署后的 docDir 基准引入片段 |
+| `[[WHEN: feature \| payload]]` | feature 存在时展开 payload，否则删除 |
+| `[[SUBAGENT: skill \| args]]` | 支持子代理时展开为子代理调用指令，否则删除 |
+| `[[NO-SUBAGENT: skill \| args]]` | 不支持子代理但支持 Skill 时展开为内联 Skill；不支持 Skill 时删除 |
+| `[[SKILL: skill \| args]]` | 支持 Skill 时展开为 Skill 调用说明，否则删除 |
+| `[[NO-SKILL: payload]]` | 不支持 Skill 时展开手动执行说明，否则删除 |
+| `[[NO-COMMANDS: payload]]` | 编辑器不支持命令文件时展开 |
+
+最终部署给 AI 的 prompt 不应解释 resolver 语法本身；`WHEN` 示例、`[[WHEN]]` 说明等应留在开发文档或测试中，不进入执行 prompt。
+
+---
+
+## 5. 全局资产
+
+### 用户数据
+
+| 文件 | 用途 | 主要写入者 |
+|:---|:---|:---|
+| `vision.md` | 项目方向、目标用户、边界与原则 | init / change(revise) |
+| `tech_stack.md` | 技术栈、目录规则、构建/测试命令、禁用模式 | init / change(revise) |
+| `roadmap.json` | 任务 DAG、状态、依赖、phase | init / plan / code / change / remove |
+| `map.json` | 目录映射、逻辑拓扑、关键路径、featureRelations | init / plan / review map / change / remove |
+| `dictionary.json` | 领域术语、命名、组件/动作词注册 | init / plan / code / change |
+| `error_codes.json` | 错误码契约 | init / plan / code / change |
+| `env_registry.json` | 环境变量注册 | init / plan / code / change |
+| `error_memory.json` | 构建/运行/测试失败经验和检查点 | code / change(fix) |
+| `data_snapshot.json` | 数据实体与关系快照 | data feature |
+| `api_snapshot.json` | API endpoint 快照 | api feature |
+| `command_api.json` | CLI 命令契约 | cli feature |
+| `public_api.json` | 库导出 API | lib feature |
+| `design_tokens.json` | UI token 与视觉规则 | ui feature |
+| `ui_context.md` | UI 屏幕索引 | ui feature |
+| `screens/` | UI 视觉/交互参考页面 | ui 命令 |
+| `refs/index.json` / `refs/{id}.*` | 外部知识摘要与索引 | ref 命令 |
+
+`screens/` 只用于确定 UI 参照。实现生产页面时，AI 使用项目语言、框架、组件体系和样式方案重新实现。
+
+### Global Guides
+
+`global/guides/*.md` 只覆盖结构化 JSON 文件，用来说明字段结构和不变量。它们不覆盖 `vision.md` / `tech_stack.md` 这类正文型文件。
+
+当前 guides：
+
+`api_snapshot.md`、`command_api.md`、`data_snapshot.md`、`design_tokens.md`、`dictionary.md`、`env_registry.md`、`error_codes.md`、`error_memory.md`、`map.md`、`public_api.md`、`roadmap.md`。
+
+Context Fetch 规则：如果后续协议要写某个 global JSON，对应 guide 进入 `must_read`；只读时进入 `optional_read`。高漂移文件（roadmap/map/dictionary/error_memory）读写都优先带 guide。
+
+---
+
+## 6. Task 文档
+
+每个任务目录通常位于 `.architext/tasks/<ID>_<Slug>/`。
+
+| 文件 | 用途 | 写入/更新 |
+|:---|:---|:---|
+| `spec.md` | 验收标准、行为场景、接口/类型、约束 | plan/detail 创建；change/edit 修改；inherit 生成 Stub |
+| `plan.json` | Phase、task、decisions、tests、notes | plan/detail 创建；code 实时更新 done；change 追加 phase |
+| `ui.md` | 单任务 UI 范围和 screens 引用 | UI feature 的 plan/edit |
+| `design.md` | 复杂任务机制、不变量、失败模式、追踪表 | Standard + Design 任务 |
+| `review.md` | 任务审查报告 | review/task 覆盖写入 |
+
+`Spec-Status: Stub` 表示仅从已有代码生成的轻量快照。进入修改或实现前，应通过 `/archi.change <ID> ...` 补全为 Full spec。
+
+---
+
+## 7. 命令行为
+
+### /archi.init
+
+路由到 start / inherit / recover：
+
+- pack XML 路径存在：recover。
+- 已有 `global/vision.md` 且内容非占位：停止，提示项目已初始化。
+- 根目录有 `package.json` / `go.mod` / `Cargo.toml` 等代码信号：inherit。
+- 有可读 brief：start。
+- 否则询问用户选择空项目、已有代码、或 pack 恢复。
+
+init 完成后必须让用户确认基础文档，尤其是 `roadmap.json`；同时检查 `vision.md`、`tech_stack.md`、`map.json` 是否符合项目真实方向。确认前不应继续进入 `/archi.plan`。
+
+recover 只提示用户运行公开入口 `/archi.init <pack-file>`；`init/recover.md` 是内部子协议名，不是 slash 命令。
+
+### /archi.ui
+
+生成或增量更新 `screens/` 与 `ui_context.md`。完成后必须让用户确认 UI 文档：页面结构、关键流程、组件边界、视觉方向和交互参照都符合预期后，才能把这些内容作为 `/archi.plan` 的上下文。
+
+`screens/` 仍然只是参照。后续实现必须使用项目语言、框架、组件体系和样式方案重新实现，不得直接复用 screens 下页面的 CSS 或源码。
+
+### /archi.plan
+
+- `/archi.plan <ID>`：detail，规划已有 roadmap 任务。
+- `/archi.plan <brief.md>`、`/archi.plan <自然语言需求>`、无参数但存在 scope brief：decompose，追加新任务。
+
+detail 的 Terminal Gate 顺序：`npx archi task --check` → `npx archi render` → `npx archi task <ID> --status active`。
+
+### /archi.code
+
+仅允许 `active` 任务进入。执行后必须：
+
+1. 按 plan task 实时更新 `done: true`。
+2. 运行构建、类型、Lint、格式化、测试与任务验证。
+3. 运行 silent-audit / feature-relations / data-sync。
+4. 通过 `npx archi plan <ID>`、`npx archi task --check`、`npx archi render`。
+5. 最后执行 `npx archi task <ID> --status done`。
+
+### /archi.change
+
+路由到：
+
+| 子协议 | 场景 | 关键约束 |
+|:---|:---|:---|
+| fix | 行为异常、报错、崩溃、不符合既有 spec | Spec Immutable；先复现测试，再修复，再回归 |
+| edit | 单任务补需求、改 spec/ui、调边界 | Doc First；追加 phase，不覆盖历史 |
+| revise | 全局架构、技术栈、跨任务约束变化 | Impact First；用户确认后级联更新 |
+
+### /archi.review
+
+- `/archi.review <ID>`：task 级审查，Read-Only，仅写 `review.md`。
+- `/archi.review`：project 级体检，Read-Only，写入 reviews 报告。
+- `/archi.review map`：同步 map，可能写 `map.json`，需要 Gate。
+
+审查维度包含 spec-code 漂移、测试有效性、技术栈合规、安全、性能、UI screens 误用等。
+
+### /archi.ref
+
+- add：摘要外部资料并写入 refs。
+- list：列出现有 refs。
+- update：覆盖前先展示 sourceType、摘要变化、format 漂移和将覆盖文件，等待确认。
+- remove：删除前先展示 ref 文件、index 条目、引用命中和影响范围，等待确认。
+
+### /archi.remove
+
+本地删除前必须输出影响范围并等待用户确认。Terminal Gate 应覆盖 `npx archi task --check`、`npx archi render`、项目构建/测试以及残留 import/引用检查。
+
+---
+
+## 9. CLI 工具
+
+| 命令 | 作用 |
+|:---|:---|
+| `npx archi init` | 部署框架文件和基础目录 |
+| `npx archi update` | 刷新框架拥有的文件 |
+| `npx archi doctor` | 检查项目健康 |
+| `npx archi render` | 生成 JSON 的 Markdown 视图 |
+| `npx archi task [--check]` | 查看/校验任务状态 |
+| `npx archi task <ID> --status <status>` | 修改任务状态 |
+| `npx archi plan <id>` | 检查 plan 完成度 |
+| `npx archi pack [-o file]` | 打包 global/tasks/refs 用户数据 |
+| `npx archi template <name>` | 输出模板到项目根目录 |
+| `npx archi uninstall` | 移除 Architext 框架文件 |

@@ -10,25 +10,25 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 
-**支持的 IDE：** Cursor *(推荐)* · Windsurf · Trae · VS Code · Claude Code · OpenCode
+**支持的 IDE：** Cursor · Windsurf · Trae · VS Code · Claude Code · OpenCode
 
 </div>
 
 > **🚧 项目早期公告**
 >
-> Architext 目前处于早期阶段。核心工作流（init → start → plan → code）已基本跑通，但仍有不少细节有待打磨。如果你在使用中遇到任何问题，欢迎[提交 Issue](../../issues) —— 我会尽快跟进修复。你的每一条反馈都会直接推动项目成长，感谢你愿意在早期就参与进来。
+> Architext 目前处于早期阶段。核心工作流（init → plan → code → review）已基本跑通，但仍有不少细节有待打磨。如果你在使用中遇到任何问题，欢迎[提交 Issue](../../issues) —— 我会尽快跟进修复。你的每一条反馈都会直接推动项目成长，感谢你愿意在早期就参与进来。
 
 ---
 
 ## 这是什么？
 
-Architext 是一套**文档驱动 AI 开发 (DDAD)** 协议，将你的 AI 编程助手从"随意的代码生成器"升级为"严谨的世界级架构师"。
+Architext 不是替你做产品/架构决策的 AI，也不是另一个代码生成器。它是一套放进仓库里的**文档驱动 AI 开发 (DDAD)** 协议：CLI 负责部署 `.architext` 文档、规则、命令和 Skills；AI 命令负责在开发过程中提问、补齐上下文、生成/更新文档，并让后续实现按这些文档执行。
 
-在写下任何一行代码之前，Architext 强制你和 AI 就以下问题达成一致：**要构建什么**、**为什么要做**、**具体怎么实现** —— 通过跨会话持久存储的结构化文档来确保这一点。
+在写下任何一行代码之前，你先决定**要构建什么**、**为什么要做**、**边界在哪里**、**怎样验收**。Architext 通过 brief、问答和确认步骤，把 AI 不知道的信息问出来、写进 `vision`、`roadmap`、`spec`、`plan` 等文件，再让 AI 照着执行。
 
 > **无文档，不代码。** 代码只是文档的下游产物。
 
-Architext 面向**中小型应用**，为 **1 人团队** 或 **1 人 + AI 助手** 的协作模式设计。无论你用的是对话式 AI 还是未来的「贾维斯式」持续助手，文档驱动的工作流都能让 AI 有稳定的上下文、清晰的执行边界，而你始终掌握决策权。
+Architext 更适合**中小型应用**、个人开发者或小团队 + AI 的场景：需求和架构还需要人来拍板，但希望 AI 不要每次都从零猜。你的产品方向、技术取舍、功能边界和验收标准仍由你决定；Architext 负责把这些决定沉淀到仓库里，让不同会话、不同成员、不同 AI 工具都能沿着同一套事实继续工作。
 
 Architext 以两个层次协同运作：
 
@@ -45,13 +45,13 @@ CLI 层负责一次性部署框架，AI 命令层在这些文件的基础上驱�
 
 |  | AI 全权代理模式<br>*(Trae Solo / Bolt / v0)* | **Architext** |
 |:---|:---|:---|
-| **核心假设** | AI 知道用户要什么 | 用户知道自己要什么，但还没想清楚 |
-| **AI 的角色** | 全权代理人 | 产品顾问 + 严格执行者 |
-| **你的角色** | 验收者（做完了才知道是什么） | 决策者（动手前就看清全貌） |
-| **信息流向** | AI → 用户（"你看这行不行"） | 用户 → AI（"我要的是这个"） |
-| **决策权** | AI 隐式决定功能逻辑 | 用户显式定义，AI 严格执行 |
+| **核心假设** | AI 知道用户要什么 | 用户负责决定，AI 需要补齐上下文 |
+| **AI 的角色** | 全权代理人 | 提问者 + 文档执行者 |
+| **你的角色** | 验收者（做完了才知道是什么） | 决策者（确认后再执行） |
+| **信息流向** | AI → 用户（"你看这行不行"） | 用户定义方向，AI 追问缺口 |
+| **决策权** | AI 隐式决定功能逻辑 | 用户显式定义，AI 按文档执行 |
 
-> 其他工具让 AI 替你做决定，Architext 帮你自己做决定。
+> Architext 不替你决定；它把需要你决定的地方问出来、记下来，并约束 AI 照着做。
 
 ---
 
@@ -68,20 +68,20 @@ npx archi init
 ✔ 选择语言      › 简体中文
 ✔ 选择 IDE      › Cursor   (多选 — Cursor / Windsurf / Trae / VS Code / Claude Code / OpenCode)
 ✔ 选择项目类型  › Web SPA / PWA
-✔ 是否生成 project-brief.md？ › 是（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）
+✔ 是否生成 project-brief.md？ › 是
 
 ● 正在部署 Architext...
 ✔ 文档已部署       → .architext/
-      prompts/  global/  templates/  tasks/
+      prompts/  global/  templates/  tasks/  refs/
 ✔ 规则文件已部署   → .cursor/rules/           (Cursor: .mdc)
       00_system · 90_custom_rules
-✔ 命令文件已部署   → .cursor/commands/         (仅 Cursor)
-      archi.start · archi.scope · archi.plan · archi.code · archi.audit · ...
-✔ Skills 已部署    → .cursor/skills/           (Cursor)
-      archi-decompose-roadmap · archi-interview-protocol · archi-plan-options · archi-ui-wireframe
+✔ 命令文件已部署   → .cursor/commands/         (仅支持命令文件的编辑器)
+      archi.init · archi.plan · archi.change · archi.code · archi.review · archi.ref · ...
+✔ Skills 已部署    → .cursor/skills/ 或 .architext/skills/
+      archi-intent-normalizer · archi-context-fetch · archi-decompose-roadmap · archi-silent-audit · ...
 ✔ project-brief.md 已生成 → 项目根目录
 
-◆ 完成！填写 project-brief.md，然后在 AI 编辑器中运行 /archi.start。
+◆ 完成！填写 project-brief.md，然后在 AI 编辑器中运行 /archi.init。
 ```
 
 **第二步 · AI 对话：初始化项目**
@@ -89,12 +89,12 @@ npx archi init
 选择生成时，`archi init` 会在项目根目录生成 `project-brief.md`。填写完毕后，在 AI 编辑器中运行：
 
 ```
-/archi.start project-brief.md
+/archi.init project-brief.md
 ```
 
-AI 读取 Brief，就关键决策向你提问，生成项目的基础文档（`vision.md`、`roadmap.json`、`tech_stack` 等）。
+`/archi.init` 会根据当前目录自动路由：空项目 + Brief 会生成基础资产；已有代码库会纳管现有功能；传入 pack XML 会恢复用户数据。它会生成或恢复 `vision.md`、`roadmap.json`、`tech_stack.md`、`map.json` 等基础资产。
 
-> **已有代码？** 跳过 `/archi.start`，改用 `/archi.inherit` —— 逆向分析项目，将已有功能注册为 `LEG-xx` 任务，同时生成 `map.json`。可选：代码库尚空时传 `project-brief.md` 补充愿景与路线图。
+> **已有代码？** 仍然运行 `/archi.init`。路由器会识别 `package.json` / `go.mod` / `Cargo.toml` 等代码库信号，进入 inherit 子协议，把已有功能注册为 `LEG-xx` 任务并生成 Stub spec。
 
 ---
 
@@ -102,68 +102,78 @@ AI 读取 Brief，就关键决策向你提问，生成项目的基础文档（`v
 
 项目全生命周期的主干路径，全部在 AI 对话框中完成。
 
-```
-project-brief.md → /archi.start → [?UI] /archi.ui → /archi.plan → /archi.code → /archi.audit
-                                                              ↑
-              /archi.scope  anytime you have NEW feature requirements
-              （不限「start 之后」——项目进行中、发布后均可）
+```mermaid
+flowchart TD
+  Input["Brief / 已有代码 / pack XML"] --> Init["/archi.init"]
+  Init --> Foundation["生成或恢复全局基础资产<br/>vision / roadmap / tech_stack / map"]
+  Foundation --> ConfirmFoundation["确认基础文档<br/>尤其 roadmap"]
+  ConfirmFoundation --> Plan["/archi.plan"]
+
+  ConfirmFoundation -. "UI 项目可选" .-> UI["/archi.ui<br/>生成 screens / ui_context"]
+  UI -.-> ConfirmUI["确认 UI 文档<br/>screens / ui_context"]
+  ConfirmUI -. "作为规划上下文" .-> Plan
+
+  Plan --> Docs["生成或更新 roadmap / spec / plan"]
+  Docs --> ConfirmTask["确认任务文档<br/>spec / plan"]
+  ConfirmTask --> Code["/archi.code<br/>按 plan 实现"]
+  Code --> Review["/archi.review<br/>审查实现"]
+
+  Review --> Next{"下一步"}
+  Next -- "bug / 改需求 / 全局变更" --> Change["/archi.change<br/>fix / edit / revise"]
+  Change --> Plan
+  Next -- "继续推进" --> Plan
 ```
 
 **第一阶段 · 初始化**
 
 ```
-你:   /archi.start project-brief.md
+你:   /archi.init project-brief.md
 
-AI:   [正在分析项目 Brief...]
-      [就技术栈、架构风格、项目类型向你提问...]
+AI:   [Intent Normalization: 判断这是初始化]
+      [Context Fetch: 读取 Brief、项目文件和必要全局资产]
+      [路由: init/start]
 
       ✔ 新增:    .architext/global/vision.md
       ✔ 新增:    .architext/global/roadmap.json
+      ✔ 新增:    .architext/global/map.json
       ✔ 新增:    .architext/global/dictionary.json
       ✔ 新增:    .architext/global/error_codes.json
       ✔ 新增:    .architext/global/env_registry.json
       ✔ 新增:    .architext/global/tech_stack.md
-      ✔ 新增:    .architext/global/ui_context.md       (仅 UI 类项目)
-      ✔ 填充:    .cursor/rules/90_custom_rules.mdc  (写入团队编码规范)
+      ✔ 新增:    .architext/global/design_tokens.json    (仅 UI 类项目)
+      ✔ 填充:    .cursor/rules/90_custom_rules.mdc
 
-      下一步：运行 /archi.ui 生成 UI 概念设计 → 然后 /archi.plan <首个任务ID>
-             Brief 之外还有需求 → /archi.scope 先追加任务
+      下一步：先确认基础文档，尤其 roadmap；UI 项目再运行 /archi.ui 并确认 UI 文档；然后 /archi.plan <首个任务ID>
 ```
 
-> **已有代码？** 改用 `/archi.inherit` —— 逆向分析项目，将已有功能注册为 `LEG-xx` 任务，并额外生成 `map.json`。
+初始化完成后先审阅基础文档：`roadmap.json` 决定后续任务拆分和优先级，`vision.md` 决定产品方向，`tech_stack.md` 决定实现约束，`map.json` 决定项目结构认知。若这些内容不符合你的真实意图，先让 AI 调整文档，不要直接进入 `/archi.plan`。
 
-**第二阶段 · 需求分解（可选，随时可跑）**
+UI 项目运行 `/archi.ui` 后也要确认文档：`screens/` 是视觉和交互参照，`ui_context.md` 是后续 plan/code 理解页面结构的依据。若页面、流程、组件边界或视觉方向不符合心意，先调整 UI 文档，不要直接进入 `/archi.plan`。
 
-> `/archi.scope` **不是**「start 的下一步」。只要你有**除初始 Brief 之外的新功能需求**，随时可运行——start 后、项目进行中、所有任务完成后均可。
+**第二阶段 · 需求分解 / 深度规划**
+
+`/archi.plan` 是聚合入口：
+- 带已有 Roadmap ID：进入 detail 子协议，生成 `spec.md` / `plan.json` / 可选 `ui.md`、`design.md`。
+- 带 brief 文件、自然语言需求或无参数：进入 decompose 子协议，把新需求追加到 `roadmap.json`。
 
 ```
-你:   /archi.scope scope-brief.md          ← 提供文件；或直接 /archi.scope 触发访谈
+你:   /archi.plan scope-brief.md
 
-AI:   [正在读取 vision.md, roadmap.json, map.json, tech_stack...]
+AI:   [读取 vision.md, roadmap.json, map.json, tech_stack...]
       [扫描现有任务，评估影响范围...]
 
-      已分解为 3 个任务：
       ✔ 更新: .architext/global/roadmap.json
         新增任务 FEAT-001 · auth-login        (状态: pending)
         新增任务 FEAT-002 · auth-session      (状态: pending, 依赖: FEAT-001)
-        新增任务 FEAT-003 · user-profile      (状态: pending, 依赖: FEAT-001)
 ```
-
-**第三阶段 · 深度规划**
 
 ```
 你:   /archi.plan FEAT-001
 
-AI:   [正在读取 vision.md, tech_stack.md, map.json, 依赖任务 spec...]
-      [就功能逻辑、数据流、边界条件向你提问...]
+AI:   [读取任务目标、依赖 spec、全局约束和相关 refs]
+      [输出功能设计 + 架构建议，等待确认]
 
-      Q1. 认证方式？[A] JWT  [B] Session Cookie  [C] OAuth  [推荐: A]
-      Q2. 会话是否需要跨设备同步？[Y/N]
-      Q3. ...
-
-你:   A | N | ...
-
-AI:         ✔ 新增:    .architext/tasks/FEAT-001_auth-login/spec.md
+      ✔ 新增:    .architext/tasks/FEAT-001_auth-login/spec.md
       ✔ 新增:    .architext/tasks/FEAT-001_auth-login/plan.json
       ✔ 新增:    .architext/tasks/FEAT-001_auth-login/ui.md          (仅 UI 类项目)
       ✔ 更新:    .architext/global/roadmap.json    (FEAT-001: pending → active)
@@ -173,115 +183,94 @@ AI:         ✔ 新增:    .architext/tasks/FEAT-001_auth-login/spec.md
 
 代码动工前，审阅生成的规格文档：
 - `spec.md` — 功能逻辑、Gherkin 验收标准、接口契约
-- `plan.json` — 实施阶段、文件级任务拆解、决策记录
+- `plan.json` — 实施阶段、文件级任务拆解、测试映射、决策记录
 - `ui.md` — 交互说明，对照 `ui_context.md` 中的屏幕定义（仅 UI 类项目）
+- `design.md` — 复杂任务的机制设计、不变量、失败模式（按需生成）
 
-确认"这就是我要的"之后，再进入实现阶段。
+这一步需要你确认任务文档：`spec.md` / `plan.json` 写出来的是不是你真正想要的产品行为、边界和实现方向。若不符合心意，先用自然语言指出问题，或运行 `/archi.change <ID> ...` 调整文档；不要直接进入 `/archi.code`。
 
-**第四阶段 · 实现**
+**第三阶段 · 实现**
 
 ```
 你:   /archi.code FEAT-001
 
-AI:   [正在读取 spec.md, plan.json, tech_stack.md...]
+AI:   [读取 spec.md, plan.json, tech_stack.md...]
       [状态门控：FEAT-001 状态为 active ✔]
-      [运行静默审计循环：依赖 / 技术红线 / 架构边界...]
+      [测试质量门控：测试必须验证真实行为，而不是只为通过]
 
-      正在实现 阶段 A：核心认证逻辑
+      正在实现 Phase A：核心认证逻辑
       ✔ 新增:    src/features/auth/auth.service.ts
       ✔ 新增:    src/features/auth/auth.controller.ts
       ✔ 更新:    src/app.module.ts
-      ✔ 更新:    .architext/tasks/FEAT-001_auth-login/plan.json  (阶段 A → 完成)
+      ✔ 更新:    .architext/tasks/FEAT-001_auth-login/plan.json  (task done 实时更新)
 ```
 
-**第五阶段 · 代码审查（可选，强烈建议）**
+`/archi.code` 的最终 Gate 会先检查 `npx archi plan <ID>`、`npx archi task --check`、`npx archi render`，全部通过后才把任务标记为 `done`。
+
+**第四阶段 · 变更与审查**
+
+`/archi.change` 是 bug、单任务需求变更、全局架构变更的聚合入口：
 
 ```
-你:   /archi.audit FEAT-001       ← 带 ID: 审查该任务实现；不带 ID: 做项目级全面体检
-
-AI:   [正在读取 代码 + spec + plan + vision + tech_stack...]
-
-      ✔ 新增: .architext/tasks/FEAT-001_auth-login/audit.md
-
-      发现 2 个问题：
-      [中] /auth/login 缺少速率限制 → 建议运行 /archi.fix
-      [低] Token 过期时间未通过环境变量配置 → 建议运行 /archi.edit
+/archi.change FEAT-001 "密码含特殊字符时登录失败"     # fix 子协议
+/archi.change FEAT-001 "补一个深色模式边界场景"       # edit 子协议
+/archi.change "全局错误码改成 ERR_MODULE_REASON"      # revise 子协议
 ```
 
-> **命令之间的日常开发**由自然语言 **Chat Mode** 驱动。用自然语言描述需求（如「加个登录功能」「修一下认证的 bug」），AI 会自动识别意图并加载对应协议（scope/plan/code/edit/fix）执行，**无需手动输入 `/archi.*` 斜杠命令**。提问、琐碎修改、调试则直接回答。2 个规则文件作为始终在线的基底规则：`00_system`、`90_custom_rules`，AI 不会因会话切换而"失忆"。
+`/archi.review` 是审查入口：
+
+```
+/archi.review FEAT-001      # task 级代码审查，只写 review.md
+/archi.review               # project 级体检
+/archi.review map           # map.json 与目录结构同步
+```
+
+审查会检查 spec-code 漂移、测试有效性、架构地图、全局资产同步等问题；发现 bug 会建议 `/archi.change <ID> ...`，而不是直接修改。
+
+> **命令之间的日常开发**由自然语言 **Chat Mode** 驱动。用自然语言描述需求（如「加个登录功能」「修一下认证的 bug」），`00_system` 会先做 Intent Normalization，再用 Context Fetch 读取必要文件，最后加载对应聚合协议。提问、琐碎修改、调试则直接回答。
 
 ---
 
 ## 教程
 
-不同场景，同一套协议。按你的情况选择对应路径。
+不同场景，同一条主干路径。输入不同，`/archi.init` 和 `/archi.plan` 会自动路由到对应子协议。
 
-### 教程 A：新项目，Brief 已覆盖全部需求
-
-`project-brief.md` 已列出所有功能，无需 scope。
+### 场景 A：Brief 已覆盖全部需求
 
 ```
-/archi.start project-brief.md  →  [?UI] /archi.ui  →  /archi.plan FEAT-001  →  /archi.code FEAT-001  →  ...
+/archi.init project-brief.md  →  确认基础文档  →  [?UI] /archi.ui  →  确认 UI 文档  →  /archi.plan FEAT-001  →  确认任务文档  →  /archi.code FEAT-001
 ```
 
-Start 产出 roadmap 后，UI 项目运行 `/archi.ui` 生成屏幕原型，再 plan 首个任务，然后 code。
-
----
-
-### 教程 B：新项目，Brief 不完整
-
-start 跑完后发现漏了功能，或想追加更多。
+### 场景 B：Brief 不完整或后续追加功能
 
 ```
-/archi.start project-brief.md  →  [?UI] /archi.ui  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-001  →  ...
+/archi.init project-brief.md  →  确认基础文档  →  /archi.plan scope-brief.md  →  /archi.plan FEAT-001  →  确认任务文档  →  /archi.code FEAT-001
 ```
 
-Scope 向 `roadmap.json` 追加任务，UI 项目运行 `/archi.ui`，再按 plan → code 继续。
+`/archi.plan` 可随时追加新需求；它不再是单纯的“深度规划”命令，而是 plan 路由器。
 
----
-
-### 教程 C：项目进行中追加功能
-
-FEAT-001 已做完，想加 FEAT-002、FEAT-003 等。
+### 场景 C：已有代码库纳管
 
 ```
-...  →  /archi.scope scope-brief.md  →  /archi.plan FEAT-002  →  /archi.code FEAT-002  →  ...
+npx archi init  →  /archi.init [project-brief.md]  →  确认基础文档  →  /archi.change LEG-xx 补全 Stub  →  /archi.code LEG-xx
 ```
 
-**Scope 随时可跑**——不限「start 之后」。只要有超出当前 roadmap 的新需求，就运行 scope。
-
----
-
-### 教程 D：已有代码库
-
-已有仓库，想纳入 Architext 管理。
+### 教程 D：Bug 修复
 
 ```
-npx archi init  →  /archi.inherit [project-brief.md]  →  /archi.edit LEG-xx 补全 Stub  →  /archi.code LEG-xx
+/archi.change FEAT-001 "密码含特殊字符时登录失败"
 ```
 
-Inherit 逆向分析项目，将已有功能注册为 `LEG-xx` 任务。用 edit 补全 Stub spec，再按需 code。
-
----
-
-### 教程 E：Bug 修复
+### 教程 E：外部资料引用
 
 ```
-/archi.fix FEAT-001 "密码含特殊字符时登录失败"
+/archi.ref add https://example.com/api-docs
+/archi.ref list
+/archi.ref update stripe-api
+/archi.ref remove stripe-api
 ```
 
-Fix 诊断根因，向 plan 追加 Bugfix Phase，并修复代码。
-
----
-
-### 何时用 /archi.scope（速查）
-
-| 时机 | 操作 |
-|:---|:---|
-| start 后，Brief 未覆盖全部 | scope |
-| 项目进行中，想到新功能 | scope |
-| 所有任务 done，要加新模块 | scope |
-| Brief 已覆盖全部 | 跳过 scope，直接 plan |
+`update` / `remove` 会先展示覆盖或删除影响范围，等待确认后再写入。
 
 ---
 
@@ -289,39 +278,34 @@ Fix 诊断根因，向 plan 追加 Bugfix Phase，并修复代码。
 
 ### AI 对话命令
 
-可通过输入 `/archi.<命令>` 或直接用自然语言描述意图触发——Chat Mode 会自动加载并执行对应协议。
+可通过输入 `/archi.<命令>` 或直接用自然语言描述意图触发。公开命令是聚合入口，具体子协议由 Intent Card + Context Pack 路由。
 
 | 命令 | 说明 |
 |:---|:---|
-| `/archi.start [brief]` | 读取需求 Brief，生成项目基础文档（vision / roadmap / tech_stack 等） |
-| `/archi.inherit [brief]` | 逆向分析已有代码库；可选传 project-brief.md 补充愿景/路线图（骨架仓库） |
-| `/archi.scope [file_path]` | 将额外需求拆解为 Roadmap 任务；无文件则自动发起访谈 |
-| `/archi.plan <ID> [context]` | 深度架构访谈 → 生成 spec / plan（[?UI] 附 ui.md）；可附加已知上下文减少提问 |
+| `/archi.init [brief-or-pack]` | 初始化项目、纳管已有代码或从 pack 恢复；生成或恢复基础文档，之后需要确认 roadmap 等内容 |
+| `/archi.plan [ID|brief|需求描述]` | 无 ID 时分解新需求；有 ID 时生成或细化该任务的 spec / plan |
 | `/archi.code <ID>` | 按 plan 分阶段实现代码；仅 `active` 任务可进入 |
-| `/archi.edit <ID> [context]` | 修改功能规格 → 追加新开发 Phase；不覆盖历史记录 |
-| `/archi.revise [context]` | 全局架构/技术栈变更 → 输出影响评估 → 用户确认后级联更新 |
-| `/archi.ui` | 生成或增量更新多文件 UI 概念设计（`screens/` 目录）；仅 UI 类项目 |
-| `/archi.audit [ID]` | 深度代码审查，输出审计报告；带 ID 审查单任务，不带 ID 做项目级体检 |
-| `/archi.fix [ID] <context>` | 诊断根因并修复 Bug；ID 可选，context 描述问题现象 |
-| `/archi.map` | 对比 map.json 与实际目录树，同步架构地图 |
-| `/archi.remove <ID>` | 全链路下线功能：删除代码 + 文档，清理 roadmap / map 引用 |
-| `/archi.help [question]` | 无参数：推荐下一步行动；有问题：定位相关文件回答 |
+| `/archi.change [ID] <context>` | 路由到 fix / edit / revise：修 bug、改单任务文档、或做全局变更 |
+| `/archi.review [ID|map]` | 任务审查、项目体检，或 map.json 同步 |
+| `/archi.ui` | 生成或增量更新 UI 概念设计；之后需要确认 `screens/` 和 `ui_context.md`；生产代码必须用项目语言重实现 |
+| `/archi.ref <add|list|update|remove>` | 管理外部知识引用，供 plan/code 按 tags 注入上下文 |
+| `/archi.remove <ID>` | 下线功能：先输出影响范围并确认，再删除代码/文档并清理引用 |
+| `/archi.help [question]` | 无参数推荐下一步；有问题时定位相关文件回答 |
 
 ### 终端命令
 
 | 命令 | 用途 |
 |:---|:---|
-| `npx archi init` | 部署框架文件（规则、Prompt、Skills） |
-| `npx archi update` | 将已部署文件更新至最新版本 |
+| `npx archi init` | 部署框架文件（规则、Prompt、Skills、模板和全局种子文件） |
+| `npx archi update` | 将已部署框架文件更新至最新版本，不覆盖用户数据 |
 | `npx archi doctor` | 检查项目健康状态 |
 | `npx archi render` | 将 JSON 数据生成可读 Markdown 视图 |
 | `npx archi task [--check]` | 查看/校验 Roadmap 任务状态 |
-| `npx archi plan <id>` | 检查指定功能的 plan 完成度 |
+| `npx archi task <ID> --status <status>` | 更新任务状态 |
+| `npx archi plan <id>` | 检查指定任务的 plan 完成度 |
 | `npx archi pack [-o file]` | 打包用户数据为 XML 备份文件 |
 | `npx archi template <name>` | 获取模板文件到项目根目录 |
-| `npx archi uninstall` | 从项目中移除 Architext 文件 |
-
----
+| `npx archi uninstall` | 从项目中移除 Architext 框架文件 |
 
 ## 核心哲学
 
@@ -333,9 +317,9 @@ Fix 诊断根因，向 plan 追加 Bugfix Phase，并修复代码。
 
 AI 的职责是挖掘和澄清你的真实意图，而非替代你做判断。在开发开始之前，你就能看到完整的功能逻辑、数据流和交互模型。所有关键决策的最终决定权在你手中。
 
-**③ 元框架**
+**③ 架构约定可执行化**
 
-Architext 不强制规定架构。它通过 AI 无法绕过的规则和边界，严格执行**你所选择的**任意架构（MFA、FSD、DDD、整洁架构等）。
+Architext 不替你选择架构。它把你选定的架构约定写进文档、规则和检查流程里，让 AI 更容易沿着这些边界工作；如果实现偏离约定，审查和 Gate 会把问题暴露出来。
 
 ---
 
@@ -351,17 +335,17 @@ Architext 是我在这个方向上的一次探索：尝试为"如何与 AI 协�
 
 ## 常见问题
 
-**这和 Cursor Agent 模式有什么区别？**
+**我已经有 AI 编辑器了，为什么还需要 Architext？**
 
-Agent 模式适合单次会话。Architext 提供跨会话、跨成员、跨 AI 工具的持久上下文。你的规格文档存在仓库里，关闭对话窗口也不会消失。
+Architext 不替代 Cursor、Claude Code、Windsurf 这类 AI 编辑器。它提供的是项目级协议：把需求、架构约定、任务计划、审查结果和上下文资产放进仓库，让不同会话和不同工具都能围绕同一套文档工作。
 
 ---
 
 **我的已有项目能用吗？**
 
-可以。先运行 `npx archi init` 部署框架，再运行 `/archi.inherit`，Architext 会分析你的现有代码并填充文档骨架（非覆盖既有内容）。已有功能以 `LEG-xx` 形式注册为存根规格，渐进式接入，无需推倒重来。
+可以。先运行 `npx archi init` 部署框架，再运行 `/archi.init`。init 路由器会识别已有代码库并进入 inherit 子协议，分析现有代码、填充文档骨架（非覆盖既有内容），并把已有功能注册为 `LEG-xx` Stub spec，渐进式接入，无需推倒重来。
 
-> **注意**：`/archi.inherit` 目前处于早期阶段，对大型或复杂仓库的分析结果可能不够完整，需要手动补充。欢迎提交 Issue 反馈遇到的问题。
+> **注意**：inherit 子协议仍处于早期阶段，对大型或复杂仓库的分析结果可能不够完整，需要手动补充。欢迎提交 Issue 反馈遇到的问题。
 
 ---
 
@@ -390,7 +374,7 @@ Agent 模式适合单次会话。Architext 提供跨会话、跨成员、跨 AI 
 
 **必须用全部命令吗？**
 
-不必。可以只从 `/archi.plan` + `/archi.code` 开始，随着熟悉程度逐步引入其他命令。整个系统按照渐进式接入的方式设计。
+不必。可以只从`/archi.init` + `/archi.plan` + `/archi.code` 开始，随着熟悉程度逐步引入其他命令。整个系统按照渐进式接入的方式设计。
 
 ---
 
@@ -404,6 +388,6 @@ Agent 模式适合单次会话。Architext 提供跨会话、跨成员、跨 AI 
 
 **[贡献指南](https://github.com/JiuNian3219/architext/blob/main/CONTRIBUTING.md) · [更新日志](https://github.com/JiuNian3219/architext/blob/main/CHANGELOG.md) · [Issues](https://github.com/JiuNian3219/architext/issues)**
 
-> 这就是 Architext：一套让 AI 真正像资深架构师一样工作的元框架协议。
+> 这就是 Architext：一套把需求、文档和 AI 执行连接起来的开发协议。
 
 </div>
