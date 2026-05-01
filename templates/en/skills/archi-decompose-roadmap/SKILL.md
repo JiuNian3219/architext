@@ -37,6 +37,18 @@ Vertical slice = End-to-end delivery unit from data layer to user touchpoint lay
 
 ---
 
+## Effort Judgment
+
+Before outputting any tasks, classify the requirement as `single-task` or `multi-task` and give rationale:
+- Independent acceptance flows: 2+ user/command/API flows → `multi-task`
+- Concern count: covers >2 concerns among data/API/UI/auth/sync/import-export, etc. → `multi-task`
+- Estimated files/modules: candidate Task exceeds 6 new files/modules → split further
+- Implementation controllability: cannot fit one implementation session → split further
+
+Output must include `effortJudgment`: `conclusion`, `rationale`, and `splitSignals`. Do not compress a large requirement into one Task just to keep the result short.
+
+---
+
 ## Decomposition Framework
 
 ### Step 0 · Project Type + Slice Strategy
@@ -238,6 +250,7 @@ Brief has design decisions → Inject into goal: `[User Preset] <content>`, same
 
 ## Output Verification
 
+- [ ] Output includes `effortJudgment` with single-task / multi-task judgment and split rationale
 - [ ] `roadmap.json` has valid `tasks[]` flat array + `nfr[]`
 - [ ] Each Task passes four baselines + granularity verification checklist
 - [ ] Each FEAT's goal contains: Verification + Boundary (with Task ID) + Implementation hints + `[TEST]` (specific scenarios)

@@ -1,6 +1,7 @@
 <protocol_plan_detail>
 **Trigger**: 由 `prompts/plan.md` 路由器分发，参数形态为 `<ID> [context]`
 **Goal**: 通过深度架构访谈，定义功能的 Spec/UI/Plan。
+**Boundary**: 本协议只细化 roadmap 中已存在的单个任务，关注“怎么做、怎么验收、怎么测试”。不得在 detail 中拆分任务、追加 roadmap 任务或为自然语言需求直接创建任务目录；若发现当前任务明显过粗，停止生成文档并提示回到 `/archi.plan` decompose 调整 roadmap。
 **Input**:
 - `<ID>` (必填): Roadmap 中已存在的任务 ID。须先通过 `/archi.plan`（无参 / 带 brief）分解范围，或通过 `/archi.init` 的 inherit 模式纳管已有代码。
 - `[context]` (可选): 任务的已知上下文（如用户需求描述、参考资料、约束条件）。提供时作为 step_2 访谈的前置输入，减少提问。
@@ -26,7 +27,7 @@
 <step_2_complexity>
 检测任务类型，评估复杂度，决定流程路径。
 
-**⓪ Task Type + 粒度红线**：
+**⓪ Task Type + 文档上限**：
 | ID 前缀 | Task Type | spec § 2 主维度 | § 4 Interface | AC 上限 | Phase 上限 |
 |:---|:---|:---|:---|:---|:---|
 | `INF-` | Infrastructure | Structural（配置契约） | **必填** | ≤ 8 Contracts | ≤ 5 |
@@ -34,7 +35,7 @@
 | `POLISH-` | Quality | Quantitative（量化目标） | 通常省略 | ≤ 4 Targets | ≤ 3 |
 | `EDIT-` | Edit | 继承原任务类型 | 继承 | 继承 | 继承 |
 
-> 混合型任务可在 § 2 中组合多维度，用子标题区分。预估超出上限即触发拆分。
+> 混合型任务可在 § 2 中组合多维度，用子标题区分。若预估超出上限，说明该 roadmap 条目过粗；停止生成文档，提示回到 `/archi.plan` decompose 调整 roadmap，不在 detail 内拆分或硬写巨型任务。
 
 **① 复杂度判定**：
 | 信号 | 判定 | 流程 |
@@ -182,10 +183,10 @@ AI 根据功能性质自行决定输出哪些模块，从以下素材库中选�
 
 **原则 2 — 100% 覆盖**: spec § 2 每个 AC → ≥1 task 覆盖；§ 4 每个 Interface → 有 task 创建；§ 5 每个 Constraint → 有 task notes 引用。遗漏则补充。
 
-**原则 3 — 粒度与互斥**:
+**原则 3 — 文档任务粒度与互斥**:
 | 信号 | 判定 |
 |:---|:---|
-| task 涉及 ≥3 个不相关文件 | 太粗 — 拆分 |
+| task 涉及 ≥3 个不相关文件 | 过粗 — 停止生成，回到 decompose 调整 roadmap |
 | title 无法对应具体产出文件 | 太抽象 — 具体化 |
 | 两个 task 修改同一文件同一区域 | 违反互斥 — 合并或重划 |
 | notes 只有一句话且无验证项 | 信息量不足 — 补充 |

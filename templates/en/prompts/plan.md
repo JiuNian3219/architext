@@ -21,6 +21,11 @@
 - If `subprotocol` is `decompose` / `detail` and `confidence >= 0.75` and no `ambiguities` → Use that route, and use `[arg]` / `target.task_id` to fill subprotocol parameters.
 - If Intent Card missing, low confidence or has ambiguity → Scan following signals by priority, first match handles:
 
+**Task Creation Boundary**:
+- New requirement / new feature / new task / natural-language scope description without an existing roadmap ID can only route to `plan/decompose.md`.
+- Router and decompose stages must not create `tasks/<ID>_<Slug>/` or any task document; they may only estimate scope, split tasks, and update `global/roadmap.json`.
+- Only case 1 with an existing ID may enter `plan/detail.md` and generate task documents.
+
 | # | Signal | Judgment | Route Target |
 |:---|:---|:---|:---|
 | 1 | `[arg]` matches `^[A-Z]+-\d+$` and exists in `roadmap.json` | Valid task ID | `plan/detail.md` (`[arg]` as ID, rest as context) |

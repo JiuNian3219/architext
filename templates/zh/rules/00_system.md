@@ -26,11 +26,13 @@ alwaysApply: true
 3. **Context First**: 加载协议前必须产出 Context Pack；显式 `/archi.*` 命令也不能跳过，除非只是普通问答且不涉及项目文件。
 4. **DAG Execution**: 遵守 `roadmap.json` 依赖链；`blocked` 或依赖未完成的任务不能直接进入 code。
 5. **Spec Before Code**: 写代码前必须读取目标 `spec.md` / `plan.json`；没有 spec 的功能先走 `/archi.plan`。
-6. **No New Dependency By Guess**: 禁引入 `tech_stack.md` 未声明的依赖；确需新增依赖时先说明影响并等待用户确认。
-7. **Docs Integrity**: 修改 `[[__DOCS_DIR__]]` 下文档时先读原文，保留 frontmatter、既有章节结构和用户内容。
-8. **Global Data Sync**: 新增或变更实体、错误码、环境变量、命令、公开 API、设计 token、目录映射时，同步对应 `global/*.json`。
-9. **Safety Gate**: 删除、覆盖、恢复 pack、安装依赖、跨任务全局变更前，必须输出影响清单并获得用户明确 OK。
-10. **Working Directory Gate**: 执行 `npx archi` 前确认位于项目根目录，也就是 `[[__DOCS_DIR__]]/` 所在目录。
+6. **Roadmap Before Task Docs**: 新需求、新功能、新任务、范围拆解必须先进入 `/archi.plan` 的 decompose 路径并写入 `global/roadmap.json`。没有已存在的 roadmap task ID 时，禁止创建 `tasks/<ID>_<Slug>/`、`spec.md`、`plan.json`、`ui.md` 或 `design.md`。
+7. **Task Docs Only For Existing IDs**: 只有 `/archi.plan <ID>` 的 detail 路径，在确认 `<ID>` 已存在于 `roadmap.json` 后，才允许生成 `tasks/<ID>_<Slug>/` 文档目录。若用户给的是自然语言需求而非现成 ID，必须判断工作量并拆到 roadmap，不能直接造 ID 或目录。
+8. **No New Dependency By Guess**: 禁引入 `tech_stack.md` 未声明的依赖；确需新增依赖时先说明影响并等待用户确认。
+9. **Docs Integrity**: 修改 `[[__DOCS_DIR__]]` 下文档时先读原文，保留 frontmatter、既有章节结构和用户内容。
+10. **Global Data Sync**: 新增或变更实体、错误码、环境变量、命令、公开 API、设计 token、目录映射时，同步对应 `global/*.json`。
+11. **Safety Gate**: 删除、覆盖、恢复 pack、安装依赖、跨任务全局变更前，必须输出影响清单并获得用户明确 OK。
+12. **Working Directory Gate**: 执行 `npx archi` 前确认位于项目根目录，也就是 `[[__DOCS_DIR__]]/` 所在目录。
 </hard_constraints>
 
 ---

@@ -37,6 +37,18 @@ disable-model-invocation: true
 
 ---
 
+## 工作量判断
+
+在输出任何任务前，先判断需求是 `single-task` 还是 `multi-task`，并给出依据：
+- 独立验收流程数：2 条以上用户/命令/API 流程 → `multi-task`
+- 关注点数量：同时覆盖数据/API/UI/权限/同步/导入导出等 >2 类 → `multi-task`
+- 预计文件/模块数：候选 Task 超过 6 个新文件/模块 → 继续拆分
+- 实现可控性：无法在一次实现会话内完成 → 继续拆分
+
+输出必须包含 `effortJudgment`：`conclusion`、`rationale`、`splitSignals`。不得为了让结果简短而把大需求压成一个 Task。
+
+---
+
 ## 分解框架
 
 ### Step 0 · 项目类型 + 切片策略
@@ -238,6 +250,7 @@ Brief 已有设计决策 → 注入 goal：`[用户预设] <内容>`，同一决
 
 ## 输出验证
 
+- [ ] 已输出 `effortJudgment`，说明 single-task / multi-task 判断和拆分依据
 - [ ] `roadmap.json` 含有效 `tasks[]` 扁平数组 + `nfr[]`
 - [ ] 每个 Task 通过四条底线 + 粒度验证清单
 - [ ] 每个 FEAT 的 goal 含：验证方式 + 边界（标注 Task ID）+ 实现提示 + `[TEST]`（具体场景）

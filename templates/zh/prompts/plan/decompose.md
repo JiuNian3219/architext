@@ -2,6 +2,7 @@
 **Trigger**: 由 `prompts/plan.md` 路由器分发，参数形态为：无参 / `[file_path]` / `[自然语言需求]`
 **Phase**: Requirement Decomposition
 **Goal**: 读取 Scope Brief（或通过访谈生成），将大需求分解为多个 Roadmap 任务并建立依赖关系。
+**Boundary**: 本协议只允许分析工作量、输出拆分方案、在用户 OK 后追加 `global/roadmap.json`。禁止创建 `tasks/<ID>_<Slug>/`、`spec.md`、`plan.json`、`ui.md` 或 `design.md`；这些只能由 `/archi.plan <已存在ID>` 的 detail 协议生成。
 
 <meta>
 	<style>Strategic, Analytical, Structured</style>
@@ -37,10 +38,11 @@
 **Input**: Step 0 Brief 解析结果 + Step 1 项目上下文。
 
 1. **Vision 对齐检查**：Brief 需求是否与 vision.md 北极星一致？偏离 → 标注 `[Vision 偏离警告]`
-2. **任务清单完整性**：是否足以支撑需求目标？
-3. **影响评估**：Brief 中"受影响的已有任务" → 对照 roadmap/tasks 验证
-4. **缺口识别**：Brief 是否有关键信息缺失
-5. **联动检查**：
+2. **工作量评估**：判断需求是 single-task 还是 multi-task，依据为可独立验收流程数、关注点数量、预计文件/模块数、依赖跨度和一次实现会话可控性。
+3. **任务清单完整性**：是否足以支撑需求目标？若输入只描述一个“大功能”，必须先拆成可交付切片。
+4. **影响评估**：Brief 中"受影响的已有任务" → 对照 roadmap/tasks 验证
+5. **缺口识别**：Brief 是否有关键信息缺失
+6. **联动检查**：
    [[SUBAGENT: archi-feature-relations | mode: check, context: 将新任务描述与 featureRelations sources 做语义对比，命中时输出联动提示]]
    [[NO-SUBAGENT: archi-feature-relations | mode: check, context: 将新任务描述与 featureRelations sources 做语义对比，命中时输出联动提示]]
    [[NO-SKILL: 读取 skills/archi-feature-relations/SKILL.md 按 mode: check 的逻辑执行]]
@@ -48,7 +50,7 @@
 **缺口分级**：必须 → 无法分解 | 可补 → AI 可推导建议确认 | 建议 → AI 自决
 **Decision**：无"必须"+"可补"缺口 → 跳 Step 3；有缺口 → 进入 Step 3
 
-向用户输出 SCOPE BRIEF 分析报告：需求名 / 预估规模 / Vision 对齐状态 / 已确认信息 / 受影响已有任务表（任务 / 状态 / 预估影响）/（有命中）联动提示表 / 信息缺口 / AI 自动决定项。进入 step_3_supplementary（有缺口）或 step_4_decompose（无缺口）。
+向用户输出 SCOPE BRIEF 分析报告：需求名 / 工作量判断（single-task | multi-task + 依据） / 预估规模 / Vision 对齐状态 / 已确认信息 / 受影响已有任务表（任务 / 状态 / 预估影响）/（有命中）联动提示表 / 信息缺口 / AI 自动决定项。进入 step_3_supplementary（有缺口）或 step_4_decompose（无缺口）。
 </step_2_analysis>
 
 <step_3_supplementary>
@@ -67,9 +69,18 @@
 [[NO-SUBAGENT: archi-decompose-roadmap | brief_data + existing_roadmap[[WHEN: ui | + ui_context]]]]
 [[NO-SKILL: 读取 skills/archi-decompose-roadmap/SKILL.md 按其协议执行，输入 brief_data + existing_roadmap[[WHEN: ui | + ui_context]]，产出追加任务]]
 
+**拆分硬门槛**：
+- 若需求包含 2 条以上可独立验收的用户/命令/API 流程，必须拆成多个 roadmap task。
+- 若候选任务预计涉及 >6 个新文件/模块、>2 个不同关注点（数据/API/UI/权限/同步/导入导出等）或无法在一次实现会话中完成，必须继续拆分。
+- 若用户只给一句自然语言需求，也必须先评估工作量并输出拆分依据；不得为了省略规划而创建单个 task 文档目录。
+
 **展示格式**（将 Skill 产出转换为以下格式，向用户呈现后等待确认）：
 
 ```
+#### 工作量判断
+- 结论: single-task | multi-task
+- 依据: <独立验收流程数 / 关注点 / 预计文件或模块 / 依赖跨度>
+
 #### Phase 1: Infrastructure
 | ID | 标题 | 描述摘要 | 标签 |
 |:---|:---|:---|:---|

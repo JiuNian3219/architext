@@ -21,6 +21,11 @@
 - 若 `subprotocol` 为 `decompose` / `detail` 且 `confidence >= 0.75` 且无 `ambiguities` → 采用该路由，并用 `[arg]` / `target.task_id` 补齐子协议参数。
 - 若 Intent Card 缺失、低置信度或存在歧义 → 按优先级扫描以下信号，首条匹配即处理：
 
+**Task 创建边界**：
+- 新需求 / 新功能 / 新任务 / 自然语言范围描述，在没有已存在 roadmap ID 时只能路由到 `plan/decompose.md`。
+- router 和 decompose 阶段禁止创建 `tasks/<ID>_<Slug>/` 或任何 task 文档；它们只允许判断工作量、拆分任务、更新 `global/roadmap.json`。
+- 只有 case 1 命中已存在 ID 后，才能进入 `plan/detail.md` 并生成 task 文档。
+
 | # | 信号 | 判定 | 路由目标 |
 |:---|:---|:---|:---|
 | 1 | `[arg]` 匹配 `^[A-Z]+-\d+$` 且在 `roadmap.json` 中存在 | 合法任务 ID | `plan/detail.md`（`[arg]` 作为 ID，后续为 context） |

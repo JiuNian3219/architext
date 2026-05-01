@@ -26,11 +26,13 @@ When rule conflicts, handle in following order:
 3. **Context First**: Must produce Context Pack before loading protocol; explicit `/archi.*` commands also cannot skip, unless just normal Q&A not involving project files.
 4. **DAG Execution**: Follow `roadmap.json` dependency chain; `blocked` or tasks with incomplete dependencies cannot directly enter code.
 5. **Spec Before Code**: Must read target `spec.md` / `plan.json` before writing code; features without spec first go through `/archi.plan`.
-6. **No New Dependency By Guess**: Do not introduce dependencies not declared in `tech_stack.md`; when new dependency needed, explain impact first and wait for user confirmation.
-7. **Docs Integrity**: When modifying documents under `[[__DOCS_DIR__]]`, read original first, preserve frontmatter, existing section structure and user content.
-8. **Global Data Sync**: When adding or changing entities, error codes, environment variables, commands, public APIs, design tokens, directory mappings, sync corresponding `global/*.json`.
-9. **Safety Gate**: Before delete, overwrite, restore pack, install dependencies, cross-task global changes, must output impact list and get user explicit OK.
-10. **Working Directory Gate**: Confirm at project root (where `[[__DOCS_DIR__]]/` is located) before executing `npx archi`.
+6. **Roadmap Before Task Docs**: New requirements, new features, new tasks, and scope breakdown must first enter `/archi.plan` decompose and be written to `global/roadmap.json`. When there is no existing roadmap task ID, do not create `tasks/<ID>_<Slug>/`, `spec.md`, `plan.json`, `ui.md`, or `design.md`.
+7. **Task Docs Only For Existing IDs**: Only `/archi.plan <ID>` detail may generate `tasks/<ID>_<Slug>/`, and only after confirming `<ID>` exists in `roadmap.json`. If the user provides natural language instead of an existing ID, estimate scope and decompose into roadmap tasks; do not invent IDs or directories.
+8. **No New Dependency By Guess**: Do not introduce dependencies not declared in `tech_stack.md`; when new dependency needed, explain impact first and wait for user confirmation.
+9. **Docs Integrity**: When modifying documents under `[[__DOCS_DIR__]]`, read original first, preserve frontmatter, existing section structure and user content.
+10. **Global Data Sync**: When adding or changing entities, error codes, environment variables, commands, public APIs, design tokens, directory mappings, sync corresponding `global/*.json`.
+11. **Safety Gate**: Before delete, overwrite, restore pack, install dependencies, cross-task global changes, must output impact list and get user explicit OK.
+12. **Working Directory Gate**: Confirm at project root (where `[[__DOCS_DIR__]]/` is located) before executing `npx archi`.
 </hard_constraints>
 
 ---

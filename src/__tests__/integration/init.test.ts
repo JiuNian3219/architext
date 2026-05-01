@@ -357,6 +357,45 @@ describe("Scaffolder Integration", () => {
     expect(content).toContain("禁止输出基于 seed roadmap / seed vision");
   });
 
+  it("plan 协议应禁止无 roadmap ID 直接创建 task 文档", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await scaffold(config);
+
+    const systemRule = await fs.readFile(
+      path.join(tempDir, ".cursor/rules/00_system.mdc"),
+      "utf-8",
+    );
+    expect(systemRule).toContain("Roadmap Before Task Docs");
+    expect(systemRule).toContain("没有已存在的 roadmap task ID");
+
+    const planRouter = await fs.readFile(
+      path.join(tempDir, ".cursor/commands/archi.plan.md"),
+      "utf-8",
+    );
+    expect(planRouter).toContain("Task 创建边界");
+    expect(planRouter).toContain("只有 case 1 命中已存在 ID");
+
+    const decompose = await fs.readFile(
+      path.join(tempDir, ".architext/prompts/plan/decompose.md"),
+      "utf-8",
+    );
+    expect(decompose).toContain("工作量判断");
+    expect(decompose).toContain("禁止创建 `tasks/<ID>_<Slug>/`");
+
+    const detail = await fs.readFile(
+      path.join(tempDir, ".architext/prompts/plan/detail.md"),
+      "utf-8",
+    );
+    expect(detail).toContain("只细化 roadmap 中已存在的单个任务");
+    expect(detail).toContain("不得在 detail 中拆分任务");
+  });
+
   it("不生成 Brief 时不应创建 brief-assets 目录", async () => {
     const config: InitConfig = {
       language: "zh",

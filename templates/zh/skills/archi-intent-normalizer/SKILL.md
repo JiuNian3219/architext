@@ -74,6 +74,7 @@ description: Normalize a user request into an Architext Intent Card before comma
 新需求、新功能、新任务、拆范围、细化已有 roadmap 任务：
 - 没有明确现成 task id，或用户说“新建/新增/写新需求/拆一下” → `/archi.plan`, `decompose`
 - 有明确 task id，且要补全 spec/plan 以便之后实现 → `/archi.plan`, `detail`
+- 对自然语言需求必须先走 `decompose` 判断工作量并写入 roadmap；不得把它归一化为“直接创建 tasks 目录”或“直接 detail”。
 
 ### Change
 
@@ -133,6 +134,7 @@ description: Normalize a user request into an Architext Intent Card before comma
 ## Hard Limits
 
 - 不要把“新功能”路由到 `/archi.code`，除非存在明确可执行 task id。
+- 不要为没有现成 roadmap ID 的自然语言需求建议创建 `tasks/<ID>_<Slug>/`、`spec.md` 或 `plan.json`；必须先 `/archi.plan` decompose。
 - 不要把“bug”直接路由到 `/archi.code`，应优先 `/archi.change` 的 `fix`。
 - 不要把“全局/架构/技术栈”路由到单任务 edit，除非用户明确限定只改某个 task 文档。
 - 不要为了显得确定而丢弃歧义；歧义要进入 `ambiguities`。

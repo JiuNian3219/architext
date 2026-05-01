@@ -74,6 +74,7 @@ Project initialization, adopt existing code, restore pack:
 New requirements, new features, new tasks, scope breakdown, detail existing roadmap task:
 - No explicit existing task id, or user says "create new/add new/write new requirement/break down" → `/archi.plan`, `decompose`
 - Has explicit task id, and need to complete spec/plan for later implementation → `/archi.plan`, `detail`
+- Natural-language requirements must first go through `decompose` to assess effort and write roadmap; do not normalize them as "directly create tasks directory" or "directly detail".
 
 ### Change
 
@@ -133,6 +134,7 @@ When encountering following situations do not hard-route, `confidence` must not 
 ## Hard Limits
 
 - Do not route "new feature" to `/archi.code` unless exists explicit executable task id.
+- Do not suggest creating `tasks/<ID>_<Slug>/`, `spec.md`, or `plan.json` for natural-language requirements without an existing roadmap ID; use `/archi.plan` decompose first.
 - Do not route "bug" directly to `/archi.code`, should prefer `/archi.change`'s `fix`.
 - Do not route "global/architecture/tech stack" to single-task edit, unless user explicitly limits to modifying some task document.
 - Do not discard ambiguity to appear certain; ambiguity must go into `ambiguities`.

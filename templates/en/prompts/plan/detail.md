@@ -1,6 +1,7 @@
 <protocol_plan_detail>
 **Trigger**: Dispatched by `prompts/plan.md` router, parameter form is `<ID> [context]`
 **Goal**: Define function's Spec/UI/Plan through deep architecture interview.
+**Boundary**: This protocol only details one existing roadmap task and focuses on how to implement, verify, and test it. It must not split tasks, append roadmap tasks, or create task directories for natural-language requirements; if the current task is clearly too coarse, stop document generation and tell the user to return to `/archi.plan` decompose to adjust the roadmap.
 **Input**:
 - `<ID>` (required): Task ID existing in Roadmap. Must first decompose scope via `/archi.plan` (no param / with brief), or adopt existing code via `/archi.init` inherit mode.
 - `[context]` (optional): Known context for the task (e.g. user requirement description, reference materials, constraints). When provided, serves as pre-input for step_2 interview, reducing questions.
@@ -26,7 +27,7 @@ Output **Task Context Brief**: Task type (inferred from ID prefix) / Goal (highl
 <step_2_complexity>
 Detect task type, evaluate complexity, decide flow path.
 
-**⓪ Task Type + Granularity Red Lines**:
+**⓪ Task Type + Document Limits**:
 | ID Prefix | Task Type | spec § 2 Main Dimension | § 4 Interface | AC Upper Limit | Phase Upper Limit |
 |:---|:---|:---|:---|:---|:---|
 | `INF-` | Infrastructure | Structural (Configuration Contract) | **Required** | ≤ 8 Contracts | ≤ 5 |
@@ -34,7 +35,7 @@ Detect task type, evaluate complexity, decide flow path.
 | `POLISH-` | Quality | Quantitative (Quantified Goals) | Usually omitted | ≤ 4 Targets | ≤ 3 |
 | `EDIT-` | Edit | Inherits original task type | Inherits | Inherits | Inherits |
 
-> Mixed-type tasks can combine multiple dimensions in § 2, distinguish with subheadings. Estimated exceeding limit triggers split.
+> Mixed-type tasks can combine multiple dimensions in section 2, distinguished with subheadings. If the estimate exceeds these limits, the roadmap entry is too coarse; stop document generation and tell the user to return to `/archi.plan` decompose to adjust the roadmap. Do not split inside detail or write a giant task.
 
 **① Complexity Judgment**:
 | Signal | Judgment | Flow |
@@ -182,10 +183,10 @@ Generate standard documents under `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/`.
 
 **Principle 2 — 100% Coverage**: Each AC in spec § 2 → ≥1 task coverage; Each Interface in § 4 → Has task creating; Each Constraint in § 5 → Has task notes referencing. Fill if missing.
 
-**Principle 3 — Granularity and Mutual Exclusivity**:
+**Principle 3 — Document Task Granularity and Mutual Exclusivity**:
 | Signal | Judgment |
 |:---|:---|
-| Task involves ≥3 unrelated files | Too coarse — split |
+| Task involves ≥3 unrelated files | Too coarse — stop generation and return to decompose to adjust the roadmap |
 | Title cannot correspond to specific output file | Too abstract — make concrete |
 | Two tasks modify same file same area | Violates mutual exclusivity — merge or re-partition |
 | Notes only has one sentence and no verification items | Insufficient info — supplement |
