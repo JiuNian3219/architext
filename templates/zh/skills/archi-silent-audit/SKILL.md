@@ -1,117 +1,98 @@
 ---
 name: archi-silent-audit
-description: Lightweight code and document review. **Must run in isolated context/subagent.** Use when verifying outputs or checking compliance with specifications.
+description: Lightweight code and document review. Must run in isolated context/subagent. Protocol-invoked only; do not auto-trigger from casual user requests.
+disable-model-invocation: true
 ---
 
-# 嵌入式轻量审查
+## 调用方式
 
-## 系统流程定位
+- **自动调用**: 否，不由模型根据 description 自行触发。
+- **触发位置**: 仅由 `/archi.*` 协议中的 `[[SUBAGENT]]` / `[[NO-SUBAGENT]]` 显式调用。
+- **执行上下文**: 支持 subagent 时必须在独立子代理/独立上下文执行；无 subagent 时才降级为内联 Skill。
+- **边界**: 只返回协议要求的结构化产物，后续写入、确认和签收由调用协议负责。
 
-```
-/archi.* step_N → Verify 阶段
-    ↓
-[本 Skill] 接收模式参数 → 独立审查 → 返回发现列表
-    ↓
-主 Agent Signoff（须回应发现）
-```
 
-> **Skill 的职责边界**：
-> - 负责：在独立上下文中审查主 Agent 产出，输出分级发现列表
-> - 不负责：修复问题（交还主 Agent）、生成报告文件（那是 audit.md 的职责）、执行 Terminal Gate 命令
+## 核心原则
 
-> **与 `audit.md` 的关系**：
-> - `audit.md` = 独立深度审查协议，生成报告文件，仅用户主动触发 `/archi.audit`
-> - 本 Skill = 嵌入式轻量检查，inline 返回发现列表，协议自动触发
-> - 两者共享审查维度定义（见 `audit.md` step_2_task），本 Skill 按模式筛选执行
+- **无证据不报**：每个 finding 必带 `evidence`（原文片段 + 位置）；无可定位证据的猜测一律不报
+- **预绑级别**：`severity` 由下方维度库表定义，skill 仅判「触发 / 未触发」不判级别
+- **全开一次**：按 mode 筛选的维度单次全跑完，不分阶段不早停
+- **级别 ≠ 行动**：发现与级别原样返回，如何响应由调用方协议决定
 
----
+## 维度库
 
-## 模式与审查维度
+符号说明：
+- **模式** 列：`I` = init、`P` = plan-docs、`C` = code-impl（多个用 ` / ` 分隔）
+- **门** 列：`[[WHEN: X]]` = 部署期 features 剩枝；`runtime: X` = 调用时按 `task_meta` 判定；`—` = 无门
 
-### 模式 `init` (调用方: start, inherit)
-
-审查新建项目/继承项目的全局文件质量。
-
-| # | 维度 | 审查要点 |
-|:---|:---|:---|
-| 1 | **Vision-Roadmap 对齐** | roadmap 任务方向与 vision.md 北极星指标是否一致 |
-| 2 | **Tech Stack 一致性** | `tech_stack.md` 与实际依赖/配置是否一致 |
-| 3 | **全局文件完整性** | 须存在的全局文件是否齐全（vision, roadmap, map, dictionary, tech_stack, custom_rules） |
-| 4 | **信息零遗漏** | Brief/代码中的所有信息是否已路由到对应文件 |
-| 5 | 仅ui项目: **Design Tokens** | `design_tokens.json` 含基础颜色/字体/间距定义 |
-
-### 模式 `plan-docs` (调用方: plan)
-
-审查规划文档（spec/ui/plan）的质量。
-
-| # | 维度 | 审查要点 |
-|:---|:---|:---|
-| 1 | **Design Fidelity** | spec § 2 是否完整覆盖确认的功能设计 |
-| 2 | **Dimension Match** | spec § 2 维度格式是否与 Task Type 匹配 |
-| 3 | **Tech Consistency** | 是否用了 `tech_stack.md` 未声明的技术 |
-| 4 | **WBS Coverage** | plan.json 是否 100% 覆盖 spec 的每个 AC 条目 |
-| 5 | **Notes Quality** | plan.json 每个 task 的 notes 是否含产出物+约束+可执行验证 |
-| 6 | **Interface Exports** | INF 任务 § 4 是否填写；有下游 deps 时是否声明接口 |
-| 7 | **Constraints** | § 5 是否含 vision.md + tech_stack 相关红线 |
-| 8 | 本任务涉及data时: **Data Integrity** | 实体和字段与确认的核心实体是否一致 |
-| 9 | 仅Complex任务: **Design Trace** | design.md § 6 是否所有 AC 均可追踪 |
-| 10 | 仅Complex任务: **Parameter Specificity** | design.md § 3 参数是否具体化（无模糊词） |
-| 11 | 仅Complex任务: **Self-Check Pass** | design.md § 2 机制自检清单是否通过 |
-
-### 模式 `code-impl` (调用方: code)
-
-审查代码实现的质量。
-
-| # | 维度 | 审查要点 |
-|:---|:---|:---|
-| 1 | **Tech Consistency** | 与 `tech_stack.md` 一致（库/模式/API 风格） |
-| 2 | **SOTA** | 拒绝过时模式；采用 tech_stack 最佳实践 |
-| 3 | **Security** | 无敏感信息泄露；输入有校验 |
-| 4 | **Performance** | 避免不必要大依赖/全量导入/无用计算/内存泄漏 |
-| 5 | 本任务涉及ui时: **Design Compliance** | 样式仅用 Token/Preset 视觉模式；无硬编码魔法值 |
-| 6 | 本任务涉及ui时: **Accessibility** | 含必要无障碍属性 |
-| 7 | 本任务涉及data时: **Data Integrity** | 符合 `data_snapshot.json`；字段名/类型一致 |
-| 8 | 仅i18n项目: **I18n** | 无硬编码字符串；须用 Key/字典引用 |
-| 9 | 仅Complex任务: **Design Compliance** | 状态转移/流程/协议与 design.md § 2 一致 |
-| 10 | 仅Complex任务: **Invariant Enforcement** | design.md § 4 不变量在代码中有 assert/运行时检查 |
-| 11 | 仅Complex任务: **Parameter Alignment** | 代码数值与 design.md § 3 参数表一致 |
-
----
+| # | ID | 名称 | 模式 | 级别 | 门 | 触发条件 |
+|:---|:---|:---|:---|:---|:---|:---|
+| 1 | `VISION_ROADMAP_ALIGN` | Vision-Roadmap 对齐 | I | CRITICAL | — | roadmap 任务目标方向与 vision.md 北极星指标方向不一致（任务不服务北极星）|
+| 2 | `TECH_STACK_DECLARED` | Tech Stack 声明一致 | I / P / C | CRITICAL | — | init: tech_stack.md 未反映 package.json 真实依赖；plan-docs: spec/plan 用了 tech_stack 未声明的库 / 框架 / API；code-impl: 代码 import 的库不在 tech_stack 中 |
+| 3 | `GLOBAL_FILES_COMPLETE` | 全局文件完整性 | I | CRITICAL | — | vision / roadmap / map / dictionary / tech_stack / custom_rules 任一缺失或仅骨架无实质内容 |
+| 4 | `INFORMATION_ROUTING` | 信息零遗漏 | I | WARNING | — | Brief / 代码中出现的信息（功能点 / 术语 / 约束）未路由到对应全局文件 |
+| 5 | `DESIGN_TOKENS_BASIC` | Design Tokens 基础齐备 | I | CRITICAL | `[[WHEN: ui]]` | design_tokens.json 缺 `aestheticDirection.preset` / `primitivePalette.brand` / 核心字体字号字段 |
+| 6 | `DESIGN_FIDELITY` | Design Fidelity | P | CRITICAL | — | spec § 2 未覆盖讨论中确认过的功能设计点（存在遗漏）|
+| 7 | `DIMENSION_MATCH` | Dimension Match | P | WARNING | — | spec § 2 维度格式与 Task Type 不匹配（未按 Task Type 规定的维度输出）|
+| 8 | `WBS_COVERAGE` | WBS Coverage | P | CRITICAL | — | plan.json 存在 spec AC 条目未被任何 task 覆盖 |
+| 9 | `NOTES_QUALITY` | Notes Quality | P | WARNING | — | plan.json task.notes 缺「产出:」/「约束:」/「验证:」任一关键词；或「验证:」值含「适当」「合理」「视情况」「按需」等模糊量词 |
+| 10 | `INTERFACE_EXPORTS` | Interface Exports | P | CRITICAL | — | INF 任务 § 4 未填；或下游 deps 存在时未声明接口签名 |
+| 11 | `CONSTRAINTS_REDLINES` | Constraints 红线 | P | WARNING | — | spec § 5 缺 vision.md 北极星相关红线或 tech_stack 已知禁用项的红线 |
+| 12 | `DATA_INTEGRITY_SPEC` | Data Integrity (spec) | P | CRITICAL | `[[WHEN: data]]` | spec 实体 / 字段与 data_snapshot.json 已有核心实体 / 字段不一致 |
+| 13 | `DESIGN_TRACE` | Design Trace | P | WARNING | `runtime: is_complex` | design.md § 6 追溯表存在 AC 未映射到设计节点 |
+| 14 | `PARAMETER_SPECIFICITY` | Parameter Specificity | P | INFO | `runtime: is_complex` | design.md § 3 参数表出现「适当」「合理」「视情况」「按需」「一些」等模糊量词 |
+| 15 | `DESIGN_SELF_CHECK` | Design Self-Check | P | CRITICAL | `runtime: is_complex` | design.md § 2 机制自检清单任一项标记 ✗ 或空未勾选 |
+| 16 | `TECH_STACK_STYLE_MATCH` | Tech Stack 风格一致 | C | WARNING | — | 代码模式 / API 风格偏离 tech_stack.md 声明（如声明 ESM 却用 CommonJS、声明 hooks 优先却用 class component）|
+| 17 | `SOTA` | SOTA | C | WARNING | — | 出现 tech_stack 明确列出的反模式；或使用已被同 stack 替代的过时 API |
+| 18 | `SECURITY` | Security | C | CRITICAL | — | 代码出现硬编码密钥 / 明文密码；或外部输入未校验直接进入 DB / FS / shell / eval |
+| 19 | `PERFORMANCE` | Performance | C | WARNING | — | 明显的全量 import、重复计算、未释放监听器、O(n²) 可优化到 O(n) 的场景 |
+| 20 | `UI_TOKEN_COMPLIANCE` | UI Token 合规 | C | CRITICAL | `[[WHEN: ui]]` + `runtime: involves_ui` | 样式值出现硬编码颜色 / 字号 / 间距（非 `var(--*)` 或 token 引用）|
+| 21 | `ACCESSIBILITY` | Accessibility | C | WARNING | `[[WHEN: ui]]` + `runtime: involves_ui` | 可交互元素缺 aria-label / 语义标签 / 键盘可达性（button / input / link 缺必要属性）|
+| 22 | `DATA_INTEGRITY_CODE` | Data Integrity (code) | C | CRITICAL | `[[WHEN: data]]` + `runtime: involves_data` | 代码实现的字段名 / 类型与 data_snapshot.json 不一致 |
+| 23 | `DESIGN_COMPLIANCE_STATE` | Design Compliance 状态 | C | CRITICAL | `runtime: is_complex` | 代码状态转移 / 流程 / 协议与 design.md § 2 不一致 |
+| 24 | `INVARIANT_ENFORCEMENT` | Invariant Enforcement | C | CRITICAL | `runtime: is_complex` | design.md § 4 不变量未在代码中通过 assert / 运行时检查 / 类型保护执行 |
+| 25 | `PARAMETER_ALIGNMENT` | Parameter Alignment | C | CRITICAL | `runtime: is_complex` | 代码中数值 / 阈值与 design.md § 3 参数表不一致 |
 
 ## 执行协议
 
-1. **读取上下文**: 按调用方传入的文件路径加载所需文档和代码
-2. **按模式筛选维度**: 仅执行当前模式对应的审查维度表
-3. **逐项审查**: 每个维度输出 PASS 或发现（含级别+位置+描述）
-4. **输出发现列表**: 按级别排序返回
+1. 按 `mode` 筛选「模式」列含对应字母的维度
+2. 再按「门」列过滤：当前上下文未出现的 feature 维度视为不适用；`runtime:` 按 `task_meta` 当场判
+3. 对保留下来的每个维度，按「触发条件」扫描 `context_files` 对应内容
+4. 命中 → 产出 finding（含 dimension / location / evidence / description）；未命中 → 不输出
+5. 所有维度跑完后按 severity 分组输出
 
-### 发现级别
+## 输出格式
 
-| 级别 | 含义 | 主 Agent 须 |
-|:---|:---|:---|
-| `CRITICAL` | 阻塞性问题 | **须修复**后再签收，禁跳过 |
-| `WARNING` | 有风险 | **须在签收报告中说明**处理方式 |
-| `INFO` | 建议优化 | 可自行决定是否处理 |
-
-### 输出格式
-
-```
+===
 ### Silent Audit Results (mode: <mode>)
 
-**CRITICAL** (须修复):
-- [维度名] 位置: 描述
+**CRITICAL**:
+- dimension: <ID>
+  location: <file:line 或 § 编号>
+  evidence: "<原文片段>"
+  description: <说明>
 
-**WARNING** (须说明):
-- [维度名] 位置: 描述
+**WARNING**:
+- dimension: <ID>
+  location: ...
+  evidence: "..."
+  description: ...
 
-**INFO** (建议):
-- [维度名] 位置: 描述
+**INFO**:
+- dimension: <ID>
+  location: ...
+  evidence: "..."
+  description: ...
 
-**Summary**: X CRITICAL / Y WARNING / Z INFO
-```
+Summary: <X> CRITICAL / <Y> WARNING / <Z> INFO
+===
 
-无发现时输出: `### Silent Audit Results (mode: <mode>) — ALL PASS`
+无发现时仅输出：`### Silent Audit Results (mode: <mode>) — ALL PASS`
 
----
+## 输出验证
 
-> **中间产物**：此 Skill 为审查型子程序，产出发现列表后控制权交还调用方，由主 Agent 在 Signoff 中回应发现。
+- [ ] 每个 finding 的 `evidence` 非空，可在 `context_files` 中定位
+- [ ] 每个 finding 的 `severity` 与维度库预绑级别一致
+- [ ] 当前 mode 未筛选到的维度不出现在 findings 中
+- [ ] `task_meta` 未开的 runtime 门对应维度不出现（如 `is_complex = false` 时不报 Complex 类）
+- [ ] Summary 计数与 findings 列表实际数量一致

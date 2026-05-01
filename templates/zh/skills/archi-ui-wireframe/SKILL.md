@@ -1,75 +1,78 @@
 ---
 name: archi-ui-wireframe
-description: Generate UI concept designs and wireframes as multi-file screens/ directory. Do not auto-trigger.
+description: Generate UI concept designs as screens/ reference artifacts. Protocol-invoked only; do not auto-trigger.
+disable-model-invocation: true
 ---
+
+## 调用方式
+
+- **自动调用**: 否，不由模型根据 description 自行触发。
+- **触发位置**: 仅由 `/archi.ui` 或 plan/change 的 UI 局部更新步骤显式调用。
+- **执行上下文**: 可由 Skill 工具或当前上下文执行；写入 `screens/` 前必须遵守调用协议的 Gate。
+- **边界**: 只生成 UI 概念稿和参照文件，不生成生产源码。
+
 
 # UI 概念设计
 
-## 系统流程定位
+## 核心原则
 
-```
-/archi.ui → [本 Skill] → screens/ (多文件目录) → /archi.plan → ui.md (单任务范围)
-/archi.ui (adopt模式) → [本 Skill] → screens/ (从代码逆向)
-```
+- 交互展示：画出按钮 / 表单 / 弹窗并绑点击，点击只触发视觉反馈（状态切换 / 面板展开 / 弹窗显隐），不跳真实业务逻辑
+- 内容填充：用 roadmap 里的真实业务名；禁「标题」「[按钮]」占位；列表 / 表格 ≥ 3-4 行真实感假数据；空状态写具体文案禁「暂无数据」
+- 调色板纪律：仅使用 `design_tokens.json` 推导出的 CSS 变量，禁硬编码魔法数字
+- 产物边界：`screens/` 是概念设计与验收参照，不是生产代码；不得指示后续实现直接复制 HTML/CSS/JS，必须要求用项目自身语言、框架和样式体系重写
+- 禁反模式：紫色渐变 / emoji / 非纯黑白
+[[INCLUDE: shared/ui-redlines.md]]
 
-> **产出物**：`screens/` 目录（`index.html` 导航枢纽 + `S-XX.html` 独立屏幕 + `_shared.css` 共享样式）+ `ui_context.md`（AI 索引）
+## Step 1 — 读取上下文
 
----
+从 `context_files` 提取：
+- vision.md → 平台 / 用户 / 北极星
+- roadmap.json → UI 任务 → 屏幕映射
+- design_tokens.json → 审美 / 品牌色 / 饰面变量
+- tech_stack.md → 平台 / 导航框架
+- 当前 `ui_context.md` → 已有屏幕 ID 和名称（`adopt` / `incremental` 复用）
 
-## 调用模式
+`adopt` 模式额外：从 `adopt_codebase` 提取 「路由 → 屏幕清单」、「布局组件 → 导航结构」、「页面组件 → 核心区域与状态」。
 
-| 模式 | 触发 | 范围 |
-|:---|:---|:---|
-| 初次生成 | `/archi.ui` | 全量，所有屏幕 |
-| 逆向采用 | `/archi.ui`（代码已存在时自动检测） | 从代码路由/组件逆向生成 |
-| 重新生成 | 用户手动 | 全量重写（全局重设计） |
-| 追加/修改 | `/archi.scope/edit` 或 `/archi.ui`（增量模式） | 仅新增/修改指定屏幕 |
-| 局部更新 | `/archi.plan` 发现偏差 | 仅更新对应屏幕 |
+## Step 2 — 规划屏幕清单
 
----
-
-## 生成协议
-
-### Step 1 — 读取上下文
-
-**Load**: vision.md（平台/用户/北极星）、roadmap.json（UI 任务 → 屏幕映射）、
-design_tokens.json（审美/品牌色）、tech_stack.md（平台/导航框架）。
-
-### Step 2 — 规划屏幕清单
-
-分配屏幕 ID（S-01, S-02...），映射到 Roadmap 任务。ID 永久不变。
+分配屏幕 ID（S-01, S-02 ...，永久不变）映射到 Roadmap 任务。`incremental` 仅处理 `scope_screens`。
 
 | 屏幕 ID | 屏幕名 | 对应任务 | 状态列表 |
 |:---|:---|:---|:---|
-| S-01 | [名] | [任务ID] | default, loading, empty, error |
+| S-01 | <名> | <任务ID> | default, loading, empty, error |
 
-### Step 3 — Tokens 检查 + 引导
+## Step 3 — Tokens 检查与引导
 
-check `design_tokens.json`:
-- `aestheticDirection.preset` 为空 → 引导选择（saas-dark/saas-light/dashboard/marketing/mobile-app/editorial/brutalist）
+检查 `design_tokens.json`：
+- `aestheticDirection.preset` 为空 → 引导用户选择（saas-dark / saas-light / dashboard / marketing / mobile-app / editorial / brutalist）
 - `primitivePalette.brand` 为空 → 引导填入 Hex
 - 其他空值 → AI 推断，非阻塞
 
-### Step 4 — 生成多文件 HTML
+`incremental` 跳过本 step（复用现有 tokens）。
+
+## Step 4 — 生成多文件 HTML
 
 **输出目录**：`[[__DOCS_DIR__]]/global/screens/`
 
-#### 4.1 `_shared.css` — 共享样式
+> 注意：该目录下文件只用于浏览器预览和设计对齐。后续 `/archi.code` 实现 UI 时，禁止直接复用 `_shared.css` 或 `S-XX.html` 的代码。
 
-从 `design_tokens.json` 提取 CSS 变量 + 基础布局 + 底部控制面板样式。所有 `S-XX.html` 通过 `<link href="_shared.css">` 引用。
+**文件清单**：
 
-**底部控制面板**：fixed 定位底部，浮动长条按钮（60×16px，位于面板顶部中央），▲/▼ 切换符号。三列布局：← 索引跳转 | 页面说明 | 状态按钮。收起时内容区 display:none，按钮保持可见。
+| 文件 | 职责 |
+|:---|:---|
+| `_shared.css` | 从 `design_tokens.json` 折出的 CSS 变量 + 基础布局 + 底部控制面板样式 |
+| `S-XX.html` | 各屏幕独立自包含页面，通过 `<link href="_shared.css">` 引入共享样式 |
+| `index.html` | 导航枢纽，列出所有屏幕卡片并链接到对应 `S-XX.html` |
 
-#### 4.2 `S-XX.html` — 独立屏幕文件
+**底部控制面板规格**（所有 `S-XX.html` 必须含）：fixed 定位底部；浮动长条按钮 60×16px 位于面板顶部中央，▲/▼ 切换；三列布局：← 索引跳转 ｜ 页面说明 ｜ 状态按钮；收起时内容区 `display:none`，按钮保持可见。
 
-每个屏幕一个自包含 HTML 文件，结构：
+**示例规格——`S-XX.html`**（表明必须包含哪些节点与脚本，非物理文件模板）：
 
 ```html
 <body>
   <header class="wf-topbar">...</header>
   <main class="wf-content">...状态切换 div...</main>
-
-  <!-- 底部控制面板 -->
   <aside class="wf-panel" id="wfPanel">
     <button class="wf-panel-toggle" id="toggleBtn" onclick="togglePanel()">▼</button>
     <div class="wf-panel-content">
@@ -78,21 +81,18 @@ check `design_tokens.json`:
       <span>状态</span> <div class="wf-states">...</div>
     </div>
   </aside>
-
   <script>
     function togglePanel() {
-  var panel = document.getElementById('wfPanel');
-  var btn = document.getElementById('toggleBtn');
-  panel.classList.toggle('collapsed');
-  btn.textContent = panel.classList.contains('collapsed') ? '▲' : '▼';
-}
+      var panel = document.getElementById('wfPanel');
+      var btn = document.getElementById('toggleBtn');
+      panel.classList.toggle('collapsed');
+      btn.textContent = panel.classList.contains('collapsed') ? '▲' : '▼';
+    }
   </script>
 </body>
 ```
 
-#### 4.3 `index.html` — 导航枢纽
-
-列出所有屏幕，每项链接到对应 `S-XX.html`：
+**示例规格——`index.html`**：
 
 ```html
 <!DOCTYPE html>
@@ -103,94 +103,50 @@ check `design_tokens.json`:
   <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
-  <header class="wf-topbar">
-    <span>[项目名] — UI 概念设计索引</span>
-  </header>
+  <header class="wf-topbar"><span>[项目名] — UI 概念设计索引</span></header>
   <main class="wf-index">
     <div class="wf-screen-card">
       <a href="S-01.html">S-01 · [屏幕名]</a>
       <p>[一句话描述]</p>
     </div>
-    <!-- 更多屏幕卡片 -->
   </main>
 </body>
 </html>
 ```
 
-**交互展示原则**（视觉反馈，非业务逻辑）：
-- 按钮/链接/输入框画出，绑点击事件
-- 点击触发**视觉反馈**（弹窗显隐、面板展开、状态切换），不触发**真实业务逻辑**
-- **跨屏幕导航**：侧边栏、Tab、面包屑、卡片点击 → 链接到对应 `S-XX.html`
-- **弹窗表单**：可聚焦、可点击，提交后不真处理数据
-- **目标**：完整展示交互流程和各状态下的界面外观
+**自绘 SVG**（无图标库时）：`stroke="currentColor"` · `stroke-width` 1.5-2 · `fill="currentColor"` · `width="1em"` `height="1em"`。
 
-**内置验证与自修复循环**（生成后自检，AI 修复直到全过）：
+### 内置验证与自修复循环
 
-| 检查项 | 通过标准 | 失败修复动作 |
+生成 → 检查 → 失败则修复重试，直到 6/6 通过；最终输出在 HTML 注释标 `<!-- Check: 6/6 passed -->`。
+
+| 检查项 | 通过标准 | 失败修复 |
 |:---|:---|:---|
-| **可点击性** | 所有带 `onclick` 的元素必须有 `cursor: pointer` | 添加 CSS `cursor: pointer` |
-| **data-el 完整性** | 所有可交互元素必须有 `data-el` | 补充 `data-el` 描述 |
-| **状态覆盖** | 每个屏幕必须包含 default/loading/empty（如适用）| 补充缺失的状态 div |
-| **跨文件链接有效性** | `index.html` 链接指向存在的 `S-XX.html`；每个 `S-XX.html` 含返回索引链接 | 修复链接路径 |
-| **反模式红线** | 无紫色渐变、无 emoji、非纯黑白 | 替换为符合审美方向的配色 |
-| **间距一致性** | 使用 CSS 变量，无硬编码魔法数字 | 替换为 `var(--space-*)` |
+| 可点击性 | 带 `onclick` 元素均有 `cursor: pointer` | 补 CSS |
+| `data-el` 完整性 | 可交互元素均有 `data-el` | 补描述 |
+| 状态覆盖 | 每屏含 default / loading / empty（如适用）| 补状态 div |
+| 跨文件链接有效性 | `index.html` 链接指向存在的 `S-XX.html`；每 `S-XX.html` 含返回索引链接 | 修路径 |
+| 反模式红线 | 无紫色渐变 / emoji / 非纯黑白 | 换为符合审美方向的配色 |
+| 间距一致性 | 使用 CSS 变量无魔法数字 | 换 `var(--space-*)` |
 
-**修复循环**（内部执行）：
-```
-生成 HTML → 运行检查 → 有失败项？
-  ├── 是 → 修复 → 重新生成 → 再次检查
-  └── 否 → 通过
-```
+## Step 5 — 更新 AI 索引
 
-**检查方式**：扫描各 HTML 文件元素，核对检查项，输出到注释（`<!-- Check: 6/6 passed -->`），失败则修复。
+`ui_context.md` 已由 `/archi.start` 初始化屏幕 ID 和名称。本 step 更新屏幕结构摘要和文件路径。
 
-[[INCLUDE: shared/ui-redlines.md]]
+[[INCLUDE: shared/ui-context-format.md]]
 
-**内容填充**：
-- 用真实业务名（来自 roadmap），禁 "标题" 占位
-- 按钮写具体操作，禁 "[按钮]"
-- 列表/表格至少 3-4 行真实感假数据
-- 空状态写具体文案，禁 "暂无数据"
+## Step 6 — Output Gate
 
-**自绘 SVG**（无图标库时）：stroke="currentColor"，stroke-width 1.5-2，fill="currentColor"，width="1em" height="1em"
+输出摘要：审美方向及参照产品 · 屏幕覆盖清单（N 个）· 视觉规格 · 导航结构描述。
 
-### Step 5 — 更新 AI 索引
-
-**前置**：`ui_context.md` 已由 `/archi.start` 初始化屏幕 ID 和名称。本步骤更新屏幕结构摘要和文件路径。
-
-**更新内容**：`[[__DOCS_DIR__]]/global/ui_context.md`
-
-[[INCLUDE: ../../docs/shared/ui-context-format.md]]
-
-### Step 6 — Output Gate
-
-输出摘要：审美方向及参照产品、屏幕覆盖清单（共 N 个）、视觉规格、导航结构描述。
-
-**用户确认**：回复 **OK** 完成；非 OK 进入 Refinement。
+用户确认：
+- 回复 **OK** → 完成
+- 非 OK（含布局 / 视觉调整反馈）→ 局部重生对应 `S-XX.html` + 同步 `ui_context.md` + `index.html` → 重示摘要等待下一轮
 
 ## 输出验证
 
-□ `global/screens/index.html` 已生成且列出所有屏幕链接
-□ `global/screens/_shared.css` 已生成且含 design_tokens CSS 变量
-□ `global/screens/S-XX.html` 每个屏幕独立文件已生成
-□ `global/ui_context.md` 屏幕结构摘要已更新，含文件路径和关键区域
-
----
-
-## Refinement（用户反馈调整）
-
-用户回复含布局/视觉调整 → 局部更新对应 `screens/S-XX.html` + 同步 `ui_context.md` → 重新展示摘要等待确认。
-
----
-
-## Incremental Update（局部更新）
-
-输入屏幕 ID 列表 → 仅处理指定屏幕：保留已有文件，按当前视觉规格生成新增/更新的 `S-XX.html`；如有新状态，同步更新 `ui_context.md`。更新 `index.html` 导航列表。
-
-输出：`MODIFIED: screens/S-XX.html`（逐文件标注）
-
----
-
-## Adopt（逆向采用）
-
-输入已有代码 + design_tokens.json → 提取：路由 → 屏幕清单，布局组件 → 导航结构，页面组件 → 核心区域和状态 → 按标准流程生成 `screens/` 目录 + ui_context.md。
+- [ ] `global/screens/index.html` 已生成且列出所有屏幕链接
+- [ ] `global/screens/_shared.css` 已生成且含 design_tokens CSS 变量
+- [ ] 每个 `global/screens/S-XX.html` 独立文件已生成（`incremental` 仅 `scope_screens` 中的）
+- [ ] `global/ui_context.md` 屏幕结构摘要已更新，含文件路径和关键区域
+- [ ] 所有 `S-XX.html` 都含 `<!-- Check: 6/6 passed -->` 注释

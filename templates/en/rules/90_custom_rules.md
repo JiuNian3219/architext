@@ -5,20 +5,18 @@ applyTo: **/*
 alwaysApply: true
 ---
 
-# Custom Project Rules
+# Custom Project Rules (User-Defined Rules)
 
 > **Priority:** [High]
-> **Role:** The "House Rules" of this project. When general `tech_stack` cannot cover certain details, or there are specific business constraints, this file prevails.
+> **Role:** This project's "special house rules". When generic `tech_stack` cannot cover certain details, or has special business constraints, use this file as the standard.
 
-## 1. Team Conventions
+## 1. Team Conventions (Team Habits)
 
-- **Git Commit**: Provide commit suggestions (in Simplified Chinese, following Conventional Commits) after each code or doc change; default not to commit automatically, confirm by user.
+- **Git Commit**: After each code or document change, provide commit suggestion (use English, follow Conventional Commits); default no auto-commit, user confirms then manually executes
+
+## 2. Business Constraints (Business Hard Constraints)
 
 
-## 2. Business Constraints
-
-
-## 3. Specific Anti-Patterns
-
+## 3. Specific Anti-Patterns (This Project Blacklist)
 
 ## 4. ...

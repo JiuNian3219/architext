@@ -106,7 +106,7 @@ async function askEditors(
 
 /**
  * 询问是否生成 project-brief.md。
- * 生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用。
+ * 生成后填写项目需求，供 /archi.init 使用。
  * @returns true/false，或 null（用户取消时）
  */
 async function askGenerateBrief(): Promise<boolean | null> {

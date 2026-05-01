@@ -22,9 +22,11 @@ import {
   EDITOR_CONFIGS,
   GLOBAL_RULES,
   getPromptsPathForEditor,
+} from "./rules.ts";
+import {
   resolveCapabilityRefs,
   type WhenContext,
-} from "./rules.ts";
+} from "./capability-resolver.ts";
 import { getCurrentFileModel } from "./file-model.ts";
 import { TemplateManager } from "./template.ts";
 import { generateBrief } from "./brief.ts";
@@ -134,7 +136,6 @@ export async function buildScaffoldOps(
   const sourceDir = path.join(templateRoot, templateLang);
   const cwd = process.cwd();
   const targetDir = path.resolve(cwd, docDir);
-  const docsSource = path.join(sourceDir, GLOBAL_RULES.PATHS.DOCS_SOURCE);
 
   const model = getCurrentFileModel();
   const featureSet = new Set<ProjectFeature>(features);
@@ -162,7 +163,7 @@ export async function buildScaffoldOps(
         docDir,
       ),
     };
-    const editorResolver = buildEditorResolver(ec, docsSource, features);
+    const editorResolver = buildEditorResolver(ec, sourceDir, features);
     const editorDir = path.join(cwd, ec.targetDir);
 
     for (const rule of model.rules) {
@@ -183,7 +184,7 @@ export async function buildScaffoldOps(
   for (const editor of editors) {
     const ec = EDITOR_CONFIGS[editor];
     if (!ec) continue;
-    const editorResolver = buildEditorResolver(ec, docsSource, features);
+    const editorResolver = buildEditorResolver(ec, sourceDir, features);
 
     for (const prompt of model.prompts) {
       const src = path.join(promptsSource, `${prompt}.md`);
@@ -199,6 +200,25 @@ export async function buildScaffoldOps(
         resolver: editorResolver,
         group: "ide",
       });
+    }
+  }
+
+  const docsResolver = buildDocsResolver(editors, sourceDir, features);
+
+  for (const promptDir of model.promptDirs) {
+    const promptSrcDir = path.join(promptsSource, promptDir);
+    const promptDestDir = path.join(targetDir, "prompts", promptDir);
+    if (await fs.pathExists(promptSrcDir)) {
+      const promptOps = await TemplateManager.plan(
+        promptSrcDir,
+        promptDestDir,
+        replacements,
+      );
+      promptOps.forEach((op) => {
+        op.group = "docs";
+        if (op.type === FileOpType.Template) op.resolver = docsResolver;
+      });
+      frameworkOps.push(...promptOps);
     }
   }
 
@@ -246,8 +266,7 @@ export async function buildScaffoldOps(
   }
 
   // ── Doc Templates ─────────────────────────────────────────────────────────
-  const templatesSource = path.join(sourceDir, "docs", "templates");
-  const docsResolver = buildDocsResolver(editors, docsSource, features);
+  const templatesSource = path.join(sourceDir, "templates");
 
   for (const tmpl of model.docTemplates) {
     frameworkOps.push({
@@ -261,7 +280,7 @@ export async function buildScaffoldOps(
   }
 
   // ── Global Seeds ──────────────────────────────────────────────────────────
-  const globalSource = path.join(sourceDir, "docs", "global");
+  const globalSource = path.join(sourceDir, "global");
 
   for (const seed of model.globalSeeds) {
     const fileName = typeof seed === "string" ? seed : seed.file;
@@ -277,7 +296,7 @@ export async function buildScaffoldOps(
   }
 
   // ── Global Docs ─────────
-  const globalRefsSource = path.join(sourceDir, "docs", "global", "references");
+  const globalRefsSource = path.join(sourceDir, "global", "references");
 
   for (const doc of model.globalDocs) {
     frameworkOps.push({
@@ -288,6 +307,23 @@ export async function buildScaffoldOps(
       resolver: docsResolver,
       group: "docs",
     });
+  }
+
+  // ── Global Guides ────────────────────────────────────────────────────────
+  const globalGuidesSource = path.join(sourceDir, "global", "guides");
+
+  for (const guide of model.globalGuides ?? []) {
+    const guideSrc = path.join(globalGuidesSource, guide);
+    if (await fs.pathExists(guideSrc)) {
+      frameworkOps.push({
+        src: guideSrc,
+        dest: path.join(targetDir, "global", "guides", guide),
+        type: FileOpType.Template,
+        replacements,
+        resolver: docsResolver,
+        group: "docs",
+      });
+    }
   }
 
   return { frameworkOps, seedOps };
@@ -344,7 +380,6 @@ export async function scaffold(
   if (otherOps.length > 0) await TemplateManager.execute(otherOps);
 
   const targetDir = path.resolve(process.cwd(), docDir);
-  await fs.ensureDir(path.join(targetDir, "scripts"));
   await fs.ensureDir(path.join(targetDir, "tasks"));
   await fs.ensureDir(path.join(targetDir, "refs"));
 

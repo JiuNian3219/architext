@@ -1,38 +1,46 @@
 ---
 name: archi-design-patterns
-description: Apply structured design patterns for technical solutions. Use when writing design documents or reviewing implementation consistency.
+description: Inline helper for structured technical design patterns. Protocol-invoked only; may run in current context.
 ---
+
+## Invocation
+
+- **Auto-invoke**: No, not triggered by model based on description.
+- **Trigger location**: Only explicitly called at corresponding step in `/archi.*` protocols.
+- **Execution context**: Can execute inline in current context; when involving user questions must return to main dialogue.
+- **Boundary**: Only assist generating options, interview questions or structured fragments, does not advance protocol steps independently.
+
 
 # Technical Design Structured Pattern Library
 
-## System Flow Position
+## System Flow Positioning
 
 ```
 /archi.plan step_4_generate → design.md § 2
     ↓
-[This Skill] pattern selection → format generation → self-check
+[This Skill] Pattern selection → Format generation → Self-check
     ↓
 design.md § 2 Core Mechanisms content
 ```
 
-> **Skill responsibility boundary**:
-> - Responsible for: pattern selection guide, standard table formats per pattern, self-check lists
-> - Not responsible for: design.md overall structure (see `design.template.md`), parameters/invariants/failure modes (see template §§ 3-5)
+> **Skill's Responsibility Boundary**:
+> - Responsible for: Pattern selection guide, Standard format per pattern, Self-check list
+> - Not responsible for: design.md overall structure (see `design.template.md`), Parameters/Invariants/Failure modes (see template §§ 3-5)
 
 ---
 
 ## Pattern Selection Guide
 
-Select ≥1 pattern per mechanism characteristic. Same feature may combine multiple (e.g. State Machine for connection mgmt + Pipeline for message handling).
+Select ≥1 pattern based on mechanism characteristics. Same function can combine multiple (e.g. Connection management uses State Machine + Message processing uses Pipeline).
 
-| Mechanism Characteristic | Recommended Pattern | Typical Scenarios |
+| Mechanism Characteristic | Recommended Pattern | Typical Scenario |
 |:---|:---|:---|
-| Discrete state set with transitions | **State Machine** | Connection mgmt, workflow engine, component lifecycle, auth flow |
-| Data/requests through ordered processing steps | **Pipeline** | Message decode chain, middleware stack, data transform pipe, request interceptor |
-| Behavior depends on multi-condition combination | **Decision Matrix** | Permission check, policy routing, degradation rules, feature flags |
-| Defined message exchange between two or more components | **Protocol** | Client-server comms, IPC, event bus, Worker messages |
+| Has discrete state set and inter-state transitions | **State Machine** | Connection management, Workflow engine, Component lifecycle, Auth flow |
+| Data/request passes through ordered processing steps | **Pipeline** | Message decode chain, Middleware stack, Data transform pipeline, Request interceptor |
+| Behavior depends on multiple condition combinations | **Decision Matrix** | Permission decision, Policy routing, Degradation rules, Feature flags |
+| Two or more components have defined message exchange | **Protocol** | Client-server communication, Inter-process IPC, Event bus, Worker message |
 
-**Execution flow**: Select pattern → fill standard format → **run self-check immediately** → if any item fails, fix and re-check → all pass before next mechanism.
+**Execution Flow**: Select pattern → Fill corresponding standard format → **Immediately execute self-check** → Has unpassed items must fix then re-check → All pass before entering next mechanism.
 
 ---
 
@@ -40,33 +48,33 @@ Select ≥1 pattern per mechanism characteristic. Same feature may combine multi
 
 ### Standard Format
 
-**States**:
+**States (State Set)**:
 
 | State | Meaning | Entry Condition |
 |:---|:---|:---|
-| `idle` | [Initial/Idle] | [Init complete or active disconnect] |
-| `connecting` | [Connecting] | [Connection request initiated] |
-| `connected` | [Connected] | [open event received] |
+| `idle` | [Initial/Idle] | [Init complete OR Active disconnect] |
+| `connecting` | [Connection establishing] | [Initiate connection request] |
+| `connected` | [Connected] | [Received open event] |
 | ... | ... | ... |
 
-**Transitions**:
+**Transitions (Transition Table)**:
 
-| From | → To | Guard (Trigger) | Action (Side Effect) |
+| From | → To | Guard (Trigger Condition) | Action (Side Effect) |
 |:---|:---|:---|:---|
-| `idle` | `connecting` | [User triggers connect] | [Create Socket instance] |
-| `connecting` | `connected` | [open event received] | [Start heartbeat, clear retry count] |
-| `connecting` | `disconnected` | [Timeout or error event] | [Log error, increment retry count] |
+| `idle` | `connecting` | [User triggers connection] | [Create Socket instance] |
+| `connecting` | `connected` | [Received open event] | [Start heartbeat, Clear retry count] |
+| `connecting` | `disconnected` | [Timeout OR error event] | [Log error, Increment retry count] |
 | ... | ... | ... | ... |
 
 ### Self-Check List
 
-| # | Check | Verification |
+| # | Check Item | Verification Method |
 |:---|:---|:---|
-| 1 | **Completeness**: No deadlock | Every state has ≥1 outgoing edge |
-| 2 | **Reachability**: No orphan | Every non-initial state has ≥1 incoming edge |
-| 3 | **Termination**: Exit path exists | Terminal state or stable loop exists |
-| 4 | **Determinism**: No ambiguous transition | Outgoing Guards from same state are mutually exclusive |
-| 5 | **Exception coverage**: Not Happy Path only | Every non-terminal state has error/timeout outgoing edge |
+| 1 | **Completeness**: No deadlock | Each state has at least one outgoing edge |
+| 2 | **Reachability**: No islands | Each non-initial state has at least one incoming edge |
+| 3 | **Termination**: Has exit path | Has terminal state or stable-state loop |
+| 4 | **Determinism**: No ambiguous transitions | Same state's outgoing edges have Guards mutually exclusive |
+| 5 | **Exception coverage**: Not Happy Path Only | Each non-terminal state has error/timeout outgoing edge |
 
 ---
 
@@ -76,18 +84,18 @@ Select ≥1 pattern per mechanism characteristic. Same feature may combine multi
 
 | Step | Input | Process | Output | On Error |
 |:---|:---|:---|:---|:---|
-| 1. [name] | [input type] | [logic] | [output type] | [drop/retry/abort/degrade] |
-| 2. [name] | [prev Output] | [logic] | [output type] | [error handling] |
+| 1. [Step name] | [Input type] | [Processing logic] | [Output type] | [Drop/Retry/Abort/Degrade] |
+| 2. [Step name] | [Previous Output] | [Processing logic] | [Output type] | [Error handling] |
 | ... | ... | ... | ... | ... |
 
 ### Self-Check List
 
-| # | Check | Verification |
+| # | Check Item | Verification Method |
 |:---|:---|:---|
-| 1 | **Type chain**: No break | Step N Output = Step N+1 Input |
-| 2 | **Error handling**: No silent swallow | Every step has On Error |
-| 3 | **Idempotency note**: Retry safety clear | Mark which steps are safe to retry, which have side effects |
-| 4 | **Recoverability**: Safe termination | Any Step error can recover or exit safely |
+| 1 | **Type chain**: No breaks | Step N Output = Step N+1 Input |
+| 2 | **Error handling**: No silent swallow | Each step has On Error |
+| 3 | **Idempotency annotation**: Retry safety clear | Mark which steps safely retryable, which have side effects |
+| 4 | **Recoverability**: Safe termination | Any Step error can recover or safe exit |
 
 ---
 
@@ -97,19 +105,19 @@ Select ≥1 pattern per mechanism characteristic. Same feature may combine multi
 
 | Condition A | Condition B | Condition C | → Behavior | Note |
 |:---|:---|:---|:---|:---|
-| [val1] | [val1] | [val1] | [behavior] | |
-| [val1] | [val1] | [val2] | [behavior] | |
-| [val1] | [val2] | * | [behavior] | *=any |
-| * | * | * | [fallback] | Default when unmatched |
+| [Value1] | [Value1] | [Value1] | [Behavior] | |
+| [Value1] | [Value1] | [Value2] | [Behavior] | |
+| [Value1] | [Value2] | * | [Behavior] | *=any value |
+| * | * | * | [Fallback behavior] | Default handling when unmatched |
 
 ### Self-Check List
 
-| # | Check | Verification |
+| # | Check Item | Verification Method |
 |:---|:---|:---|
-| 1 | **Exhaustiveness**: No gap | All condition value combos covered (* wildcards for unlisted) |
-| 2 | **Unambiguous**: Single match | Same input hits only one row (priority top-to-bottom, or conditions mutually exclusive) |
-| 3 | **Fallback row**: Default exists | Last row is * wildcard |
-| 4 | **Testable**: Can construct cases | Each row can construct test input |
+| 1 | **Exhaustiveness**: No omissions | All condition value combinations covered (* wildcard covers unlisted combinations) |
+| 2 | **Unambiguous**: Single hit | Same input only hits one row (priority top-to-bottom, or conditions mutually exclusive) |
+| 3 | **Fallback row**: Has default handling | Last row is * wildcard |
+| 4 | **Testable**: Can construct cases | Each row can construct test input for verification |
 
 ---
 
@@ -117,28 +125,28 @@ Select ≥1 pattern per mechanism characteristic. Same feature may combine multi
 
 ### Standard Format
 
-**Parties**: [Component A] ↔ [Component B]
+**Participants**: [Component A] ↔ [Component B]
 
 | Seq | Sender → Receiver | Message | Payload | Expected Response | Timeout |
 |:---|:---|:---|:---|:---|:---|
-| 1 | [A → B] | `[name]` | {[field: type]} | `[response]` {[field: type]} | [Ns → timeout handling] |
-| 2 | [B → A] | `[name]` | {[field: type]} | None (one-way push) | - |
+| 1 | [A → B] | `[Message name]` | {[Field: Type]} | `[Response name]` {[Field: Type]} | [Ns → Timeout handling] |
+| 2 | [B → A] | `[Message name]` | {[Field: Type]} | None (one-way push) | - |
 | ... | ... | ... | ... | ... | ... |
 
 ### Self-Check List
 
-| # | Check | Verification |
+| # | Check Item | Verification Method |
 |:---|:---|:---|
-| 1 | **Pairing**: Request has response | Messages needing response have Response + Timeout defined |
-| 2 | **Type explicit**: No any | Every Payload field has concrete type |
-| 3 | **Order dependency**: Precedence declared | Mark which messages must follow which |
-| 4 | **Concurrency safe**: Strategy stated | If multiple messages may arrive concurrently, state handling (queue/drop/merge) |
+| 1 | **Pairing**: Has request has response | Messages needing response all have Response + Timeout defined |
+| 2 | **Type clear**: No any | Each Payload field has concrete type |
+| 3 | **Sequence dependency**: Pre-declared | Mark which messages must follow which |
+| 4 | **Concurrency safe**: Has strategy | When multiple messages concurrent, state handling strategy (queue/drop/merge) |
 
 ---
 
-> **Intermediate output**: This Skill is a subroutine; after producing mechanism description + self-check results, control returns to caller (step_4_generate or step_5_audit) to continue.
+> **Intermediate artifact**: This Skill is subroutine, after producing mechanism description + self-check results returns control to caller (step_4_generate or step_5_audit), continues subsequent flow.
 
 ## Output Verification
 
-□ `design.md` § 2 Core Mechanisms populated with selected pattern(s)
-□ Self-check list all passed for each pattern
+□ `design.md` § 2 Core Mechanisms filled with selected patterns
+□ Each pattern's self-check list all passed

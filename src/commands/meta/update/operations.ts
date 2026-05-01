@@ -13,11 +13,8 @@ import {
   resolveAllPossibleFiles,
   resolveFiles,
 } from "../../../core/file-model.ts";
-import {
-  EDITOR_CONFIGS,
-  GLOBAL_RULES,
-  resolveCapabilityRefs,
-} from "../../../core/rules.ts";
+import { EDITOR_CONFIGS, GLOBAL_RULES } from "../../../core/rules.ts";
+import { resolveCapabilityRefs } from "../../../core/capability-resolver.ts";
 import { buildScaffoldOps } from "../../../core/scaffold.ts";
 import { TemplateManager } from "../../../core/template.ts";
 import type { ArchitextConfig, FileOperation } from "../../../types/index.ts";
@@ -157,7 +154,6 @@ export async function deployNewFiles(
   if (seedsToExecute.length > 0) await TemplateManager.execute(seedsToExecute);
 
   const targetDir = path.resolve(cwd, config.docDir);
-  await fs.ensureDir(path.join(targetDir, "scripts"));
   await fs.ensureDir(path.join(targetDir, "tasks"));
   await fs.ensureDir(path.join(targetDir, "refs"));
 
@@ -187,7 +183,6 @@ export async function deployTemplateOnlyRules(
     : "zh";
   const sourceDir = path.join(templateRoot, lang);
   const rulesSource = path.join(sourceDir, GLOBAL_RULES.PATHS.RULES_SOURCE);
-  const docsSource = path.join(sourceDir, GLOBAL_RULES.PATHS.DOCS_SOURCE);
 
   const featuresLabel =
     config.features && config.features.length > 0
@@ -208,7 +203,7 @@ export async function deployTemplateOnlyRules(
     resolveCapabilityRefs(
       content,
       { hasSkills, hasSubagents, hasCommands },
-      docsSource,
+      sourceDir,
       whenContext,
     );
 

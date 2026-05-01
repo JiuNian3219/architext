@@ -1,0 +1,26 @@
+{
+  "commands": [
+    {
+      "name": "[command-name]",
+      "aliases": ["[alias]"],
+      "description": "[One-line command responsibility description]",
+      "args": [
+        {
+          "name": "[arg-name]",
+          "required": true,
+          "description": "[Argument description]"
+        }
+      ],
+      "flags": [
+        {
+          "name": "--[flag-name]",
+          "short": "-[f]",
+          "type": "[string | boolean | number]",
+          "default": "[Default value or null]",
+          "description": "[Flag description]"
+        }
+      ],
+      "owner": "[FEAT-xxx | INF-xxx]"
+    }
+  ]
+}

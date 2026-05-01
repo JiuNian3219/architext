@@ -81,7 +81,7 @@
       "select_editor": "请选择您的目标编辑器",
       "select_lang": "请选择项目文档语言",
       "select_features": "请选择项目特征（可多选）",
-      "select_generate_brief": "是否生成 project-brief.md？（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）",
+      "select_generate_brief": "是否生成 project-brief.md？（生成后填写项目需求，供 /archi.init 使用）",
       "select_doc_dir": "请输入文档目录",
       "config_exists": "检测到现有配置文件 (architext.json)。是否覆盖？",
       "config_saved": "配置已保存到 architext.json",
@@ -143,7 +143,7 @@
       "usage": "用法: npx archi template <name>  可用模板:",
       "unknown": "未知模板 \"{name}\"。可用模板: {available}",
       "exists": "{path} 已存在，跳过。如需覆盖请先删除。",
-      "done": "已生成 {path}，填写后运行 /archi.scope 开始分解。",
+      "done": "已生成 {path}，填写后运行 /archi.plan 开始分解。",
       "not_found": "模板文件 {name} 未找到。请先运行 npx archi init。"
     },
     "render": {
@@ -314,20 +314,11 @@
       },
       "ai": {
         "chatModeHint": "💡 Chat Mode: 可直接用自然语言描述需求，AI 会自动识别意图并执行对应协议。",
-        "start": {
-          "desc": "新项目冷启动。通过访谈确立愿景、技术栈，生成文档骨架。",
+        "init": {
+          "desc": "初始化路由。根据项目状态分发到新项目启动、旧项目纳管或备份恢复。",
           "detail": "产出: Vision + Tech Stack + Roadmap + 全局文档骨架",
-          "example": "例: /archi.start 我要做一个 Todo CLI 工具，用 Rust 写"
-        },
-        "inherit": {
-          "desc": "接管旧项目。全量扫描代码，逆向推导架构，填充全局文档。可选提供 Brief 补充愿景/路线图。",
-          "detail": "适用于已有代码库但缺少 Architext 文档的项目；代码库尚空时可传 project-brief.md",
-          "example": "例: /archi.inherit project-brief.md"
-        },
-        "scope": {
-          "desc": "需求分解。读取 Scope Brief，将大需求拆解为多个 Roadmap 任务并建立依赖关系。",
-          "detail": "产出: 多个 Roadmap 任务 (含 ID/目标/依赖)。无 Brief 时自动进入访谈模式",
-          "example": "例: /archi.scope scope-brief.md"
+          "example1": "例: /archi.init 我要做一个 Todo CLI 工具，用 Rust 写",
+          "example2": "例: /archi.init project-brief.md"
         },
         "plan": {
           "desc": "功能深度规划。对 Roadmap 中已有任务做架构访谈，生成完整文档。",
@@ -340,34 +331,26 @@
           "detail": "前置: 对应 Task 须有完整的 Spec + Plan",
           "example": "例: /archi.code INF-001"
         },
-        "audit": {
-          "desc": "独立深度代码审查。找 Bug、找缺漏、查合规。",
-          "detail": "带 ID: 审查指定任务的代码实现 | 无 ID: 项目级健康体检",
-          "example1": "例: /archi.audit INF-001",
-          "example2": "例: /archi.audit"
+        "change": {
+          "desc": "变更路由。按意图分发到 bug 修复、局部文档变更或全局修订。",
+          "detail": "fix/edit/revise 已合并到此入口，由路由器按上下文判断",
+          "example1": "例: /archi.change INF-001 登录时报 403 错误",
+          "example2": "例: /archi.change 从 REST 迁移到 GraphQL"
         },
-        "fix": {
-          "desc": "修复 Bug（非需求变更）。诊断错误并修复代码，通常不改 Spec。",
-          "detail": "自动记录修复过程到 Plan，保持文档一致性",
-          "example": "例: /archi.fix INF-001 登录时报 403 错误"
-        },
-        "edit": {
-          "desc": "局部需求变更。先改 Spec/UI 文档，再同步修改代码。",
-          "detail": "变更链路: 更新 Spec/UI --> 追加 Plan 步骤 --> 修改代码",
-          "example": "例: /archi.edit INF-001 增加记住密码功能"
-        },
-        "revise": {
-          "desc": "全局变更（技术栈、架构等）。分析影响范围，经确认后级联更新相关 Task。",
-          "detail": "影响范围: Vision / Tech Stack / Roadmap / 相关 Task 文档",
-          "example": "例: /archi.revise 从 REST 迁移到 GraphQL"
+        "review": {
+          "desc": "聚合审查。审查任务、项目体检，或同步架构地图。",
+          "detail": "带 ID: 审查指定任务 | 无 ID: 项目级健康体检 | map: 刷新 map.json",
+          "example1": "例: /archi.review INF-001",
+          "example2": "例: /archi.review map"
         },
         "ui": {
           "desc": "生成或增量更新 UI 概念设计（screens/ 目录）。仅 UI 类项目。",
           "detail": "全量模式: screens/ 不存在时全量生成。增量模式: screens/ 存在时根据 roadmap 差异更新"
         },
-        "map": {
-          "desc": "刷新架构地图。重新扫描目录树，更新 map.json。",
-          "detail": "当目录结构发生变化时使用，保持 map.json 与实际文件系统同步"
+        "ref": {
+          "desc": "管理外部知识引用。新增、查看、更新或移除 refs/ 中的结构化资料。",
+          "detail": "供 plan / code 按 tags 按需注入上下文",
+          "example": "例: /archi.ref add https://stripe.com/docs/api"
         },
         "remove": {
           "desc": "特性下线。全链路清除：影响分析 → 删除文档+代码 → 清理全局引用。",
@@ -383,7 +366,7 @@
       },
       "cli": {
         "init": {
-          "desc": "初始化 Architext 框架。生成规则文件、文档目录、Prompt 模板。可选生成 project-brief.md（生成后填写项目需求，供 /archi.start 或 /archi.inherit 使用）。",
+          "desc": "初始化 Architext 框架。生成规则文件、文档目录、Prompt 模板。可选生成 project-brief.md（生成后填写项目需求，供 /archi.init 使用）。",
           "editor": "指定 IDE (cursor / trae / windsurf / vscode / claude / opencode)",
           "lang": "指定语言 (zh / en)",
           "doc": "自定义文档目录名 (默认 .architext)",

@@ -61,14 +61,10 @@ export async function helpCommand(): Promise<void> {
     section(t("section.ai")),
     `  ${color.dim(t("ai.chatModeHint"))}`,
     "",
-    cmd("/archi.start [file_path]", t("ai.start.desc"), [
-      t("ai.start.detail"),
-      t("ai.start.example"),
-    ]),
-    cmd("/archi.inherit", t("ai.inherit.desc"), [t("ai.inherit.detail")]),
-    cmd("/archi.scope [file_path]", t("ai.scope.desc"), [
-      t("ai.scope.detail"),
-      t("ai.scope.example"),
+    cmd("/archi.init [args]", t("ai.init.desc"), [
+      t("ai.init.detail"),
+      t("ai.init.example1"),
+      t("ai.init.example2"),
     ]),
     cmd("/archi.plan <ID> [context]", t("ai.plan.desc"), [
       t("ai.plan.detail"),
@@ -79,25 +75,21 @@ export async function helpCommand(): Promise<void> {
       t("ai.code.detail"),
       t("ai.code.example"),
     ]),
-    cmd("/archi.audit [id]", t("ai.audit.desc"), [
-      t("ai.audit.detail"),
-      t("ai.audit.example1"),
-      t("ai.audit.example2"),
+    cmd("/archi.change [id] <context>", t("ai.change.desc"), [
+      t("ai.change.detail"),
+      t("ai.change.example1"),
+      t("ai.change.example2"),
     ]),
-    cmd("/archi.fix [id] <context>", t("ai.fix.desc"), [
-      t("ai.fix.detail"),
-      t("ai.fix.example"),
-    ]),
-    cmd("/archi.edit <id> [context]", t("ai.edit.desc"), [
-      t("ai.edit.detail"),
-      t("ai.edit.example"),
-    ]),
-    cmd("/archi.revise [context]", t("ai.revise.desc"), [
-      t("ai.revise.detail"),
-      t("ai.revise.example"),
+    cmd("/archi.review [id|map] [context]", t("ai.review.desc"), [
+      t("ai.review.detail"),
+      t("ai.review.example1"),
+      t("ai.review.example2"),
     ]),
     cmd("/archi.ui", t("ai.ui.desc"), [t("ai.ui.detail")]),
-    cmd("/archi.map", t("ai.map.desc"), [t("ai.map.detail")]),
+    cmd("/archi.ref <add|list|update|remove> [args]", t("ai.ref.desc"), [
+      t("ai.ref.detail"),
+      t("ai.ref.example"),
+    ]),
     cmd("/archi.remove <id>", t("ai.remove.desc"), [
       t("ai.remove.detail"),
       t("ai.remove.example"),
@@ -140,28 +132,28 @@ export async function helpCommand(): Promise<void> {
 
   const quickStart = [
     section(t("section.quick")),
-    tip(t("quick.new_project"), "/archi.start [desc]"),
-    tip(t("quick.legacy"), "/archi.inherit"),
-    tip(t("quick.new_feature"), "/archi.scope [file_path]"),
+    tip(t("quick.new_project"), "/archi.init [desc]"),
+    tip(t("quick.legacy"), "/archi.init"),
+    tip(t("quick.new_feature"), "/archi.plan [file_path]"),
     tip(t("quick.write_code"), "/archi.code <id>"),
-    tip(t("quick.fix_bug"), "/archi.fix [id] <desc>"),
-    tip(t("quick.check_health"), "/archi.audit"),
+    tip(t("quick.fix_bug"), "/archi.change [id] <desc>"),
+    tip(t("quick.check_health"), "/archi.review"),
     "",
   ].join("\n");
 
   const workflow = [
     section(t("section.workflow")),
     `  ${color.dim(t("workflow.init_flow"))}`,
-    `  ${color.cyan("/archi.start")} ${color.dim("-->")} ${color.cyan("/archi.ui")} ${color.dim("[?UI] -->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
+    `  ${color.cyan("/archi.init")} ${color.dim("-->")} ${color.cyan("/archi.ui")} ${color.dim("[?UI] -->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
     "",
     `  ${color.dim(t("workflow.new_feature"))}`,
-    `  ${color.cyan("/archi.scope")} ${color.dim("-->")} ${color.cyan("/archi.ui")} ${color.dim("[?UI] -->")} ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
+    `  ${color.cyan("/archi.plan")} ${color.dim("-->")} ${color.cyan("/archi.ui")} ${color.dim("[?UI] -->")} ${color.cyan("/archi.plan <ID>")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
     "",
     `  ${color.dim(t("workflow.change_spec"))}`,
-    `  ${color.cyan("/archi.edit")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
+    `  ${color.cyan("/archi.change")} ${color.dim("-->")} ${color.cyan("/archi.code")}`,
     "",
     `  ${color.dim(t("workflow.standalone"))}`,
-    `  ${color.cyan("/archi.fix")}  ${color.cyan("/archi.revise")}  ${color.cyan("/archi.audit")}  ${color.cyan("/archi.remove")}`,
+    `  ${color.cyan("/archi.change")}  ${color.cyan("/archi.review")}  ${color.cyan("/archi.remove")}`,
     "",
   ].join("\n");
 

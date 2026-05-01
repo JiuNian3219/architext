@@ -1,97 +1,75 @@
 ---
 name: archi-data-sync
-description: Sync data governance files with main agent output. **Must run in isolated context/subagent.** Use when verifying data consistency between code and global data files.
+description: Sync data governance files with protocol outputs. Must run in isolated context/subagent. Protocol-invoked only; do not auto-trigger from casual user requests.
+disable-model-invocation: true
 ---
+
+## Invocation
+
+- **Auto-invoke**: No, not triggered by model based on description.
+- **Trigger location**: Only explicitly called via `[[SUBAGENT]]` / `[[NO-SUBAGENT]]` in `/archi.*` protocols.
+- **Execution context**: When subagent supported must execute in independent subagent/independent context; only downgrade to inline Skill when no subagent.
+- **Boundary**: Only return protocol-required structured artifacts, subsequent write, confirm and signoff handled by calling protocol.
+
 
 # Data Governance Sync Executor
 
-## System Flow Position
+## Sync Matrix
 
-```
-/archi.* step_N → Verify phase
-    ↓
-[This Skill] scans output → compare global files → incremental sync → return Diff
-    ↓
-Main Agent Signoff (confirm Diff)
-```
-
-> **Skill responsibility boundary**:
-> - Responsible: Scan main Agent output for new business entities/error codes/Schema, compare with global data files, perform incremental sync
-> - Not responsible: Modify `00_system.md` itself (this Skill enforces rules, does not define them)
-> - Not responsible: Register framework concepts (Architext framework concepts must not be registered to global data files)
-
----
-
-## Authoritative Rule Source
-
-`00_system.md` "File Index → Global Data Assets" table is the authoritative rule source for data governance. All behavior of this Skill must align with that file.
-
----
-
-## Sync Scope
-
-| Global file | Sync content | Trigger |
+| File | Sync Content | Trigger Condition |
 |:---|:---|:---|
-| `map.json` | New module registration (directoryMapping), dependency relationships (logicalTopology), impact associations (featureRelations) | When creating new code modules/directories |
-| `dictionary.json` | New business entities · actions · shared tools · public components | Output contains unregistered business terms or tools |
-| `error_codes.json` | New business error codes | Output contains unregistered error scenarios |
-| `env_registry.json` | New env vars | Output introduces new `process.env.X` |
-| [?UI] `design_tokens.json` | Style changes | Output has new color/font/spacing/motion definitions |
-| [?UI] `ui_context.md` | Screen index changes | Output has new/modified screens |
-| [?Data] `data_snapshot.json` | Schema changes | Output has data model add/modify |
-| [?API] `api_snapshot.json` | New endpoints | Output has new HTTP/RPC endpoints |
-| [?CLI] `command_api.json` | New commands | Output has new CLI commands |
-| [?Lib] `public_api.json` | New public exports | Output has new public exports |
-
----
+| `map.json` | `directoryMapping` / `logicalTopology` / `featureRelations` | New code module or directory |
+| `dictionary.json` | New business entity / action / shared tool / public component | Output has unregistered business term or tool |
+| `error_codes.json` | New business error code | Output has unregistered error scenario |
+| `env_registry.json` | New environment variable | Output introduces new `process.env.X` |
+[[WHEN: ui | | ui | `design_tokens.json` | New color / font / spacing / motion | Output has new style definition | ]]
+[[WHEN: ui | | ui | `ui_context.md` | Screen index change | Output has new / modified screen | ]]
+[[WHEN: data | | data | `data_snapshot.json` | Schema new / field extension | Output has data model change | ]]
+[[WHEN: api | | api | `api_snapshot.json` | New HTTP/RPC endpoint | Output has new endpoint | ]]
+[[WHEN: cli | | cli | `command_api.json` | New CLI command | Output has new command registration | ]]
+[[WHEN: lib | | lib | `public_api.json` | New public export | Output has new export API | ]]
 
 ## Execution Protocol
 
-1. **Read project features**: Read project root `architext.json`, extract `features` field (api/cli/lib/data/ui etc.)
-2. **Read global data files**: Load global files matching project features from table above
-3. **Scan main Agent output**: Identify changes based on file type:
-   - **Code files**: New modules → map.json, new types/interfaces → dictionary.json, new error handling → error_codes.json, new env vars → env_registry.json
-   - **UI code**: New colors/fonts/components → design_tokens.json, new routes/screens → ui_context.md
-   - **Data code**: New models/fields → data_snapshot.json
-   - **API code**: New endpoints → api_snapshot.json
-   - **CLI code**: New commands → command_api.json
-   - **Lib code**: New exports → public_api.json
-4. **Boundary check**: Do not register framework concepts (scripts, scaffold, roadmap, plan, etc.); sync only project business domain content
-5. **Deduplication**: Compare with existing entries, avoid duplicate registration
-6. **Incremental sync**: Append/modify only, do not delete existing entries
-7. **Output change Diff**
+1. Load corresponding `global_files` per `project_features` (fixed four + feature matches)
+2. Scan each item in `agent_output`, route to matrix-corresponding result bucket by `type`
+3. For each change:
+   - Compare against existing entries for dedup; exact duplicate → skip; partial duplicate → merge
+   - Pass "boundary check": Hit framework concept blacklist → skip and mark `SKIPPED (framework)` in Diff
+   - Removed entries not deleted, only record MODIFIED
+4. Summarize into `writes`, each item has `file` / `op` (`append` / `merge`) / `path` (JSON path) / `value`
+5. Output Diff + `writes`
 
-### Hard Boundaries
+## Hard Boundaries
 
-- **No direct append** — Must check existing content boundary before write, avoid duplicates or conflicts
-- **No framework concept registration** — Sync only project business domain content
-- **No modify `00_system.md`** — This Skill enforces rules, does not define them
+- Do not register framework concepts: `scripts` / `scaffold` / `roadmap` / `plan` / `protocol` / `skill` / `architext.*` etc Architext's own concepts not in project global files
+- Do not modify `00_system.md`: This skill is rule executor, not rule maker
+- Do not delete: Only append / merge; removed entries handled by `/archi.remove` cleanup path
 
-### Output Format
+## Output Format
 
 ```
 ### Data Sync Results
-
 ADDED:
-- dictionary.json: entities += [new entity names]
-- error_codes.json: businessErrors += [ERR_CODE]
-
+- <file>: <path> += <value summary>
 MODIFIED:
-- data_snapshot.json: models.User += [new fields]
-
-NO CHANGE:
-- [files with no sync needed]
-
-**Summary**: X files changed / Y added / Z modified
+- <file>: <path> extended <new field summary>
+SKIPPED:
+- <file>: <path> — <skip reason (duplicate / framework)>
+Summary: <X> files changed / <Y> added / <Z> modified / <W> skipped
+writes:
+  - file: <file>
+    op: <append|merge>
+    path: <JSON path>
+    value: <specific value>
 ```
-
-When no sync needed: `### Data Sync Results — NO CHANGES`
-
----
-
-> **Intermediate output**: This Skill is a review subprogram; after producing change Diff, control returns to caller.
+No changes only output: `### Data Sync Results — NO CHANGES`
 
 ## Output Verification
 
-□ Target global JSON files updated (dictionary.json / error_codes.json / data_snapshot.json / etc.)
-□ Diff output generated with ADDED/MODIFIED/NO CHANGE sections
+- [ ] Diff block corresponds 1:1 with `writes` array entries, counts match
+- [ ] Each change went through dedup check, no duplicate entries in `writes`
+- [ ] Framework concept entries all in `SKIPPED` not `ADDED`
+- [ ] `writes` `op` only `append` / `merge`, no `delete`
+- [ ] Feature-triggered files only appear in `writes` when matching `project_features`
+- [ ] `00_system.md` not in `writes`

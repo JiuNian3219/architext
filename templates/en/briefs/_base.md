@@ -1,27 +1,27 @@
 # Project Brief: [Project Name]
 
-> Fill in what you can; leave blank if unsure. When done, run `/archi.start project-brief.md` and AI will complete missing info via multiple-choice questions.
+> Fill in as much as possible; leave uncertain fields blank. After completion, run `/archi.start project-brief.md`, and AI will complete missing information through multiple-choice questions.
 
 ---
 
 ## Project Overview
 
 **Project Name**:
-**One-line description**: [What the project is, who it serves, what problem it solves]
-**Problem statement**: [Core pain points for target users? Where do existing solutions fall short?]
+**One-liner Description**: [What the project is, who it serves, what problem it solves]
+**Problem Statement**: [Core pain points of target users? Where do existing solutions fall short?]
 
-**Target users**:
-- **Primary users**: [Role/audience]
-- **Key characteristics**: [Skill level, usage context, behavioral patterns]
+**Target Users**:
+- **Core Users**: [Role/Group]
+- **Key Characteristics**: [Technical level, usage scenarios, behavioral habits]
 
-**Success metrics**: [What counts as done? e.g.: DAU 1000 / adopted by 100+ projects / P99 < 200ms]
+**Success Metrics**: [How to define success? E.g., DAU 1000 / Adopted by 100+ projects / P99 < 200ms]
 
 ---
 
 ## Functional Requirements
 
-> Core capabilities to implement—describe "what" not "how."
-> AI will decompose these into implementation tasks; here just clarify the business goal.
+> Core capabilities that must be implemented, describe "what to do" not "how to do it".
+> AI will decompose these into specific implementation tasks; here you only need to clarify business goals.
 
 -
 -
@@ -29,14 +29,14 @@
 
 ---
 
-## Business Process
+## Business Flow
 
 > If your project has clear user journeys or core workflows, describe them here.
-> No need for diagrams—describe steps in text; AI will infer system behavior from this.
-> Leave blank if not applicable; AI will derive from core tasks.
+> No need to draw diagrams—describe steps in text, AI will understand system behavior from them.
+> Leave blank if none, AI will infer from core features.
 
-<!-- Format reference:
-### [Process name]
+<!-- Example format:
+### [Flow Name]
 1. User [action] → System [response]
 2. User [action] → System [response]
 3. ...
@@ -46,110 +46,110 @@
 
 ## Existing Design Decisions
 
-> If you have clear ideas for specific tasks/pages/flows, describe them here. AI will treat these as final in the plan phase and will not override them.
-> Leave blank if not applicable.
+> If you have clear ideas about certain features/pages/flows, describe them here. AI will follow these in subsequent plan phases and won't overturn them.
+> Leave blank if none.
 >
-> Format:
-> - **[Task/page name]**: Describe behavior, flow, constraints
-> - May include screenshot/sketch (see "Design Assets" below)
+> Example format:
+> - **[Feature/Page Name]**: Describe specific behavior, flow, constraints
+> - Can attach screenshots/sketches (see "Design Assets" below)
 
 ---
 
 ## Tech Stack
 
-> Fill in what's confirmed. Leave blank or write "recommend" for the rest; AI will recommend based on project characteristics.
+> Fill in confirmed items directly. Leave blank or write "recommended" for uncertain items, AI will recommend based on project characteristics.
 
-**Project type**: [[__PROJECT_TYPE__]]
-<!-- Auto-filled by archi init; if writing manually, choose from ui/data/api/cli/lib/mobile/desktop/miniapp/extension/realtime/ai -->
-**Language/runtime**: [e.g.: TypeScript + Node.js 22]
-**Core framework**: [e.g.: Next.js 15 / Fastify / Tauri]
-**Package manager**: [e.g.: pnpm / npm / yarn / cargo]
-**Build tool**: [e.g.: Vite / tsup / Webpack / esbuild / cargo / go build]
-**Linter / Formatter**: [e.g.: ESLint + Prettier / Biome / ruff / clippy + rustfmt]
+**Project Features**: [[__PROJECT_TYPE__]]
+<!-- archi init auto-fills (comma-separated feature tags); manually select from ui/data/api/cli/lib/mobile/desktop/miniapp/extension/realtime/ai -->
+**Language/Runtime**: [E.g., TypeScript + Node.js 22]
+**Core Framework**: [E.g., Next.js 15 / Fastify / Tauri]
+**Package Manager**: [E.g., pnpm / npm / yarn / cargo]
+**Build Tool**: [E.g., Vite / tsup / Webpack / esbuild / cargo / go build]
+**Linter / Formatter**: [E.g., ESLint + Prettier / Biome / ruff / clippy + rustfmt]
 <!-- @slot:tech -->
-**Deployment target**: [e.g.: Vercel / Docker / npm publish / binary distribution]
-**Key third-party libraries**: [e.g.: Zod, TanStack Query, Lucia Auth]
+**Deployment Target**: [E.g., Vercel / Docker / npm publish / Binary distribution]
+**Key Third-party Libraries**: [E.g., Zod, TanStack Query, Lucia Auth]
 
-**Technical red lines** (banned tech/approaches):
-- [e.g.: No jQuery; no CSS-in-JS]
+**Tech Red Lines** (Forbidden technologies/approaches):
+- [E.g., No jQuery; No CSS-in-JS]
 
 ---
 
 ## Engineering Standards
 
-> Existing team conventions. Leave blank if unsure; AI will recommend sensible defaults based on your tech stack.
+> Existing engineering conventions. Leave uncertain items blank, AI will recommend reasonable defaults based on tech stack.
 
-**Repository structure**: [Monorepo (Turborepo/Nx/pnpm workspaces) / single repo]
-**Architecture pattern**: [e.g.: MFA / FSD / Clean Architecture / layered / no preference (AI recommends)]
-**Directory structure**: [already defined → describe key dirs / none (AI generates based on pattern)]
-**Branching strategy**: [e.g.: Trunk-based / Git Flow / GitHub Flow]
-**Commit convention**: [e.g.: Conventional Commits (feat/fix/chore) / custom → describe]
+**Repository Type**: [Monorepo (Turborepo/Nx/pnpm workspaces) / Single Repo]
+**Architecture Pattern**: [E.g., MFA / FSD / Clean Architecture / Layered / No preference (AI recommends)]
+**Directory Structure**: [Existing clear structure → describe key directories / None (AI generates based on architecture pattern)]
+**Branch Strategy**: [E.g., Trunk-based / Git Flow / GitHub Flow]
+**Commit Convention**: [E.g., Conventional Commits (feat/fix/chore) / Custom → describe]
 
-**AI Git Workflow** (Git conventions when AI runs `/archi.code`):
-- **Auto commit**: [Yes - auto git commit after each Task / No - generate commit message only, user commits manually]
-- **Commit granularity**: [Per Task / Per Phase / As needed]
-- **Branching**: [Work directly on main / Create branch per Task `feat/{task-id}`]
-- **Auto push**: [Yes / No]
+**AI Git Workflow** (Commit conventions when AI executes `/archi.code`):
+- **Auto Commit**: [Yes - auto git commit after each Task / No - only generate commit message, user commits manually]
+- **Commit Granularity**: [Per Task - one commit per Task / Per Phase - one commit per Phase / As needed]
+- **Branch Strategy**: [Work directly on main / New branch per Task `feat/{task-id}`]
+- **Auto Push**: [Yes / No]
 
-**Testing preference**: [e.g.: Vitest / Jest / pytest / no special requirements]
+**Testing Preference**: [E.g., Vitest / Jest / pytest / No special requirements]
 
 ---
 
 ## Existing Resources & Context
 
-> What already exists that AI should know—to avoid reinventing or making conflicting decisions.
+> What AI needs to know about existing things—avoid reinventing the wheel or making conflicting decisions.
 
-**Project starting point**: [Greenfield / based on existing repo (brief status and tech debt)]
-**Existing API/backend**: [API docs link / brief available endpoints / none (build from scratch)]
-**Third-party services**: [Confirmed services, e.g.: Auth0, Stripe, AWS S3, Resend...]
-**Existing data**: [Existing DB/data sources? Format? Migration needed? / none]
+**Project Starting Point**: [New project / Based on existing codebase (describe current state and tech debt)]
+**Existing API/Backend**: [API doc link / Describe available endpoints / None (need to build from scratch)]
+**Third-party Services**: [Confirmed services, e.g., Auth0, Stripe, AWS S3, Resend...]
+**Existing Data**: [Existing database/data sources? Format? Need migration? / None]
 
 ---
 
 ## Design Assets
 
-> Provide visual/design input for AI—directly impacts UI and architecture decision quality.
+> Provide visual/design inputs for AI, directly affecting project UI and architecture decision quality.
 > Two ways to provide files:
-> 1. **Local files**: Place files in `brief-assets/` directory, reference by format below
-> 2. **External links**: Paste URL directly
+> 1. **Local files**: Put files in `brief-assets/` directory, reference using format below
+> 2. **External links**: Fill in URLs directly
 >
-> Reference format: `- [semantic label] ./brief-assets/filename`
+> Reference format: `- [Semantic Label] ./brief-assets/filename`
 >
-> Format reference:
-> - [Competitor reference - home] ./brief-assets/linear-dashboard.png
-> - [My sketch] ./brief-assets/sketch-v1.png
-> - [Brand palette] ./brief-assets/brand-colors.pdf
-> - [API docs] ./brief-assets/api-spec.yaml
+> Example:
+> - [Competitor Reference-Homepage] ./brief-assets/linear-dashboard.png
+> - [My Sketch] ./brief-assets/sketch-v1.png
+> - [Brand Palette] ./brief-assets/brand-colors.pdf
+> - [API Docs] ./brief-assets/api-spec.yaml
 > - [Database Schema] ./brief-assets/schema.sql
 
-**Design mockups/screenshots**: [Reference local files per format above / Figma link / none (AI designs)]
-**Brand guidelines**: [Existing logo/colors/fonts → reference file or describe / none]
+**Design Screenshots**: [Reference local files using above format / Figma link / None (AI designs itself)]
+**Brand Guidelines**: [Existing Logo/colors/fonts → reference files or describe / None]
 
 ---
 
 <!-- @slot:style -->
 
-## Scope & Constraints
+## Boundaries & Constraints
 
-**Explicit non-goals** (anti-goals):
-- [e.g.: No i18n this release / no mobile adaption / no paid features]
+**Explicit Non-goals** (Anti-goals):
+- [E.g., No internationalization this phase / No mobile adaptation / No paid features]
 
-**Hard constraints**:
-- **Compatibility**: [e.g.: Chrome 90+ / Node 18+ / iOS 15+]
-- **Performance**: [e.g.: First paint < 2s / API P99 < 500ms / no special requirements]
-- **Compliance/accessibility**: [e.g.: WCAG 2.1 AA / GDPR / none]
+**Hard Constraints**:
+- **Compatibility**: [E.g., Chrome 90+ / Node 18+ / iOS 15+]
+- **Performance**: [E.g., First load < 2s / API P99 < 500ms / No special requirements]
+- **Compliance/Accessibility**: [E.g., WCAG 2.1 AA / GDPR / None]
 
 ---
 
 ## References & Inspiration
 
-| Reference project | Reference dimension |
+| Reference Project | Reference Dimension |
 |:---|:---|
-| [e.g.: Linear] | [Interaction UX, task management logic] |
+| [E.g., Linear] | [Interaction experience, feature management logic] |
 | | |
 
 ---
 
-## Additional Notes
+## Supplementary Notes
 
-> Anything not covered above: background story, special requirements, rationale for decisions, etc.
+> Any information not covered above: background stories, special requirements, reasons for existing decisions, etc.

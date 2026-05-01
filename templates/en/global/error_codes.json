@@ -1,0 +1,11 @@
+{
+  "businessErrors": [
+    {
+      "module": "[MODULE]",
+      "code": "ERR_[MODULE]_[REASON]",
+      "statusCode": "",
+      "message": "[User/developer visible error description]",
+      "recovery": "[Recovery suggestion]"
+    }
+  ]
+}

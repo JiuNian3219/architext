@@ -1,0 +1,51 @@
+<protocol_init_router>
+**Trigger**: `/archi.init [args...]` | Loaded when Intent Card points to `/archi.init`
+**Goal**: Route dispatcher — Based on Intent Card, Context Pack, working directory state and current parameters, dispatch to start / inherit / recover (choose one).
+
+<meta>
+		<style>Decisive, Non-interactive</style>
+		<language>English</language>
+		<principles>
+			Deterministic First: Prioritize objective signals from working directory to judge, do not infer intent from `[args]` natural language.
+			Explicit Routing: Judgment result must be explicitly output (user can interrupt), do not silently jump.
+		</principles>
+</meta>
+
+<step_1_scan>
+Prioritize reading Intent Card + Context Pack:
+- If `command` is not `/archi.init` → Stop, prompt caller to load correct protocol per Intent Card.
+- If Context Pack missing → Return to `00_system.md` Front Pipeline to fill; if `missing_or_stale` non-empty, handle gaps first or explain to user.
+- If `subprotocol` is `recover` and pack file path is clear → Directly process via recover path.
+- If `subprotocol` is `start` / `inherit`, still need to verify with working directory state to avoid mistakenly initializing an existing project.
+
+Scan following signals by priority, first match handles:
+
+| # | Signal | Judgment | Route Target |
+|:---|:---|:---|:---|
+| 1 | `[args]` contains `.xml` path and file exists readable | pack file | `init/recover.md` |
+| 2 | `[args]` contains `.xml` path but file does not exist/corrupted | - | Stop, error "pack file cannot be read" |
+| 3 | `[[__DOCS_DIR__]]/global/vision.md` already filled (not template placeholder) | Project initialized | Stop, prompt "Project already initialized, please use /archi.plan or /archi.change" |
+| 4 | Root directory has package.json / go.mod / Cargo.toml / pyproject.toml / pom.xml / build.gradle any one | Has source code | `init/inherit.md` (if `[args]` points to brief, pass as hybrid mode) |
+| 5 | Root or `[[__DOCS_DIR__]]/` has `project-brief.md` and non-empty | Has brief no source | `init/start.md` |
+| 6 | `[args]` points to some `.md` file | Explicitly specified brief | `init/start.md` (`[args]` as brief_path) |
+| 7 | None match | State unclear | Enter `step_1b_clarify` |
+</step_1_scan>
+
+<step_1b_clarify>
+Triggered when step_1 doesn't hit. Output 3-choose-1 question to user and wait for answer then re-scan:
+
+- [A] Start from scratch (empty project, have or will write Brief) → First run `npx archi init` to generate `project-brief.md` template, fill then re-run `/archi.init`
+- [B] Adopt existing code (has legacy codebase) → Confirm project root has config file (package.json etc); if not, tell project type
+- [C] Restore from backup → Provide pack file path: `/archi.init <path-to-pack.xml>`
+</step_1b_clarify>
+
+<step_2_report>
+When step_1 hits a route, explicitly output decision: `Route judgment: <mode>; Basis: <specific hit signal>; Subprotocol: init/<mode>.md`.
+</step_2_report>
+
+<step_3_dispatch>
+1. Read `[[__DOCS_DIR__]]/prompts/init/<mode>.md` content
+2. Extract subprotocol required parameters from `[args]` (brief_path / pack-file-path etc) and inject into context
+3. Continue executing subprotocol as current active protocol; this file exits
+</step_3_dispatch>
+</protocol_init_router>

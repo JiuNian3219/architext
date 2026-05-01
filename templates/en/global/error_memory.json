@@ -1,0 +1,40 @@
+{
+  "errorPatterns": {
+    "_comment": "Error patterns: { id: unique identifier, watchFor: [scenarios to watch before execution], matchWhen: [keywords to match after error], cause: root cause, solution: solution, lesson: lesson/principle }. Append here after AI resolves errors",
+    "examples": [
+      {
+        "id": "build-vite-config-missing",
+        "watchFor": ["Run npm run build", "Modify vite.config.ts"],
+        "matchWhen": ["ENOENT", "vite.config", "Cannot find module"],
+        "cause": "Config file deleted accidentally or node_modules not installed",
+        "solution": "Check if file exists, run npm install to reinstall dependencies",
+        "lesson": "Backup before modifying config, periodically verify node_modules integrity"
+      },
+      {
+        "id": "type-import-assertion-deprecated",
+        "watchFor": ["Import JSON file"],
+        "matchWhen": ["assert", "SyntaxError", "import", "type"],
+        "cause": "Node.js 18+ deprecated import assert syntax, use import attributes instead",
+        "solution": "Change assert { type: 'json' } to with { type: 'json' }",
+        "lesson": "Watch Node.js version updates, confirm syntax version when importing JSON"
+      }
+    ]
+  },
+  "checkpoints": {
+    "_comment": "Checkpoints: { before: operation description to match before execution, check: [list of errorPatterns.id to check] }. AI auto-generates based on watchFor scenarios",
+    "examples": [
+      {
+        "before": "Run npm run build",
+        "check": ["build-vite-config-missing"]
+      },
+      {
+        "before": "Modify config file",
+        "check": ["build-vite-config-missing"]
+      },
+      {
+        "before": "Import JSON file",
+        "check": ["type-import-assertion-deprecated"]
+      }
+    ]
+  }
+}

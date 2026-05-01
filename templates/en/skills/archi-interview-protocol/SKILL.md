@@ -1,86 +1,57 @@
 ---
 name: archi-interview-protocol
-description: Conduct structured interviews to fill information gaps. Use when requirements are unclear or need user clarification.
+description: Inline helper for structured multiple-choice interviews. Protocol-invoked only; must return user-facing questions to the main conversation.
 ---
+
+## Invocation
+
+- **Auto-invoke**: No, not triggered by model based on description.
+- **Trigger location**: Only explicitly called at corresponding step in `/archi.*` protocols.
+- **Execution context**: Can execute inline in current context; when involving user questions must return to main dialogue.
+- **Boundary**: Only assist generating options, interview questions or structured fragments, does not advance protocol steps independently.
+
 
 # Supplementary Interview Protocol
 
-## System Flow Position
+## Core Principles
 
-```
-Information gap detected
-    ↓
-[This Skill] → Q-table output → Wait for user INPUT
-                                        ↓
-                                Caller continues next steps
-```
+**Multiple-choice first**. Do not open-ended ask (e.g. "What database do you want?"). Each question gives 3-5 options + `[Z] Custom`, AI recommends one, user confirms or chooses differently. Goal: User without domain knowledge can make reasonable decisions.
 
-> **Skill responsibility boundary**:
-> - Responsible for: how to ask (format / rules / tone)
-> - Not responsible for: what to ask (determined by caller's gap list), how to handle user answers (determined by caller)
+## Rules
 
-## Invocation Modes
+1. Only ask about `gaps`, do not self-expand topics
+2. What user already stated in Brief / `context` do not re-ask, directly adopt
+3. Strongly-related gaps merge into one question, weakly-related separate
+4. Each question 3-5 options + `[Z] Custom (please describe)` fallback
+5. Recommended item marked `[Recommended]`, reason must combine `context`, do not mechanically apply default
+6. Option "Description" must contain: What it is / What choosing means for project / What scenarios suitable (2-3 sentences, not one word)
+7. `AI+` / `AI-` write complete sentences from AI Agent execution perspective; each option must have tradeoffs, do not write "none"
+8. Question count ≤ `max_questions`
 
-| Caller | Trigger Step | Trigger Condition | Max Questions |
-|:---|:---|:---|:---|
-| `/archi.start` | step_2_supplementary | Brief has "Required" or "Can supplement" gaps | 3–6 |
-| `/archi.scope` | step_2_5_supplementary | Brief has "Required" or "Can supplement" gaps | ≤3 |
-| `/archi.plan` | step_2 Part 2 Q-table | Architecture dimension has 2+ viable options whose choice significantly impacts implementation | As needed; recommend directly if possible |
-
----
-
-## Core Rules
-
-### Principle: Multiple-Choice First
-
-No open-ended questions (e.g., "What database do you want to use?"). All questions are presented as multiple-choice. AI provides a recommended default option based on context; user only needs to confirm or switch. Goal: user can make a reasonable decision without domain expertise.
-
-### Rule Checklist
-
-| # | Rule | Detail |
-|:---|:---|:---|
-| 1 | **Gaps only** | Never re-ask what the caller or Brief has already answered; directly adopt user's filled-in choices |
-| 2 | **Option count** | 3–5 options per question + `[Z] Custom`; too many options means the question should be split |
-| 3 | **Recommendation mark** | AI picks the most reasonable option based on project context, marks it `[Recommended]`; must reflect current context, not mechanical defaults |
-| 4 | **[Z] fallback** | Every question must include `[Z] Custom (please describe)` as an escape hatch for needs that don't fit presets |
-| 5 | **Complete option description** | Description must cover: ① what this option is ② what the project/code looks like if chosen ③ what scenarios it suits (2–3 sentences total); no one-word labels |
-| 6 | **AI+/AI- full sentences** | State advantages and risks from AI Agent execution perspective; must be full sentences; never write "None" — every option has trade-offs |
-| 7 | **Merge related questions** | Merge strongly related gaps into one question to reduce user decision count; split only weakly related ones |
-
----
-
-## Standard Output Format
+## Output Format
 
 ```
 ### Supplementary Confirmation
 
-**[Q<n>] Question title**
-> Why this information is needed (one sentence, so user understands why they're answering)
+**[Q<n>] Question Title**
+> One sentence explaining why this information is needed
 
 | ID | Option | Description | AI+ | AI- |
 |:---|:---|:---|:---|:---|
-| A [Recommended] | Option name | What it is + what happens if chosen + what scenarios it suits (2–3 sentences) | Full sentence | Full sentence |
+| A [Recommended] | Option name | 2-3 sentence description | Complete sentence | Complete sentence |
 | B | ... | ... | ... | ... |
-| C | ... | ... | ... | ... |
 | Z | Custom | (please describe) | - | - |
 
-(Repeat Q-table structure above for multiple questions)
+(Multiple questions repeat above Q-table)
 
----
-**INPUT**: `Q1 answer | Q2 answer | ...` (use `|` between questions; space for multi-select within one question, e.g. `A B`)
+**INPUT**: `Q1 answer | Q2 answer | ...` (Between questions use `|`; Single question multiple choices use space, e.g. `A B`)
 ```
 
----
+## Anti-Example Quick Reference
 
-## Common Mistakes
-
-| Wrong | Problem | Correct |
+| Error | Rule Violated | Fix |
 |:---|:---|:---|
-| `A \| PostgreSQL` | One-word label, can't judge which to pick | `A \| PostgreSQL \| Relational DB suited for well-defined schemas and join queries...` |
-| `AI+: Good performance` | Not a full sentence, no substantive info | `AI+: Structured schema lets AI infer CRUD code directly from type definitions, reducing guesswork` |
-| `AI-: None` | Every option has trade-offs; "None" is avoidance | `AI-: Migration scripts must stay in sync as schema evolves; AI often misses field changes` |
-| Asking about tech stack already answered in Brief | Re-asking erodes trust | Skip; directly adopt the user's filled-in choice |
-
----
-
-> **Intermediate artifact**: This Skill is a subroutine. After producing the Q-table, control returns to the caller. The caller resumes after the user replies to INPUT.
+| `A | PostgreSQL` | #6 One-word description | `A | PostgreSQL | Relational database, Schema fixed then AI infers CRUD stably, suitable for clear entity relationships` |
+| `AI+: Good performance` | #7 Not complete sentence | `AI+: Structured Schema lets AI directly infer CRUD from types, reducing guessing` |
+| `AI-: None` | #7 Avoiding | `AI-: Migration scripts need sync maintenance as Schema evolves, AI easily misses field changes` |
+| Asking about tech stack Brief already stated | #2 | Skip, directly adopt |

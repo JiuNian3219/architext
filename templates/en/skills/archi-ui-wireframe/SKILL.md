@@ -1,98 +1,98 @@
 ---
 name: archi-ui-wireframe
-description: Generate UI concept designs and wireframes as multi-file screens/ directory. Do not auto-trigger.
+description: Generate UI concept designs as screens/ reference artifacts. Protocol-invoked only; do not auto-trigger.
+disable-model-invocation: true
 ---
+
+## Invocation
+
+- **Auto-invoke**: No, not triggered by model based on description.
+- **Trigger location**: Only explicitly called by `/archi.ui` or plan/change's UI local update step.
+- **Execution context**: Can execute via Skill tool or current context; must follow calling protocol's Gate before writing `screens/`.
+- **Boundary**: Only generate UI concept drafts and reference files, does not generate production source code.
+
 
 # UI Concept Design
 
-## System Flow Position
+## Core Principles
 
-```
-/archi.ui → [This Skill] → screens/ (multi-file directory) → /archi.plan → ui.md (task scope)
-/archi.ui (adopt mode) → [This Skill] → screens/ (reverse from code)
-```
+- Interactive display: Draw buttons / forms / modals and bind clicks, clicks only trigger visual feedback (state switch / panel expand / modal show/hide), not real business logic
+- Content fill: Use real business names from roadmap; No "Title", "[Button]" placeholders; Lists / tables ≥ 3-4 rows of realistic dummy data; Empty states write specific copy not "No data"
+- Palette discipline: Only use CSS variables derived from `design_tokens.json`, no hardcoded magic numbers
+- Output boundary: `screens/` is concept design and acceptance reference, not production code; Must not instruct subsequent implementation to directly copy HTML/CSS/JS, must require rewrite using project's own language, framework and style system
+- No anti-patterns: Purple gradient / emoji / non-pure black-white
+[[INCLUDE: shared/ui-redlines.md]]
 
-> **Outputs**: `screens/` directory (`index.html` navigation hub + `S-XX.html` independent screens + `_shared.css` shared styles) + `ui_context.md` (AI index)
+## Step 1 — Read Context
 
----
+Extract from `context_files`:
+- vision.md → Platform / Users / North star
+- roadmap.json → UI tasks → Screen mapping
+- design_tokens.json → Aesthetic / Brand color / Decor variables
+- tech_stack.md → Platform / Navigation framework
+- Current `ui_context.md` → Existing screen IDs and names (`adopt` / `incremental` reuse)
 
-## Invocation Modes
+`adopt` mode additionally: Extract from `adopt_codebase` "Route → Screen list", "Layout components → Navigation structure", "Page components → Core regions and states".
 
-| Mode | Trigger | Scope |
-|:---|:---|:---|
-| Initial | `/archi.ui` | Full — all screens |
-| Adopt | `/archi.ui` (auto-detected when code exists) | Reverse from code routes/components |
-| Regenerate | Manual | Full rewrite (global redesign) |
-| Append/Modify | `/archi.scope/edit` or `/archi.ui` (incremental mode) | Specified screens only |
-| Update | `/archi.plan` divergence | Affected screens only |
+## Step 2 — Plan Screen List
 
----
+Assign screen IDs (S-01, S-02 ..., permanent) mapping to Roadmap tasks. `incremental` only processes `scope_screens`.
 
-## Generation Protocol
-
-### Step 1 — Load Context
-
-**Load**: vision.md (platform/users/north-star), roadmap.json (UI tasks → screen mapping),
-design_tokens.json (aesthetic/brand), tech_stack.md (platform/nav framework).
-
-### Step 2 — Plan Screen Inventory
-
-Assign screen IDs (S-01, S-02...), map to Roadmap tasks. IDs are permanent.
-
-| Screen ID | Name | Task | States |
+| Screen ID | Screen Name | Corresponding Task | Status List |
 |:---|:---|:---|:---|
-| S-01 | [name] | [task ID] | default, loading, empty, error |
+| S-01 | <Name> | <Task ID> | default, loading, empty, error |
 
-### Step 3 — Tokens Check + Guidance
+## Step 3 — Tokens Check and Guidance
 
-check `design_tokens.json`:
-- `aestheticDirection.preset` empty → guide selection (saas-dark/saas-light/dashboard/marketing/mobile-app/editorial/brutalist)
-- `primitivePalette.brand` empty → guide for Hex
-- Other empty → AI infers, non-blocking
+Check `design_tokens.json`:
+- `aestheticDirection.preset` empty → Guide user to select (saas-dark / saas-light / dashboard / marketing / mobile-app / editorial / brutalist)
+- `primitivePalette.brand` empty → Guide user to fill Hex
+- Other empty values → AI inference, non-blocking
 
-### Step 4 — Generate Multi-file HTML
+`incremental` skips this step (reuse existing tokens).
 
-**Output directory**: `[[__DOCS_DIR__]]/global/screens/`
+## Step 4 — Generate Multi-File HTML
 
-#### 4.1 `_shared.css` — Shared Styles
+**Output Directory**: `[[__DOCS_DIR__]]/global/screens/`
 
-Extract CSS variables from `design_tokens.json` + base layout + bottom control panel styles. All `S-XX.html` reference via `<link href="_shared.css">`.
+> Note: Files in this directory only for browser preview and design alignment. In subsequent `/archi.code` UI implementation, prohibit directly reusing `_shared.css` or `S-XX.html` code.
 
-**Bottom Control Panel**: fixed bottom, floating toggle button (60×16px, centered top), ▲/▼ symbols. 3-column: ← index jump | page info | state buttons. Collapsed hides content, button stays visible.
+**File List**:
 
-#### 4.2 `S-XX.html` — Independent Screen Files
+| File | Responsibility |
+|:---|:---|
+| `_shared.css` | CSS variables folded from `design_tokens.json` + Base layout + Bottom control panel styles |
+| `S-XX.html` | Each screen independent self-contained page, via `<link href="_shared.css">` includes shared styles |
+| `index.html` | Navigation hub, lists all screen cards and links to corresponding `S-XX.html` |
 
-One self-contained HTML file per screen, structure:
+**Bottom Control Panel Spec** (All `S-XX.html` must contain): Fixed positioning at bottom; Floating bar button 60×16px at panel top center, ▲/▼ toggle; Three-column layout: ← Index jump ｜ Page description ｜ State buttons; When collapsed content area `display:none`, button remains visible.
+
+**Example Spec — `S-XX.html`** (Indicates which nodes and scripts must be included, not physical file template):
 
 ```html
 <body>
   <header class="wf-topbar">...</header>
-  <main class="wf-content">...state divs...</main>
-
-  <!-- Bottom Control Panel -->
+  <main class="wf-content">...State switch div...</main>
   <aside class="wf-panel" id="wfPanel">
     <button class="wf-panel-toggle" id="toggleBtn" onclick="togglePanel()">▼</button>
     <div class="wf-panel-content">
       <span>Jump</span> <a href="index.html">← Index</a>
-      <span>Page</span> <span>[description]</span>
+      <span>Page</span> <span>[Description]</span>
       <span>State</span> <div class="wf-states">...</div>
     </div>
   </aside>
-
   <script>
     function togglePanel() {
-  var panel = document.getElementById('wfPanel');
-  var btn = document.getElementById('toggleBtn');
-  panel.classList.toggle('collapsed');
-  btn.textContent = panel.classList.contains('collapsed') ? '▲' : '▼';
-}
+      var panel = document.getElementById('wfPanel');
+      var btn = document.getElementById('toggleBtn');
+      panel.classList.toggle('collapsed');
+      btn.textContent = panel.classList.contains('collapsed') ? '▲' : '▼';
+    }
   </script>
 </body>
 ```
 
-#### 4.3 `index.html` — Navigation Hub
-
-List all screens, each linking to corresponding `S-XX.html`:
+**Example Spec — `index.html`**:
 
 ```html
 <!DOCTYPE html>
@@ -103,94 +103,50 @@ List all screens, each linking to corresponding `S-XX.html`:
   <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
-  <header class="wf-topbar">
-    <span>[Project Name] — UI Concept Design Index</span>
-  </header>
+  <header class="wf-topbar"><span>[Project Name] — UI Concept Design Index</span></header>
   <main class="wf-index">
     <div class="wf-screen-card">
       <a href="S-01.html">S-01 · [Screen Name]</a>
-      <p>[One-line description]</p>
+      <p>[One-sentence description]</p>
     </div>
-    <!-- More screen cards -->
   </main>
 </body>
 </html>
 ```
 
-**Interactive Display Principles** (visual feedback, NOT real business logic):
-- Buttons/links/inputs drawn with click events
-- Click triggers **visual feedback** (modal show/hide, panel expand, state switch), NOT **real business logic**
-- **Cross-screen navigation**: Sidebar, tabs, breadcrumbs, card clicks → link to corresponding `S-XX.html`
-- **Modal forms**: Focusable, clickable, but submission doesn't process data
-- **Goal**: complete display of interaction flow and interface in various states
+**Self-drawn SVG** (When no icon library): `stroke="currentColor"` · `stroke-width` 1.5-2 · `fill="currentColor"` · `width="1em"` `height="1em"`.
 
-**Built-in Validation & Self-Repair Loop** (AI self-checks and fixes until all pass):
+### Built-in Verification and Self-Fix Loop
 
-| Check | Pass Criteria | Repair Action |
+Generate → Check → If fail fix and retry, until 6/6 pass; Final output mark `<!-- Check: 6/6 passed -->` in HTML comment.
+
+| Check Item | Pass Standard | Fail Fix |
 |:---|:---|:---|
-| **Clickability** | All elements with `onclick` must have `cursor: pointer` | Add CSS `cursor: pointer` |
-| **data-el completeness** | All interactive elements must have `data-el` | Add `data-el` description |
-| **State coverage** | Each screen must include default/loading/empty (as applicable) | Add missing state divs |
-| **Cross-file link validity** | `index.html` links point to existing `S-XX.html`; each `S-XX.html` contains back-to-index link | Fix link paths |
-| **Anti-pattern red lines** | No purple gradient, no emoji, not pure black/white | Replace with aesthetic-compliant colors |
-| **Spacing consistency** | Use CSS variables, no hardcoded magic numbers | Replace with `var(--space-*)` |
+| Clickability | Elements with `onclick` all have `cursor: pointer` | Add CSS |
+| `data-el` completeness | Interactive elements all have `data-el` | Add description |
+| State coverage | Each screen has default / loading / empty (if applicable)| Add state div |
+| Cross-file link validity | `index.html` links point to existing `S-XX.html`; Each `S-XX.html` has return-to-index link | Fix path |
+| Anti-pattern red lines | No purple gradient / emoji / non-pure black-white | Replace with aesthetic-compliant colors |
+| Spacing consistency | Uses CSS variables no magic numbers | Replace with `var(--space-*)` |
 
-**Repair Loop** (internal execution):
-```
-Generate HTML → Run checks → Any failures?
-  ├── Yes → Repair → Regenerate → Check again
-  └── No → Passed
-```
+## Step 5 — Update AI Index
 
-**Check Method**: Scan HTML file elements, verify against checklist, output to comment (`<!-- Check: 6/6 passed -->`), repair if failed.
+`ui_context.md` already initialized by `/archi.start` with screen IDs and names. This step updates screen structure summary and file paths.
 
-[[INCLUDE: shared/ui-redlines.md]]
+[[INCLUDE: shared/ui-context-format.md]]
 
-**Content Fill**:
-- Real business names from roadmap, never "Title" placeholders
-- Buttons with specific actions, never "[Button]"
-- Lists/tables with 3-4 rows realistic fake data
-- Empty states with specific copy, never "No data"
+## Step 6 — Output Gate
 
-**Self-drawn SVG** (no icon library): stroke="currentColor", stroke-width 1.5-2, fill="currentColor", width="1em" height="1em"
+Output summary: Aesthetic direction and reference products · Screen coverage list (N screens) · Visual spec · Navigation structure description.
 
-### Step 5 — Update AI Index
-
-**Prerequisite**: `ui_context.md` was initialized by `/archi.start` with screen IDs and names. This step updates screen structure summary and file paths.
-
-**Update Content**: `[[__DOCS_DIR__]]/global/ui_context.md`
-
-[[INCLUDE: ../../docs/shared/ui-context-format.md]]
-
-### Step 6 — Output Gate
-
-Output summary: aesthetic direction + reference products, screen coverage list (N screens), visual spec, navigation structure.
-
-**User confirmation**: Reply **OK** to complete; otherwise enter Refinement.
+User confirmation:
+- Reply **OK** → Complete
+- Non-OK (contains layout / visual adjustment feedback) → Local regenerate corresponding `S-XX.html` + sync `ui_context.md` + `index.html` → Re-display summary wait for next round
 
 ## Output Verification
 
-□ `global/screens/index.html` generated with all screen links listed
-□ `global/screens/_shared.css` generated with design_tokens CSS variables
-□ `global/screens/S-XX.html` independent file generated for each screen
-□ `global/ui_context.md` screen structure summary updated with file paths and key regions
-
----
-
-## Refinement (User Feedback)
-
-User reply contains layout/visual adjustments → partial update corresponding `screens/S-XX.html` + sync `ui_context.md` → re-display summary, await confirmation.
-
----
-
-## Incremental Update
-
-Input screen ID list → process specified screens only: preserve existing files, generate new/updated `S-XX.html` per current visual spec; if new states → sync update `ui_context.md`. Update `index.html` navigation list.
-
-Output: `MODIFIED: screens/S-XX.html` (annotated per file)
-
----
-
-## Adopt (Reverse from Code)
-
-Input existing code + design_tokens.json → extract: routes → screen inventory, layout components → navigation structure, page components → core regions and states → generate `screens/` directory + ui_context.md per standard flow.
+- [ ] `global/screens/index.html` generated and lists all screen links
+- [ ] `global/screens/_shared.css` generated and contains design_tokens CSS variables
+- [ ] Each `global/screens/S-XX.html` independent file generated (`incremental` only for `scope_screens`)
+- [ ] `global/ui_context.md` screen structure summary updated, with file paths and key regions
+- [ ] All `S-XX.html` contain `<!-- Check: 6/6 passed -->` comment

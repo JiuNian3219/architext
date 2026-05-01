@@ -49,12 +49,9 @@ describe("Scaffolder Integration", () => {
     const commandsDir = path.join(tempDir, ".cursor/commands");
     expect(await fs.pathExists(commandsDir)).toBe(true);
 
-    // 检查 scripts 和 tasks 空目录（用于存放未来计划和脚本）
-    const scriptsDir = path.join(docDir, "scripts");
+    // 检查 tasks 空目录（用于存放未来计划）
     const tasksDir = path.join(docDir, "tasks");
-    expect(await fs.pathExists(scriptsDir)).toBe(true);
     expect(await fs.pathExists(tasksDir)).toBe(true);
-    expect(await fs.readdir(scriptsDir)).toEqual([]);
     expect(await fs.readdir(tasksDir)).toEqual([]);
   });
 

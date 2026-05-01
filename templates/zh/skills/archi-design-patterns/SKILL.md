@@ -1,7 +1,15 @@
 ---
 name: archi-design-patterns
-description: Apply structured design patterns for technical solutions. Use when writing design documents or reviewing implementation consistency.
+description: Inline helper for structured technical design patterns. Protocol-invoked only; may run in current context.
 ---
+
+## 调用方式
+
+- **自动调用**: 否，不由模型根据 description 自行触发。
+- **触发位置**: 仅由 `/archi.*` 协议在对应步骤显式调用。
+- **执行上下文**: 可在当前上下文内联执行；涉及用户提问时必须回到主对话。
+- **边界**: 只辅助生成选项、访谈问题或结构化片段，不自行推进协议步骤。
+
 
 # 技术方案结构化模式库
 

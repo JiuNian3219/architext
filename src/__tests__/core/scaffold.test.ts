@@ -94,7 +94,7 @@ describe("Scaffolder Integration", () => {
     // 验证：Command 文件是否生成 (这是你刚才加的新功能)
     const cursorCmdDir = path.join(tempDir, ".cursor/commands");
     expect(await fs.pathExists(cursorCmdDir)).toBe(true);
-    expect(await fs.pathExists(path.join(cursorCmdDir, "archi.start.md"))).toBe(
+    expect(await fs.pathExists(path.join(cursorCmdDir, "archi.init.md"))).toBe(
       true,
     );
   });
@@ -116,7 +116,7 @@ describe("Scaffolder Integration", () => {
     // 验证：Commands 文件是否生成 (.claude/commands)
     const claudeCmdDir = path.join(tempDir, ".claude/commands");
     expect(await fs.pathExists(claudeCmdDir)).toBe(true);
-    expect(await fs.pathExists(path.join(claudeCmdDir, "archi.start.md"))).toBe(
+    expect(await fs.pathExists(path.join(claudeCmdDir, "archi.init.md"))).toBe(
       true,
     );
 
@@ -142,7 +142,7 @@ describe("Scaffolder Integration", () => {
     // 验证：Commands 目录
     const commandsDir = path.join(tempDir, ".opencode/commands");
     expect(await fs.pathExists(commandsDir)).toBe(true);
-    expect(await fs.pathExists(path.join(commandsDir, "archi.start.md"))).toBe(
+    expect(await fs.pathExists(path.join(commandsDir, "archi.init.md"))).toBe(
       true,
     );
 

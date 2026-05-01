@@ -1,97 +1,75 @@
 ---
 name: archi-data-sync
-description: Sync data governance files with main agent output. **Must run in isolated context/subagent.** Use when verifying data consistency between code and global data files.
+description: Sync data governance files with protocol outputs. Must run in isolated context/subagent. Protocol-invoked only; do not auto-trigger from casual user requests.
+disable-model-invocation: true
 ---
+
+## 调用方式
+
+- **自动调用**: 否，不由模型根据 description 自行触发。
+- **触发位置**: 仅由 `/archi.*` 协议中的 `[[SUBAGENT]]` / `[[NO-SUBAGENT]]` 显式调用。
+- **执行上下文**: 支持 subagent 时必须在独立子代理/独立上下文执行；无 subagent 时才降级为内联 Skill。
+- **边界**: 只返回协议要求的结构化产物，后续写入、确认和签收由调用协议负责。
+
 
 # 数据治理同步执行器
 
-## 系统流程定位
+## 同步矩阵
 
-```
-/archi.* step_N → Verify 阶段
-    ↓
-[本 Skill] 扫描产出 → 对比全局文件 → 增量同步 → 返回 Diff
-    ↓
-主 Agent Signoff（确认 Diff）
-```
-
-> **Skill 的职责边界**：
-> - 负责：扫描主 Agent 产出中新增的业务实体/错误码/Schema，与全局数据文件对比，执行增量同步
-> - 不负责：修改 `00_system.md` 本身（本 Skill 是规则的执行者，不是制定者）
-> - 不负责：注册框架概念（Architext 框架自身概念禁注册到全局数据文件）
-
----
-
-## 权威规则源
-
-`00_system.md` 的「文件索引 → 全局数据资产」表格是数据治理的权威规则源。本 Skill 的所有行为须与该文件一致。
-
----
-
-## 同步范围
-
-| 全局文件 | 同步内容 | 触发条件 |
+| 文件 | 同步内容 | 触发条件 |
 |:---|:---|:---|
-| `map.json` | 新模块注册 (directoryMapping)、依赖关系 (logicalTopology)、影响关联 (featureRelations) | 创建新代码模块/目录时 |
-| `dictionary.json` | 新业务实体 · 动作 · 共享工具 · 公共组件 | 产出中出现未登记的业务术语或工具 |
-| `error_codes.json` | 新业务错误码 | 产出中出现未注册的错误场景 |
-| `env_registry.json` | 新环境变量 | 产出中引入新 `process.env.X` |
-| 仅ui项目: `design_tokens.json` | 样式变更 | 产出中有新的颜色/字体/间距/动效定义 |
-| 仅ui项目: `ui_context.md` | 屏幕索引变更 | 产出中有新增/修改的屏幕 |
-| 仅data项目: `data_snapshot.json` | Schema 变更 | 产出中有数据模型新增/修改 |
-| 仅api项目: `api_snapshot.json` | 新端点 | 产出中有新 HTTP/RPC 端点 |
-| 仅cli项目: `command_api.json` | 新命令 | 产出中有新 CLI 命令 |
-| 仅lib项目: `public_api.json` | 新导出 API | 产出中有新公共导出 |
-
----
+| `map.json` | `directoryMapping` / `logicalTopology` / `featureRelations` | 新增代码模块或目录 |
+| `dictionary.json` | 新业务实体 / 动作 / 共享工具 / 公共组件 | 产出出现未登记的业务术语或工具 |
+| `error_codes.json` | 新业务错误码 | 产出出现未注册的错误场景 |
+| `env_registry.json` | 新环境变量 | 产出引入新 `process.env.X` |
+[[WHEN: ui | | ui | `design_tokens.json` | 新颜色 / 字体 / 间距 / 动效 | 产出出现新样式定义 | ]]
+[[WHEN: ui | | ui | `ui_context.md` | 屏幕索引变更 | 产出新增 / 修改屏幕 | ]]
+[[WHEN: data | | data | `data_snapshot.json` | Schema 新增 / 字段扩展 | 产出出现数据模型变更 | ]]
+[[WHEN: api | | api | `api_snapshot.json` | 新 HTTP/RPC 端点 | 产出出现新端点 | ]]
+[[WHEN: cli | | cli | `command_api.json` | 新 CLI 命令 | 产出出现新命令注册 | ]]
+[[WHEN: lib | | lib | `public_api.json` | 新公共导出 | 产出出现新导出 API | ]]
 
 ## 执行协议
 
-1. **读取项目 features**: 读取项目根目录 `architext.json`，提取 `features` 字段（api/cli/lib/data/ui 等）
-2. **读取全局数据文件**: 加载上表中与项目 features 匹配的全局文件
-3. **扫描主 Agent 产出**: 根据文件类型识别对应变更：
-   - **代码文件**: 新增模块 → map.json、新增类型/接口 → dictionary.json、新增错误处理 → error_codes.json、新增环境变量 → env_registry.json
-   - **UI 代码**: 新增颜色/字体/组件 → design_tokens.json、新增路由/屏幕 → ui_context.md
-   - **Data 代码**: 新增模型/字段 → data_snapshot.json
-   - **API 代码**: 新增端点 → api_snapshot.json
-   - **CLI 代码**: 新增命令 → command_api.json
-   - **Lib 代码**: 新增导出 → public_api.json
-4. **Boundary 检查**: 禁注册框架概念（scripts、scaffold、roadmap、plan 等），仅同步项目业务域内容
-5. **查重**: 对比现有条目，避免重复注册
-6. **增量同步**: 仅追加/修改已有条目，禁删除
-7. **输出变更 Diff**
+1. 按 `project_features` 加载对应的 `global_files`（固定四件 + feature 匹配项）
+2. 扫描 `agent_output` 每项，按 `type` 分流到矩阵对应的结果桶里
+3. 每项变更：
+   - 对比现有条目查重；完全重复 → 跳过；部分重复 → 合并
+   - 经「边界检查」：命中框架概念黑名单 → 跳过并在 Diff 中标 `SKIPPED (framework)`
+   - 被移除的条目不删除，仅记录 MODIFIED
+4. 汇总成 `writes`，每项含 `file` / `op`（`append` / `merge`）/ `path`（JSON 路径）/ `value`
+5. 输出 Diff + `writes`
 
-### 硬边界
+## 硬边界
 
-- **禁直接追加写入** — 须先查现有内容边界再写，避免重复或冲突
-- **禁注册框架概念** — 仅同步项目业务域内容
-- **禁修改 `00_system.md`** — 本 Skill 是规则的执行者
+- 禁注册框架概念：`scripts` / `scaffold` / `roadmap` / `plan` / `protocol` / `skill` / `architext.*` 等 Architext 自身概念不入项目全局文件
+- 禁修改 `00_system.md`：本 skill 是规则执行者，非制定者
+- 禁删除：仅追加 / 合并；移除的条目由 `/archi.remove` 的 cleanup 路径处理
 
-### 输出格式
+## 输出格式
 
 ```
 ### Data Sync Results
-
 ADDED:
-- dictionary.json: entities += [新实体名]
-- error_codes.json: businessErrors += [ERR_CODE]
-
+- <file>: <path> += <value 摘要>
 MODIFIED:
-- data_snapshot.json: models.User += [新字段]
-
-NO CHANGE:
-- [无需同步的文件]
-
-**Summary**: X 文件变更 / Y 条新增 / Z 条修改
+- <file>: <path> 扩展 <新增字段摘要>
+SKIPPED:
+- <file>: <path> — <跳过原因（duplicate / framework）>
+Summary: <X> files changed / <Y> added / <Z> modified / <W> skipped
+writes:
+  - file: <file>
+    op: <append|merge>
+    path: <JSON 路径>
+    value: <具体值>
 ```
-
-无需同步时输出: `### Data Sync Results — NO CHANGES`
-
----
-
-> **中间产物**：此 Skill 为审查型子程序，产出变更 Diff 后控制权交还调用方。
+无变更时仅输出：`### Data Sync Results — NO CHANGES`
 
 ## 输出验证
 
-□ 目标全局 JSON 文件已更新（dictionary.json / error_codes.json / data_snapshot.json 等）
-□ Diff 输出已生成，含 ADDED/MODIFIED/NO CHANGE 段
+- [ ] Diff 块与 `writes` 数组条目一一对应，数量一致
+- [ ] 每一项变更经过查重，无重复条目进 `writes`
+- [ ] 框架概念条目全部进 `SKIPPED` 而非 `ADDED`
+- [ ] `writes` 的 `op` 仅为 `append` / `merge`，无 `delete`
+- [ ] feature 触发文件仅在 `project_features` 匹配时出现在 `writes`
+- [ ] `00_system.md` 不在 `writes` 中

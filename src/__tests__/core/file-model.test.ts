@@ -39,6 +39,7 @@ describe("getCurrentFileModel", () => {
     const model = getCurrentFileModel();
     expect(model.rules.length).toBeGreaterThan(0);
     expect(model.prompts.length).toBeGreaterThan(0);
+    expect(model.promptDirs.length).toBeGreaterThan(0);
     expect(model.skills.length).toBeGreaterThan(0);
     expect(model.docTemplates.length).toBeGreaterThan(0);
     expect(model.globalSeeds.length).toBeGreaterThan(0);
@@ -97,8 +98,9 @@ describe("resolveFiles", () => {
       f.startsWith(".cursor/commands/"),
     );
     expect(cmdPaths).toHaveLength(model.prompts.length);
-    expect(cmdPaths).toContain(".cursor/commands/archi.start.md");
+    expect(cmdPaths).toContain(".cursor/commands/archi.init.md");
     expect(cmdPaths).toContain(".cursor/commands/archi.plan.md");
+    expect(cmdPaths).toContain(".cursor/commands/archi.review.md");
     expect(cmdPaths).toContain(".cursor/commands/archi.ui.md");
   });
 
@@ -112,7 +114,7 @@ describe("resolveFiles", () => {
       f.startsWith(".architext/prompts/windsurf/"),
     );
     expect(promptPaths).toHaveLength(model.prompts.length);
-    expect(promptPaths).toContain(".architext/prompts/windsurf/archi.start.md");
+    expect(promptPaths).toContain(".architext/prompts/windsurf/archi.init.md");
   });
 
   it("有 skills 的 editor 应生成 IDE skills 目录", () => {
@@ -158,7 +160,7 @@ describe("resolveFiles", () => {
     );
   });
 
-  it("骨架目录应包含 tasks/refs/scripts", () => {
+  it("骨架目录应包含 tasks/refs", () => {
     const result = resolveFiles(model, {
       editors: ["cursor"],
       docDir: ".myproject",
@@ -166,7 +168,6 @@ describe("resolveFiles", () => {
 
     expect(result.scaffoldDirs).toContain(".myproject/tasks");
     expect(result.scaffoldDirs).toContain(".myproject/refs");
-    expect(result.scaffoldDirs).toContain(".myproject/scripts");
   });
 
   it("docTemplates 路径正确", () => {
@@ -199,6 +200,22 @@ describe("resolveFiles", () => {
         ".architext/global/references/cli_reference.md",
       );
     }
+  });
+
+  it("globalGuides 路径正确", () => {
+    const result = resolveFiles(model, {
+      editors: ["cursor"],
+      docDir: ".architext",
+    });
+
+    const guidePaths = result.frameworkFiles.filter((f) =>
+      f.startsWith(".architext/global/guides/"),
+    );
+    expect(guidePaths).toHaveLength(model.globalGuides?.length ?? 0);
+    expect(guidePaths).toContain(".architext/global/guides/roadmap.md");
+    expect(guidePaths).toContain(".architext/global/guides/map.md");
+    expect(guidePaths).not.toContain(".architext/global/guides/vision.md");
+    expect(guidePaths).not.toContain(".architext/global/guides/tech_stack.md");
   });
 
   it("路径统一使用正斜杠", () => {
@@ -269,6 +286,20 @@ describe("FileModel 与模板目录同步", () => {
     expect(model.prompts.slice().sort()).toEqual(actual);
   });
 
+  it("promptDirs 列表与模板目录子目录一致", async () => {
+    const promptsDir = path.join(
+      TEMPLATE_ZH,
+      GLOBAL_RULES.PATHS.PROMPTS_SOURCE,
+    );
+    const entries = await fs.readdir(promptsDir, { withFileTypes: true });
+    const actual = entries
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name)
+      .sort();
+
+    expect(model.promptDirs.slice().sort()).toEqual(actual);
+  });
+
   it("skills 列表与模板目录一致", async () => {
     const skillsDir = path.join(TEMPLATE_ZH, GLOBAL_RULES.PATHS.SKILLS_SOURCE);
     const entries = await fs.readdir(skillsDir, { withFileTypes: true });
@@ -281,14 +312,14 @@ describe("FileModel 与模板目录同步", () => {
   });
 
   it("docTemplates 列表与模板目录一致", async () => {
-    const templatesDir = path.join(TEMPLATE_ZH, "docs", "templates");
+    const templatesDir = path.join(TEMPLATE_ZH, "templates");
     const actual = (await fs.readdir(templatesDir)).sort();
 
     expect(model.docTemplates.slice().sort()).toEqual(actual);
   });
 
   it("globalSeeds 列表与模板目录一致", async () => {
-    const globalDir = path.join(TEMPLATE_ZH, "docs", "global");
+    const globalDir = path.join(TEMPLATE_ZH, "global");
     const entries = await fs.readdir(globalDir, { withFileTypes: true });
     const actual = entries
       .filter((e) => e.isFile())
@@ -303,7 +334,7 @@ describe("FileModel 与模板目录同步", () => {
   });
 
   it("globalDocs 列表与模板目录一致", async () => {
-    const refsDir = path.join(TEMPLATE_ZH, "docs", "global", "references");
+    const refsDir = path.join(TEMPLATE_ZH, "global", "references");
     const exists = await fs.pathExists(refsDir);
     if (!exists) {
       expect(model.globalDocs).toHaveLength(0);

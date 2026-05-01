@@ -30,13 +30,16 @@ export interface FileModel {
   /** 规则文件 basenames（无扩展名），对应 templates/{lang}/rules/{name}.md */
   rules: string[];
 
-  /** 协议文件 basenames（无扩展名），对应 templates/{lang}/docs/prompts/{name}.md，部署时加 archi. 前缀 */
+  /** 根协议文件 basenames（无扩展名），对应 templates/{lang}/prompts/{name}.md，部署时加 archi. 前缀 */
   prompts: string[];
+
+  /** 子协议目录名，对应 templates/{lang}/prompts/{dir}/，部署到 {docDir}/prompts/{dir}/ */
+  promptDirs: string[];
 
   /** Skill 目录名，对应 templates/{lang}/skills/{name}/，每个目录整体部署 */
   skills: string[];
 
-  /** 文档模板文件名（含扩展名），对应 templates/{lang}/docs/templates/{name} */
+  /** 文档模板文件名（含扩展名），对应 templates/{lang}/templates/{name} */
   docTemplates: string[];
 
   /** 全局种子文件：init 部署一次，之后为用户数据，update 仅 add-only */
@@ -44,10 +47,13 @@ export interface FileModel {
 
   /**
    * 框架参考文档：框架拥有，可随 update 刷新（非用户数据）。
-   * basenames（含扩展名），对应 templates/{lang}/docs/global/references/{name}，
+   * basenames（含扩展名），对应 templates/{lang}/global/references/{name}，
    * 部署到 {docDir}/global/references/{name}
    */
   globalDocs: string[];
+
+  /** Framework-owned global guide files, deployed to {docDir}/global/guides/{name} */
+  globalGuides?: string[];
 
   /** 规则更新策略覆盖（未列出的默认 refresh） */
   rulePolicy: Record<string, "templateOnly" | "neverTouch">;
@@ -101,11 +107,17 @@ export const FILE_MODELS: FileModel[] = [
       "recover",
       "ref",
     ],
+    promptDirs: [],
     skills: [
+      "archi-brief-scan",
+      "archi-code-survey",
+      "archi-context-fetch",
+      "archi-constitution-draft",
       "archi-data-sync",
       "archi-decompose-roadmap",
       "archi-design-patterns",
       "archi-feature-relations",
+      "archi-intent-normalizer",
       "archi-interview-protocol",
       "archi-plan-options",
       "archi-silent-audit",
@@ -132,6 +144,7 @@ export const FILE_MODELS: FileModel[] = [
       { file: "public_api.json", feature: "lib" },
     ],
     globalDocs: [],
+    globalGuides: [],
     rulePolicy: {
       "02_tech_stack": "templateOnly",
       "90_custom_rules": "neverTouch",
@@ -141,28 +154,27 @@ export const FILE_MODELS: FileModel[] = [
     version: 2,
     rules: ["00_system", "90_custom_rules"],
     prompts: [
-      "start",
-      "inherit",
-      "scope",
-      "plan",
+      "change",
       "code",
-      "edit",
-      "revise",
-      "audit",
-      "fix",
-      "map",
-      "remove",
       "help",
-      "recover",
+      "init",
+      "plan",
       "ref",
+      "remove",
+      "review",
       "ui",
-      "script",
     ],
+    promptDirs: ["change", "init", "plan", "ref", "review"],
     skills: [
+      "archi-brief-scan",
+      "archi-code-survey",
+      "archi-context-fetch",
+      "archi-constitution-draft",
       "archi-data-sync",
       "archi-decompose-roadmap",
       "archi-design-patterns",
       "archi-feature-relations",
+      "archi-intent-normalizer",
       "archi-interview-protocol",
       "archi-plan-options",
       "archi-silent-audit",
@@ -191,6 +203,19 @@ export const FILE_MODELS: FileModel[] = [
       { file: "public_api.json", feature: "lib" },
     ],
     globalDocs: ["cli_reference.md"],
+    globalGuides: [
+      "api_snapshot.md",
+      "command_api.md",
+      "data_snapshot.md",
+      "design_tokens.md",
+      "dictionary.md",
+      "env_registry.md",
+      "error_codes.md",
+      "error_memory.md",
+      "map.md",
+      "public_api.md",
+      "roadmap.md",
+    ],
     rulePolicy: {
       "90_custom_rules": "neverTouch",
     },
@@ -225,8 +250,9 @@ function normalizePath(p: string): string {
  *
  * 路由规则（集中在此函数，取代散布在 scaffold/handlers/resolver 的重复逻辑）：
  * - Rules:   每个 editor → {editor.targetDir}/{rule}{editor.targetExt}
- * - Prompts: 有 commands 的 editor → {commands.targetDir}/archi.{name}.md
- *            无 commands 的 editor → {docDir}/prompts/{editor}/archi.{name}.md
+ * - Prompts: 根协议有 commands 的 editor → {commands.targetDir}/archi.{name}.md
+ *            根协议无 commands 的 editor → {docDir}/prompts/{editor}/archi.{name}.md
+ *            子协议目录统一部署到 {docDir}/prompts/{dir}/，供聚合路由器读取
  * - Skills:  有 skills 的 editor → {skills.targetDir}/{skillName}/ (目录)
  *            任一 editor 无 skills → {docDir}/skills/{skillName}/ (目录)
  * - DocTemplates: → {docDir}/templates/{filename}
@@ -275,6 +301,11 @@ export function resolveFiles(
     }
   }
 
+  // ── Prompt Sub-protocol Dirs ──
+  for (const promptDir of model.promptDirs) {
+    frameworkDirs.push(normalizePath(`${config.docDir}/prompts/${promptDir}`));
+  }
+
   // 无 skills 支持的 editor → skills 部署到 docDir/skills/
   const hasNonSkillEditor = config.editors.some(
     (e) => !EDITOR_CONFIGS[e]?.skills,
@@ -297,6 +328,13 @@ export function resolveFiles(
     );
   }
 
+  // ── Global Guides (framework-owned field guides, refreshed on update) ──
+  for (const guide of model.globalGuides ?? []) {
+    frameworkFiles.push(
+      normalizePath(`${config.docDir}/global/guides/${guide}`),
+    );
+  }
+
   // ── Global Seeds ──
   for (const seed of model.globalSeeds) {
     if (typeof seed === "string") {
@@ -310,7 +348,6 @@ export function resolveFiles(
   const scaffoldDirs = [
     normalizePath(`${config.docDir}/tasks`),
     normalizePath(`${config.docDir}/refs`),
-    normalizePath(`${config.docDir}/scripts`),
   ];
 
   return { frameworkFiles, frameworkDirs, seedFiles, scaffoldDirs };

@@ -1,0 +1,113 @@
+{
+  "featureId": "{FEATURE_ID}",
+  "featureName": "{FEATURE_NAME}",
+  "status": "pending",
+  "decisions": [
+    { "category": "Data Model", "choice": "", "rationale": "" },
+    { "category": "Interaction Mode", "choice": "", "rationale": "" },
+    { "category": "State Sync", "choice": "", "rationale": "" },
+    { "category": "Edge Case Handling", "choice": "", "rationale": "" },
+    { "category": "Access Control", "choice": "", "rationale": "" }
+  ],
+  "phases": [
+    {
+      "name": "Phase 1: Domain & Data",
+      "tasks": [
+        {
+          "id": "p1-1",
+          "title": "[Data Structure/Schema Definition]",
+          "notes": "",
+          "done": false
+        },
+        {
+          "id": "p1-2",
+          "title": "[Core Logic/Interface Implementation]",
+          "notes": "",
+          "done": false
+        },
+        {
+          "id": "p1-3",
+          "title": "[Input Validation]",
+          "notes": "",
+          "done": false
+        }
+      ]
+    },
+    {
+      "name": "Phase 2: Presentation Layer",
+      "tasks": [
+        {
+          "id": "p2-1",
+          "title": "[Static Structure (refer to spec/ui docs)]",
+          "notes": "",
+          "done": false
+        },
+        {
+          "id": "p2-2",
+          "title": "[Interaction Logic]",
+          "notes": "",
+          "done": false
+        },
+        {
+          "id": "p2-3",
+          "title": "[State Management]",
+          "notes": "",
+          "done": false
+        }
+      ]
+    },
+    {
+      "name": "Phase 3: Integration",
+      "tasks": [
+        {
+          "id": "p3-1",
+          "title": "[End-to-end Connection]",
+          "notes": "",
+          "done": false
+        },
+        {
+          "id": "p3-2",
+          "title": "[Error Handling (refer to error_codes.json)]",
+          "notes": "",
+          "done": false
+        },
+        {
+          "id": "p3-3",
+          "title": "[Edge States (loading/empty/error)]",
+          "notes": "",
+          "done": false
+        }
+      ]
+    }
+  ],
+  "tests": {
+    "automated": [
+      {
+        "id": "t1",
+        "title": "[Verification Scenario 1: Happy Path]",
+        "notes": "",
+        "done": false
+      },
+      {
+        "id": "t2",
+        "title": "[Verification Scenario 2: Edge Cases]",
+        "notes": "",
+        "done": false
+      }
+    ],
+    "manual": [
+      {
+        "id": "m1",
+        "title": "[Output & Documentation Consistency Check]",
+        "notes": "",
+        "done": false
+      },
+      {
+        "id": "m2",
+        "title": "[Specific Interaction/Environment Verification]",
+        "notes": "",
+        "done": false
+      }
+    ]
+  }
+}
