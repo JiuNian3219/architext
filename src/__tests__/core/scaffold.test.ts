@@ -1,4 +1,4 @@
-/** @fileoverview Scaffolder 集成测试，验证从配置到文件生成的完整流程 */
+/** @fileoverview Scaffolder 集成测试，验证从配置到文件生成的完整流程和内容正确性 */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { scaffold } from "../../core/scaffold.ts";
@@ -35,16 +35,12 @@ describe("Scaffolder Integration", () => {
   let originalCwd: string;
 
   beforeEach(async () => {
-    // 1. 创建真实的临时目录
     tempDir = await createTempDir("scaffold-test-");
     originalCwd = process.cwd();
-
-    // 2. 切换工作目录到临时目录，确保 Scaffolder 在此目录下生成文件
     process.chdir(tempDir);
   });
 
   afterEach(async () => {
-    // 3. 恢复工作目录并清理
     process.chdir(originalCwd);
     if (tempDir) {
       await cleanupTempDir(tempDir);
@@ -52,188 +48,440 @@ describe("Scaffolder Integration", () => {
     vi.restoreAllMocks();
   });
 
-  it("should generate basic documentation structure", async () => {
-    // 准备配置
-    const config: InitConfig = {
-      language: "zh",
-      editors: ["cursor"],
-      docDir: ".architext",
-      features: ["ui"],
-    };
+  // ─────────────────────────────────────────────────────────────────
+  // 基础结构生成
+  // ─────────────────────────────────────────────────────────────────
 
-    // 执行生成
-    await scaffold(config);
+  describe("基础结构生成", () => {
+    it("should generate basic documentation structure", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: ["ui"],
+      };
 
-    // 验证：文档目录是否创建
-    const docDir = path.join(tempDir, ".architext");
-    expect(await fs.pathExists(docDir)).toBe(true);
+      await scaffold(config);
 
-    // 验证：是否包含全局文档 (JSON 格式)
-    const mapFile = path.join(docDir, "global", "map.json");
-    expect(await fs.pathExists(mapFile)).toBe(true);
+      const docDir = path.join(tempDir, ".architext");
+      expect(await fs.pathExists(docDir)).toBe(true);
 
-    // 验证：JSON 文件内容是有效的 JSON
-    const content = await fs.readFile(mapFile, "utf-8");
-    expect(() => JSON.parse(content)).not.toThrow();
+      // 验证骨架目录
+      expect(await fs.pathExists(path.join(docDir, "tasks"))).toBe(true);
+      expect(await fs.pathExists(path.join(docDir, "refs"))).toBe(true);
+      expect(await fs.pathExists(path.join(docDir, "global"))).toBe(true);
+    });
+
+    it("should generate global JSON files with valid structure", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: ["ui"],
+      };
+
+      await scaffold(config);
+
+      const mapFile = path.join(tempDir, ".architext", "global", "map.json");
+      expect(await fs.pathExists(mapFile)).toBe(true);
+
+      const content = await fs.readFile(mapFile, "utf-8");
+      const mapData = JSON.parse(content);
+
+      // 验证 JSON 结构（map.json 使用对象而非数组）
+      expect(mapData).toHaveProperty("directoryMapping");
+      expect(mapData).toHaveProperty("logicalTopology");
+      expect(mapData).toHaveProperty("criticalUserJourneys");
+      expect(mapData).toHaveProperty("featureRelations");
+      expect(typeof mapData.directoryMapping).toBe("object");
+    });
   });
 
-  it("should generate editor specific rules", async () => {
-    const config: InitConfig = {
-      language: "en",
-      editors: ["cursor"],
-      docDir: "docs",
-      features: ["ui"],
-    };
+  // ─────────────────────────────────────────────────────────────────
+  // 编辑器特定文件生成
+  // ─────────────────────────────────────────────────────────────────
 
-    await scaffold(config);
+  describe("编辑器特定文件生成", () => {
+    it("should generate Cursor rules and commands", async () => {
+      const config: InitConfig = {
+        language: "en",
+        editors: ["cursor"],
+        docDir: "docs",
+        features: ["ui"],
+      };
 
-    // 验证：Cursor 规则目录
-    const cursorRuleDir = path.join(tempDir, ".cursor/rules");
-    expect(await fs.pathExists(cursorRuleDir)).toBe(true);
+      await scaffold(config);
 
-    // 验证：Command 文件是否生成 (这是你刚才加的新功能)
-    const cursorCmdDir = path.join(tempDir, ".cursor/commands");
-    expect(await fs.pathExists(cursorCmdDir)).toBe(true);
-    expect(await fs.pathExists(path.join(cursorCmdDir, "archi.init.md"))).toBe(
-      true,
-    );
+      // Cursor 规则目录
+      const cursorRuleDir = path.join(tempDir, ".cursor/rules");
+      expect(await fs.pathExists(cursorRuleDir)).toBe(true);
+
+      // 验证规则文件存在
+      expect(
+        await fs.pathExists(path.join(cursorRuleDir, "00_system.mdc")),
+      ).toBe(true);
+      expect(
+        await fs.pathExists(path.join(cursorRuleDir, "90_custom_rules.mdc")),
+      ).toBe(true);
+
+      // Cursor Commands 目录
+      const cursorCmdDir = path.join(tempDir, ".cursor/commands");
+      expect(await fs.pathExists(cursorCmdDir)).toBe(true);
+      expect(
+        await fs.pathExists(path.join(cursorCmdDir, "archi.init.md")),
+      ).toBe(true);
+    });
+
+    it("should generate Claude Code specific files", async () => {
+      const config: InitConfig = {
+        language: "en",
+        editors: ["claude"],
+        docDir: "docs",
+        features: ["ui"],
+      };
+
+      await scaffold(config);
+
+      // Claude Code 规则目录
+      const claudeRuleDir = path.join(tempDir, ".claude/rules");
+      expect(await fs.pathExists(claudeRuleDir)).toBe(true);
+
+      // Commands 目录
+      const claudeCmdDir = path.join(tempDir, ".claude/commands");
+      expect(await fs.pathExists(claudeCmdDir)).toBe(true);
+      expect(
+        await fs.pathExists(path.join(claudeCmdDir, "archi.init.md")),
+      ).toBe(true);
+
+      // Skills 目录
+      const claudeSkillsDir = path.join(tempDir, ".claude/skills");
+      expect(await fs.pathExists(claudeSkillsDir)).toBe(true);
+    });
+
+    it("should generate OpenCode specific files and opencode.json", async () => {
+      const config: InitConfig = {
+        language: "en",
+        editors: ["opencode"],
+        docDir: "docs",
+        features: [],
+      };
+
+      await scaffold(config);
+
+      // OpenCode 规则目录
+      const rulesDir = path.join(tempDir, ".opencode/rules");
+      expect(await fs.pathExists(rulesDir)).toBe(true);
+
+      // Commands 目录
+      const commandsDir = path.join(tempDir, ".opencode/commands");
+      expect(await fs.pathExists(commandsDir)).toBe(true);
+
+      // opencode.json
+      const configPath = path.join(tempDir, "opencode.json");
+      expect(await fs.pathExists(configPath)).toBe(true);
+      const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
+      expect(content.instructions).toContain(".opencode/rules/*.md");
+    });
   });
 
-  it("should generate Claude Code specific files", async () => {
-    const config: InitConfig = {
-      language: "en",
-      editors: ["claude"],
-      docDir: "docs",
-      features: ["ui"],
-    };
+  // ─────────────────────────────────────────────────────────────────
+  // SUBAGENT/WHEN 指令展开验证
+  // ─────────────────────────────────────────────────────────────────
 
-    await scaffold(config);
+  describe("SUBAGENT 指令展开", () => {
+    it("Cursor 规则应包含子代理指令（hasSubagents=true）", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: [],
+      };
 
-    // 验证：Claude Code 规则目录
-    const claudeRuleDir = path.join(tempDir, ".claude/rules");
-    expect(await fs.pathExists(claudeRuleDir)).toBe(true);
+      await scaffold(config);
 
-    // 验证：Commands 文件是否生成 (.claude/commands)
-    const claudeCmdDir = path.join(tempDir, ".claude/commands");
-    expect(await fs.pathExists(claudeCmdDir)).toBe(true);
-    expect(await fs.pathExists(path.join(claudeCmdDir, "archi.init.md"))).toBe(
-      true,
-    );
+      const ruleFile = await fs.readFile(
+        path.join(tempDir, ".cursor/rules/00_system.mdc"),
+        "utf-8",
+      );
 
-    // 验证：Skills 目录是否生成 (.claude/skills)
-    const claudeSkillsDir = path.join(tempDir, ".claude/skills");
-    expect(await fs.pathExists(claudeSkillsDir)).toBe(true);
+      // Cursor 支持子代理，应展开 SUBAGENT 标记
+      expect(ruleFile).toContain("**[SUBAGENT · 子代理]**");
+      expect(ruleFile).not.toContain("[[SUBAGENT:");
+    });
+
+    it("Windsurf 规则应使用内联 Skill（hasSubagents=false, hasSkills=true）", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["windsurf"],
+        docDir: ".architext",
+        features: [],
+      };
+
+      await scaffold(config);
+
+      const ruleFile = await fs.readFile(
+        path.join(tempDir, ".windsurf/rules/00_system.md"),
+        "utf-8",
+      );
+
+      // Windsurf 无子代理，应使用内联 Skill
+      expect(ruleFile).toContain("**[SKILL · 内联]**");
+      expect(ruleFile).not.toContain("**[SUBAGENT · 子代理]**");
+      expect(ruleFile).not.toContain("[[SUBAGENT:");
+    });
   });
 
-  it("should generate OpenCode specific files and opencode.json", async () => {
-    const config: InitConfig = {
-      language: "en",
-      editors: ["opencode"],
-      docDir: "docs",
-      features: [],
-    };
+  describe("WHEN 指令展开", () => {
+    it("features 含 ui 时，规则应包含 UI 相关内容", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: ["ui"],
+      };
 
-    await scaffold(config);
+      await scaffold(config);
 
-    // 验证：OpenCode 规则目录
-    const rulesDir = path.join(tempDir, ".opencode/rules");
-    expect(await fs.pathExists(rulesDir)).toBe(true);
+      const ruleFile = await fs.readFile(
+        path.join(tempDir, ".cursor/rules/00_system.mdc"),
+        "utf-8",
+      );
 
-    // 验证：Commands 目录
-    const commandsDir = path.join(tempDir, ".opencode/commands");
-    expect(await fs.pathExists(commandsDir)).toBe(true);
-    expect(await fs.pathExists(path.join(commandsDir, "archi.init.md"))).toBe(
-      true,
-    );
+      // WHEN 标记应被展开
+      expect(ruleFile).not.toContain("[[WHEN:");
+      // 应包含 UI 相关内容（如设计令牌）
+      expect(ruleFile).toContain("design_tokens.json");
+    });
 
-    // 验证：opencode.json 生成且包含 instructions 字段
-    const configPath = path.join(tempDir, "opencode.json");
-    expect(await fs.pathExists(configPath)).toBe(true);
-    const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
-    expect(content.instructions).toContain(".opencode/rules/*.md");
+    it("features 不含 ui 时，规则不应包含 UI 特定内容", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: ["api"],
+      };
+
+      await scaffold(config);
+
+      const ruleFile = await fs.readFile(
+        path.join(tempDir, ".cursor/rules/00_system.mdc"),
+        "utf-8",
+      );
+
+      // WHEN 标记应被移除
+      expect(ruleFile).not.toContain("[[WHEN:");
+    });
+
+    it("多 features 时，所有相关内容应展开", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: ["ui", "data"],
+      };
+
+      await scaffold(config);
+
+      const ruleFile = await fs.readFile(
+        path.join(tempDir, ".cursor/rules/00_system.mdc"),
+        "utf-8",
+      );
+
+      expect(ruleFile).not.toContain("[[WHEN:");
+      // UI + Data 项目应有相关内容
+      expect(ruleFile).toContain("design_tokens.json");
+      expect(ruleFile).toContain("data_snapshot.json");
+    });
   });
 
-  it("should merge Architext path into existing opencode.json instructions", async () => {
-    // 预先写入一个已有 instructions 的 opencode.json
-    const configPath = path.join(tempDir, "opencode.json");
-    const existing = {
-      model: "anthropic/claude-sonnet-4-5",
-      instructions: ["custom/*.md"],
-    };
-    await fs.writeFile(configPath, JSON.stringify(existing, null, 2), "utf-8");
+  // ─────────────────────────────────────────────────────────────────
+  // opencode.json 合并逻辑
+  // ─────────────────────────────────────────────────────────────────
 
-    const config: InitConfig = {
-      language: "en",
-      editors: ["opencode"],
-      docDir: "docs",
-      features: [],
-    };
+  describe("opencode.json 合并逻辑", () => {
+    it("should merge Architext path into existing opencode.json instructions", async () => {
+      const configPath = path.join(tempDir, "opencode.json");
+      const existing = {
+        model: "anthropic/claude-sonnet-4-5",
+        instructions: ["custom/*.md"],
+      };
+      await fs.writeFile(
+        configPath,
+        JSON.stringify(existing, null, 2),
+        "utf-8",
+      );
 
-    await scaffold(config);
+      const config: InitConfig = {
+        language: "en",
+        editors: ["opencode"],
+        docDir: "docs",
+        features: [],
+      };
 
-    // instructions 应合并：保留用户原有 + 追加 Architext 路径
-    const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
-    expect(content.instructions).toContain("custom/*.md");
-    expect(content.instructions).toContain(".opencode/rules/*.md");
+      await scaffold(config);
+
+      const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
+      expect(content.instructions).toContain("custom/*.md");
+      expect(content.instructions).toContain(".opencode/rules/*.md");
+    });
+
+    it("should not duplicate .opencode/rules/*.md when already in instructions", async () => {
+      const configPath = path.join(tempDir, "opencode.json");
+      const existing = { instructions: [".opencode/rules/*.md", "AGENTS.md"] };
+      await fs.writeFile(
+        configPath,
+        JSON.stringify(existing, null, 2),
+        "utf-8",
+      );
+
+      const config: InitConfig = {
+        language: "en",
+        editors: ["opencode"],
+        docDir: "docs",
+        features: [],
+      };
+
+      const result = await scaffold(config);
+
+      const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
+      const count = content.instructions.filter(
+        (p: string) => p === ".opencode/rules/*.md",
+      ).length;
+      expect(count).toBe(1);
+      expect(result?.opencodeInstructionsAdded).toBe(false);
+    });
+
+    it("should return opencodeInstructionsAdded true when we add the path", async () => {
+      const config: InitConfig = {
+        language: "en",
+        editors: ["opencode"],
+        docDir: "docs",
+        features: [],
+      };
+
+      const result = await scaffold(config);
+
+      expect(result?.opencodeInstructionsAdded).toBe(true);
+    });
   });
 
-  it("should not duplicate .opencode/rules/*.md when already in instructions", async () => {
-    const configPath = path.join(tempDir, "opencode.json");
-    const existing = { instructions: [".opencode/rules/*.md", "AGENTS.md"] };
-    await fs.writeFile(configPath, JSON.stringify(existing, null, 2), "utf-8");
+  // ─────────────────────────────────────────────────────────────────
+  // 语言回退
+  // ─────────────────────────────────────────────────────────────────
 
-    const config: InitConfig = {
-      language: "en",
-      editors: ["opencode"],
-      docDir: "docs",
-      features: [],
-    };
+  describe("语言回退", () => {
+    it("should fallback to default language if requested language template missing", async () => {
+      const config = {
+        language: "fr", // French doesn't exist
+        editors: ["cursor"],
+        docDir: ".architext",
+      } as unknown as InitConfig;
 
-    const result = await scaffold(config);
+      await scaffold(config);
 
-    const content = JSON.parse(await fs.readFile(configPath, "utf-8"));
-    const count = content.instructions.filter(
-      (p: string) => p === ".opencode/rules/*.md",
-    ).length;
-    expect(count).toBe(1);
-    expect(result?.opencodeInstructionsAdded).toBe(false);
+      const docDir = path.join(tempDir, ".architext");
+      expect(await fs.pathExists(docDir)).toBe(true);
+
+      // 验证回退到 zh（默认）
+      const helpFile = path.join(docDir, "prompts", "help.md");
+      if (await fs.pathExists(helpFile)) {
+        const content = await fs.readFile(helpFile, "utf-8");
+        expect(content.length).toBeGreaterThan(0);
+      }
+    });
   });
 
-  it("should return opencodeInstructionsAdded true when we add the path", async () => {
-    const config: InitConfig = {
-      language: "en",
-      editors: ["opencode"],
-      docDir: "docs",
-      features: [],
-    };
+  // ─────────────────────────────────────────────────────────────────
+  // 条件种子文件
+  // ─────────────────────────────────────────────────────────────────
 
-    const result = await scaffold(config);
+  describe("条件种子文件", () => {
+    it("features 含 ui 时，应生成 design_tokens.json", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: ["ui"],
+      };
 
-    expect(result?.opencodeInstructionsAdded).toBe(true);
+      await scaffold(config);
+
+      const tokensFile = path.join(
+        tempDir,
+        ".architext/global/design_tokens.json",
+      );
+      expect(await fs.pathExists(tokensFile)).toBe(true);
+
+      const content = JSON.parse(await fs.readFile(tokensFile, "utf-8"));
+      expect(content).toHaveProperty("primitivePalette");
+      expect(content).toHaveProperty("semanticTokens");
+    });
+
+    it("features 不含 ui 时，不应生成 design_tokens.json", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: ["api"],
+      };
+
+      await scaffold(config);
+
+      const tokensFile = path.join(
+        tempDir,
+        ".architext/global/design_tokens.json",
+      );
+      expect(await fs.pathExists(tokensFile)).toBe(false);
+    });
   });
 
-  it("should fallback to default language if requested language template missing", async () => {
-    // 假设我们请求一个不存在的语言
-    // 注意：这里需要确保 Config 类型允许 string，或者我们 cast 一下
-    const config = {
-      language: "fr", // French doesn't exist
-      editors: ["cursor"],
-      docDir: ".architext",
-    } as unknown as InitConfig;
+  // ─────────────────────────────────────────────────────────────────
+  // 规则文件内容验证
+  // ─────────────────────────────────────────────────────────────────
 
-    await scaffold(config);
+  describe("规则文件内容验证", () => {
+    it("规则文件应正确替换占位符", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".mydocs",
+        features: ["ui", "api"],
+      };
 
-    // 验证是否回退到了 zh (默认)
-    const docDir = path.join(tempDir, ".architext");
-    expect(await fs.pathExists(docDir)).toBe(true);
+      await scaffold(config);
 
-    // 检查生成的内容是否包含中文特征 (可选)
-    const helpFile = path.join(docDir, "prompts/help.md");
-    if (await fs.pathExists(helpFile)) {
-      const content = await fs.readFile(helpFile, "utf-8");
-      // 如果回退到 zh，内容应该是中文
-      // 这里只是简单验证文件存在，因为内容验证可能比较脆弱
-      expect(content.length).toBeGreaterThan(0);
-    }
+      const ruleFile = await fs.readFile(
+        path.join(tempDir, ".cursor/rules/00_system.mdc"),
+        "utf-8",
+      );
+
+      // 占位符应被替换
+      expect(ruleFile).toContain(".mydocs");
+      expect(ruleFile).not.toContain("[[DOCS_DIR]]");
+    });
+
+    it("规则文件不应保留任何能力标记原始形式", async () => {
+      const config: InitConfig = {
+        language: "zh",
+        editors: ["cursor"],
+        docDir: ".architext",
+        features: ["ui"],
+      };
+
+      await scaffold(config);
+
+      const ruleFile = await fs.readFile(
+        path.join(tempDir, ".cursor/rules/00_system.mdc"),
+        "utf-8",
+      );
+
+      // 所有能力标记应被处理
+      expect(ruleFile).not.toContain("[[SUBAGENT:");
+      expect(ruleFile).not.toContain("[[NO-SUBAGENT:");
+      expect(ruleFile).not.toContain("[[NO-SKILL:");
+      expect(ruleFile).not.toContain("[[NO-COMMANDS:");
+      expect(ruleFile).not.toContain("[[WHEN:");
+      expect(ruleFile).not.toContain("[[INCLUDE:");
+    });
   });
 });

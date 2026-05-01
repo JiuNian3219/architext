@@ -1,4 +1,4 @@
-/** @fileoverview RoadmapParser 单元测试，验证 JSON 解析、getAllTasks/buildTaskMap/groupByPhase 辅助函数。 */
+/** @fileoverview RoadmapParser 单元测试，验证 JSON 解析、getAllTasks/buildTaskMap/groupByPhase 辅助函数，以及边界和错误场景。 */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { RoadmapParser } from "../../core/roadmap/parser.ts";
 import {
@@ -36,7 +36,9 @@ describe("RoadmapParser", () => {
     return parser.parse(filePath);
   }
 
-  // --- 基本 JSON 解析 ---
+  // ─────────────────────────────────────────────────────────────────
+  // 基本 JSON 解析
+  // ─────────────────────────────────────────────────────────────────
 
   describe("基本 JSON 解析", () => {
     it("应正确解析包含多个任务的 roadmap（扁平结构）", async () => {
@@ -75,10 +77,17 @@ describe("RoadmapParser", () => {
       expect(result.projectStatus).toBe("planning");
       expect(result.lastUpdated).toBe("2024-01-01");
       expect(result.tasks).toHaveLength(2);
-      expect(result.tasks[0].id).toBe("INF-01");
-      expect(result.tasks[0].phase).toBe("infra");
-      expect(result.tasks[1].id).toBe("FEAT-01");
-      expect(result.tasks[1].phase).toBe("core");
+      expect(result.tasks[0]).toMatchObject({
+        id: "INF-01",
+        phase: "infra",
+        title: "Project Scaffolding",
+        status: "done",
+      });
+      expect(result.tasks[1]).toMatchObject({
+        id: "FEAT-01",
+        phase: "core",
+        deps: ["INF-01"],
+      });
     });
 
     it("应正确解析不同 phase 的任务", async () => {
@@ -110,12 +119,9 @@ describe("RoadmapParser", () => {
       };
 
       const result = await parseRoadmap(input);
-      const tasks = result.tasks;
+      const phases = result.tasks.map((t) => t.phase);
 
-      expect(tasks[0].phase).toBe("infra");
-      expect(tasks[1].phase).toBe("core");
-      expect(tasks[2].phase).toBe("polish");
-      expect(tasks[3].phase).toBe("platform");
+      expect(phases).toEqual(["infra", "core", "polish", "platform"]);
     });
 
     it("应正确保留任务的完整 metadata", async () => {
@@ -142,16 +148,18 @@ describe("RoadmapParser", () => {
       const result = await parseRoadmap(input);
       const task = result.tasks[0];
 
-      expect(task.id).toBe("FEAT-01");
-      expect(task.phase).toBe("core");
-      expect(task.title).toBe("User Auth");
-      expect(task.status).toBe("pending");
-      expect(task.description).toBe("OAuth login + session");
-      expect(task.goal).toBe("Initialize project structure");
-      expect(task.deps).toEqual(["INF-01"]);
-      expect(task.tag).toBe("Auth");
-      expect(task.slug).toBe("User_Auth");
-      expect(task.screens).toEqual(["S-01", "S-02"]);
+      expect(task).toMatchObject({
+        id: "FEAT-01",
+        phase: "core",
+        title: "User Auth",
+        status: "pending",
+        description: "OAuth login + session",
+        goal: "Initialize project structure",
+        deps: ["INF-01"],
+        tag: "Auth",
+        slug: "User_Auth",
+        screens: ["S-01", "S-02"],
+      });
     });
 
     it("应正确解析不同状态的任务", async () => {
@@ -183,12 +191,9 @@ describe("RoadmapParser", () => {
       };
 
       const result = await parseRoadmap(input);
-      const tasks = result.tasks;
+      const statuses = result.tasks.map((t) => t.status);
 
-      expect(tasks[0].status).toBe("pending");
-      expect(tasks[1].status).toBe("active");
-      expect(tasks[2].status).toBe("done");
-      expect(tasks[3].status).toBe("blocked");
+      expect(statuses).toEqual(["pending", "active", "done", "blocked"]);
     });
 
     it("应正确解析含依赖的任务", async () => {
@@ -222,11 +227,10 @@ describe("RoadmapParser", () => {
       };
 
       const result = await parseRoadmap(input);
-      const tasks = result.tasks;
 
-      expect(tasks[0].deps).toEqual([]);
-      expect(tasks[1].deps).toEqual(["T-001"]);
-      expect(tasks[2].deps).toEqual(["T-001", "T-002"]);
+      expect(result.tasks[0].deps).toEqual([]);
+      expect(result.tasks[1].deps).toEqual(["T-001"]);
+      expect(result.tasks[2].deps).toEqual(["T-001", "T-002"]);
     });
 
     it("应正确解析空 tasks 数组", async () => {
@@ -297,13 +301,304 @@ describe("RoadmapParser", () => {
 
       const result = await parseRoadmap(input);
       expect(result.nfr).toHaveLength(1);
-      expect(result.nfr?.[0].taskId).toBe("FEAT-01");
-      expect(result.nfr?.[0].constraint).toBe("All copy via i18n key");
-      expect(result.nfr?.[0].impact).toEqual(["FEAT-01", "FEAT-02"]);
+      expect(result.nfr?.[0]).toMatchObject({
+        taskId: "FEAT-01",
+        constraint: "All copy via i18n key",
+        impact: ["FEAT-01", "FEAT-02"],
+      });
     });
   });
 
-  // --- getAllTasks ---
+  // ─────────────────────────────────────────────────────────────────
+  // 边界测试：字段类型错误
+  // ─────────────────────────────────────────────────────────────────
+
+  describe("边界测试：字段类型错误", () => {
+    it("version 为字符串时应抛出错误", async () => {
+      const input = {
+        version: "1",
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [],
+      } as unknown as RoadmapData;
+
+      const filePath = path.join(tempDir, "roadmap.json");
+      await createTestStructure(tempDir, {
+        "roadmap.json": JSON.stringify(input),
+      });
+
+      await expect(parser.parse(filePath)).rejects.toThrow();
+    });
+
+    it("tasks 为非数组时应抛出错误", async () => {
+      const input = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: "not-an-array",
+      } as unknown as RoadmapData;
+
+      const filePath = path.join(tempDir, "roadmap.json");
+      await createTestStructure(tempDir, {
+        "roadmap.json": JSON.stringify(input),
+      });
+
+      await expect(parser.parse(filePath)).rejects.toThrow();
+    });
+
+    it("task.id 为数字时应抛出错误", async () => {
+      const input = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [{ id: 123, phase: "core", title: "Task", status: "pending" }],
+      } as unknown as RoadmapData;
+
+      const filePath = path.join(tempDir, "roadmap.json");
+      await createTestStructure(tempDir, {
+        "roadmap.json": JSON.stringify(input),
+      });
+
+      await expect(parser.parse(filePath)).rejects.toThrow();
+    });
+
+    it("deps 为非数组时应抛出错误", async () => {
+      const input = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T-01",
+            phase: "core",
+            title: "Task",
+            status: "pending",
+            deps: "INF-01",
+          },
+        ],
+      } as unknown as RoadmapData;
+
+      const filePath = path.join(tempDir, "roadmap.json");
+      await createTestStructure(tempDir, {
+        "roadmap.json": JSON.stringify(input),
+      });
+
+      await expect(parser.parse(filePath)).rejects.toThrow();
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────
+  // 边界测试：无效 enum 值
+  // ─────────────────────────────────────────────────────────────────
+
+  describe("边界测试：无效 enum 值", () => {
+    it("无效 status 值应抛出错误", async () => {
+      const input = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T-01",
+            phase: "core",
+            title: "Task",
+            status: "invalid-status",
+          },
+        ],
+      } as unknown as RoadmapData;
+
+      const filePath = path.join(tempDir, "roadmap.json");
+      await createTestStructure(tempDir, {
+        "roadmap.json": JSON.stringify(input),
+      });
+
+      await expect(parser.parse(filePath)).rejects.toThrow();
+    });
+
+    it("无效 phase 值应抛出错误", async () => {
+      const input = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T-01",
+            phase: "invalid-phase",
+            title: "Task",
+            status: "pending",
+          },
+        ],
+      } as unknown as RoadmapData;
+
+      const filePath = path.join(tempDir, "roadmap.json");
+      await createTestStructure(tempDir, {
+        "roadmap.json": JSON.stringify(input),
+      });
+
+      await expect(parser.parse(filePath)).rejects.toThrow();
+    });
+
+    it("projectStatus 为任意字符串时应正常解析（Schema 允许）", async () => {
+      const input = {
+        version: 1,
+        projectStatus: "custom-status",
+        lastUpdated: "2024-01-01",
+        tasks: [],
+      };
+
+      const result = await parseRoadmap(input as RoadmapData);
+      expect(result.projectStatus).toBe("custom-status");
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────
+  // 边界测试：极端值
+  // ─────────────────────────────────────────────────────────────────
+
+  describe("边界测试：极端值", () => {
+    it("负数 version 应正常解析（Schema 允许任意数字）", async () => {
+      const input = {
+        version: -1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [],
+      };
+
+      const result = await parseRoadmap(input as RoadmapData);
+      expect(result.version).toBe(-1);
+    });
+
+    it("零 version 应正常解析（Schema 允许任意数字）", async () => {
+      const input = {
+        version: 0,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [],
+      };
+
+      const result = await parseRoadmap(input as RoadmapData);
+      expect(result.version).toBe(0);
+    });
+
+    it("超长 ID 应正常解析", async () => {
+      const longId = "A".repeat(1000);
+      const input: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          { id: longId, phase: "core", title: "Task", status: "pending" },
+        ],
+      };
+
+      const result = await parseRoadmap(input);
+      expect(result.tasks[0].id).toBe(longId);
+    });
+
+    it("超长 title 应正常解析", async () => {
+      const longTitle = "T".repeat(10000);
+      const input: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          { id: "T-01", phase: "core", title: longTitle, status: "pending" },
+        ],
+      };
+
+      const result = await parseRoadmap(input);
+      expect(result.tasks[0].title).toBe(longTitle);
+    });
+
+    it("大量任务应正常解析", async () => {
+      const tasks = Array.from({ length: 1000 }, (_, i) => ({
+        id: `T-${i.toString().padStart(4, "0")}`,
+        phase: "core" as const,
+        title: `Task ${i}`,
+        status: "pending" as const,
+      }));
+
+      const input: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks,
+      };
+
+      const result = await parseRoadmap(input);
+      expect(result.tasks).toHaveLength(1000);
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────
+  // 边界测试：特殊字符
+  // ─────────────────────────────────────────────────────────────────
+
+  describe("边界测试：特殊字符", () => {
+    it("ID 含特殊字符应正常解析", async () => {
+      const input: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "FEAT-中文-日本語-🌍",
+            phase: "core",
+            title: "Task",
+            status: "pending",
+          },
+        ],
+      };
+
+      const result = await parseRoadmap(input);
+      expect(result.tasks[0].id).toBe("FEAT-中文-日本語-🌍");
+    });
+
+    it("title 含换行符应正常解析", async () => {
+      const input: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T-01",
+            phase: "core",
+            title: "Line1\nLine2\tTabbed",
+            status: "pending",
+          },
+        ],
+      };
+
+      const result = await parseRoadmap(input);
+      expect(result.tasks[0].title).toBe("Line1\nLine2\tTabbed");
+    });
+
+    it("description 含 JSON 字符串应正常解析", async () => {
+      const input: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T-01",
+            phase: "core",
+            title: "Task",
+            status: "pending",
+            description: '{"key": "value", "nested": {"a": 1}}',
+          },
+        ],
+      };
+
+      const result = await parseRoadmap(input);
+      expect(result.tasks[0].description).toBe(
+        '{"key": "value", "nested": {"a": 1}}',
+      );
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────
+  // getAllTests
+  // ─────────────────────────────────────────────────────────────────
 
   describe("getAllTasks", () => {
     it("应返回 tasks 数组（扁平结构直接返回）", () => {
@@ -321,9 +616,7 @@ describe("RoadmapParser", () => {
       const tasks = getAllTasks(data);
 
       expect(tasks).toHaveLength(3);
-      expect(tasks[0].id).toBe("A-01");
-      expect(tasks[1].id).toBe("A-02");
-      expect(tasks[2].id).toBe("B-01");
+      expect(tasks.map((t) => t.id)).toEqual(["A-01", "A-02", "B-01"]);
     });
 
     it("空 tasks 应返回空数组", () => {
@@ -354,7 +647,9 @@ describe("RoadmapParser", () => {
     });
   });
 
-  // --- buildTaskMap ---
+  // ─────────────────────────────────────────────────────────────────
+  // buildTaskMap
+  // ─────────────────────────────────────────────────────────────────
 
   describe("buildTaskMap", () => {
     it("应构建 taskId -> Task 的 Map", () => {
@@ -450,7 +745,9 @@ describe("RoadmapParser", () => {
     });
   });
 
-  // --- groupByPhase ---
+  // ─────────────────────────────────────────────────────────────────
+  // groupByPhase
+  // ─────────────────────────────────────────────────────────────────
 
   describe("groupByPhase", () => {
     it("应按 phase 分组任务", () => {
@@ -474,9 +771,12 @@ describe("RoadmapParser", () => {
       const groups = groupByPhase(data);
 
       expect(groups.size).toBe(3);
-      expect(groups.get("infra")?.length).toBe(2);
-      expect(groups.get("core")?.length).toBe(1);
-      expect(groups.get("polish")?.length).toBe(1);
+      expect(groups.get("infra")?.map((t) => t.id)).toEqual([
+        "INF-01",
+        "INF-02",
+      ]);
+      expect(groups.get("core")?.map((t) => t.id)).toEqual(["FEAT-01"]);
+      expect(groups.get("polish")?.map((t) => t.id)).toEqual(["POLISH-01"]);
       expect(groups.get("platform")).toBeUndefined();
     });
 
@@ -505,7 +805,10 @@ describe("RoadmapParser", () => {
 
       const groups = groupByPhase(data);
       expect(groups.size).toBe(1);
-      expect(groups.get("core")?.length).toBe(2);
+      expect(groups.get("core")?.map((t) => t.id)).toEqual([
+        "FEAT-01",
+        "FEAT-02",
+      ]);
     });
   });
 });

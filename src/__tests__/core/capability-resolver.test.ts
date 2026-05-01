@@ -1,4 +1,4 @@
-/** @fileoverview resolveCapabilityRefs 单元测试 */
+/** @fileoverview resolveCapabilityRefs 单元测试 - 使用精确断言验证能力标记解析 */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import path from "path";
@@ -19,6 +19,10 @@ describe("resolveCapabilityRefs", () => {
     await fsExtra.remove(tmpDir);
   });
 
+  // ─────────────────────────────────────────────────────────────────
+  // [[SUBAGENT:]] marker
+  // ─────────────────────────────────────────────────────────────────
+
   describe("[[SUBAGENT:]] marker", () => {
     it("should expand to sub-agent instruction when hasSubagents=true", () => {
       const input =
@@ -29,6 +33,7 @@ describe("resolveCapabilityRefs", () => {
         hasCommands: false,
       });
 
+      // 精确验证输出结构
       expect(result).toContain("**[SUBAGENT · 子代理]**");
       expect(result).toContain("启动独立子代理执行此任务");
       expect(result).toContain("skills/archi-silent-audit/SKILL.md");
@@ -36,6 +41,8 @@ describe("resolveCapabilityRefs", () => {
       expect(result).toContain("禁在当前上下文内联执行");
       expect(result).toContain("before ");
       expect(result).toContain(" after");
+      // 不应保留原始标记
+      expect(result).not.toContain("[[SUBAGENT:");
     });
 
     it("should be removed when hasSubagents=false, even if skills are available", () => {
@@ -46,8 +53,6 @@ describe("resolveCapabilityRefs", () => {
         hasCommands: false,
       });
 
-      expect(result).not.toContain("**[SUBAGENT · 子代理]**");
-      expect(result).not.toContain("启动独立子代理执行此任务");
       expect(result).toBe("");
     });
 
@@ -75,15 +80,22 @@ describe("resolveCapabilityRefs", () => {
         hasCommands: false,
       });
 
+      // 验证所有三个子代理都被展开
       expect(result).toContain("skills/archi-silent-audit/SKILL.md");
       expect(result).toContain("skills/archi-data-sync/SKILL.md");
       expect(result).toContain("skills/archi-feature-relations/SKILL.md");
+
+      // 精确计数
       const subagentCount = (
         result.match(/\*\*\[SUBAGENT · 子代理\]\*\*/g) || []
       ).length;
       expect(subagentCount).toBe(3);
     });
   });
+
+  // ─────────────────────────────────────────────────────────────────
+  // [[SKILL:]] marker
+  // ─────────────────────────────────────────────────────────────────
 
   describe("[[SKILL:]] marker (Specialist Skills)", () => {
     it("should expand to skill tool call when hasSkills=true", () => {
@@ -110,6 +122,10 @@ describe("resolveCapabilityRefs", () => {
       expect(result).toBe("before  after");
     });
   });
+
+  // ─────────────────────────────────────────────────────────────────
+  // [[NO-SKILL:]] marker
+  // ─────────────────────────────────────────────────────────────────
 
   describe("[[NO-SKILL:]] marker", () => {
     it("should be removed when hasSkills=true", () => {
@@ -145,6 +161,10 @@ describe("resolveCapabilityRefs", () => {
       expect(result).toBe("[错误码: ERR-001]");
     });
   });
+
+  // ─────────────────────────────────────────────────────────────────
+  // [[NO-SUBAGENT:]] marker
+  // ─────────────────────────────────────────────────────────────────
 
   describe("[[NO-SUBAGENT:]] marker", () => {
     it("should be removed when hasSubagents=true", () => {
@@ -194,14 +214,18 @@ describe("resolveCapabilityRefs", () => {
     });
   });
 
-  describe("SUBAGENT + NO-SUBAGENT + NO-SKILL combined (real-world pattern)", () => {
-    it("should produce sub-agent instruction for Cursor (subagents=true, skills=true)", () => {
-      const input =
-        "[[SUBAGENT: archi-silent-audit|mode: code-impl]]" +
-        "[[NO-SUBAGENT: archi-silent-audit|mode: code-impl]]" +
-        "[[NO-SKILL: （请阅读 skills/archi-silent-audit/SKILL.md，并在当前上下文手动审查）]]";
+  // ─────────────────────────────────────────────────────────────────
+  // Combined markers (real-world pattern)
+  // ─────────────────────────────────────────────────────────────────
 
-      const result = resolveCapabilityRefs(input, {
+  describe("SUBAGENT + NO-SUBAGENT + NO-SKILL combined (real-world pattern)", () => {
+    const combinedInput =
+      "[[SUBAGENT: archi-silent-audit|mode: code-impl]]" +
+      "[[NO-SUBAGENT: archi-silent-audit|mode: code-impl]]" +
+      "[[NO-SKILL: （请阅读 skills/archi-silent-audit/SKILL.md，并在当前上下文手动审查）]]";
+
+    it("should produce sub-agent instruction for Cursor (subagents=true, skills=true)", () => {
+      const result = resolveCapabilityRefs(combinedInput, {
         hasSkills: true,
         hasSubagents: true,
         hasCommands: false,
@@ -213,12 +237,7 @@ describe("resolveCapabilityRefs", () => {
     });
 
     it("should produce inline skill for Windsurf (subagents=false, skills=true)", () => {
-      const input =
-        "[[SUBAGENT: archi-silent-audit|mode: code-impl]]" +
-        "[[NO-SUBAGENT: archi-silent-audit|mode: code-impl]]" +
-        "[[NO-SKILL: （请阅读 skills/archi-silent-audit/SKILL.md，并在当前上下文手动审查）]]";
-
-      const result = resolveCapabilityRefs(input, {
+      const result = resolveCapabilityRefs(combinedInput, {
         hasSkills: true,
         hasSubagents: false,
         hasCommands: false,
@@ -230,12 +249,7 @@ describe("resolveCapabilityRefs", () => {
     });
 
     it("should produce fallback for no-skill platform (hypothetical)", () => {
-      const input =
-        "[[SUBAGENT: archi-silent-audit|mode: code-impl]]" +
-        "[[NO-SUBAGENT: archi-silent-audit|mode: code-impl]]" +
-        "[[NO-SKILL: （请阅读 skills/archi-silent-audit/SKILL.md，并在当前上下文手动审查）]]";
-
-      const result = resolveCapabilityRefs(input, {
+      const result = resolveCapabilityRefs(combinedInput, {
         hasSkills: false,
         hasSubagents: false,
         hasCommands: false,
@@ -249,11 +263,15 @@ describe("resolveCapabilityRefs", () => {
     });
   });
 
+  // ─────────────────────────────────────────────────────────────────
+  // [[INCLUDE:]] marker
+  // ─────────────────────────────────────────────────────────────────
+
   describe("[[INCLUDE:]] marker", () => {
     it("should expand file content when includeBaseDir provided", async () => {
       const mockContent = "| active | 通过 |\n| pending | 拒绝 |";
       await fsExtra.writeFile(
-        path.join(tmpDir, "shared/status-gate.md"),
+        path.join(tmpDir, "shared", "status-gate.md"),
         mockContent,
       );
 
@@ -264,7 +282,7 @@ describe("resolveCapabilityRefs", () => {
         tmpDir,
       );
 
-      expect(result).toContain("| active | 通过 |");
+      expect(result).toBe("Gate:\n| active | 通过 |\n| pending | 拒绝 |\nEnd");
       expect(result).not.toContain("[[INCLUDE:");
     });
 
@@ -276,7 +294,7 @@ describe("resolveCapabilityRefs", () => {
         tmpDir,
       );
 
-      expect(result).toContain("<!-- INCLUDE NOT FOUND: shared/missing.md -->");
+      expect(result).toBe("<!-- INCLUDE NOT FOUND: shared/missing.md -->");
     });
 
     it("should not process INCLUDE when no includeBaseDir", () => {
@@ -290,6 +308,10 @@ describe("resolveCapabilityRefs", () => {
       expect(result).toBe("[[INCLUDE: shared/status-gate.md]]");
     });
   });
+
+  // ─────────────────────────────────────────────────────────────────
+  // [[NO-COMMANDS:]] marker
+  // ─────────────────────────────────────────────────────────────────
 
   describe("[[NO-COMMANDS:]] marker", () => {
     it("should be removed when hasCommands=true", () => {
@@ -345,14 +367,18 @@ after`;
     });
   });
 
+  // ─────────────────────────────────────────────────────────────────
+  // Combined capabilities (real-world IDE configs)
+  // ─────────────────────────────────────────────────────────────────
+
   describe("combined capabilities (real-world IDE configs)", () => {
-    it("Cursor: has all capabilities", () => {
-      const input = `[[SUBAGENT: test|args]]
+    const fullInput = `[[SUBAGENT: test|args]]
 [[NO-SUBAGENT: test|args]]
 [[NO-SKILL: no skill fallback]]
 [[NO-COMMANDS: no commands fallback]]`;
 
-      const result = resolveCapabilityRefs(input, {
+    it("Cursor: has all capabilities", () => {
+      const result = resolveCapabilityRefs(fullInput, {
         hasSkills: true,
         hasSubagents: true,
         hasCommands: true,
@@ -364,12 +390,7 @@ after`;
     });
 
     it("Windsurf: skills but no subagents/commands", () => {
-      const input = `[[SUBAGENT: test|args]]
-[[NO-SUBAGENT: test|args]]
-[[NO-SKILL: no skill fallback]]
-[[NO-COMMANDS: no commands fallback]]`;
-
-      const result = resolveCapabilityRefs(input, {
+      const result = resolveCapabilityRefs(fullInput, {
         hasSkills: true,
         hasSubagents: false,
         hasCommands: false,
@@ -381,6 +402,10 @@ after`;
       expect(result).toContain("no commands fallback");
     });
   });
+
+  // ─────────────────────────────────────────────────────────────────
+  // Processing order
+  // ─────────────────────────────────────────────────────────────────
 
   describe("processing order", () => {
     it("should process INCLUDE before SUBAGENT/SKILL", async () => {
@@ -402,6 +427,10 @@ after`;
     });
   });
 
+  // ─────────────────────────────────────────────────────────────────
+  // [[WHEN:]] marker
+  // ─────────────────────────────────────────────────────────────────
+
   describe("[[WHEN:]] marker", () => {
     it("should expand description when single feature matches", () => {
       const input = "[[WHEN: ui | 仅UI项目: ]]内容";
@@ -421,7 +450,7 @@ after`;
         input,
         { hasSkills: true, hasSubagents: true, hasCommands: false },
         undefined,
-        { features: ["api", "cli"] }, // 不含 ui
+        { features: ["api", "cli"] },
       );
 
       expect(result).toBe("前面内容后面");
@@ -434,7 +463,7 @@ after`;
         input,
         { hasSkills: true, hasSubagents: true, hasCommands: false },
         undefined,
-        { features: ["ui", "data", "api"] }, // 同时含 ui 和 data
+        { features: ["ui", "data", "api"] },
       );
 
       expect(result).toBe("仅UI+Data项目:");
@@ -446,7 +475,7 @@ after`;
         input,
         { hasSkills: true, hasSubagents: true, hasCommands: false },
         undefined,
-        { features: ["ui", "api"] }, // 含 ui 但不含 data
+        { features: ["ui", "api"] },
       );
 
       expect(result).toBe("");
@@ -497,12 +526,10 @@ after`;
         hasCommands: false,
       });
 
-      // 没有 whenContext 时，WHEN 标记保持原样
       expect(result).toBe("[[WHEN: ui | 仅UI项目: ]]内容");
     });
 
     it("should allow single ] in description", () => {
-      // 允许 description 中包含单个 ]，只有 ]] 才是结束标记
       const input = "[[WHEN: ui | 这是测试]内容]]";
       const result = resolveCapabilityRefs(
         input,
@@ -524,6 +551,107 @@ after`;
       );
 
       expect(result).toBe("[状态码: 200] 或 [错误]");
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────
+  // 噪声测试（多余空格、跨行指令）
+  // ─────────────────────────────────────────────────────────────────
+
+  describe("噪声测试：多余空格", () => {
+    it("should handle extra spaces in SUBAGENT marker", () => {
+      const input = "[[SUBAGENT:  name  |  args  ]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      // 应该能正确解析，即使有多余空格
+      expect(result).toContain("**[SUBAGENT · 子代理]**");
+      expect(result).toContain("skills/name/SKILL.md");
+    });
+
+    it("should handle no spaces in SUBAGENT marker", () => {
+      const input = "[[SUBAGENT:name|args]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      expect(result).toContain("**[SUBAGENT · 子代理]**");
+    });
+
+    it("should handle leading/trailing spaces around marker", () => {
+      const input = "  [[SUBAGENT: name|args]]  ";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      expect(result).toContain("**[SUBAGENT · 子代理]**");
+    });
+  });
+
+  describe("噪声测试：跨行指令", () => {
+    it("should handle multi-line SUBAGENT args", () => {
+      const input = `[[SUBAGENT: name|
+多行参数内容
+第二行
+]]`;
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      expect(result).toContain("**[SUBAGENT · 子代理]**");
+      expect(result).toContain("多行参数内容");
+    });
+
+    it("should handle multi-line NO-COMMANDS content", () => {
+      const input = `[[NO-COMMANDS:
+## 标题
+
+段落1
+
+段落2
+]]`;
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      expect(result).toContain("## 标题");
+      expect(result).toContain("段落1");
+      expect(result).toContain("段落2");
+    });
+  });
+
+  describe("噪声测试：嵌套指令", () => {
+    it("should handle nested brackets in description", () => {
+      const input = "[[NO-SKILL: 使用 [archi.audit] 进行审查]]";
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: false,
+        hasSubagents: false,
+        hasCommands: false,
+      });
+
+      expect(result).toBe("使用 [archi.audit] 进行审查");
+    });
+
+    it("should handle JSON-like content in args", () => {
+      const input = '[[SUBAGENT: name|{"key": "value"}]]';
+      const result = resolveCapabilityRefs(input, {
+        hasSkills: true,
+        hasSubagents: true,
+        hasCommands: false,
+      });
+
+      expect(result).toContain('{"key": "value"}');
     });
   });
 });
