@@ -42,6 +42,7 @@ disable-model-invocation: true
 | 13 | `DESIGN_TRACE` | Design Trace | P | WARNING | `runtime: is_complex` | design.md § 6 追溯表存在 AC 未映射到设计节点 |
 | 14 | `PARAMETER_SPECIFICITY` | Parameter Specificity | P | INFO | `runtime: is_complex` | design.md § 3 参数表出现「适当」「合理」「视情况」「按需」「一些」等模糊量词 |
 | 15 | `DESIGN_SELF_CHECK` | Design Self-Check | P | CRITICAL | `runtime: is_complex` | design.md § 2 机制自检清单任一项标记 ✗ 或空未勾选 |
+| 15.5 | `TEST_PLAN_QUALITY` | Test Plan Quality | P | WARNING | — | plan.json tests / task notes 只写「补测试」「跑测试」「覆盖逻辑」等占位句；或未映射 spec AC / bug 复现步骤 |
 | 16 | `TECH_STACK_STYLE_MATCH` | Tech Stack 风格一致 | C | WARNING | — | 代码模式 / API 风格偏离 tech_stack.md 声明（如声明 ESM 却用 CommonJS、声明 hooks 优先却用 class component）|
 | 17 | `SOTA` | SOTA | C | WARNING | — | 出现 tech_stack 明确列出的反模式；或使用已被同 stack 替代的过时 API |
 | 18 | `SECURITY` | Security | C | CRITICAL | — | 代码出现硬编码密钥 / 明文密码；或外部输入未校验直接进入 DB / FS / shell / eval |
@@ -52,6 +53,7 @@ disable-model-invocation: true
 | 23 | `DESIGN_COMPLIANCE_STATE` | Design Compliance 状态 | C | CRITICAL | `runtime: is_complex` | 代码状态转移 / 流程 / 协议与 design.md § 2 不一致 |
 | 24 | `INVARIANT_ENFORCEMENT` | Invariant Enforcement | C | CRITICAL | `runtime: is_complex` | design.md § 4 不变量未在代码中通过 assert / 运行时检查 / 类型保护执行 |
 | 25 | `PARAMETER_ALIGNMENT` | Parameter Alignment | C | CRITICAL | `runtime: is_complex` | 代码中数值 / 阈值与 design.md § 3 参数表不一致 |
+| 26 | `TEST_BEHAVIOR_QUALITY` | Test Behavior Quality | C | WARNING | — | 新增/修改测试只断言 mock 调用次数、文件存在、对象非空、JSON 可解析；缺少行为结果、边界/错误路径或 Red→Green 复现证据 |
 
 ## 执行协议
 

@@ -36,6 +36,8 @@ Resolve Target:
 </step_2_diagnose>
 
 <step_3_plan>
+[[INCLUDE: shared/test-quality.md]]
+
 追加 plan.json 一个 Bugfix Phase，强制三件套（Reproduction Test → Fix Implementation → Regression Test）。
 
 [[INCLUDE: prompts/change/shared/plan-phase-append.md]]

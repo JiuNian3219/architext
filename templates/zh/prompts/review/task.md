@@ -57,6 +57,7 @@ Load:
 | 12 | I18n 合规 | 如有I18n要求，需无硬编码字符串；须用 Key/字典引用 |
 | 13 | Orphan .gitkeep | 目录已有其他文件时仍存在 .gitkeep — 须删除 |
 | 14 | Spec-Code 漂移 | 接口/类型/行为与 spec.md 一致；手动变更已同步文档 |
+| 17 | 测试有效性 | 新增/已有测试是否验证真实行为；是否存在只测调用次数、文件存在、对象非空、JSON 可解析、缺边界/负面路径的问题 |
 [[WHEN: ui |
 | 10 | Design 合规 | Token 使用；无硬编码魔法值；与 screens/S-XX.html 视觉一致 |
 | 15 | UI 引用完整性 | ui.md 中 ref: screens/S-XX.html 指针是否仍有效 |

@@ -123,6 +123,8 @@ AI 根据功能性质自行决定输出哪些模块，从以下素材库中选�
 </step_4_global_sync>
 
 <step_5_generate>
+[[INCLUDE: shared/test-quality.md]]
+
 **Input**: 确认的 Unified Proposal（功能设计 + 架构建议）+ 已更新的全局上下文 + step_2 检测的 Task Type。
 
 在 `[[__DOCS_DIR__]]/tasks/<ID>_<Slug>/` 下生成标准文档。

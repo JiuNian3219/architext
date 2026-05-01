@@ -48,6 +48,8 @@
 </step_2_plan>
 
 <step_3_implement>
+[[INCLUDE: shared/test-quality.md]]
+
     **Protocol**:
     - **Read First**: 修改前须读取目标文件；遵循项目现有代码风格。
     - **Use Existing Stack**: 仅用 `tech_stack.md` 声明的技术与库。

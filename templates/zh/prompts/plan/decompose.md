@@ -59,6 +59,8 @@
 </step_3_supplementary>
 
 <step_4_decompose>
+[[INCLUDE: shared/test-quality.md]]
+
 **Input**: Brief 全文 + 项目上下文 + 补充回答（如有）。
 
 [[SUBAGENT: archi-decompose-roadmap | brief_data + existing_roadmap[[WHEN: ui | + ui_context]] ]]
