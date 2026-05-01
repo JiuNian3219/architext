@@ -1,24 +1,24 @@
 {
-  "endpoints": [
-    {
-      "method": "[GET | POST | PUT | DELETE | PATCH]",
-      "path": "[/resource/:id]",
-      "description": "[One-line endpoint responsibility description]",
-      "auth": "[required | public | optional]",
-      "requestBody": "[schema description or N/A]",
-      "responses": {
-        "200": "[Success response structure description]",
-        "[4xx]": "[ref: error_codes.json#ERR_CODE]"
-      },
-      "owner": "[FEAT-xxx | INF-xxx]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "endpoints[]": {
+      "method": "GET | POST | PUT | DELETE | PATCH",
+      "path": "Endpoint path, for example /resource/:id",
+      "description": "Endpoint responsibility",
+      "auth": "required | public | optional",
+      "requestBody": "Request body schema or N/A",
+      "responses": "Map of HTTP status codes to response schemas / error_codes refs",
+      "owner": "Related roadmap task ID"
+    },
+    "protocolMapping[]": {
+      "statusCode": "HTTP status code",
+      "code": "Error code from error_codes.json",
+      "meaning": "Error meaning",
+      "action": "Caller handling action"
     }
-  ],
-  "protocolMapping": [
-    {
-      "statusCode": "[400 | 401 | 403 | 404 | 500 | ...]",
-      "code": "[ERR_CODE]",
-      "meaning": "[Meaning]",
-      "action": "[Caller behavior: Toast / Redirect / Retry / ...]"
-    }
-  ]
+  },
+  "endpoints": [],
+  "protocolMapping": []
 }

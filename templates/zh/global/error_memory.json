@@ -1,40 +1,21 @@
 {
-  "errorPatterns": {
-    "_comment": "错误模式：{ id: 唯一标识, watchFor: [执行前需警惕的场景], matchWhen: [报错后匹配的关键词], cause: 根本原因, solution: 解决方案, lesson: 教训/原则 }。AI解决错误后在此追加",
-    "examples": [
-      {
-        "id": "build-vite-config-missing",
-        "watchFor": ["运行 npm run build", "修改 vite.config.ts"],
-        "matchWhen": ["ENOENT", "vite.config", "Cannot find module"],
-        "cause": "配置文件被误删或 node_modules 未安装",
-        "solution": "检查文件是否存在，运行 npm install 重装依赖",
-        "lesson": "修改配置前备份，定期确认 node_modules 完整"
-      },
-      {
-        "id": "type-import-assertion-deprecated",
-        "watchFor": ["导入 JSON 文件"],
-        "matchWhen": ["assert", "SyntaxError", "import", "type"],
-        "cause": "Node.js 18+ 废弃了 import assert 语法，改用 import attributes",
-        "solution": "assert { type: 'json' } 改为 with { type: 'json' }",
-        "lesson": "关注 Node.js 版本更新，import JSON 时确认语法版本"
-      }
-    ]
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "errorPatterns[]": {
+      "id": "稳定问题模式 ID",
+      "watchFor": "执行前需要警惕的场景",
+      "matchWhen": "报错后匹配的关键词",
+      "cause": "根因",
+      "solution": "解决方式",
+      "lesson": "后续避免重复犯错的规则"
+    },
+    "checkpoints[]": {
+      "before": "执行前场景",
+      "check": "需要检查的 errorPatterns.id 数组"
+    }
   },
-  "checkpoints": {
-    "_comment": "检查点：{ before: 执行前匹配的操作描述, check: [要检查的 errorPatterns.id 列表] }。AI根据 watchFor 场景自动生成",
-    "examples": [
-      {
-        "before": "运行 npm run build",
-        "check": ["build-vite-config-missing"]
-      },
-      {
-        "before": "修改配置文件",
-        "check": ["build-vite-config-missing"]
-      },
-      {
-        "before": "导入 JSON 文件",
-        "check": ["type-import-assertion-deprecated"]
-      }
-    ]
-  }
+  "errorPatterns": [],
+  "checkpoints": []
 }

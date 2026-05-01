@@ -1,35 +1,36 @@
 {
-  "entities": [
-    {
-      "term": "[业务术语]",
-      "definition": "[一句话定义]",
-      "codeName": "[PascalCase / camelCase]",
-      "forbiddenSynonyms": [],
-      "reference": "[来源: spec / vision / task ID]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "entities[]": {
+      "term": "业务术语",
+      "definition": "一句话定义",
+      "codeName": "代码命名建议",
+      "forbiddenSynonyms": "禁止混用的同义词",
+      "reference": "来源：vision / spec / task ID"
+    },
+    "verbs[]": {
+      "verb": "业务动作",
+      "definition": "一句话定义",
+      "codeName": "代码命名建议",
+      "context": "使用场景",
+      "reference": "来源"
+    },
+    "utilities[]": {
+      "name": "工具名",
+      "path": "文件路径",
+      "purpose": "用途说明",
+      "replaces": "替代的原始 API 或旧工具"
+    },
+    "components[]": {
+      "name": "组件名",
+      "path": "文件路径",
+      "purpose": "用途说明"
     }
-  ],
-  "verbs": [
-    {
-      "verb": "[业务动作]",
-      "definition": "[一句话定义]",
-      "codeName": "[camelCase]",
-      "context": "[使用场景]",
-      "reference": "[来源]"
-    }
-  ],
-  "utilities": [
-    {
-      "name": "[工具名, 如 logger]",
-      "path": "[文件路径, 如 src/utils/logger.ts]",
-      "purpose": "[用途说明]",
-      "replaces": "[替代的原始 API, 如 console.log]"
-    }
-  ],
-  "components（仅ui项目）": [
-    {
-      "name": "[组件名]",
-      "path": "[文件路径]",
-      "purpose": "[用途说明]"
-    }
-  ]
+  },
+  "entities": [],
+  "verbs": [],
+  "utilities": [],
+  "components": []
 }

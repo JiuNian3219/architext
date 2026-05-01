@@ -1,55 +1,31 @@
 {
-  "directoryMapping": {
-    "_comment": "Code directory ↔ module mapping: { path: directory path, module: module name, responsibility: responsibility description }",
-    "examples": [
-      {
-        "path": "src/features/auth",
-        "module": "auth",
-        "responsibility": "User authentication, login, registration"
-      },
-      {
-        "path": "src/features/todos",
-        "module": "todo",
-        "responsibility": "Todo CRUD operations"
-      }
-    ]
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "directoryMapping[]": {
+      "path": "Code directory path",
+      "module": "Module name",
+      "responsibility": "Module responsibility"
+    },
+    "logicalTopology[]": {
+      "module": "Module name",
+      "layer": "domain | application | interface | infrastructure | custom",
+      "depends": "Array of dependency modules"
+    },
+    "criticalUserJourneys[]": {
+      "journey": "Critical user journey name",
+      "steps": "Array of journey steps",
+      "owner": "Related roadmap task ID"
+    },
+    "featureRelations[]": {
+      "group": "Relation group name",
+      "members": "Array of related files or modules",
+      "rule": "Required check rule when changing members"
+    }
   },
-  "logicalTopology": {
-    "_comment": "Logical topology: { module: module name, layer: layer(layer/domain/interface/infrastructure), depends: [dependent modules] }",
-    "examples": [
-      { "module": "auth", "layer": "domain", "depends": ["user-repo"] },
-      { "module": "todo", "layer": "domain", "depends": ["auth", "todo-repo"] }
-    ]
-  },
-  "criticalUserJourneys": {
-    "_comment": "Critical user journeys: { journey: journey name, steps: [steps], owner: owner task ID }",
-    "examples": [
-      {
-        "journey": "User Registration and Login",
-        "steps": [
-          "Visit homepage",
-          "Click register",
-          "Fill form",
-          "Submit verification",
-          "Login successful"
-        ],
-        "owner": "FEAT-AUTH"
-      }
-    ]
-  },
-  "featureRelations": {
-    "_comment": "Feature relations, organized as network structure: { group: network name, members: [member files], rule: change rules }",
-    "examples": [
-      {
-        "group": "UI Protocol",
-        "members": [
-          "prompts/ui.md",
-          "skills/archi-ui-wireframe/SKILL.md",
-          "prompts/start.md",
-          "prompts/inherit.md"
-        ],
-        "rule": "UI protocol and Skill are strongly linked, changes need mutual review"
-      }
-    ]
-  }
+  "directoryMapping": [],
+  "logicalTopology": [],
+  "criticalUserJourneys": [],
+  "featureRelations": []
 }

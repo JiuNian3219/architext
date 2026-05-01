@@ -1,12 +1,16 @@
 {
-  "exports": [
-    {
-      "name": "[exportName]",
-      "type": "[function | class | type | constant | enum]",
-      "signature": "[TypeScript 签名]",
-      "description": "[一句话描述导出项职责]",
-      "stability": "[stable | experimental | deprecated]",
-      "owner": "[FEAT-xxx | INF-xxx]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "exports[]": {
+      "name": "导出名",
+      "type": "function | class | type | constant | enum",
+      "signature": "公开签名",
+      "description": "导出项职责",
+      "stability": "stable | experimental | deprecated",
+      "owner": "关联 roadmap 任务 ID"
     }
-  ]
+  },
+  "exports": []
 }

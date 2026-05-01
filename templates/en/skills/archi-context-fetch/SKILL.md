@@ -88,7 +88,17 @@ Rules:
 
 ## Baseline Reads
 
-All non-normal-Q&A intent at minimum consider:
+`init` is a special intent: its purpose is to create or recover global documents, so files just deployed by `npx archi init` must not be treated as project facts.
+
+When `intent_card.command == "/archi.init"` or `for_intent` starts with `init`:
+- Do not apply the Baseline Reads below.
+- `must_read` only includes routing essentials: Intent Card, pack/brief path from `[args]`, lightweight root file signals (whether package.json/go.mod/Cargo.toml exists), and whether `project-brief.md` exists.
+- If initialization state must be checked, only inspect template markers in `global/vision.md` / `global/*.json`; do not extract their body or `_fieldGuide` as `relevant_facts`.
+- If `vision.md` contains `architextTemplate: true` / `Status: Template` / `Uninitialized` / `[Project Name]`, put `global/vision.md` and current `global/` seed files (including older `roadmap.json` with `INF-01` / `FEAT-01` example tasks) in `do_not_read` with reason `scaffold_seed_not_project_fact`.
+- If any `global/*.json` contains `architextTemplate: true` / `status: "template-uninitialized"` / `lastUpdated == "TEMPLATE"`, also put that file in `do_not_read`.
+- Do not output drift, source mismatch, or "cannot understand original content" judgments based on seed roadmap / seed vision / seed json.
+
+All non-init, non-normal-Q&A intent at minimum consider:
 
 - `global/roadmap.json`: Match task id, status, dependencies.
 - `global/map.json`: Locate modules, featureRelations, directory mappings.

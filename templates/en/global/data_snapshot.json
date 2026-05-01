@@ -1,30 +1,26 @@
 {
-  "models": [
-    {
-      "name": "[ModelName]",
-      "description": "[One-line description]",
-      "fields": [
-        {
-          "name": "id",
-          "type": "string",
-          "modifiers": "PK",
-          "description": "Unique identifier"
-        },
-        {
-          "name": "[fieldName]",
-          "type": "[type]",
-          "modifiers": "[nullable | unique | index | ...]",
-          "description": "[Field description]"
-        }
-      ]
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "models[]": {
+      "name": "Model name",
+      "description": "Model responsibility",
+      "fields": "Array of fields"
+    },
+    "fields[]": {
+      "name": "Field name",
+      "type": "Field type",
+      "modifiers": "PK | nullable | unique | index, etc.",
+      "description": "Field meaning"
+    },
+    "relationships[]": {
+      "from": "Source model",
+      "to": "Target model",
+      "type": "1:1 | 1:N | M:N | self-ref",
+      "description": "Relationship description"
     }
-  ],
-  "relationships": [
-    {
-      "from": "[ModelA]",
-      "to": "[ModelB]",
-      "type": "[1:1 | 1:N | M:N | self-ref]",
-      "description": "[Relationship description]"
-    }
-  ]
+  },
+  "models": [],
+  "relationships": []
 }

@@ -1,11 +1,15 @@
 {
-  "businessErrors": [
-    {
-      "module": "[MODULE]",
-      "code": "ERR_[MODULE]_[REASON]",
-      "statusCode": "",
-      "message": "[User/developer visible error description]",
-      "recovery": "[Recovery suggestion]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "businessErrors[]": {
+      "module": "Module name",
+      "code": "Stable error code, for example ERR_MODULE_REASON",
+      "statusCode": "HTTP/CLI/business status code",
+      "message": "User- or developer-visible error message",
+      "recovery": "Recovery suggestion"
     }
-  ]
+  },
+  "businessErrors": []
 }

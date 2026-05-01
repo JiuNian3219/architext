@@ -60,6 +60,8 @@ Symbol legend:
 1. Filter dimensions with corresponding letter in "Mode" column by `mode`
 2. Then filter by "Gate" column: Dimensions for features not present in current context视为inapplicable; `runtime:` judge via `task_meta` on the spot
 3. For each retained dimension, scan corresponding content in `context_files` per "Trigger Condition"
+   - In `mode: init`, only audit files generated/overwritten by this init run, or files explicitly returned in step_3 `writtenFiles`.
+   - If a file still contains `architextTemplate: true`, `Status: Template`, `template-uninitialized`, or `lastUpdated: "TEMPLATE"`, it is a scaffold seed, not an audit target; do not report roadmap/source mismatch, incomprehensible vision, or global document drift from it.
 4. Hit → Produce finding (with dimension / location / evidence / description); No hit → No output
 5. After all dimensions run, group output by severity
 

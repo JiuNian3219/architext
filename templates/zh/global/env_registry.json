@@ -1,12 +1,16 @@
 {
-  "variables": [
-    {
-      "name": "[ENV_VAR_NAME]",
-      "required": true,
-      "default": null,
-      "description": "[用途说明]",
-      "example": "[示例值]",
-      "owner": "[FEAT-xxx | INF-xxx]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "variables[]": {
+      "name": "环境变量名",
+      "required": "是否必填",
+      "default": "默认值或 null",
+      "description": "用途说明",
+      "example": "示例值；不要写真实密钥",
+      "owner": "关联 roadmap 任务 ID"
     }
-  ]
+  },
+  "variables": []
 }

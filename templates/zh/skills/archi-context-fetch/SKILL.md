@@ -88,7 +88,17 @@ Global guide 只覆盖结构化 JSON 文件，不覆盖 `vision.md` / `tech_stac
 
 ## Baseline Reads
 
-所有非普通问答 intent 至少考虑：
+`init` 是特殊 intent：它的目标是创建或恢复全局文档，不能把 `npx archi init` 刚部署的 seed 文件当成项目事实。
+
+当 `intent_card.command == "/archi.init"` 或 `for_intent` 以 `init` 开头时：
+- 不执行下方 Baseline Reads。
+- `must_read` 只包含路由必要信息：Intent Card、`[args]` 指向的 pack/brief、根目录轻量文件清单（例如 package.json/go.mod/Cargo.toml 是否存在）、`project-brief.md` 是否存在。
+- 如果需要判断是否已初始化，只读取 `global/vision.md` / `global/*.json` 的模板标记；不要摘录正文或 `_fieldGuide` 为 `relevant_facts`。
+- 若 `vision.md` 含 `architextTemplate: true` / `Status: Template` / `未初始化` / `[项目名称]`，把 `global/vision.md` 以及当前 `global/` seed 文件（包括旧版含 `INF-01` / `FEAT-01` 示例任务的 `roadmap.json`）放进 `do_not_read`，原因写为 `scaffold_seed_not_project_fact`。
+- 若任一 `global/*.json` 含 `architextTemplate: true` / `status: "template-uninitialized"` / `lastUpdated == "TEMPLATE"`，也把该文件放进 `do_not_read`。
+- 禁止输出基于 seed roadmap / seed vision / seed json 的漂移、源码不一致、"看不懂原文"等判断。
+
+除 init 外，所有非普通问答 intent 至少考虑：
 
 - `global/roadmap.json`：匹配 task id、状态、依赖。
 - `global/map.json`：定位模块、featureRelations、目录映射。

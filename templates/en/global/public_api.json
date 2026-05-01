@@ -1,12 +1,16 @@
 {
-  "exports": [
-    {
-      "name": "[exportName]",
-      "type": "[function | class | type | constant | enum]",
-      "signature": "[TypeScript signature]",
-      "description": "[One-line export responsibility description]",
-      "stability": "[stable | experimental | deprecated]",
-      "owner": "[FEAT-xxx | INF-xxx]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "exports[]": {
+      "name": "Export name",
+      "type": "function | class | type | constant | enum",
+      "signature": "Public signature",
+      "description": "Export responsibility",
+      "stability": "stable | experimental | deprecated",
+      "owner": "Related roadmap task ID"
     }
-  ]
+  },
+  "exports": []
 }

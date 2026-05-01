@@ -1,131 +1,56 @@
 {
-  "_comment": "由 /archi.start 基于 Brief「风格与调性」和「视觉参考」生成。所有值须从 Brief 推导，禁直接复用任何模板默认值。",
-  "status": "drafting",
-
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "aestheticDirection": {
+      "preset": "视觉方向，例如 saas-light / dashboard / custom",
+      "customDescription": "自定义视觉方向说明"
+    },
+    "primitivePalette": "基础色板；由 /archi.ui 根据项目真实风格生成",
+    "semanticTokens.colors[]": {
+      "token": "语义色名",
+      "light": "浅色模式取值",
+      "dark": "深色模式取值",
+      "usage": "使用场景"
+    },
+    "semanticTokens.typography[]": {
+      "role": "H1 | H2 | Body | Small 等",
+      "fontFamily": "字体族",
+      "size": "字号",
+      "weight": "字重",
+      "lineHeight": "行高"
+    },
+    "layout": "圆角、阴影、间距等布局 token",
+    "motion": "动效节奏、时长、缓动曲线",
+    "illustration": "图标、插画、空状态资产风格"
+  },
   "aestheticDirection": {
     "preset": "",
-    "_presetOptions": "saas-dark | saas-light | dashboard | marketing | mobile-app | editorial | brutalist | custom",
     "customDescription": ""
   },
-
   "primitivePalette": {
-    "neutral": {
-      "50": "",
-      "100": "",
-      "200": "",
-      "300": "",
-      "400": "",
-      "500": "",
-      "600": "",
-      "700": "",
-      "800": "",
-      "900": "",
-      "950": ""
-    },
+    "neutral": {},
     "brand": {}
   },
-
   "semanticTokens": {
-    "colors": [
-      { "token": "Background", "light": "", "dark": "", "usage": "页面背景" },
-      {
-        "token": "Surface",
-        "light": "",
-        "dark": "",
-        "usage": "卡片, 弹窗, 侧边栏"
-      },
-      {
-        "token": "Primary",
-        "light": "Brand-?00",
-        "dark": "Brand-?00",
-        "usage": "主按钮, 激活状态"
-      },
-      { "token": "Text-Main", "light": "", "dark": "", "usage": "正文, 标题" },
-      {
-        "token": "Text-Muted",
-        "light": "",
-        "dark": "",
-        "usage": "次要信息, 注释"
-      },
-      { "token": "Border", "light": "", "dark": "", "usage": "边框, 分割线" },
-      {
-        "token": "Destructive",
-        "light": "",
-        "dark": "",
-        "usage": "删除, 错误提示"
-      }
-    ],
-    "typography": [
-      {
-        "role": "H1",
-        "fontFamily": "",
-        "size": "",
-        "weight": "",
-        "lineHeight": ""
-      },
-      {
-        "role": "H2",
-        "fontFamily": "",
-        "size": "",
-        "weight": "",
-        "lineHeight": ""
-      },
-      {
-        "role": "Body",
-        "fontFamily": "",
-        "size": "",
-        "weight": "",
-        "lineHeight": ""
-      },
-      {
-        "role": "Small",
-        "fontFamily": "",
-        "size": "",
-        "weight": "",
-        "lineHeight": ""
-      }
-    ]
+    "colors": [],
+    "typography": []
   },
-
   "layout": {
-    "radius": {
-      "sm": "",
-      "md": "",
-      "lg": "",
-      "full": "9999px"
-    },
-    "shadow": {
-      "sm": "",
-      "md": ""
-    },
-    "spacing": {
-      "unit": "4px",
-      "scale": [1, 2, 3, 4, 6, 8, 12, 16]
-    }
+    "radius": {},
+    "shadow": {},
+    "spacing": {}
   },
-
   "mode": {
     "default": "",
     "support": []
   },
-
   "motion": {
-    "preference": "",
-    "easing": {
-      "standard": "",
-      "decelerate": "",
-      "accelerate": ""
-    },
-    "duration": {
-      "instant": "",
-      "fast": "",
-      "normal": "",
-      "slow": "",
-      "pageTransition": ""
-    },
+    "easing": {},
+    "duration": {},
     "patterns": {}
   },
-
   "illustration": {
     "style": "",
     "iconLibrary": "",

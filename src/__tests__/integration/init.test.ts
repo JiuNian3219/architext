@@ -259,6 +259,104 @@ describe("Scaffolder Integration", () => {
     expect(stat.isDirectory()).toBe(true);
   });
 
+  it("全局 seed 不应包含示例任务，避免 /archi.init 误判为真实项目文档", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+      generateBrief: true,
+    };
+
+    await scaffold(config);
+
+    const roadmapPath = path.join(tempDir, ".architext/global/roadmap.json");
+    const roadmap = await fs.readJSON(roadmapPath);
+    expect(roadmap.projectStatus).toBe("template-uninitialized");
+    expect(roadmap.lastUpdated).toBe("TEMPLATE");
+    expect(roadmap.tasks).toEqual([]);
+
+    const visionPath = path.join(tempDir, ".architext/global/vision.md");
+    const vision = await fs.readFile(visionPath, "utf-8");
+    expect(vision).toContain("architextTemplate: true");
+    expect(vision).toContain("未初始化");
+  });
+
+  it("global JSON seed should keep field guides without prefilled example data", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: ["api", "cli", "data", "ui", "lib"],
+      generateBrief: true,
+    };
+
+    await scaffold(config);
+
+    const globalDir = path.join(tempDir, ".architext/global");
+    const seedFiles = [
+      "api_snapshot.json",
+      "command_api.json",
+      "data_snapshot.json",
+      "design_tokens.json",
+      "dictionary.json",
+      "env_registry.json",
+      "error_codes.json",
+      "error_memory.json",
+      "map.json",
+      "public_api.json",
+      "roadmap.json",
+    ];
+
+    for (const file of seedFiles) {
+      const data = await fs.readJSON(path.join(globalDir, file));
+      expect(data.architextTemplate).toBe(true);
+      expect(data._fieldGuide).toBeDefined();
+    }
+
+    const roadmap = await fs.readJSON(path.join(globalDir, "roadmap.json"));
+    expect(roadmap.tasks).toEqual([]);
+    expect(roadmap.nfr).toEqual([]);
+
+    const map = await fs.readJSON(path.join(globalDir, "map.json"));
+    expect(map.directoryMapping).toEqual([]);
+    expect(map.logicalTopology).toEqual([]);
+    expect(map.criticalUserJourneys).toEqual([]);
+    expect(map.featureRelations).toEqual([]);
+
+    const dictionary = await fs.readJSON(
+      path.join(globalDir, "dictionary.json"),
+    );
+    expect(dictionary.entities).toEqual([]);
+    expect(dictionary.verbs).toEqual([]);
+
+    const errorMemory = await fs.readJSON(
+      path.join(globalDir, "error_memory.json"),
+    );
+    expect(errorMemory.errorPatterns).toEqual([]);
+    expect(errorMemory.checkpoints).toEqual([]);
+  });
+
+  it("/archi.init 前置 Context Fetch 应将 scaffold seed 排除为项目事实", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await scaffold(config);
+
+    const skillPath = path.join(
+      tempDir,
+      ".cursor/skills/archi-context-fetch/SKILL.md",
+    );
+    const content = await fs.readFile(skillPath, "utf-8");
+    expect(content).toContain('intent_card.command == "/archi.init"');
+    expect(content).toContain("scaffold_seed_not_project_fact");
+    expect(content).toContain("禁止输出基于 seed roadmap / seed vision");
+  });
+
   it("不生成 Brief 时不应创建 brief-assets 目录", async () => {
     const config: InitConfig = {
       language: "zh",

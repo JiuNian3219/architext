@@ -60,6 +60,8 @@ disable-model-invocation: true
 1. 按 `mode` 筛选「模式」列含对应字母的维度
 2. 再按「门」列过滤：当前上下文未出现的 feature 维度视为不适用；`runtime:` 按 `task_meta` 当场判
 3. 对保留下来的每个维度，按「触发条件」扫描 `context_files` 对应内容
+   - `mode: init` 时仅审查本次 init 生成/覆盖后的文件，或 step_3 明确返回的 `writtenFiles`。
+   - 若文件仍含 `architextTemplate: true`、`Status: Template`、`template-uninitialized`、`lastUpdated: "TEMPLATE"`，它是 scaffold seed，不是审查对象；不要据此报告 roadmap 与源码不一致、vision 不可理解或全局文档漂移。
 4. 命中 → 产出 finding（含 dimension / location / evidence / description）；未命中 → 不输出
 5. 所有维度跑完后按 severity 分组输出
 

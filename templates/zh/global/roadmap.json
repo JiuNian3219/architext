@@ -1,31 +1,23 @@
 {
+  "architextTemplate": true,
   "version": 1,
-  "projectStatus": "planning",
-  "lastUpdated": "YYYY-MM-DD",
-  "tasks": [
-    {
-      "id": "INF-01",
-      "phase": "infra",
-      "title": "项目脚手架",
-      "status": "pending",
-      "description": "框架初始化 + 全局布局 + 测试基础设施",
-      "goal": "完成后，启动项目可访问空白页。涉及：框架初始化 + 路由空壳 + App Shell + 全局布局 + 设计 Token + 测试基础设施。验证方式：pnpm dev → 空白页可访问 + pnpm test 空套件通过。边界：不含业务 Schema（由首个 FEAT 创建）、不含认证（由首个 FEAT 包含）。",
-      "deps": [],
-      "tag": "Infra",
-      "slug": "Project_Scaffolding"
+  "projectStatus": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "tasks[]": {
+      "id": "任务 ID，例如 FEAT-01；由 /archi.plan 生成",
+      "phase": "infra | core | polish | platform",
+      "title": "任务标题",
+      "status": "pending | active | done | blocked",
+      "description": "50 字以内的摘要",
+      "deps": "依赖的任务 ID 数组"
     },
-    {
-      "id": "FEAT-01",
-      "phase": "core",
-      "title": "示例功能",
-      "status": "blocked",
-      "description": "示例业务功能",
-      "goal": "完成后，用户可 [动作] → [可感知结果]。涉及：<逻辑单元名称>。实现提示：<关键技术选型>。验证方式：<具体步骤式验证>。边界：不含 X（由 Y 负责）。[TEST] 单元：<场景> | E2E：<路径>",
-      "deps": ["INF-01"],
-      "screens": ["S-01"],
-      "tag": "Core",
-      "slug": "Example_Task"
+    "nfr[]": {
+      "taskId": "关联任务 ID",
+      "constraint": "非功能约束",
+      "impact": "影响范围"
     }
-  ],
+  },
+  "tasks": [],
   "nfr": []
 }

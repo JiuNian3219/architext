@@ -18,13 +18,21 @@
 - 若 `subprotocol` 为 `recover` 且 pack 文件路径明确 → 直接按 recover 路径处理。
 - 若 `subprotocol` 为 `start` / `inherit`，仍须结合工作目录状态验证，避免把已有项目误初始化。
 
+Seed 识别规则：
+- `npx archi init` 部署到 `[[__DOCS_DIR__]]/global/` 的文件是 scaffold seed，不是项目事实。
+- 若 `vision.md` 含 `architextTemplate: true`、`Status: Template`、`未初始化`、`[项目名称]`、`[Project Name]`、`待 /archi.init` 任一标记，视为模板占位，不得判定为"项目已初始化"。
+- 若 vision 被判定为模板，则 `global/` 下当前 seed 文件都不得作为项目事实；即使旧版 `roadmap.json` 仍含 `INF-01` / `FEAT-01` 示例任务，也必须当作 scaffold seed。
+- 若任一 `global/*.json` 含 `architextTemplate: true`、`status: "template-uninitialized"` 或 `lastUpdated: "TEMPLATE"`，只把它当结构说明和待填充占位，不得把 `_fieldGuide` 或空数组推断为项目事实。
+- 若 `roadmap.json.projectStatus == "template-uninitialized"` 或 `lastUpdated == "TEMPLATE"` 或 `tasks == []` 且 vision 为模板，占位 roadmap 不得用于源码一致性检查、漂移判断或需求推断。
+- 路由阶段只用 seed 文件判断"是否仍是模板"，不要把 seed 内容作为 `relevant_facts` 传给 start / inherit。
+
 按优先级扫描以下信号，首条匹配即处理：
 
 | # | 信号 | 判定 | 路由目标 |
 |:---|:---|:---|:---|
 | 1 | `[args]` 含 `.xml` 路径且文件存在可读 | pack 文件 | `init/recover.md` |
 | 2 | `[args]` 含 `.xml` 路径但文件不存在/损坏 | - | 停止，报错"pack 文件无法读取" |
-| 3 | `[[__DOCS_DIR__]]/global/vision.md` 已填充（非模板占位符） | 项目已初始化 | 停止，提示"项目已初始化，请使用 /archi.plan 或 /archi.change" |
+| 3 | `[[__DOCS_DIR__]]/global/vision.md` 已填充，且不命中 Seed 识别规则 | 项目已初始化 | 停止，提示"项目已初始化，请使用 /archi.plan 或 /archi.change" |
 | 4 | 根目录存在 package.json / go.mod / Cargo.toml / pyproject.toml / pom.xml / build.gradle 任一 | 有源码 | `init/inherit.md`（若 `[args]` 指向 brief，作为混合模式传入） |
 | 5 | 根目录或 `[[__DOCS_DIR__]]/` 存在 `project-brief.md` 且非空 | 有 brief 无源码 | `init/start.md` |
 | 6 | `[args]` 指向某个 `.md` 文件 | 显式指定 brief | `init/start.md`（`[args]` 作为 brief_path） |

@@ -1,11 +1,15 @@
 {
-  "businessErrors": [
-    {
-      "module": "[MODULE]",
-      "code": "ERR_[MODULE]_[REASON]",
-      "statusCode": "",
-      "message": "[用户/开发者可见的错误描述]",
-      "recovery": "[恢复建议]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "businessErrors[]": {
+      "module": "模块名",
+      "code": "稳定错误码，例如 ERR_MODULE_REASON",
+      "statusCode": "HTTP/CLI/业务状态码",
+      "message": "用户或开发者可见的错误描述",
+      "recovery": "恢复建议"
     }
-  ]
+  },
+  "businessErrors": []
 }

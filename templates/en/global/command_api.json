@@ -1,26 +1,28 @@
 {
-  "commands": [
-    {
-      "name": "[command-name]",
-      "aliases": ["[alias]"],
-      "description": "[One-line command responsibility description]",
-      "args": [
-        {
-          "name": "[arg-name]",
-          "required": true,
-          "description": "[Argument description]"
-        }
-      ],
-      "flags": [
-        {
-          "name": "--[flag-name]",
-          "short": "-[f]",
-          "type": "[string | boolean | number]",
-          "default": "[Default value or null]",
-          "description": "[Flag description]"
-        }
-      ],
-      "owner": "[FEAT-xxx | INF-xxx]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "commands[]": {
+      "name": "Command name",
+      "aliases": "Array of aliases",
+      "description": "Command responsibility",
+      "args": "Array of positional arguments",
+      "flags": "Array of optional flags",
+      "owner": "Related roadmap task ID"
+    },
+    "args[]": {
+      "name": "Argument name",
+      "required": "Whether the argument is required",
+      "description": "Argument description"
+    },
+    "flags[]": {
+      "name": "Long flag name, for example --force",
+      "short": "Short flag name, for example -f",
+      "type": "string | boolean | number",
+      "default": "Default value or null",
+      "description": "Flag description"
     }
-  ]
+  },
+  "commands": []
 }

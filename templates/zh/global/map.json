@@ -1,49 +1,31 @@
 {
-  "directoryMapping": {
-    "_comment": "代码目录 ↔ 模块映射：{ path: 目录路径, module: 模块名, responsibility: 职责描述 }",
-    "examples": [
-      {
-        "path": "src/features/auth",
-        "module": "auth",
-        "responsibility": "用户认证、登录、注册"
-      },
-      {
-        "path": "src/features/todos",
-        "module": "todo",
-        "responsibility": "待办事项 CRUD"
-      }
-    ]
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "directoryMapping[]": {
+      "path": "代码目录路径",
+      "module": "模块名",
+      "responsibility": "模块职责"
+    },
+    "logicalTopology[]": {
+      "module": "模块名",
+      "layer": "domain | application | interface | infrastructure | custom",
+      "depends": "依赖模块数组"
+    },
+    "criticalUserJourneys[]": {
+      "journey": "关键用户旅程名称",
+      "steps": "旅程步骤数组",
+      "owner": "关联 roadmap 任务 ID"
+    },
+    "featureRelations[]": {
+      "group": "关系组名",
+      "members": "相关文件或模块数组",
+      "rule": "变更时必须遵守的检查规则"
+    }
   },
-  "logicalTopology": {
-    "_comment": "逻辑拓扑：{ module: 模块名, layer: 层(layer/domain/interface/infrastructure), depends: [依赖模块] }",
-    "examples": [
-      { "module": "auth", "layer": "domain", "depends": ["user-repo"] },
-      { "module": "todo", "layer": "domain", "depends": ["auth", "todo-repo"] }
-    ]
-  },
-  "criticalUserJourneys": {
-    "_comment": "关键用户旅程：{ journey: 旅程名, steps: [步骤], owner: 归属任务ID }",
-    "examples": [
-      {
-        "journey": "用户注册登录",
-        "steps": ["访问首页", "点击注册", "填写表单", "提交验证", "登录成功"],
-        "owner": "FEAT-AUTH"
-      }
-    ]
-  },
-  "featureRelations": {
-    "_comment": "影响关联关系，以网状结构组织：{ group: 网名, members: [成员文件], rule: 变更规则 }",
-    "examples": [
-      {
-        "group": "UI 协议",
-        "members": [
-          "prompts/ui.md",
-          "skills/archi-ui-wireframe/SKILL.md",
-          "prompts/start.md",
-          "prompts/inherit.md"
-        ],
-        "rule": "UI 协议与 Skill 强关联，变更需互相检查"
-      }
-    ]
-  }
+  "directoryMapping": [],
+  "logicalTopology": [],
+  "criticalUserJourneys": [],
+  "featureRelations": []
 }

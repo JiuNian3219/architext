@@ -1,26 +1,28 @@
 {
-  "commands": [
-    {
-      "name": "[command-name]",
-      "aliases": ["[alias]"],
-      "description": "[一句话描述命令职责]",
-      "args": [
-        {
-          "name": "[arg-name]",
-          "required": true,
-          "description": "[参数说明]"
-        }
-      ],
-      "flags": [
-        {
-          "name": "--[flag-name]",
-          "short": "-[f]",
-          "type": "[string | boolean | number]",
-          "default": "[默认值或 null]",
-          "description": "[标志说明]"
-        }
-      ],
-      "owner": "[FEAT-xxx | INF-xxx]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "commands[]": {
+      "name": "命令名",
+      "aliases": "别名数组",
+      "description": "命令职责",
+      "args": "位置参数数组",
+      "flags": "可选参数数组",
+      "owner": "关联 roadmap 任务 ID"
+    },
+    "args[]": {
+      "name": "参数名",
+      "required": "是否必填",
+      "description": "参数说明"
+    },
+    "flags[]": {
+      "name": "长参数名，例如 --force",
+      "short": "短参数名，例如 -f",
+      "type": "string | boolean | number",
+      "default": "默认值或 null",
+      "description": "参数说明"
     }
-  ]
+  },
+  "commands": []
 }

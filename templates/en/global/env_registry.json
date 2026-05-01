@@ -1,12 +1,16 @@
 {
-  "variables": [
-    {
-      "name": "[ENV_VAR_NAME]",
-      "required": true,
-      "default": null,
-      "description": "[Purpose description]",
-      "example": "[Example value]",
-      "owner": "[FEAT-xxx | INF-xxx]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "variables[]": {
+      "name": "Environment variable name",
+      "required": "Whether it is required",
+      "default": "Default value or null",
+      "description": "Purpose",
+      "example": "Example value; never store real secrets",
+      "owner": "Related roadmap task ID"
     }
-  ]
+  },
+  "variables": []
 }

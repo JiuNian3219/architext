@@ -1,24 +1,24 @@
 {
-  "endpoints": [
-    {
-      "method": "[GET | POST | PUT | DELETE | PATCH]",
-      "path": "[/resource/:id]",
-      "description": "[一句话描述端点职责]",
-      "auth": "[required | public | optional]",
-      "requestBody": "[schema 描述或 N/A]",
-      "responses": {
-        "200": "[成功响应结构描述]",
-        "[4xx]": "[ref: error_codes.json#ERR_CODE]"
-      },
-      "owner": "[FEAT-xxx | INF-xxx]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "endpoints[]": {
+      "method": "GET | POST | PUT | DELETE | PATCH",
+      "path": "接口路径，例如 /resource/:id",
+      "description": "端点职责",
+      "auth": "required | public | optional",
+      "requestBody": "请求体结构或 N/A",
+      "responses": "HTTP 状态码到响应结构 / error_codes 引用的映射",
+      "owner": "关联 roadmap 任务 ID"
+    },
+    "protocolMapping[]": {
+      "statusCode": "HTTP 状态码",
+      "code": "错误码，引用 error_codes.json",
+      "meaning": "错误含义",
+      "action": "调用方处理动作"
     }
-  ],
-  "protocolMapping": [
-    {
-      "statusCode": "[400 | 401 | 403 | 404 | 500 | ...]",
-      "code": "[ERR_CODE]",
-      "meaning": "[含义]",
-      "action": "[调用方行为: Toast / Redirect / Retry / ...]"
-    }
-  ]
+  },
+  "endpoints": [],
+  "protocolMapping": []
 }

@@ -1,35 +1,36 @@
 {
-  "entities": [
-    {
-      "term": "[Business Term]",
-      "definition": "[One-line definition]",
-      "codeName": "[PascalCase / camelCase]",
-      "forbiddenSynonyms": [],
-      "reference": "[Source: spec / vision / task ID]"
+  "architextTemplate": true,
+  "status": "template-uninitialized",
+  "lastUpdated": "TEMPLATE",
+  "_fieldGuide": {
+    "entities[]": {
+      "term": "Business term",
+      "definition": "One-sentence definition",
+      "codeName": "Suggested code name",
+      "forbiddenSynonyms": "Synonyms that must not be mixed in",
+      "reference": "Source: vision / spec / task ID"
+    },
+    "verbs[]": {
+      "verb": "Business action",
+      "definition": "One-sentence definition",
+      "codeName": "Suggested code name",
+      "context": "Usage context",
+      "reference": "Source"
+    },
+    "utilities[]": {
+      "name": "Utility name",
+      "path": "File path",
+      "purpose": "Purpose",
+      "replaces": "Original API or old utility it replaces"
+    },
+    "components[]": {
+      "name": "Component name",
+      "path": "File path",
+      "purpose": "Purpose"
     }
-  ],
-  "verbs": [
-    {
-      "verb": "[Business Action]",
-      "definition": "[One-line definition]",
-      "codeName": "[camelCase]",
-      "context": "[Usage scenario]",
-      "reference": "[Source]"
-    }
-  ],
-  "utilities": [
-    {
-      "name": "[Utility name, e.g., logger]",
-      "path": "[File path, e.g., src/utils/logger.ts]",
-      "purpose": "[Purpose description]",
-      "replaces": "[Original API being replaced, e.g., console.log]"
-    }
-  ],
-  "components (ui projects only)": [
-    {
-      "name": "[Component name]",
-      "path": "[File path]",
-      "purpose": "[Purpose description]"
-    }
-  ]
+  },
+  "entities": [],
+  "verbs": [],
+  "utilities": [],
+  "components": []
 }
