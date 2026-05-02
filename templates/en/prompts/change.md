@@ -29,7 +29,7 @@ When reading user input, determine what they really want to do.
 |---|---|---|---|
 | Fix a bug / behavior anomaly / error / crash / not as expected | **fix** | Fix / error / crash / anomaly / wrong / problem / won't run | "Login redirect has problem", "FEAT-A throws NPE", "List not refreshing" |
 | Add requirements to a task / change spec / adjust scope or boundaries | **edit** | Add / supplement / change requirements / adjust scope / change spec / boundary | "Add dark mode to FEAT-A", "Change max length limit", "Add an edge case" |
-| Change project direction / tech stack / architecture / global conventions / cross-task constraints | **revise** | Global / architecture / tech stack / cross-task / switch to X / refactor overall | "Globally change error code format", "Switch to React 19", "Adjust directory structure" |
+| Change project direction / tech stack / architecture / global conventions / cross-task constraints | **revise** | Global / architecture / tech stack / cross-task / switch to X / refactor overall | "Globally change error code format", "Switch to React 19", "Unify directory structure conventions" |
 
 **Decision Priority** (High → Low):
 
@@ -48,6 +48,7 @@ When reading user input, determine what they really want to do.
 
 Description doesn't resemble bug, spec adjustment, or architecture / global change:
 - "Create new feature / add new task / write new requirements" → /archi.plan
+- "Split existing files / code too concentrated / reorganize modules" when it proposes a new refactor task rather than changing global architecture rules → /archi.plan
 - "Implement planned task / start coding" → /archi.code <ID>
 - "Review / health check / check code / map sync" → /archi.review
 </step_1_route>

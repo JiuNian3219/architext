@@ -75,6 +75,15 @@ Only executed when Step 2 finds "Required" or "Can supplement" level gaps. Quest
 - If a candidate task is expected to touch >6 new files/modules, >2 different concerns (data/API/UI/auth/sync/import-export, etc.), or cannot fit in one implementation session, it must split further.
 - Even when the user gives only one natural-language sentence, first estimate scope and output split rationale; do not skip planning by creating one task document directory.
 
+**Refactor Granularity Exception**:
+- If the goal is "split existing files / reorganize directories / adjust module boundaries / code too concentrated / CSS modules / split server", it is still a new task, but do not split roadmap by each file, component, or directory.
+- Decompose only appends evaluated tasks to roadmap; implementation steps move down into later `/archi.plan <ID>` detail `plan.json`.
+- Refactor tasks split by independent delivery value, independent verification boundary, and risk isolation; evaluate first, then decide count. Do not use a fixed numeric rule.
+- Small structure cleanup should tend to merge into one roadmap task. Split into multiple roadmap tasks only when frontend/backend/styles/data migration have clear independent acceptance, independent risk, or independent release ordering.
+- Components/constants/utilities/styles from the same existing large frontend file usually merge into one frontend structure refactor task; backend routes/services/utils usually merge into one backend structure refactor task; styles become separate only when risk or migration size is independent.
+- Do not output pure step tasks such as "create directories", "extract constants", "extract utilities", or "split one component" as roadmap tasks; those belong in later detail `plan.json`.
+- Example: `main.jsx + server.js + styles.css are too concentrated and need splitting` -> evaluate actual scope first; if it is only small-file cleanup, one `code structure split` task may be enough; if frontend and backend risks and acceptance are clearly independent, split into `frontend structure refactor` and `backend structure refactor`; style becomes separate only when its independent risk is obvious.
+
 **Display format** (Convert Skill output to following format, present to user and wait for confirmation):
 
 ```

@@ -396,6 +396,35 @@ describe("Scaffolder Integration", () => {
     expect(detail).toContain("不得在 detail 中拆分任务");
   });
 
+  it("decompose 对重构类需求应基于交付和验证边界拆分 roadmap 任务", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await scaffold(config);
+
+    const decompose = await fs.readFile(
+      path.join(tempDir, ".architext/prompts/plan/decompose.md"),
+      "utf-8",
+    );
+    expect(decompose).toContain(
+      "decompose 只负责在 roadmap 上追加经过评估后的任务",
+    );
+    expect(decompose).toContain("先评估再决定数量");
+    expect(decompose).toContain("不使用固定数字规则");
+    expect(decompose).toContain("这些应写进后续 detail 的 plan.json");
+
+    const skill = await fs.readFile(
+      path.join(tempDir, ".cursor/skills/archi-decompose-roadmap/SKILL.md"),
+      "utf-8",
+    );
+    expect(skill).toContain("每个 roadmap task 必须有独立交付价值");
+    expect(skill).toContain("不要因为涉及多个文件、目录或组件就机械拆分");
+  });
+
   it("不生成 Brief 时不应创建 brief-assets 目录", async () => {
     const config: InitConfig = {
       language: "zh",

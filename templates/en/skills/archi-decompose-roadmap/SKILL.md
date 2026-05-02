@@ -49,6 +49,23 @@ Output must include `effortJudgment`: `conclusion`, `rationale`, and `splitSigna
 
 ---
 
+## Refactor Task Granularity
+
+Signals: split existing files, reorganize directories, adjust module boundaries, code too concentrated, CSS modules, split server.
+
+These requests still enter `/archi.plan` decompose, but they are not greenfield feature planning. Decompose only appends a few tasks to roadmap; how to split files, create directories, migrate components, and update imports belongs in later detail `plan.json`.
+
+Split basis:
+- Each roadmap task must have independent delivery value, independent acceptance, or risk that needs separate isolation
+- Small structure cleanup should tend to merge; do not mechanically split just because multiple files, directories, or components are involved
+- Frontend, backend, styles, data migration, and similar areas split only when verification risk, dependency order, or release boundary is clearly different
+
+Do not output these as roadmap tasks: create directories, extract constants, extract utilities, split one individual component, migrate one CSS file. These are implementation steps for later `/archi.plan <ID>` detail `plan.json`.
+
+Before output, explain why each item is a roadmap task rather than an implementation step in detail `plan.json`. If it is only "a few files are too concentrated and should be split", usually produce very few tasks; if it is genuinely large refactor work, more tasks are allowed, but each must be justified by independent delivery / independent acceptance / risk isolation.
+
+---
+
 ## Decomposition Framework
 
 ### Step 0 · Project Type + Slice Strategy
@@ -251,6 +268,7 @@ Brief has design decisions → Inject into goal: `[User Preset] <content>`, same
 ## Output Verification
 
 - [ ] Output includes `effortJudgment` with single-task / multi-task judgment and split rationale
+- [ ] Refactor requirements are not mechanically split by file/component/directory/step; each roadmap task has independent delivery, independent acceptance, or risk-isolation rationale
 - [ ] `roadmap.json` has valid `tasks[]` flat array + `nfr[]`
 - [ ] Each Task passes four baselines + granularity verification checklist
 - [ ] Each FEAT's goal contains: Verification + Boundary (with Task ID) + Implementation hints + `[TEST]` (specific scenarios)
