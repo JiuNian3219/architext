@@ -157,13 +157,21 @@
     □ Terminal Gate — npx archi render successful
     □ Terminal Gate — npx archi task <ID> --status done executed
 
+    **Next-Step Gate**:
+    - After current `<ID>` is complete, the primary recommendation is always `/archi.review <ID>` to review the implementation just finished.
+    - When checking subsequent roadmap tasks, distinguish "needs planning" from "ready to implement":
+      - Only exists in `roadmap.json`, status is `pending`, or missing `tasks/<NEXT_ID>_*/spec.md` / `plan.json` -> recommend only `/archi.plan <NEXT_ID>`.
+      - Recommend `/archi.code <NEXT_ID>` only when the subsequent task is `active`, `spec.md` / `plan.json` exist, and `npx archi plan <NEXT_ID>` passes.
+    - Never turn "next pending task" into `/archi.code <NEXT_ID>`; a task without detail docs cannot enter code.
+
     **Output**: Completion summary, including completed tasks, exempt items (if any), Next Steps:
 
     | Priority | Action | Description |
     |:---|:---|:---|
     | Recommended | `/archi.review <ID>` | Independent review of implementation |
     | (When Spec Drift) | `/archi.change <ID>` | Update docs before continuing |
-    | (When subsequent pending tasks) | `/archi.plan <next pending ID>` | Plan next task |
+    | (When subsequent task is not planned yet) | `/archi.plan <next pending ID>` | Generate spec / plan for that task first |
+    | (When subsequent task is active and docs complete) | `/archi.code <next active ID>` | Continue implementing an already planned task |
 </step_6_signoff>
 
 </protocol_code>

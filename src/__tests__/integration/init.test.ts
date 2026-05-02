@@ -425,6 +425,28 @@ describe("Scaffolder Integration", () => {
     expect(skill).toContain("不要因为涉及多个文件、目录或组件就机械拆分");
   });
 
+  it("code 完成后不应把未规划的 pending task 推荐为 code", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await scaffold(config);
+
+    const code = await fs.readFile(
+      path.join(tempDir, ".cursor/commands/archi.code.md"),
+      "utf-8",
+    );
+    expect(code).toContain("Next-Step Gate");
+    expect(code).toContain("只能推荐 `/archi.plan <NEXT_ID>`");
+    expect(code).toContain(
+      "禁止把“下一个 pending task”写成 `/archi.code <NEXT_ID>`",
+    );
+    expect(code).toContain("后续任务已 active 且文档完整时");
+  });
+
   it("不生成 Brief 时不应创建 brief-assets 目录", async () => {
     const config: InitConfig = {
       language: "zh",

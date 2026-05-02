@@ -157,13 +157,21 @@
     □ Terminal Gate — npx archi render 成功
     □ Terminal Gate — npx archi task <ID> --status done 已执行
 
+    **Next-Step Gate**:
+    - 当前 `<ID>` 完成后，首要推荐永远是 `/archi.review <ID>`，先审查刚完成的实现。
+    - 检查后续 roadmap task 时，必须区分“待规划”和“可实现”：
+      - 仅存在于 `roadmap.json`、状态为 `pending`、或缺少 `tasks/<NEXT_ID>_*/spec.md` / `plan.json` → 只能推荐 `/archi.plan <NEXT_ID>`。
+      - 只有后续 task 状态为 `active`，且 `spec.md` / `plan.json` 已存在并通过 `npx archi plan <NEXT_ID>`，才允许推荐 `/archi.code <NEXT_ID>`。
+    - 禁止把“下一个 pending task”写成 `/archi.code <NEXT_ID>`；未 detail 的 task 不能进入 code。
+
     **Output**: 完成摘要，含已完成任务、豁免项(如有)、Next Steps：
 
     | 优先级 | 动作 | 说明 |
     |:---|:---|:---|
     | 推荐 | `/archi.review <ID>` | 对实现做独立审查 |
     | （有 Spec 漂移时） | `/archi.change <ID>` | 先更新文档再继续 |
-    | （有后续 pending 任务时） | `/archi.plan <下一个 pending ID>` | 规划下一个任务 |
+    | （有后续未规划任务时） | `/archi.plan <下一个 pending ID>` | 先生成该任务 spec / plan |
+    | （后续任务已 active 且文档完整时） | `/archi.code <下一个 active ID>` | 继续实现已规划任务 |
 </step_6_signoff>
 
 </protocol_code>
