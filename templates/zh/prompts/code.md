@@ -21,13 +21,24 @@
     **Action**:
     0.  **Context Pack Gate**: 优先消费 `00_system.md` Front Pipeline 产出的 Context Pack；缺失则先补齐。若 `missing_or_stale` 非空，先处理缺口或向用户说明。
     1.  **Resolve ID**: 从 Context Pack / roadmap.json 解析 `<id>` → Task Name、Slug、阶段/状态。
-    2.  **Status Gate** — 仅 `active` 可进入 code 流程:
+    2.  **Status Gate** — 仅 `active` 可直接进入 code 流程。若状态看似阻塞，先做状态校准，避免把“状态未同步”误判为“任务未完成”:
+
+[[SUBAGENT: archi-task-state-reconcile | 当 `<ID>` 为 `pending` 或 `blocked`，或其 deps 未 done 时，按 mode=`target_active` 检查目标任务是否已完成 detail / 前置是否只是状态滞后。只返回 JSON 报告，不修改状态。]]
+[[NO-SUBAGENT: archi-task-state-reconcile | 当 `<ID>` 为 `pending` 或 `blocked`，或其 deps 未 done 时，读取 `[[__DOCS_DIR__]]/skills/archi-task-state-reconcile/SKILL.md`，按 mode=`target_active` 在当前上下文执行；只返回 JSON 报告，不修改状态。]]
+[[NO-SKILL: 当 `<ID>` 为 `pending` 或 `blocked`，或其 deps 未 done 时，先手动检查 `roadmap.json`、`tasks/<ID>_*/spec.md`、`tasks/<ID>_*/plan.json`、`npx archi plan <ID>` 和 `npx archi task --check`。证据显示只是状态滞后时，先运行推荐的 `npx archi task <ID> --status active/done` 后再重试；证据不足才拒绝。]]
+
+        **Reconcile Handling**:
+        - `status_stale_active` → 运行报告中的推荐命令（通常为 `npx archi task <ID> --status active`），再重新执行 Status Gate。
+        - deps 返回 `status_stale_done` → 对对应 dep 运行推荐命令（通常为 `npx archi task <DEP_ID> --status done`），再重新执行 Status Gate。
+        - `needs_plan` → 拒绝 code，提示先运行 `/archi.plan <ID>`。
+        - `actually_incomplete` / `blocked` → 拒绝 code，并输出证据。
+        - `inconclusive` → 不猜测，向用户说明需人工确认或补跑检查。
 
         | 状态 | 处理 |
         |:---|:---|
         | `active` | 通过，继续 |
-        | `pending` | 拒绝 — 提示先运行 `/archi.plan <ID>` |
-        | `blocked` | 拒绝 — 前置依赖未完成 |
+        | `pending` | 先执行 Reconcile；若仍为 pending，则拒绝 — 提示先运行 `/archi.plan <ID>` |
+        | `blocked` | 先执行 Reconcile；若仍为 blocked，则拒绝 — 前置依赖未完成 |
         | `done` | 拒绝 — 已完成，如需修改用 `/archi.change <ID>` |
 
     3.  **Load**: task docs (spec[[WHEN: ui | /ui ]]/design/plan) + project context (tech_stack[[WHEN: ui | /design_tokens/ui_context/screens]][[WHEN: data | /data_snapshot]][[WHEN: api | /api_snapshot]][[WHEN: cli | /command_api]][[WHEN: lib | /public_api]]) + refs（按 tags 匹配，仅读命中文件）。

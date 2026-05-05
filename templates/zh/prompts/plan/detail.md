@@ -16,7 +16,12 @@
 </meta>
 
 <step_1_load>
-1. **Pre-flight**: 读取 roadmap.json，仅读 `<ID>` 条目及直接 deps 的 `id/title/status`；deps 未完成则拒绝（除非用户强制）。
+1. **Pre-flight**: 读取 roadmap.json，仅读 `<ID>` 条目及直接 deps 的 `id/title/status`；deps 未完成时先做状态校准，不要直接拒绝。
+   [[SUBAGENT: archi-task-state-reconcile | 对每个未 done 的直接 dep 运行 mode=`dependency_done`，判断是否只是状态滞后；只返回 JSON 报告，不修改状态。]]
+   [[NO-SUBAGENT: archi-task-state-reconcile | 对每个未 done 的直接 dep，读取 `[[__DOCS_DIR__]]/skills/archi-task-state-reconcile/SKILL.md` 并按 mode=`dependency_done` 内联执行；只返回 JSON 报告，不修改状态。]]
+   [[NO-SKILL: 对每个未 done 的直接 dep，手动检查 dep 的 `spec.md`、`plan.json`、`npx archi plan <DEP_ID>` 和 `npx archi task --check`。证据显示已完成但状态滞后时，先运行 `npx archi task <DEP_ID> --status done` 后重试；证据不足才拒绝。]]
+   - dep 返回 `status_stale_done` → 运行推荐命令，再重读 roadmap；若已解锁则继续。
+   - dep 返回 `actually_incomplete` / `blocked` / `inconclusive` → 拒绝并输出证据；除非用户明确强制。
 2. **Load**: 读取项目上下文（vision、tech_stack、按需读取 feature 相关 JSON），详见 00_system.md 数据治理规则。
 3. **Dependency Context** (有依赖时): 仅读依赖任务 spec.md 的 Interface/Type 段；无引用时跳过。Stub 依赖 → 从关联文件提取源码公共接口。
 4. **Refs** (如有): 读 refs/index.json，按 tags 语义匹配，仅读命中 ref 文件；不存在则跳过。

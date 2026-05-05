@@ -121,6 +121,7 @@ export const FILE_MODELS: FileModel[] = [
       "archi-interview-protocol",
       "archi-plan-options",
       "archi-silent-audit",
+      "archi-task-state-reconcile",
       "archi-ui-wireframe",
     ],
     docTemplates: [
@@ -178,6 +179,7 @@ export const FILE_MODELS: FileModel[] = [
       "archi-interview-protocol",
       "archi-plan-options",
       "archi-silent-audit",
+      "archi-task-state-reconcile",
       "archi-ui-wireframe",
     ],
     docTemplates: [

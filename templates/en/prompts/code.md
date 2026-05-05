@@ -21,13 +21,24 @@
     **Action**:
     0.  **Context Pack Gate**: Prioritize consuming Context Pack produced by `00_system.md` Front Pipeline; if missing, fill it first. If `missing_or_stale` is non-empty, handle gaps first or explain to user.
     1.  **Resolve ID**: Parse `<id>` from Context Pack / roadmap.json → Task Name, Slug, phase/status.
-    2.  **Status Gate** — Only `active` can enter code flow:
+    2.  **Status Gate** — Only `active` can directly enter code flow. If status appears blocked, reconcile first so stale status is not mistaken for unfinished work:
+
+[[SUBAGENT: archi-task-state-reconcile | When `<ID>` is `pending` or `blocked`, or its deps are not done, run mode=`target_active` to check whether target detail is ready / deps are merely stale. Return only JSON report; do not mutate status.]]
+[[NO-SUBAGENT: archi-task-state-reconcile | When `<ID>` is `pending` or `blocked`, or its deps are not done, read `[[__DOCS_DIR__]]/skills/archi-task-state-reconcile/SKILL.md` and execute mode=`target_active` inline. Return only JSON report; do not mutate status.]]
+[[NO-SKILL: When `<ID>` is `pending` or `blocked`, or its deps are not done, manually check `roadmap.json`, `tasks/<ID>_*/spec.md`, `tasks/<ID>_*/plan.json`, `npx archi plan <ID>`, and `npx archi task --check`. If evidence shows stale status, run the recommended `npx archi task <ID> --status active/done` before retrying; refuse only when evidence is insufficient.]]
+
+        **Reconcile Handling**:
+        - `status_stale_active` → run the report's recommended command (usually `npx archi task <ID> --status active`), then re-run Status Gate.
+        - deps returning `status_stale_done` → run the recommended command for each dep (usually `npx archi task <DEP_ID> --status done`), then re-run Status Gate.
+        - `needs_plan` → refuse code and prompt `/archi.plan <ID>` first.
+        - `actually_incomplete` / `blocked` → refuse code with evidence.
+        - `inconclusive` → do not guess; explain that manual confirmation or checks are needed.
 
         | Status | Handling |
         |:---|:---|
         | `active` | Pass, continue |
-        | `pending` | Reject — prompt to run `/archi.plan <ID>` first |
-        | `blocked` | Reject — prerequisite dependencies not completed |
+        | `pending` | Run Reconcile first; if still pending, reject — prompt to run `/archi.plan <ID>` first |
+        | `blocked` | Run Reconcile first; if still blocked, reject — prerequisite dependencies not completed |
         | `done` | Reject — already completed; use `/archi.change <ID>` if modification needed |
 
     3.  **Load**: task docs (spec[[WHEN: ui | /ui ]]/design/plan) + project context (tech_stack[[WHEN: ui | /design_tokens/ui_context/screens]][[WHEN: data | /data_snapshot]][[WHEN: api | /api_snapshot]][[WHEN: cli | /command_api]][[WHEN: lib | /public_api]]) + refs (match by tags, only read hit files).

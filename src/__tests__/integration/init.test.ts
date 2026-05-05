@@ -169,6 +169,15 @@ describe("Scaffolder Integration", () => {
     const content = await fs.readFile(skillFile, "utf-8");
     expect(content).toContain("name: archi-decompose-roadmap");
     expect(content).toContain("description:");
+
+    const reconcileSkill = path.join(
+      tempDir,
+      ".cursor/skills/archi-task-state-reconcile/SKILL.md",
+    );
+    expect(await fs.pathExists(reconcileSkill)).toBe(true);
+    const reconcileContent = await fs.readFile(reconcileSkill, "utf-8");
+    expect(reconcileContent).toContain("name: archi-task-state-reconcile");
+    expect(reconcileContent).toContain("Must run in isolated context/subagent");
   });
 
   it("Skills 文件不应包含未替换的占位符", async () => {
@@ -445,6 +454,33 @@ describe("Scaffolder Integration", () => {
       "禁止把“下一个 pending task”写成 `/archi.code <NEXT_ID>`",
     );
     expect(code).toContain("后续任务已 active 且文档完整时");
+  });
+
+  it("code 和 plan detail 应在状态阻塞时先调用状态校准 skill", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await scaffold(config);
+
+    const code = await fs.readFile(
+      path.join(tempDir, ".cursor/commands/archi.code.md"),
+      "utf-8",
+    );
+    expect(code).toContain("archi-task-state-reconcile");
+    expect(code).toContain("状态未同步");
+    expect(code).toContain("status_stale_active");
+
+    const detail = await fs.readFile(
+      path.join(tempDir, ".architext/prompts/plan/detail.md"),
+      "utf-8",
+    );
+    expect(detail).toContain("archi-task-state-reconcile");
+    expect(detail).toContain("mode=`dependency_done`");
+    expect(detail).toContain("status_stale_done");
   });
 
   it("不生成 Brief 时不应创建 brief-assets 目录", async () => {
