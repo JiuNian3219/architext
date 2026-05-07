@@ -483,6 +483,26 @@ describe("Scaffolder Integration", () => {
     expect(detail).toContain("status_stale_done");
   });
 
+  it("help 不应把缺少 spec 或 plan 的任务推荐为 code", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await scaffold(config);
+
+    const help = await fs.readFile(
+      path.join(tempDir, ".cursor/commands/archi.help.md"),
+      "utf-8",
+    );
+    expect(help).toContain("Next-Step Readiness Gate");
+    expect(help).toContain("不能推荐 `/archi.code <ID>`");
+    expect(help).toContain("推荐动作必须是 `/archi.plan <ID>`");
+    expect(help).toContain("有 pending 任务且依赖已 done 但缺 spec/plan");
+  });
+
   it("不生成 Brief 时不应创建 brief-assets 目录", async () => {
     const config: InitConfig = {
       language: "zh",

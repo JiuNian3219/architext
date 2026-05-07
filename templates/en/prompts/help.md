@@ -35,19 +35,26 @@
 
 <step_3_navigate>
     **Action**:
-    1.  **Determine project phase**:
+    1.  **Next-Step Readiness Gate**:
+        - Recommend `/archi.code <ID>` only for a task that is ready to implement: `roadmap.status = active`, and both `tasks/<ID>_*/spec.md` and `plan.json` exist.
+        - If a task is `pending`, `blocked`, or missing `spec.md` / `plan.json`, do not recommend `/archi.code <ID>`, even when dependencies are done.
+        - If output says "need to create spec.md / plan.json / complete planning docs first", the recommended action must be `/archi.plan <ID>`.
+        - Never recommend `/archi.code <ID>` in the same item that says `spec.md` / `plan.json` must be created first.
+
+    2.  **Determine project phase**:
 
         | Signal | Phase | Suggestion |
         |:---|:---|:---|
         | roadmap.json does not exist | Not initialized | New project → `/archi.init`; existing code → `/archi.init` |
         | Has roadmap but no Task directory | Started, not planned | `/archi.plan` to plan new tasks |
         | Has Legacy stub (Spec-Status: Stub) | Inherited, not filled | `/archi.change LEG-xx` to fill spec |
-        | Has active task and plan.json complete | Can code | `/archi.code <ID>` |
+        | Has active task and spec.md + plan.json complete | Can code | `/archi.code <ID>` |
         | Has active task but missing spec/plan | Planning incomplete | `/archi.plan <ID>` to complete |
+        | Has pending task with deps done but missing spec/plan | Needs planning | `/archi.plan <ID>` to generate spec / plan |
         | All tasks done | Completed | `/archi.plan` to plan new tasks or release |
         | Has blocked tasks | Has blockers | Prompt block reason and prerequisite dependencies |
 
-    2.  **Output**: One-sentence state summary + recommended next step (with command) + optional paths (≤3, by priority).
+    3.  **Output**: One-sentence state summary + recommended next step (with command) + optional paths (≤3, by priority).
 </step_3_navigate>
 
 <step_4_answer>
