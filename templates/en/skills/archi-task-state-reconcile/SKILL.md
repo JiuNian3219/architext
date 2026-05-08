@@ -66,6 +66,8 @@ Otherwise:
 
 Output only one JSON code block. No explanatory prose.
 
+**Return-Control Contract**: This Skill JSON is input to the calling protocol's Status Gate, not the final reply. After receiving it, the main agent must continue the original protocol according to `main_agent_next_step`: run the recommended status command and re-check, refuse with evidence, or ask the user; do not stop at the JSON report.
+
 ```json
 {
   "task_state_reconcile_version": 1,

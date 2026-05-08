@@ -66,6 +66,8 @@ disable-model-invocation: true
 
 只输出一个 JSON 代码块，不输出解释性正文。
 
+**Return-Control Contract**: 本 Skill 的 JSON 是调用协议 Status Gate 的输入，不是最终回复。主 agent 收到结果后必须按 `main_agent_next_step` 继续原协议：运行推荐状态命令并重检、带证据拒绝、或向用户澄清；不得停在 JSON 报告。
+
 ```json
 {
   "task_state_reconcile_version": 1,

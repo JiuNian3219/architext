@@ -8,6 +8,7 @@
 		<principles>
 			Deterministic First: Prioritize objective signals from working directory to judge, do not infer intent from `[args]` natural language.
 			Explicit Routing: Judgment result must be explicitly output (user can interrupt), do not silently jump.
+			Dispatch-Continuation: After outputting the routing decision, immediately read and execute the target subprotocol; "this file exits" only means the router no longer participates, not that the turn stops.
 		</principles>
 </meta>
 
@@ -54,6 +55,6 @@ When step_1 hits a route, explicitly output decision: `Route judgment: <mode>; B
 <step_3_dispatch>
 1. Read `[[__DOCS_DIR__]]/prompts/init/<mode>.md` content
 2. Extract subprotocol required parameters from `[args]` (brief_path / pack-file-path etc) and inject into context
-3. Continue executing subprotocol as current active protocol; this file exits
+3. Continue executing subprotocol as current active protocol; this file exits; do not end the turn after only outputting the routing decision
 </step_3_dispatch>
 </protocol_init_router>

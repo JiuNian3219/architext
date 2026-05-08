@@ -27,6 +27,10 @@ Read minimally necessary Architext documents based on `Intent Card`, produce str
 
 Only output one JSON code block, no explanatory body text.
 
+**Continuation Contract**: This Skill output is only Front Pipeline step 2. After the main agent receives the Context Pack, if `missing_or_stale` is empty or contains only non-blocking notes, it must continue to load and execute the protocol pointed to by `next_context_action` / Intent Card; do not treat the Context Pack as the final reply.
+
+`risk_flags` are later protocol Gate inputs, not Front Pipeline stop markers. Stop to explain to the user only when `missing_or_stale` explicitly blocks execution, clarification is required, or a safety Gate must be shown first.
+
 ```json
 {
   "context_pack_version": 1,

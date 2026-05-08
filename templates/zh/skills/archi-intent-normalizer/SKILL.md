@@ -27,6 +27,10 @@ description: Normalize a user request into an Architext Intent Card before comma
 
 只输出一个 JSON 代码块，不输出解释性正文。
 
+**Continuation Contract**: 本 Skill 的输出只是 Front Pipeline 的第 1 步。主 agent 收到 Intent Card 后，若 `confidence >= 0.75` 且 `ambiguities` 为空，必须继续执行 `archi-context-fetch`，再加载 `recommended_next_action` 指向的协议；不得把 Intent Card 当作最终回复。
+
+`requires_user_confirmation` 是后续协议 Gate 标记，不是 Front Pipeline 停止标记。除删除、覆盖、安装依赖、恢复 pack 或跨任务全局变更等安全场景外，路由型 Intent Card 应保持 `requires_user_confirmation: false`。
+
 ```json
 {
   "intent_card_version": 1,

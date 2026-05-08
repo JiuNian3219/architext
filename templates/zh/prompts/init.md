@@ -8,6 +8,7 @@
 	<principles>
 		Deterministic First: 优先用工作目录的客观信号判断，禁从 `[args]` 自然语言推测意图。
 		Explicit Routing: 判断结果显性输出（用户可中断），禁静默跳转。
+		Dispatch-Continuation: 输出路由决策后必须立即读取并执行目标子协议；“本文件退出”只表示 router 不再参与，不表示本轮停止。
 	</principles>
 </meta>
 
@@ -54,6 +55,6 @@ step_1 命中路由时显性输出决策：`判断路由：<mode>；依据：<�
 <step_3_dispatch>
 1. 读取 `[[__DOCS_DIR__]]/prompts/init/<mode>.md` 内容
 2. 从 `[args]` 提取子协议所需参数（brief_path / pack-file-path 等）注入上下文
-3. 将子协议作为当前 active protocol 继续执行；本文件退出
+3. 将子协议作为当前 active protocol 继续执行；本文件退出；禁止在只输出路由决策后结束本轮
 </step_3_dispatch>
 </protocol_init_router>

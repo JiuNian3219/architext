@@ -9,7 +9,7 @@
     1. **Intent + Context First**: Prioritize consuming Intent Card and Context Pack; explicit parameters then use "parameter form + roadmap existence" for judgment.
     2. **Explicit Routing**: Judgment result must be explicitly output (user can interrupt), do not silently jump.
     3. **Single-Layer Dispatch**: This file does not embed any planning logic, subprotocol upgrades do not affect this file.
-    4. **Self-Terminating**: After dispatch this file exits, does not participate in subprotocol execution.
+    4. **Dispatch-Continuation**: After outputting the routing decision, immediately read and execute the target subprotocol; "this file exits" only means the router no longer participates, not that the turn stops.
   </principles>
 </meta>
 
@@ -52,6 +52,6 @@ Subprotocol: `plan/<decompose|detail>.md`
 1. Read `[[__DOCS_DIR__]]/prompts/plan/<mode>.md` content
 2. Extract subprotocol required parameters from `[arg] [context]` (ID / file_path / natural language requirement), inject into context
 3. Continue executing subprotocol as current active protocol
-4. This file exits, no longer participates in subsequent flow
+4. This file exits, no longer participates in subsequent flow; do not end the turn after only outputting the routing decision
 </step_3_dispatch>
 </protocol_plan_router>

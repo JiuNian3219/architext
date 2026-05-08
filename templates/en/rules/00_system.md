@@ -51,6 +51,11 @@ Natural language entry must execute in order:
 2. **Context Fetch**: Generate Context Pack based on Intent Card.
 3. **Protocol Dispatch**: Load corresponding `/archi.*` protocol.
 
+**Continuation Guard**:
+- Intent Card and Context Pack are intermediate artifacts, not final replies; unless `confidence < 0.75`, `ambiguities` exist, or Context Pack `missing_or_stale` explicitly blocks execution, do not stop after either intermediate artifact.
+- `requires_user_confirmation` only means the later protocol's write/delete/overwrite/dependency-install/global-change Gate needs user confirmation; it does not block Front Pipeline from continuing to Context Fetch and Protocol Dispatch.
+- When Intent Card `recommended_next_action` points to a protocol, immediately continue with the next steps: Context Fetch first, then load that protocol.
+
 Auto-call boundary:
 - Only `archi-intent-normalizer` and `archi-context-fetch` belong to Front Pipeline auto-pre-call.
 - Other `archi-*` skills can only be explicitly called via `[[SUBAGENT]]` / `[[SKILL]]` in `/archi.*` protocols, model cannot auto-trigger based on skill description alone.

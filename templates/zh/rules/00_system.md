@@ -51,6 +51,11 @@ alwaysApply: true
 2. **Context Fetch**: 基于 Intent Card 生成 Context Pack。
 3. **Protocol Dispatch**: 加载对应 `/archi.*` 协议。
 
+**Continuation Guard**:
+- Intent Card 和 Context Pack 都是中间产物，不是最终回复；除非 `confidence < 0.75`、存在 `ambiguities`，或 Context Pack 的 `missing_or_stale` 明确阻塞，否则禁止在任一中间产物后停止。
+- `requires_user_confirmation` 只表示后续协议的写入、删除、覆盖、安装依赖或全局变更 Gate 需要用户确认；它不阻止 Front Pipeline 继续执行 Context Fetch 和 Protocol Dispatch。
+- 当 Intent Card 的 `recommended_next_action` 指向某个协议时，必须立即继续执行下一步：先 Context Fetch，再加载该协议。
+
 自动调用边界：
 - 只有 `archi-intent-normalizer` 和 `archi-context-fetch` 属于 Front Pipeline 自动前置调用。
 - 其它 `archi-*` skills 只能由 `/archi.*` 协议中的 `[[SUBAGENT]]` / `[[SKILL]]` 显式调用，禁止模型仅根据 skill description 自行触发。

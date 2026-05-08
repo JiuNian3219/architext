@@ -27,6 +27,10 @@ description: Fetch minimal Architext documentation context after an Intent Card.
 
 只输出一个 JSON 代码块，不输出解释性正文。
 
+**Continuation Contract**: 本 Skill 的输出只是 Front Pipeline 的第 2 步。主 agent 收到 Context Pack 后，若 `missing_or_stale` 为空或仅含非阻塞提示，必须继续加载并执行 `next_context_action` / Intent Card 指向的协议；不得把 Context Pack 当作最终回复。
+
+`risk_flags` 是后续协议 Gate 输入，不是 Front Pipeline 停止标记。只有 `missing_or_stale` 明确阻塞、需要澄清或安全 Gate 必须先展示时，才停下向用户说明。
+
 ```json
 {
   "context_pack_version": 1,

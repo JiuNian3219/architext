@@ -405,6 +405,74 @@ describe("Scaffolder Integration", () => {
     expect(detail).toContain("不得在 detail 中拆分任务");
   });
 
+  it("Front Pipeline 中间产物不应被当作最终回复", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await scaffold(config);
+
+    const systemRule = await fs.readFile(
+      path.join(tempDir, ".cursor/rules/00_system.mdc"),
+      "utf-8",
+    );
+    expect(systemRule).toContain("Continuation Guard");
+    expect(systemRule).toContain("Intent Card 和 Context Pack 都是中间产物");
+    expect(systemRule).toContain(
+      "不阻止 Front Pipeline 继续执行 Context Fetch",
+    );
+
+    const normalizer = await fs.readFile(
+      path.join(tempDir, ".cursor/skills/archi-intent-normalizer/SKILL.md"),
+      "utf-8",
+    );
+    expect(normalizer).toContain("Continuation Contract");
+    expect(normalizer).toContain("不得把 Intent Card 当作最终回复");
+
+    const contextFetch = await fs.readFile(
+      path.join(tempDir, ".cursor/skills/archi-context-fetch/SKILL.md"),
+      "utf-8",
+    );
+    expect(contextFetch).toContain("Continuation Contract");
+    expect(contextFetch).toContain("不得把 Context Pack 当作最终回复");
+
+    const planRouter = await fs.readFile(
+      path.join(tempDir, ".cursor/commands/archi.plan.md"),
+      "utf-8",
+    );
+    expect(planRouter).toContain("Dispatch-Continuation");
+    expect(planRouter).toContain("禁止在只输出路由决策后结束本轮");
+
+    const initRouter = await fs.readFile(
+      path.join(tempDir, ".cursor/commands/archi.init.md"),
+      "utf-8",
+    );
+    expect(initRouter).toContain("Dispatch-Continuation");
+    expect(initRouter).toContain("禁止在只输出路由决策后结束本轮");
+  });
+
+  it("状态校准 Skill 输出后应回到调用协议继续执行", async () => {
+    const config: InitConfig = {
+      language: "zh",
+      docDir: ".architext",
+      editors: ["cursor"],
+      features: [],
+    };
+
+    await scaffold(config);
+
+    const reconcile = await fs.readFile(
+      path.join(tempDir, ".cursor/skills/archi-task-state-reconcile/SKILL.md"),
+      "utf-8",
+    );
+    expect(reconcile).toContain("Return-Control Contract");
+    expect(reconcile).toContain("不是最终回复");
+    expect(reconcile).toContain("不得停在 JSON 报告");
+  });
+
   it("decompose 对重构类需求应基于交付和验证边界拆分 roadmap 任务", async () => {
     const config: InitConfig = {
       language: "zh",

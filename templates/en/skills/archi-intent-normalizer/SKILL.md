@@ -27,6 +27,10 @@ Convert user's original words into structured `Intent Card`. This Skill only doe
 
 Only output one JSON code block, no explanatory body text.
 
+**Continuation Contract**: This Skill output is only Front Pipeline step 1. After the main agent receives the Intent Card, if `confidence >= 0.75` and `ambiguities` is empty, it must continue to `archi-context-fetch`, then load the protocol pointed to by `recommended_next_action`; do not treat the Intent Card as the final reply.
+
+`requires_user_confirmation` is a later protocol Gate marker, not a Front Pipeline stop marker. Except for safety cases such as delete, overwrite, dependency install, pack restore, or cross-task global change, routing Intent Cards should keep `requires_user_confirmation: false`.
+
 ```json
 {
   "intent_card_version": 1,

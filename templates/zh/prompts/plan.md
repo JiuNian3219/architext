@@ -9,7 +9,7 @@
     1. **Intent + Context First**: 优先消费 Intent Card 与 Context Pack；显式参数再用「参数形态 + roadmap 存在性」判定。
     2. **Explicit Routing**: 判断结果必须显性输出（用户可中断），禁静默跳转。
     3. **Single-Layer Dispatch**: 本文件不内嵌任何规划逻辑，子协议升级时本文件不受影响。
-    4. **Self-Terminating**: 分发后本文件退出，不参与子协议执行。
+    4. **Dispatch-Continuation**: 输出路由决策后必须立即读取并执行目标子协议；“本文件退出”只表示 router 不再参与，不表示本轮停止。
   </principles>
 </meta>
 
@@ -52,6 +52,6 @@
 1. 读取 `[[__DOCS_DIR__]]/prompts/plan/<mode>.md` 内容
 2. 从 `[arg] [context]` 提取子协议需要的参数（ID / file_path / 自然语言需求），注入上下文
 3. 将子协议作为当前 active protocol，继续执行
-4. 本文件退出，不再参与后续流程
+4. 本文件退出，不再参与后续流程；禁止在只输出路由决策后结束本轮
 </step_3_dispatch>
 </protocol_plan_router>
