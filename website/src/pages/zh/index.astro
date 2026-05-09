@@ -149,21 +149,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Architext">
 
-  <!-- Preconnect / DNS Prefetch -->
-  <link rel="dns-prefetch" href="//fonts.googleapis.com">
-  <link rel="dns-prefetch" href="//fonts.gstatic.com">
-  <link rel="dns-prefetch" href="//registry.npmjs.org">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
-    fetch('https://registry.npmjs.org/architext/latest')
-      .then(r => r.json())
-      .then(d => {
-        document.getElementById('version').textContent = 'v' + d.version;
-      })
-      .catch(() => {});
-
     // 绘制工作流 Canvas
     (function() {
       const canvas = document.getElementById('workflow-canvas');
@@ -271,9 +257,9 @@
       --text-muted: #6a5a4a;
 
       /* Typography */
-      --font-display: 'Noto Serif SC', 'Noto Serif SC', Georgia, serif;
-      --font-body: 'Noto Sans SC', 'Space Grotesk', -apple-system, sans-serif;
-      --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
+      --font-display: 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'Microsoft YaHei', serif;
+      --font-body: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, -apple-system, sans-serif;
+      --font-mono: 'SF Mono', Consolas, 'Liberation Mono', monospace;
 
       /* Spacing */
       --space-xs: 0.5rem;
@@ -1990,7 +1976,7 @@
 
     <div class="hero-badge">
       <span class="dot"></span>
-      <a href="https://www.npmjs.com/package/architext" target="_blank" id="version" style="color:#86efac;text-decoration:none">v0.0.0</a> · 开源
+      <a href="https://www.npmjs.com/package/architext" target="_blank" id="version" style="color:#86efac;text-decoration:none">v0.0.7</a> · 开源
     </div>
 
     <h1><em>AI 架构</em> 协议</h1>
