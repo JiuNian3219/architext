@@ -3,7 +3,12 @@
 :80 {
     root * /usr/share/caddy
 
-    encode gzip
+    encode zstd gzip
+
+    header /_astro/* Cache-Control "public, max-age=31536000, immutable"
+    header /favicon.svg Cache-Control "public, max-age=86400"
+    header /og-image.png Cache-Control "public, max-age=86400"
+    header /* Cache-Control "public, max-age=300"
 
     file_server
 
