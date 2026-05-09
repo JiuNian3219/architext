@@ -6,7 +6,29 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ---
 
-## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.6...HEAD) / 待发布
+## [Unreleased](https://github.com/JiuNian3219/architext/compare/v0.0.7...HEAD) / 待发布
+
+---
+
+## [0.0.7](https://github.com/JiuNian3219/architext/compare/v0.0.6...v0.0.7) - 2026-05-09
+
+### Added / 新增
+
+- 新增 Continuation 机制，避免协议执行中的中间产物被误当作最终回复。
+- 新增任务状态校准指引与配套 Skill 资产，强化 plan/detail 与 code 阶段的状态门控。
+- 扩展测试覆盖，补充 brief 解析、能力标记解析、IDE 集成、渲染器与 roadmap 行为等场景。
+
+### Changed / 变更
+
+- 重写公开工作流文档，使其贴合当前 `init` / `plan` / `code` / `review` 生命周期。
+- 重组模板资产目录，从旧的 `docs/` 布局调整为部署态的 `global`、`prompts`、`shared`、`skills` 与 `templates` 结构。
+- 优化 prompt 与 rule 表述，增强任务拆分、代码生成、审查和下一步推荐逻辑。
+
+### Fixed / 修复
+
+- 通过刷新 lockfile 修复依赖元数据。
+- 修复任务推荐逻辑，避免未补齐 spec / plan 或尚未规划完成的任务过早进入 code 阶段。
+- 修复 roadmap、渲染器和 scaffold 的若干边界场景，并用新增测试覆盖回归。
 
 ---
 
@@ -154,4 +176,3 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 - 双语文档支持（英文 + 简体中文）/ Bilingual documentation (English + Simplified Chinese)
 - GitHub 社区文件：贡献指南、Issue 模板、PR 模板 / GitHub community files: CONTRIBUTING, issue templates, PR template
 - GitHub Actions CI 与自动发布流程 / GitHub Actions CI and automated release workflow
-
