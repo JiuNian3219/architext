@@ -130,6 +130,8 @@ export function renderRoadmap(
       if (task.description)
         lines.push(`  - 📝 ${t("roadmap.description")}: ${task.description}`);
       if (task.goal) lines.push(`  - 🎯 ${t("roadmap.goal")}: ${task.goal}`);
+      if (task.sourceRef)
+        lines.push(`  - 📌 ${t("roadmap.sourceRef")}: ${task.sourceRef}`);
       if (task.deps && task.deps.length > 0) {
         lines.push(
           `  - 🔗 ${t("roadmap.dep")}: ${task.deps.map((d) => `[${d}]`).join(", ")}`,

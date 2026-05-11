@@ -324,6 +324,9 @@ describe("Scaffolder Integration", () => {
     }
 
     const roadmap = await fs.readJSON(path.join(globalDir, "roadmap.json"));
+    expect(roadmap._fieldGuide["tasks[]"].sourceRef).toContain(
+      "global/requirements",
+    );
     expect(roadmap.tasks).toEqual([]);
     expect(roadmap.nfr).toEqual([]);
 

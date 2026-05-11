@@ -13,6 +13,7 @@ export interface Task {
   status: TaskStatus;
   description?: string;
   goal?: string;
+  sourceRef?: string;
   deps?: string[];
   tag?: string;
   slug?: string;

@@ -387,6 +387,26 @@ describe("renderRoadmap — Mermaid 依赖图传递规约", () => {
       expect(output).toContain("This is a description");
     });
 
+    it("sourceRef 字段应被渲染", () => {
+      const data: RoadmapData = {
+        version: 1,
+        projectStatus: "active",
+        lastUpdated: "2024-01-01",
+        tasks: [
+          {
+            id: "T1",
+            phase: "core",
+            title: "Task with source",
+            status: "pending",
+            sourceRef: "global/requirements/REQ-20260512-001.md#T1",
+          },
+        ],
+      };
+      const output = renderRoadmap(data);
+      expect(output).toContain("来源");
+      expect(output).toContain("global/requirements/REQ-20260512-001.md#T1");
+    });
+
     it("screens 字段应被渲染", () => {
       const data: RoadmapData = {
         version: 1,

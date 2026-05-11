@@ -17,6 +17,7 @@
 
 <step_1_load>
 1. **Pre-flight**: Read roadmap.json, only read `<ID>` entry and direct deps' `id/title/status`; when deps are incomplete, reconcile status first instead of rejecting immediately.
+   - If the target task has `sourceRef`, read the requirement snapshot shared summary and `#<ID>` section; if missing, note stale sourceRef and fall back to roadmap `description/goal`.
    [[SUBAGENT: archi-task-state-reconcile | For each direct dep not done, run mode=`dependency_done` to judge whether status is merely stale. Return only JSON report; do not mutate status.]]
    [[NO-SUBAGENT: archi-task-state-reconcile | For each direct dep not done, read `[[__DOCS_DIR__]]/skills/archi-task-state-reconcile/SKILL.md` and execute mode=`dependency_done` inline. Return only JSON report; do not mutate status.]]
    [[NO-SKILL: For each direct dep not done, manually check dep `spec.md`, `plan.json`, `npx archi plan <DEP_ID>`, and `npx archi task --check`. If evidence shows complete but stale, run `npx archi task <DEP_ID> --status done` then retry; refuse only when evidence is insufficient.]]
@@ -26,7 +27,7 @@
 3. **Dependency Context** (when has dependencies): Only read Interface/Type sections of dependency task spec.md; skip if no reference. Stub dependency → Extract source code public interface from associated files.
 4. **Refs** (if any): Read refs/index.json, match by tags semantically, only read hit ref files; skip if doesn't exist.
 
-Output **Task Context Brief**: Task type (inferred from ID prefix) / Goal (highlight [User Preset]) / Upstream dependencies and key interfaces / Project feature tags / Technical constraints / Design philosophy / Project conventions (§9 values, "not set" if absent) / External knowledge references (hit ref id list). Keep full context internally, enter step_2_complexity.
+Output **Task Context Brief**: Task type (inferred from ID prefix) / sourceRef summary (if any) / Goal (highlight [User Preset]) / Upstream dependencies and key interfaces / Project feature tags / Technical constraints / Design philosophy / Project conventions (§9 values, "not set" if absent) / External knowledge references (hit ref id list). Keep full context internally, enter step_2_complexity.
 </step_1_load>
 
 <step_2_complexity>

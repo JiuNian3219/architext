@@ -19,7 +19,7 @@ disable-model-invocation: true
 - **From scratch** (`/archi.init` start): Brief feature list + ui_context → Generate complete Roadmap. Do not generate EDIT tasks.
 - **Incremental append** (`/archi.plan` decompose): Brief + existing Roadmap → Append new tasks. Do not modify existing tasks, ID uses unused range.
 
-**Schema Constraint (Tier 1)**: roadmap.json validated by CLI Zod, do not add/remove fields.
+**Schema Constraint (Tier 1)**: roadmap.json is validated by CLI Zod; only use schema-allowed fields, including optional `sourceRef`.
 
 ---
 
@@ -226,7 +226,11 @@ Flat `tasks` array + `nfr` array, execution order derived from deps topological 
 
 Required: `id` (`INF-xx`/`FEAT-xx`/`FEAT-xx-01`/`POLISH-xx`/`PLATFORM-xx`/`EDIT-xx`), `phase` (`infra`/`core`/`polish`/`platform`), `title`, `status` (`pending` when generated), `description` (≤50 chars, not repeating goal), `goal` (format see below), `deps` (ID array), `tag` (business tag), `slug` (`Pascal_Snake_Case` → `tasks/<slug>/`).
 
-Optional: `screens` (ui only, screen ID array).
+Optional: `sourceRef` (requirement snapshot anchor, e.g. `global/requirements/REQ-20260512-001.md#FEAT-01`), `screens` (ui only, screen ID array).
+
+#### Requirement Snapshot
+
+Also output a snapshot draft: `User Intent` / `Confirmed Decisions` / `Boundaries` / `Task Mapping`. The caller writes it to `global/requirements/REQ-YYYYMMDD-NNN.md` after user OK, and points each new task's `sourceRef` to its matching `### <ID>`.
 
 #### Goal Format
 

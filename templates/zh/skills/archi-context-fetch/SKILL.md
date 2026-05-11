@@ -117,6 +117,7 @@ Global guide 只覆盖结构化 JSON 文件，不覆盖 `vision.md` / `tech_stac
 ### plan.decompose
 
 - `global/roadmap.json`
+- 若目标 task 含 `sourceRef` → 将对应 `global/requirements/REQ-*.md` 加入 `must_read`
 - `global/vision.md`
 - `global/map.json`
 - `scope-brief.md` 或 Intent Card 指向的 brief 文件

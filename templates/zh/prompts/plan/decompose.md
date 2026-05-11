@@ -2,7 +2,7 @@
 **Trigger**: 由 `prompts/plan.md` 路由器分发，参数形态为：无参 / `[file_path]` / `[自然语言需求]`
 **Phase**: Requirement Decomposition
 **Goal**: 读取 Scope Brief（或通过访谈生成），将大需求分解为多个 Roadmap 任务并建立依赖关系。
-**Boundary**: 本协议只允许分析工作量、输出拆分方案、在用户 OK 后追加 `global/roadmap.json`。禁止创建 `tasks/<ID>_<Slug>/`、`spec.md`、`plan.json`、`ui.md` 或 `design.md`；这些只能由 `/archi.plan <已存在ID>` 的 detail 协议生成。
+**Boundary**: 本协议只允许分析工作量、输出拆分方案、在用户 OK 后写入 `global/requirements/REQ-*.md` 并追加 `global/roadmap.json`。禁止创建 `tasks/<ID>_<Slug>/`、`spec.md`、`plan.json`、`ui.md` 或 `design.md`；这些只能由 `/archi.plan <已存在ID>` 的 detail 协议生成。
 
 <meta>
 	<style>Strategic, Analytical, Structured</style>
@@ -118,8 +118,8 @@ Batch 2（等 Batch 1 全完）: ...
 <step_5_roadmap_update>
 **Input**: 用户确认的分解方案。
 
-1. 将新任务追加到 roadmap.json 对应 Phase 的 `tasks` 数组中
-2. 如需新增 Phase → 追加到 `phases` 数组
+1. 写入 `global/requirements/REQ-YYYYMMDD-NNN.md`（当日递增编号），内容含 User Intent / Confirmed Decisions / Boundaries / Task Mapping。
+2. 将新任务追加到 roadmap.json 顶层 `tasks` 数组中，并为每个新增 task 写 `phase` 与 `sourceRef: "global/requirements/<REQ>.md#<ID>"`。
 3. 更新 `lastUpdated`
 4. （新模块）更新 map.json `directoryMapping`：为新增任务预注册推断的模块路径
 
@@ -131,6 +131,7 @@ Batch 2（等 Batch 1 全完）: ...
 <step_6_signoff>
 **Pre-signoff Checklist** (输出前须逐项确认):
 □ 分解方案已获用户明确确认（回复 OK 后才写入 roadmap — step_4 Gate）
+□ global/requirements/REQ-*.md — 需求快照已写入，且新增任务含 sourceRef
 □ roadmap.json — 任务已追加（非覆盖），lastUpdated 已更新
 □ （有新模块）map.json directoryMapping + logicalTopology — 新任务模块路径已预注册
 □ featureRelations — 若新任务涉及已有文件的关联影响，已同步更新

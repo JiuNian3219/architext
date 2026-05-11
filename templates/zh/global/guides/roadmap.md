@@ -3,12 +3,12 @@
 - `version`: schema version.
 - `projectStatus`: overall project status.
 - `lastUpdated`: ISO date string.
-- `phases[]`: roadmap phase list.
-- `phases[].id`: stable phase id.
-- `phases[].name`: display name.
-- `phases[].tasks[]`: task list under the phase.
+- `tasks[]`: flat roadmap task list.
 - `tasks[].id`: stable task id, referenced by deps and commands.
+- `tasks[].phase`: `infra | core | polish | platform`.
+- `tasks[].title`: task title.
 - `tasks[].status`: `pending | active | done | blocked`.
+- `tasks[].sourceRef`: optional requirement snapshot ref, e.g. `global/requirements/REQ-20260512-001.md#FEAT-01`.
 - `tasks[].deps[]`: existing task ids that must finish first.
 - `tasks[].slug`: directory slug for `tasks/<id>_<slug>/`.
 - `nfr[]`: non-functional constraints when present.

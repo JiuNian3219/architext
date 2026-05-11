@@ -10,6 +10,7 @@
       "title": "任务标题",
       "status": "pending | active | done | blocked",
       "description": "50 字以内的摘要",
+      "sourceRef": "可选，需求快照引用，例如 global/requirements/REQ-20260512-001.md#FEAT-01",
       "deps": "依赖的任务 ID 数组"
     },
     "nfr[]": {

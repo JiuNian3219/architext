@@ -117,6 +117,7 @@ Normal explanation, summary, discussion not involving project files can return e
 ### plan.decompose
 
 - `global/roadmap.json`
+- If target task has `sourceRef` → add the corresponding `global/requirements/REQ-*.md` to `must_read`
 - `global/vision.md`
 - `global/map.json`
 - `scope-brief.md` or Brief file Intent Card points to

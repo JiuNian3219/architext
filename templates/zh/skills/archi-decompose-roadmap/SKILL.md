@@ -19,7 +19,7 @@ disable-model-invocation: true
 - **从零建立**（`/archi.init` start）：Brief 功能列表 + ui_context → 生成完整 Roadmap。禁生成 EDIT 任务。
 - **增量追加**（`/archi.plan` decompose）：Brief + 已有 Roadmap → 追加新任务。禁改已有任务，ID 沿用水位。
 
-**Schema 约束（Tier 1）**：roadmap.json 由 CLI Zod 校验，禁增删字段。
+**Schema 约束（Tier 1）**：roadmap.json 由 CLI Zod 校验，只使用 schema 已允许字段（含可选 `sourceRef`）。
 
 ---
 
@@ -226,7 +226,11 @@ FEAT-B + FEAT-C → FEAT-E
 
 必填：`id`（`INF-xx`/`FEAT-xx`/`FEAT-xx-01`/`POLISH-xx`/`PLATFORM-xx`/`EDIT-xx`）、`phase`（`infra`/`core`/`polish`/`platform`）、`title`、`status`（生成时 `pending`）、`description`（≤50字，不重复 goal）、`goal`（格式见下）、`deps`（ID 数组）、`tag`（业务标签）、`slug`（`Pascal_Snake_Case` → `tasks/<slug>/`）。
 
-可选：`screens`（ui 专用，屏幕 ID 数组）。
+可选：`sourceRef`（需求快照锚点，例 `global/requirements/REQ-20260512-001.md#FEAT-01`）、`screens`（ui 专用，屏幕 ID 数组）。
+
+#### Requirement Snapshot
+
+同时输出一份快照草稿：`User Intent` / `Confirmed Decisions` / `Boundaries` / `Task Mapping`。调用方在用户 OK 后写入 `global/requirements/REQ-YYYYMMDD-NNN.md`，并把每个新增 task 的 `sourceRef` 指向对应 `### <ID>`。
 
 #### goal 格式
 

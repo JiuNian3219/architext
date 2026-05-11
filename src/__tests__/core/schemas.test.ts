@@ -127,6 +127,39 @@ describe("Tier 1: RoadmapDataSchema", () => {
     expect(result.tasks[0].goal).toBeUndefined();
   });
 
+  it("task.description 应允许保留较长的需求上下文", () => {
+    const data = makeValidRoadmap();
+    data.tasks[0].description =
+      "这是一个包含用户目标、边界、依赖和验收线索的较长任务摘要，decompose 写入后 detail 阶段应能继续读取完整上下文。";
+
+    const result = validateJson<RoadmapData>(
+      RoadmapDataSchema,
+      data,
+      "roadmap.json",
+    );
+    expect(result.tasks[0].description).toBe(data.tasks[0].description);
+  });
+
+  it("task.sourceRef 缺失或存在字符串时应通过校验", () => {
+    const withoutSource = validateJson<RoadmapData>(
+      RoadmapDataSchema,
+      makeValidRoadmap(),
+      "roadmap.json",
+    );
+    expect(withoutSource.tasks[0].sourceRef).toBeUndefined();
+
+    const withSource = makeValidRoadmap();
+    withSource.tasks[0].sourceRef =
+      "global/requirements/REQ-20260512-001.md#INF-01";
+
+    const result = validateJson<RoadmapData>(
+      RoadmapDataSchema,
+      withSource,
+      "roadmap.json",
+    );
+    expect(result.tasks[0].sourceRef).toBe(withSource.tasks[0].sourceRef);
+  });
+
   it("空 tasks 数组应通过校验", () => {
     const data = { ...makeValidRoadmap(), tasks: [] };
     const result = validateJson<RoadmapData>(

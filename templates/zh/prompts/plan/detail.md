@@ -17,6 +17,7 @@
 
 <step_1_load>
 1. **Pre-flight**: 读取 roadmap.json，仅读 `<ID>` 条目及直接 deps 的 `id/title/status`；deps 未完成时先做状态校准，不要直接拒绝。
+   - 若目标 task 含 `sourceRef`，读取对应需求快照的共享概要与 `#<ID>` 段；文件缺失时标注 sourceRef 失效，并降级使用 roadmap 的 `description/goal`。
    [[SUBAGENT: archi-task-state-reconcile | 对每个未 done 的直接 dep 运行 mode=`dependency_done`，判断是否只是状态滞后；只返回 JSON 报告，不修改状态。]]
    [[NO-SUBAGENT: archi-task-state-reconcile | 对每个未 done 的直接 dep，读取 `[[__DOCS_DIR__]]/skills/archi-task-state-reconcile/SKILL.md` 并按 mode=`dependency_done` 内联执行；只返回 JSON 报告，不修改状态。]]
    [[NO-SKILL: 对每个未 done 的直接 dep，手动检查 dep 的 `spec.md`、`plan.json`、`npx archi plan <DEP_ID>` 和 `npx archi task --check`。证据显示已完成但状态滞后时，先运行 `npx archi task <DEP_ID> --status done` 后重试；证据不足才拒绝。]]
@@ -26,7 +27,7 @@
 3. **Dependency Context** (有依赖时): 仅读依赖任务 spec.md 的 Interface/Type 段；无引用时跳过。Stub 依赖 → 从关联文件提取源码公共接口。
 4. **Refs** (如有): 读 refs/index.json，按 tags 语义匹配，仅读命中 ref 文件；不存在则跳过。
 
-输出 **Task Context Brief**：任务类型（从 ID 前缀推断）/ 目标 goal（高亮 [用户预设]）/ 上游依赖及关键接口 / 项目特征标签 / 技术约束 / 设计哲学 / 项目约定（§9 各项值，无则"未设置"）/ 外部知识引用（命中 ref id 列表）。内部保留完整上下文，进入 step_2_complexity。
+输出 **Task Context Brief**：任务类型（从 ID 前缀推断）/ sourceRef 摘要（如有）/ 目标 goal（高亮 [用户预设]）/ 上游依赖及关键接口 / 项目特征标签 / 技术约束 / 设计哲学 / 项目约定（§9 各项值，无则"未设置"）/ 外部知识引用（命中 ref id 列表）。内部保留完整上下文，进入 step_2_complexity。
 </step_1_load>
 
 <step_2_complexity>

@@ -10,6 +10,7 @@
       "title": "Task title",
       "status": "pending | active | done | blocked",
       "description": "Short summary",
+      "sourceRef": "Optional requirement snapshot ref, for example global/requirements/REQ-20260512-001.md#FEAT-01",
       "deps": "Array of dependency task IDs"
     },
     "nfr[]": {
