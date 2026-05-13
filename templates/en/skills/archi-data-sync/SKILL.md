@@ -18,7 +18,7 @@ disable-model-invocation: true
 
 | File | Sync Content | Trigger Condition |
 |:---|:---|:---|
-| `map.json` | `directoryMapping` / `logicalTopology` / `featureRelations` | New code module or directory |
+| `map.json` | `directoryMapping` / `logicalTopology` / `featureRelations` | New code/doc module or directory, or code/doc change creates stable coupling |
 | `dictionary.json` | New business entity / action / shared tool / public component | Output has unregistered business term or tool |
 | `error_codes.json` | New business error code | Output has unregistered error scenario |
 | `env_registry.json` | New environment variable | Output introduces new `process.env.X` |

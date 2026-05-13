@@ -18,7 +18,7 @@ disable-model-invocation: true
 
 | 文件 | 同步内容 | 触发条件 |
 |:---|:---|:---|
-| `map.json` | `directoryMapping` / `logicalTopology` / `featureRelations` | 新增代码模块或目录 |
+| `map.json` | `directoryMapping` / `logicalTopology` / `featureRelations` | 新增代码/文档模块、目录，或代码/文档变更产生稳定联动关系 |
 | `dictionary.json` | 新业务实体 / 动作 / 共享工具 / 公共组件 | 产出出现未登记的业务术语或工具 |
 | `error_codes.json` | 新业务错误码 | 产出出现未注册的错误场景 |
 | `env_registry.json` | 新环境变量 | 产出引入新 `process.env.X` |

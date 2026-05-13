@@ -19,9 +19,11 @@
       "owner": "关联 roadmap 任务 ID"
     },
     "featureRelations[]": {
-      "group": "关系组名",
-      "members": "相关文件或模块数组",
-      "rule": "变更时必须遵守的检查规则"
+      "id": "稳定关系 ID，例如 FR-001",
+      "source": "source：触发联动检查的项目路径、目录、glob、模块名或 map 条目",
+      "targets": "targets：必须同步检查的路径、模块、文档或 map 条目数组",
+      "checkRule": "source 变更时必须执行的短检查规则",
+      "evidence": "建立关系的简短依据，如 file:line、文档路径或 task ID"
     }
   },
   "directoryMapping": [],

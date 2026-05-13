@@ -122,8 +122,8 @@ User replies OK → Enter step_4_global_sync.
    [[NO-SUBAGENT: archi-data-sync | context: Scan new business entities/error codes/Schema/endpoints/commands/exports introduced in Task proposal, incrementally sync per 00_system.md rules]]
 [[NO-SKILL: Read skills/archi-data-sync/SKILL.md, and execute sync in current context per its protocol]]
 3. **`map.json` featureRelations**:
-   [[SUBAGENT: archi-feature-relations | mode: register, context: Determine if this Task is aggregator type, if so register featureRelations entry]]
-   [[NO-SUBAGENT: archi-feature-relations | mode: register, context: Determine if this Task is aggregator type, if so register featureRelations entry]]
+   [[SUBAGENT: archi-feature-relations | mode: register, context: Determine whether this Task introduces stable "change source, check targets" code/doc coupling, and register a featureRelations entry if yes]]
+   [[NO-SUBAGENT: archi-feature-relations | mode: register, context: Determine whether this Task introduces stable "change source, check targets" code/doc coupling, and register a featureRelations entry if yes]]
    [[NO-SKILL: Read skills/archi-feature-relations/SKILL.md and execute per mode: register logic]]
 
 Output: Change Diff for above files (brief). Enter step_5_generate.

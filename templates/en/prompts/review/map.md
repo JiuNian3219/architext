@@ -90,7 +90,7 @@ Display complete change list to user:
    - Remove stale entries
    - Add new entries (path + layer + description + file-level contains)
    - Handle renames
-2. featureRelations — If directory change affects linkage relationships, sync update.
+2. featureRelations — Scan code/doc change-coupling; add missing source/targets entries, and sync update when directory changes affect relations.
 3. Update lastUpdated.
 
 **Terminal Gate** (Do not skip): Standard check task --check + render.

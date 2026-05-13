@@ -1,7 +1,7 @@
 # Invocation Contract
 
-[[SUBAGENT: archi-data-sync | context: Scan new business entities/error codes/Schema/endpoints/commands/exports introduced by this change, incrementally sync global JSON per 00_system.md data governance rules]]
-[[NO-SUBAGENT: archi-data-sync | context: Scan new business entities/error codes/Schema/endpoints/commands/exports introduced by this change, incrementally sync global JSON per 00_system.md data governance rules]]
+[[SUBAGENT: archi-data-sync | context: Scan code/doc changes for new business entities/error codes/Schema/endpoints/commands/exports and stable featureRelations coupling, incrementally sync global JSON per 00_system.md data governance rules]]
+[[NO-SUBAGENT: archi-data-sync | context: Scan code/doc changes for new business entities/error codes/Schema/endpoints/commands/exports and stable featureRelations coupling, incrementally sync global JSON per 00_system.md data governance rules]]
 [[NO-SKILL: (Please read [[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md, and execute sync in current context per its protocol)]]
 
 # Invocation Timing
@@ -14,7 +14,7 @@
 
 # Data Governance Coverage (inside archi-data-sync skill)
 
-- map.json — directoryMapping / logicalTopology / featureRelations
+- map.json — directoryMapping / logicalTopology / featureRelations source/targets (when code/doc changes create stable coupling)
 - dictionary.json — New/renamed entities, terms, components
 - error_codes.json — New/adjusted error code contracts
 - env_registry.json — New/removed environment variables

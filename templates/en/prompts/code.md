@@ -122,13 +122,13 @@
 [[NO-SKILL: (Read `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`, and check item by item in current context per mode: code-impl review dimension table)]]
 
     **5B. Linkage Check**:
-[[SUBAGENT: archi-feature-relations|mode: check, context: Semantically compare this implementation with featureRelations sources]]
-[[NO-SUBAGENT: archi-feature-relations|mode: check, context: Semantically compare this implementation with featureRelations sources]]
+[[SUBAGENT: archi-feature-relations|mode: check, context: Match changed code/doc paths against featureRelations source/targets by path and semantics, output required sync checks]]
+[[NO-SUBAGENT: archi-feature-relations|mode: check, context: Match changed code/doc paths against featureRelations source/targets by path and semantics, output required sync checks]]
 [[NO-SKILL: (Read `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`, and execute in current context per mode: check logic)]]
 
     **5C. Data Governance Sync**:
-[[SUBAGENT: archi-data-sync|context: Scan new business entities/error codes/Schema introduced by this implementation, incrementally sync per 00_system.md rules]]
-[[NO-SUBAGENT: archi-data-sync|context: Scan new business entities/error codes/Schema introduced by this implementation, incrementally sync per 00_system.md rules]]
+[[SUBAGENT: archi-data-sync|context: Scan code/doc changes for new business entities/error codes/Schema and stable featureRelations coupling, incrementally sync per 00_system.md rules]]
+[[NO-SUBAGENT: archi-data-sync|context: Scan code/doc changes for new business entities/error codes/Schema and stable featureRelations coupling, incrementally sync per 00_system.md rules]]
 [[NO-SKILL: (Read `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`, and execute sync in current context per its protocol)]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
@@ -155,7 +155,7 @@
     □ Step 4 — Each project type's Task Verification executed with Evidence attached
     □ Step 5A Silent Audit — Executed, all CRITICAL issues fixed
     □ Step 5B featureRelations linkage check — Executed
-      - Whether modified files affect other related files
+      - Whether code/doc changes hit source/targets and linked targets were checked
     □ Step 5C Data governance sync — Executed
       - dictionary.json + error_codes.json + env_registry.json — Must check
 [[WHEN: ui |       - design_tokens.json + ui_context.md ]]

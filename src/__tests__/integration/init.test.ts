@@ -335,6 +335,13 @@ describe("Scaffolder Integration", () => {
     expect(map.logicalTopology).toEqual([]);
     expect(map.criticalUserJourneys).toEqual([]);
     expect(map.featureRelations).toEqual([]);
+    expect(map._fieldGuide["featureRelations[]"]).toMatchObject({
+      id: expect.stringContaining("FR-001"),
+      source: expect.stringContaining("source"),
+      targets: expect.stringContaining("targets"),
+      checkRule: expect.stringContaining("source"),
+      evidence: expect.stringContaining("file:line"),
+    });
 
     const dictionary = await fs.readJSON(
       path.join(globalDir, "dictionary.json"),

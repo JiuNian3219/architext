@@ -93,7 +93,7 @@ Stub 是起点非终态。signoff 阶段须输出 Stub 覆盖率报告，建议�
 
 **§6 map.json**：字段 directoryMapping / logicalTopology / criticalUserJourneys / featureRelations。
 - 有 brief_data：directoryMapping 按 tech_stack 架构模式预注册核心目录骨架；其余字段为空；新任务 /archi.plan 时填充
-- 有 code_analysis：全部字段从代码分析填充。featureRelations 识别：若模块 A 遍历/枚举/动态加载同类模块 X1/X2/X3，或描述为"汇总/列举/注册所有 X"，标 A 为 aggregator、X* 为 sources；evidence 记触发识别的代码片段（文件:行号）；checkNote: "新增同类 source 时需同步更新 A"
+- 有 code_analysis：全部字段从代码分析填充。featureRelations 识别稳定的代码/文档联动关系：registry/router/schema/template/prompt/guide/docs/tests 等出现“改 source 必查 targets”时记录；条目使用 id/source/targets/checkRule/evidence。
 - 两者都有：以 code_analysis 为主；Brief 提及但代码未实现的目录标 `(预留 — Brief 规划)`
 
 [[WHEN: ui |

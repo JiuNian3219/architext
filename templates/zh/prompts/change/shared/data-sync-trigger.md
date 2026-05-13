@@ -1,7 +1,7 @@
 # 调用契约
 
-[[SUBAGENT: archi-data-sync | context: 扫描本次变更引入的新业务实体/错误码/Schema/端点/命令/导出，按 00_system.md 数据治理规则增量同步全局 JSON]]
-[[NO-SUBAGENT: archi-data-sync | context: 扫描本次变更引入的新业务实体/错误码/Schema/端点/命令/导出，按 00_system.md 数据治理规则增量同步全局 JSON]]
+[[SUBAGENT: archi-data-sync | context: 扫描本次代码/文档变更引入的新业务实体/错误码/Schema/端点/命令/导出及稳定 featureRelations 联动关系，按 00_system.md 数据治理规则增量同步全局 JSON]]
+[[NO-SUBAGENT: archi-data-sync | context: 扫描本次代码/文档变更引入的新业务实体/错误码/Schema/端点/命令/导出及稳定 featureRelations 联动关系，按 00_system.md 数据治理规则增量同步全局 JSON]]
 [[NO-SKILL: （请阅读 [[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md，并在当前上下文按其协议执行同步）]]
 
 # 调用时机
@@ -14,7 +14,7 @@
 
 # 数据治理覆盖范围（archi-data-sync skill 内部）
 
-- map.json — directoryMapping / logicalTopology / featureRelations
+- map.json — directoryMapping / logicalTopology / featureRelations source/targets（代码或文档变更产生稳定联动关系时）
 - dictionary.json — 新增/重命名实体、术语、组件
 - error_codes.json — 新增/调整错误码契约
 - env_registry.json — 新增/移除环境变量

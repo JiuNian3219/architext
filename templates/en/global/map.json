@@ -19,9 +19,11 @@
       "owner": "Related roadmap task ID"
     },
     "featureRelations[]": {
-      "group": "Relation group name",
-      "members": "Array of related files or modules",
-      "rule": "Required check rule when changing members"
+      "id": "Stable relation ID, e.g. FR-001",
+      "source": "Change trigger: project path, directory, glob, module name, or map entry",
+      "targets": "Array of paths, modules, docs, or map entries that must be checked",
+      "checkRule": "Short executable rule to apply when source changes",
+      "evidence": "Brief basis such as file:line, doc path, or task ID"
     }
   },
   "directoryMapping": [],

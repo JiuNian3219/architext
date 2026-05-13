@@ -1,86 +1,94 @@
 ---
 name: archi-feature-relations
-description: Manage featureRelations linkage in map.json. Must run in isolated context/subagent. Protocol-invoked only; do not auto-trigger from casual user requests.
+description: Manage featureRelations change-coupling index in map.json. Must run in isolated context/subagent. Protocol-invoked only; do not auto-trigger from casual user requests.
 disable-model-invocation: true
 ---
 
 ## Invocation
 
-- **Auto-invoke**: No, not triggered by model based on description.
-- **Trigger location**: Only explicitly called via `[[SUBAGENT]]` / `[[NO-SUBAGENT]]` in `/archi.*` protocols.
-- **Execution context**: When subagent supported must execute in independent subagent/independent context; only downgrade to inline Skill when no subagent.
-- **Boundary**: Only return protocol-required structured artifacts, subsequent write, confirm and signoff handled by calling protocol.
+- **Auto invocation**: No. Only `/archi.*` protocols invoke this skill through explicit `[[SUBAGENT]]` / `[[NO-SUBAGENT]]` markers.
+- **Execution context**: Use an isolated subagent when available; otherwise run inline.
+- **Boundary**: Return structured artifacts only. The caller owns writing, confirmation, and signoff.
 
-
-# featureRelations Linkage Handler
+# featureRelations Change-Coupling Handler
 
 ## Core Concept
 
-**Aggregator Task**: Task whose core responsibility is to list / aggregate / dynamically reflect another class of Task outputs. When adding or removing source-class Tasks, aggregator Task may need sync.
+`featureRelations` is a change-coupling index: it records stable "when source changes, check targets" relationships so code or docs are not updated partially.
 
-**Aggregator Determination Necessary Conditions** (all must be met):
-1. Code-level echo: Iterates / Enumerates / Dynamically loads same-type modules (`for (const cmd of allCommands)`, `Object.values(registry)`, Read directory then dynamic import)
-2. Description-level echo: "Aggregate all X", "Register all X", "List all X", "Dynamically generate X list"
+Entry shape:
 
-Only matches description-level but actual code is hardcoded list → Not aggregator.
+```json
+{
+  "id": "FR-001",
+  "source": "Trigger path, directory, glob, module name, or map entry",
+  "targets": ["Paths, modules, docs, or map entries that must be checked"],
+  "checkRule": "Short executable rule to apply when source changes",
+  "evidence": "Brief basis such as file:line, doc path, or task ID"
+}
+```
+
+## Recognition Scope
+
+Record:
+- Code to code: registries, routers, schemas, adapters, generated indexes, public exports.
+- Code to docs: API/CLI/config/error changes that require docs, examples, or tests.
+- Docs to docs: stable sync relationships between templates, guides, prompts, skills, and roadmap conventions.
+
+Do not record:
+- One-off task steps.
+- Ordinary import/call relations; those belong in `logicalTopology`.
+- Long explanations or full context; keep short rules and traceable evidence.
 
 ## Modes
 
 ### register
 
-Determine if current Task is aggregator, if so generate one featureRelations append entry.
+When planning or implementation introduces a new stable coupling relationship, generate one `featureRelations` append entry.
 
-1. Analyze `task_context.spec` + `goal` + `description`
-2. Compare against aggregator necessary conditions all met → Aggregator; otherwise non-aggregator
-3. Aggregator → Output `updates: { action: "append", entry: { aggregator, sources, evidence, checkNote } }`
-   - `aggregator`: Task ID
-   - `sources`: Source range description, prefer pattern match over enumeration (e.g. "All `/archi.*` command protocols" not "/archi.init, /archi.plan, ...")
-   - `evidence`: Original sentence extracted from spec/goal, proving judgment basis
-   - `checkNote`: "When <sources> added or removed, check if <aggregator> needs sync"
-4. Non-aggregator → Output `NOT AGGREGATOR` + judgment reason (which necessary condition not hit)
+1. Analyze new code/doc artifacts from task/spec/plan/change summary.
+2. Decide whether there is a durable "change A, check B" relationship.
+3. On hit, output `updates: { action: "append", entry: { id, source, targets, checkRule, evidence } }`.
+4. On miss, output `NO STABLE COUPLING` plus a short reason.
 
 ### check
 
-Semantically compare current Task's to-be-implemented features with existing featureRelations' `sources`, output hit linkage prompts.
+Compare changed code/doc paths against existing `featureRelations.source` and `featureRelations.targets` using path and semantic matching.
 
-1. `feature_relations` empty → Output `NO RELATIONS`
-2. Compare `task_context.implementedFeatures` with `sources` item by item, semantically belongs to `sources` range then hit
-3. Hit → Output `aggregator` + `checkNote`; Unhit list `aggregator` for review
+1. Empty `feature_relations` -> output `NO RELATIONS`.
+2. Change hits `source` -> output required `targets` and `checkRule`.
+3. Change hits `targets` -> output reverse reminder: confirm the `source` contract still holds.
+4. If a new stable relationship is discovered, output an append suggestion; otherwise only output hits.
 
 ### cleanup
 
-For removed Task, clean related featureRelations entries.
+Clean `featureRelations` for removed or moved code/docs.
 
-1. Iterate `feature_relations`, classify by reference location:
-   - `aggregator == removedTaskId` → `updates: { action: "remove", index }`
-   - `sources` description references that Task → `updates: { action: "update", index, newSources }` + `impact: "Check if <aggregator> needs adjustment"`
-2. Output impact report
+1. Removed `source` -> `updates: { action: "remove", index }`.
+2. Removed subset of `targets` -> `updates: { action: "update", index, newTargets }`.
+3. Output an impact report so the caller can confirm replacement paths or relation validity.
 
 ## Output Format
 
-```
+```md
 ### Feature Relations: <mode>
-RESULT: <mode main result line>
-<Field block, filled per mode>
+RESULT: <main result line>
+HITS:
+- <source> -> <targets>: <checkRule>
 updates:
   - action: <append|update|remove>
     <fields>
 ```
 
-**RESULT line per mode**:
-- register: `AGGREGATOR REGISTERED` or `NOT AGGREGATOR — <unmet necessary condition>`
-- check: `HITS: <n>` or `NO HITS` or `NO RELATIONS`
-- cleanup: `REMOVED: <n>, UPDATED: <n>` or `NO AFFECTED RELATIONS`
+RESULT lines:
+- register: `RELATION REGISTERED` or `NO STABLE COUPLING — <reason>`
+- check: `HITS: <n>` / `NO HITS` / `NO RELATIONS`
+- cleanup: `REMOVED: <n>, UPDATED: <n>` / `NO AFFECTED RELATIONS`
 
-**Field block**:
-- register when output `AGGREGATOR REGISTERED`: `aggregator` / `sources` / `evidence` / `checkNote`
-- check when `HITS ≥ 1`: Each hit one line `- <aggregator>: <checkNote>`
-- cleanup: `REMOVED:` list + `UPDATED:` list + `IMPACT:` description
+## Output Validation
 
-## Output Verification
-
-- [ ] register output entry has all four fields (aggregator/sources/evidence/checkNote)
-- [ ] `sources` uses pattern description not specific ID enumeration (avoid needing update here when source set changes)
-- [ ] check hit determination based on semantic comparison not keyword match
-- [ ] cleanup distinguishes `remove` (aggregator deleted) vs `update` (source deleted) two actions
-- [ ] All internal changes packaged in `updates` array returned, skill does not directly write map.json
+- [ ] Append entries use only `id/source/targets/checkRule/evidence`.
+- [ ] `source` and `targets` prefer short paths, globs, module names, or map entry names.
+- [ ] `checkRule` is executable, not vague commentary.
+- [ ] No long context and no one-off task steps.
+- [ ] All proposed changes are returned in `updates`; the skill does not write `map.json` directly.

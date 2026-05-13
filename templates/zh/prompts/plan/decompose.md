@@ -43,8 +43,8 @@
 4. **影响评估**：Brief 中"受影响的已有任务" → 对照 roadmap/tasks 验证
 5. **缺口识别**：Brief 是否有关键信息缺失
 6. **联动检查**：
-   [[SUBAGENT: archi-feature-relations | mode: check, context: 将新任务描述与 featureRelations sources 做语义对比，命中时输出联动提示]]
-   [[NO-SUBAGENT: archi-feature-relations | mode: check, context: 将新任务描述与 featureRelations sources 做语义对比，命中时输出联动提示]]
+   [[SUBAGENT: archi-feature-relations | mode: check, context: 将新任务描述与 featureRelations source/targets 做语义对比，命中时输出联动提示]]
+   [[NO-SUBAGENT: archi-feature-relations | mode: check, context: 将新任务描述与 featureRelations source/targets 做语义对比，命中时输出联动提示]]
    [[NO-SKILL: 读取 skills/archi-feature-relations/SKILL.md 按 mode: check 的逻辑执行]]
 
 **缺口分级**：必须 → 无法分解 | 可补 → AI 可推导建议确认 | 建议 → AI 自决
@@ -134,7 +134,7 @@ Batch 2（等 Batch 1 全完）: ...
 □ global/requirements/REQ-*.md — 需求快照已写入，且新增任务含 sourceRef
 □ roadmap.json — 任务已追加（非覆盖），lastUpdated 已更新
 □ （有新模块）map.json directoryMapping + logicalTopology — 新任务模块路径已预注册
-□ featureRelations — 若新任务涉及已有文件的关联影响，已同步更新
+□ featureRelations — 若新任务涉及已有代码/文档联动影响，已同步检查或更新
 □ step_5 Terminal Gate — task --check + render 已通过
 
 Gate 须在 step_5 完成。checklist 全过后：

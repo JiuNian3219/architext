@@ -45,21 +45,21 @@
     | 文件 | 扫描内容 |
     |:---|:---|
     | `roadmap.json` | 任务条目 + deps 引用 |
-    | `map.json` | 模块条目 + featureRelations 中以被删 Task 为 aggregator 的条目 |
+    | `map.json` | 模块条目 + featureRelations 中引用被删代码/文档的条目 |
     | `dictionary.json` | 独占术语（仅标记） |
     | `error_codes.json` | 独占错误码（仅标记） |
 
-    ### 2.4 聚合联动检查
+    ### 2.4 featureRelations 联动检查
 
-[[SUBAGENT: archi-feature-relations|mode: cleanup, context: 检查被删 Task 在 featureRelations 中的引用，输出影响报告]]
-[[NO-SUBAGENT: archi-feature-relations|mode: cleanup, context: 检查被删 Task 在 featureRelations 中的引用，输出影响报告]]
+[[SUBAGENT: archi-feature-relations|mode: cleanup, context: 检查被删代码/文档路径在 featureRelations source/targets 中的引用，输出影响报告]]
+[[NO-SUBAGENT: archi-feature-relations|mode: cleanup, context: 检查被删代码/文档路径在 featureRelations source/targets 中的引用，输出影响报告]]
 [[NO-SKILL: （请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，并在当前上下文按 mode: cleanup 的逻辑执行）]]
 
     ### 2.5 跨 Task 引用
 
     扫描其他 Task 的 `spec.md`，检查是否引用了被删 Task 的接口/组件/数据。发现引用则标注 `[Breaking]`。
 
-    **Output**: 向用户输出下线影响报告 — 含 Task 状态、将删除的文档和代码（文件/来源表）、全局引用清理项（roadmap/map）、（有）术语/错误码残留（须人工确认）、（有）聚合联动表、（有）跨 Task 引用 [Breaking] 表。末尾：OK 确认执行 / 中止取消。
+    **Output**: 向用户输出下线影响报告 — 含 Task 状态、将删除的文档和代码（文件/来源表）、全局引用清理项（roadmap/map）、（有）术语/错误码残留（须人工确认）、（有）featureRelations 联动表、（有）跨 Task 引用 [Breaking] 表。末尾：OK 确认执行 / 中止取消。
 
     **Gate**: 用户回复 OK 后进入 step_3。有 `[Breaking]` 引用时须再次警告。
 </step_2_impact>
@@ -75,7 +75,7 @@
     | 4 | 更新 `map.json` | 移除模块条目 + featureRelations 条目 |
     | 5 | [?有独占术语] 更新 `dictionary.json` | 移除或标注废弃 |
     | 7 | [?有独占错误码] 更新 `error_codes.json` | 移除或标注废弃 |
-    | 8 | [?有聚合联动] 检查聚合方代码 | 确认引用已清理 |
+    | 8 | [?有 featureRelations 联动] 检查联动 source/targets | 确认引用已清理 |
 
     每步完成后记录操作日志。
 </step_3_execute>

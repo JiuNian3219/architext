@@ -93,7 +93,7 @@ Stub is starting point not end state. Signoff phase must output Stub coverage re
 
 **§6 map.json**: Fields directoryMapping / logicalTopology / criticalUserJourneys / featureRelations.
 - Has brief_data: directoryMapping pre-registers core directory skeleton per tech_stack architecture pattern; other fields empty; new tasks fill when /archi.plan executes
-- Has code_analysis: All fields filled from code analysis results. featureRelations recognition: If module A iterates/enumerates/dynamically loads same-type modules X1/X2/X3, or description is "aggregate/list/register all X", mark A as aggregator, X* as sources; evidence records code snippet triggering recognition (file:line); checkNote: "When adding new same-type source, need to sync update A"
+- Has code_analysis: All fields filled from code analysis results. featureRelations recognizes stable code/doc coupling: when registry/router/schema/template/prompt/guide/docs/tests create "change source, check targets" obligations, record id/source/targets/checkRule/evidence entries.
 - Both: Use code_analysis rules as primary; directories Brief mentions but code doesn't implement mark in directoryMapping as `(reserved — Brief planned)`
 
 [[WHEN: ui |

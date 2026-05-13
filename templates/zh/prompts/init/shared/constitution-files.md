@@ -128,11 +128,11 @@ AI 根据当前掌握的数据自动选列：
 - `directoryMapping`: 每个核心目录 → { path, layer, responsibility, publicAPI }
 - `logicalTopology`: 模块间依赖 → { from, to, type: "imports" | "calls" | "extends" }
 - `criticalUserJourneys`: 核心流程 → { name, steps: [...] }
-- `featureRelations`: 聚合型模块关系 → { aggregator, sources, evidence, checkNote }
+- `featureRelations`: 变更联动索引 → { id, source, targets, checkRule, evidence }
 
 **有 brief_data**：`directoryMapping` 按 tech_stack 架构模式预注册核心目录骨架；其余字段为空；新任务 /archi.plan 执行时填充。
 
-**有 code_analysis**：全部字段从代码实际分析结果填充。`featureRelations` 识别规则：若模块 A 遍历/枚举/动态加载同类模块 X1/X2/X3，或其描述为"汇总/列举/注册所有 X"，标记 A 为 aggregator，X* 为 sources；evidence 记触发识别的代码片段（文件:行号）；checkNote: "新增同类 source 时需同步更新 A"。
+**有 code_analysis**：全部字段从代码实际分析结果填充。`featureRelations` 识别稳定的代码/文档联动关系：registry/router/schema/template/prompt/guide/docs/tests 等出现“改 source 必查 targets”时记录；source/targets 用短路径、glob、模块名或 map 条目名，checkRule 写可执行短规则，evidence 记 file:line、文档路径或 task ID。
 
 **两者都有**：以 code_analysis 规则为主；Brief 提及但代码未实现的目录，在 directoryMapping 中标 `(预留 — Brief 规划)`。
 

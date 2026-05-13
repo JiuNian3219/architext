@@ -43,8 +43,8 @@ Output: Internal context summary, enter `<step_2_analysis>`.
 4. **Impact assessment**: "Affected existing tasks" in Brief → Verify against roadmap/tasks
 5. **Gap identification**: Does Brief have key missing information?
 6. **Linkage check**:
-   [[SUBAGENT: archi-feature-relations | mode: check, context: Semantically compare new task description with featureRelations sources, output linkage prompt when hit]]
-   [[NO-SUBAGENT: archi-feature-relations | mode: check, context: Semantically compare new task description with featureRelations sources, output linkage prompt when hit]]
+   [[SUBAGENT: archi-feature-relations | mode: check, context: Semantically compare new task description with featureRelations source/targets, output linkage prompt when hit]]
+   [[NO-SUBAGENT: archi-feature-relations | mode: check, context: Semantically compare new task description with featureRelations source/targets, output linkage prompt when hit]]
    [[NO-SKILL: Read skills/archi-feature-relations/SKILL.md and execute per mode: check logic]]
 
 **Gap classification**: Required → Cannot decompose | Can supplement → AI can infer for confirmation | Recommended → AI decides
@@ -135,7 +135,7 @@ Output: Write confirmation. Enter step_6_signoff.
 □ global/requirements/REQ-*.md — Requirement snapshot written, and new tasks include sourceRef
 □ roadmap.json — Tasks appended (not overwritten), lastUpdated updated
 □ (Has new modules) map.json directoryMapping + logicalTopology — New task module paths pre-registered
-□ featureRelations — If new task involves related impact of existing files, synced update
+□ featureRelations — If new task involves code/doc coupling impact, checked or synced update
 □ step_5 Terminal Gate — task --check + render passed
 
 Gate must complete in step_5. After checklist all pass:

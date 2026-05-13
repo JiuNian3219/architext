@@ -122,8 +122,8 @@ AI 根据功能性质自行决定输出哪些模块，从以下素材库中选�
    [[NO-SUBAGENT: archi-data-sync | context: 扫描 Task 提案中引入的新业务实体/错误码/Schema/端点/命令/导出，按 00_system.md 规则增量同步]]
 [[NO-SKILL: 读取 skills/archi-data-sync/SKILL.md，并在当前上下文按其协议执行同步]]
 3. **`map.json` featureRelations**：
-   [[SUBAGENT: archi-feature-relations | mode: register, context: 判断本 Task 是否为聚合型，若是则注册 featureRelations 条目]]
-   [[NO-SUBAGENT: archi-feature-relations | mode: register, context: 判断本 Task 是否为聚合型，若是则注册 featureRelations 条目]]
+   [[SUBAGENT: archi-feature-relations | mode: register, context: 判断本 Task 是否会新增稳定的“改 source 必查 targets”代码/文档联动关系，若是则注册 featureRelations 条目]]
+   [[NO-SUBAGENT: archi-feature-relations | mode: register, context: 判断本 Task 是否会新增稳定的“改 source 必查 targets”代码/文档联动关系，若是则注册 featureRelations 条目]]
    [[NO-SKILL: 读取 skills/archi-feature-relations/SKILL.md 按 mode: register 的逻辑执行]]
 
 输出：上述文件的变更 Diff（简要）。进入 step_5_generate。

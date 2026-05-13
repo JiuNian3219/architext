@@ -1,86 +1,94 @@
 ---
 name: archi-feature-relations
-description: Manage featureRelations linkage in map.json. Must run in isolated context/subagent. Protocol-invoked only; do not auto-trigger from casual user requests.
+description: Manage featureRelations change-coupling index in map.json. Must run in isolated context/subagent. Protocol-invoked only; do not auto-trigger from casual user requests.
 disable-model-invocation: true
 ---
 
 ## 调用方式
 
-- **自动调用**: 否，不由模型根据 description 自行触发。
-- **触发位置**: 仅由 `/archi.*` 协议中的 `[[SUBAGENT]]` / `[[NO-SUBAGENT]]` 显式调用。
-- **执行上下文**: 支持 subagent 时必须在独立子代理/独立上下文执行；无 subagent 时才降级为内联 Skill。
-- **边界**: 只返回协议要求的结构化产物，后续写入、确认和签收由调用协议负责。
+- **自动调用**: 否，仅由 `/archi.*` 协议中的 `[[SUBAGENT]]` / `[[NO-SUBAGENT]]` 显式调用。
+- **执行上下文**: 支持 subagent 时在独立上下文执行；无 subagent 时降级为内联 Skill。
+- **边界**: 只返回结构化产物；后续写入、确认和签收由调用协议负责。
 
-
-# featureRelations 联动处理器
+# featureRelations 变更联动处理器
 
 ## 核心概念
 
-**聚合型 Task**：核心职责是列举 / 汇总 / 动态反映另一类 Task 产出的 Task。新增或删除来源类 Task 时，聚合型 Task 可能需要同步。
+`featureRelations` 是变更联动索引：记录“改 source 时必须同步检查 targets”的稳定关系，避免代码或文档改不全。
 
-**聚合型判定必要条件**（全满足才是）：
-1. 代码层面呼应：遍历 / 枚举 / 动态加载同类模块（`for (const cmd of allCommands)`、`Object.values(registry)`、读目录后动态 import）
-2. 描述层面呼应：「汇总所有 X」「注册所有 X」「列出所有 X」「动态生成 X 列表」
+条目结构：
 
-只符合描述层面但实际代码是硬编码列表 → 非聚合型。
+```json
+{
+  "id": "FR-001",
+  "source": "触发联动检查的路径、目录、glob、模块名或 map 条目",
+  "targets": ["必须同步检查的路径、模块、文档或 map 条目"],
+  "checkRule": "source 变更时必须执行的短检查规则",
+  "evidence": "建立关系的简短依据，如 file:line、文档路径或 task ID"
+}
+```
+
+## 识别范围
+
+应记录：
+- 代码到代码：registry、router、schema、adapter、generated index、public export。
+- 代码到文档：API/CLI/配置/错误码变化需要同步 docs、examples、tests。
+- 文档到文档：template、guide、prompt、skill、roadmap 约定之间的稳定同步关系。
+
+不应记录：
+- 一次性 task 内部步骤。
+- 普通 import/call 关系；这类关系由 `logicalTopology` 表达。
+- 长解释或完整上下文；只写短规则和可追溯证据。
 
 ## 模式
 
 ### register
 
-判定当前 Task 是否聚合型，是则生成一条 featureRelations 追加条目。
+当规划或实现引入新的稳定联动关系时，生成一条 `featureRelations` append 条目。
 
-1. 分析 `task_context.spec` + `goal` + `description`
-2. 对照聚合型必要条件全满足 → 聚合型；否则非聚合型
-3. 聚合型 → 输出 `updates: { action: "append", entry: { aggregator, sources, evidence, checkNote } }`
-   - `aggregator`：Task ID
-   - `sources`：来源范围描述，优先用模式匹配而非枚举（例：「所有 `/archi.*` 命令协议」 而非 「/archi.init, /archi.plan, ...」）
-   - `evidence`：从 spec/goal 抽取的原句，证明判定依据
-   - `checkNote`：「<sources> 新增或删除时，检查 <aggregator> 是否需同步」
-4. 非聚合型 → 输出 `NOT AGGREGATOR` + 判定理由（没命中哪个必要条件）
+1. 分析 task/spec/plan/变更摘要中的新代码或文档产物。
+2. 判断是否存在“改 A 必查 B”的长期关系。
+3. 命中则输出 `updates: { action: "append", entry: { id, source, targets, checkRule, evidence } }`。
+4. 未命中则输出 `NO STABLE COUPLING` + 简短理由。
 
 ### check
 
-将当前 Task 要实现的功能与已有 featureRelations 的 `sources` 语义对比，输出命中的联动提示。
+把本次实际修改的代码或文档路径，与已有 `featureRelations` 的 `source` 和 `targets` 做路径/语义匹配。
 
-1. `feature_relations` 为空 → 输出 `NO RELATIONS`
-2. 逐条对比 `task_context.implementedFeatures` 与 `sources`，语义属于 `sources` 范围则命中
-3. 命中 → 输出 `aggregator` + `checkNote`；未命中的列出 `aggregator` 供审核
+1. `feature_relations` 为空 -> 输出 `NO RELATIONS`。
+2. 本次改动命中 `source` -> 输出必须检查的 `targets` 与 `checkRule`。
+3. 本次改动命中 `targets` -> 输出反向提醒：确认 `source` 的约定是否仍成立。
+4. 若发现新的稳定联动关系，输出 append 建议；否则只输出检查命中。
 
 ### cleanup
 
-针对被移除的 Task，清理相关 featureRelations 条目。
+针对被删除或移动的代码/文档，清理相关 `featureRelations`。
 
-1. 遍历 `feature_relations`，按引用位置分类：
-   - `aggregator == removedTaskId` → `updates: { action: "remove", index }`
-   - `sources` 描述引用该 Task → `updates: { action: "update", index, newSources }` + `impact: "检查 <aggregator> 是否需调整"`
-2. 输出影响报告
+1. `source` 被删除 -> `updates: { action: "remove", index }`。
+2. `targets` 中部分项目被删除 -> `updates: { action: "update", index, newTargets }`。
+3. 输出影响报告，提醒调用方确认替代路径或关系是否仍成立。
 
 ## 输出格式
 
-```
+```md
 ### Feature Relations: <mode>
-RESULT: <mode 主结果行>
-<字段块，按 mode 填充>
+RESULT: <主结果行>
+HITS:
+- <source> -> <targets>: <checkRule>
 updates:
   - action: <append|update|remove>
     <字段>
 ```
 
-**按 mode 的 RESULT 行**：
-- register：`AGGREGATOR REGISTERED` 或 `NOT AGGREGATOR — <未命中的必要条件>`
-- check：`HITS: <n>` 或 `NO HITS` 或 `NO RELATIONS`
-- cleanup：`REMOVED: <n>, UPDATED: <n>` 或 `NO AFFECTED RELATIONS`
-
-**字段块**：
-- register当输出 `AGGREGATOR REGISTERED` 时：`aggregator` / `sources` / `evidence` / `checkNote`
-- check 当 `HITS ≥ 1` 时：每条命中一行 `- <aggregator>: <checkNote>`
-- cleanup：`REMOVED:` 列表 + `UPDATED:` 列表 + `IMPACT:` 说明
+RESULT 行：
+- register: `RELATION REGISTERED` 或 `NO STABLE COUPLING — <原因>`
+- check: `HITS: <n>` / `NO HITS` / `NO RELATIONS`
+- cleanup: `REMOVED: <n>, UPDATED: <n>` / `NO AFFECTED RELATIONS`
 
 ## 输出验证
 
-- [ ] register 产出的 entry 四字段（aggregator/sources/evidence/checkNote）齐备
-- [ ] `sources` 用模式描述而非具体 ID 枚举（避免来源集删增时要改此处）
-- [ ] check 命中判定基于语义对比而非关键词匹配
-- [ ] cleanup 区分 `remove`（aggregator 被删）与 `update`（source 被删）两种 action
-- [ ] 所有内部改动打包在 `updates` 数组中返回，skill 不直接写 map.json
+- [ ] append entry 只使用 `id/source/targets/checkRule/evidence`。
+- [ ] `source` 和 `targets` 优先使用短路径、glob、模块名或 map 条目名。
+- [ ] `checkRule` 是可执行检查，不是泛泛说明。
+- [ ] 不复制长上下文，不写一次性步骤。
+- [ ] 所有内部改动打包在 `updates` 数组中返回，skill 不直接写 `map.json`。

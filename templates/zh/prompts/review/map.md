@@ -90,7 +90,7 @@
    - 移除过期条目
    - 添加新增条目（path + layer + description + 文件级 contains）
    - 处理重命名
-2. featureRelations — 目录变更若影响关联关系，同步更新。
+2. featureRelations — 扫描代码/文档变更联动关系；补齐遗漏的 source/targets 条目，目录变更若影响关系则同步更新。
 3. 更新 lastUpdated。
 
 **Terminal Gate**（禁止跳过）：标准检查 task --check + render。

@@ -122,13 +122,13 @@
 [[NO-SKILL: （请阅读 `[[__DOCS_DIR__]]/skills/archi-silent-audit/SKILL.md`，并在当前上下文按 mode: code-impl 的审查维度表逐项检查）]]
 
     **5B. 联动检查**:
-[[SUBAGENT: archi-feature-relations|mode: check, context: 将本次实现的功能与 featureRelations sources 做语义对比]]
-[[NO-SUBAGENT: archi-feature-relations|mode: check, context: 将本次实现的功能与 featureRelations sources 做语义对比]]
+[[SUBAGENT: archi-feature-relations|mode: check, context: 将本次修改的代码/文档路径与 featureRelations source/targets 做路径和语义匹配，输出必须同步检查项]]
+[[NO-SUBAGENT: archi-feature-relations|mode: check, context: 将本次修改的代码/文档路径与 featureRelations source/targets 做路径和语义匹配，输出必须同步检查项]]
 [[NO-SKILL: （请阅读 `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`，并在当前上下文按 mode: check 的逻辑执行）]]
 
     **5C. 数据治理同步**:
-[[SUBAGENT: archi-data-sync|context: 扫描本次实现引入的新业务实体/错误码/Schema，按 00_system.md 规则增量同步]]
-[[NO-SUBAGENT: archi-data-sync|context: 扫描本次实现引入的新业务实体/错误码/Schema，按 00_system.md 规则增量同步]]
+[[SUBAGENT: archi-data-sync|context: 扫描本次代码/文档变更引入的新业务实体/错误码/Schema 及稳定 featureRelations 联动关系，按 00_system.md 规则增量同步]]
+[[NO-SUBAGENT: archi-data-sync|context: 扫描本次代码/文档变更引入的新业务实体/错误码/Schema 及稳定 featureRelations 联动关系，按 00_system.md 规则增量同步]]
 [[NO-SKILL: （请阅读 `[[__DOCS_DIR__]]/skills/archi-data-sync/SKILL.md`，并在当前上下文按其协议执行同步）]]
 
     [[INCLUDE: shared/verify-result-handling.md]]
@@ -155,7 +155,7 @@
     □ Step 4 — 每种项目类型的 Task Verification 已执行并附 Evidence
     □ Step 5A Silent Audit — 已执行，所有 CRITICAL 问题已修复
     □ Step 5B featureRelations 联动检查 — 已执行
-      - 涉及修改的文件是否影响其他关联文件
+      - 代码或文档变更是否命中 source/targets，并已检查联动 targets
     □ Step 5C 数据治理同步 — 已执行
       - dictionary.json + error_codes.json + env_registry.json — 必检
 [[WHEN: ui |       - design_tokens.json + ui_context.md ]]

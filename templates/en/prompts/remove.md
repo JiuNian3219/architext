@@ -45,21 +45,21 @@
     | File | Scan Content |
     |:---|:---|
     | `roadmap.json` | Task entry + deps references |
-    | `map.json` | Module entry + featureRelations entries with deleted Task as aggregator |
+    | `map.json` | Module entry + featureRelations entries referencing deleted code/docs |
     | `dictionary.json` | Exclusive terms (only mark) |
     | `error_codes.json` | Exclusive error codes (only mark) |
 
-    ### 2.4 Aggregator Linkage Check
+    ### 2.4 featureRelations Linkage Check
 
-[[SUBAGENT: archi-feature-relations|mode: cleanup, context: Check deleted Task's references in featureRelations, output impact report]]
-[[NO-SUBAGENT: archi-feature-relations|mode: cleanup, context: Check deleted Task's references in featureRelations, output impact report]]
+[[SUBAGENT: archi-feature-relations|mode: cleanup, context: Check deleted code/doc paths in featureRelations source/targets, output impact report]]
+[[NO-SUBAGENT: archi-feature-relations|mode: cleanup, context: Check deleted code/doc paths in featureRelations source/targets, output impact report]]
 [[NO-SKILL: (Read `[[__DOCS_DIR__]]/skills/archi-feature-relations/SKILL.md`, and execute per mode: cleanup logic in current context)]]
 
     ### 2.5 Cross-Task References
 
     Scan other Tasks' `spec.md`, check if interfaces/components/data of deleted Task are referenced. Found references mark `[Breaking]`.
 
-    **Output**: Output decommission impact report to user — Contains Task status, to-be-deleted docs and code (file/source table), global reference cleanup items (roadmap/map), (if any) terms/error codes residue (needs manual confirmation), (if any) aggregator linkage table, (if any) cross-Task reference [Breaking] table. End: OK confirm execution / Abort cancel.
+    **Output**: Output decommission impact report to user — Contains Task status, to-be-deleted docs and code (file/source table), global reference cleanup items (roadmap/map), (if any) terms/error codes residue (needs manual confirmation), (if any) featureRelations linkage table, (if any) cross-Task reference [Breaking] table. End: OK confirm execution / Abort cancel.
 
     **Gate**: User replies OK then enter step_3. Has `[Breaking]` references must warn again.
 </step_2_impact>
@@ -75,7 +75,7 @@
     | 4 | Update `map.json` | Remove module entry + featureRelations entry |
     | 5 | [?has exclusive terms] Update `dictionary.json` | Remove or mark deprecated |
     | 7 | [?has exclusive error codes] Update `error_codes.json` | Remove or mark deprecated |
-    | 8 | [?has aggregator linkage] Check aggregator code | Confirm references cleaned |
+    | 8 | [?has featureRelations linkage] Check linked source/targets | Confirm references cleaned |
 
     Record operation log after each step completes.
 </step_3_execute>
