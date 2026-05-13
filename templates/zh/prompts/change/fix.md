@@ -25,7 +25,7 @@ Resolve Target:
 - `Spec-Status: Stub` / `spec.md` 明显缺少行为边界 → 停下，不在 fix 中补文档；提示用户先运行 `/archi.change <ID> 补全 spec：<当前 bug 相关行为边界>`，再回到 fix。
 - `spec.md` 缺失 → 停下，提示用户先运行 `/archi.change <ID> 补全缺失 spec`。
 
-读取目标目录下所有文档与相关代码，及项目上下文（tech_stack / vision / error_memory，详见 00_system.md 数据治理规则）。结合 [context] 与代码逻辑定位潜在故障点，进入 step_2。
+读取目标目录下所有文档与相关代码，及项目上下文（tech_stack / vision / lesson_memory，详见 00_system.md 数据治理规则）。结合 [context] 与代码逻辑定位潜在故障点，进入 step_2。
 </step_1_load>
 
 <step_2_diagnose>

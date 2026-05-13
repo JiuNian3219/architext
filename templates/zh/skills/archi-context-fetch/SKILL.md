@@ -77,7 +77,7 @@ Global guide 只覆盖结构化 JSON 文件，不覆盖 `vision.md` / `tech_stac
 | `global/dictionary.json` | `global/guides/dictionary.md` |
 | `global/error_codes.json` | `global/guides/error_codes.md` |
 | `global/env_registry.json` | `global/guides/env_registry.md` |
-| `global/error_memory.json` | `global/guides/error_memory.md` |
+| `global/lesson_memory.json` | `global/guides/lesson_memory.md` |
 | `global/api_snapshot.json` | `global/guides/api_snapshot.md` |
 | `global/command_api.json` | `global/guides/command_api.md` |
 | `global/data_snapshot.json` | `global/guides/data_snapshot.md` |
@@ -87,7 +87,7 @@ Global guide 只覆盖结构化 JSON 文件，不覆盖 `vision.md` / `tech_stac
 规则：
 - 后续协议要写某个 global JSON 时，对应 guide 必须进入 `must_read`。
 - 只读 global JSON 时，对应 guide 进入 `optional_read`。
-- `roadmap.json` / `map.json` / `dictionary.json` / `error_memory.json` 易漂移，读取时 guide 也进入 `must_read`。
+- `roadmap.json` / `map.json` / `dictionary.json` / `lesson_memory.json` 易漂移，读取时 guide 也进入 `must_read`。
 - guide 只用于字段结构和不变量，不代替 global 文件内容。
 
 ## Baseline Reads
@@ -108,7 +108,7 @@ Global guide 只覆盖结构化 JSON 文件，不覆盖 `vision.md` / `tech_stac
 - `global/map.json`：定位模块、featureRelations、目录映射。
 - `global/tech_stack.md`：技术约束、测试/构建命令、禁用模式。
 - `global/vision.md`：方向、边界、目标用户。
-- `global/error_memory.json`：历史错误与用户纠错经验。
+- `global/lesson_memory.json`：历史可复用教训，含错误、用户纠错、误判与流程失误。
 
 普通解释、总结、讨论方案，且不涉及项目文件时，可返回空 Context Pack。
 
@@ -135,7 +135,7 @@ Global guide 只覆盖结构化 JSON 文件，不覆盖 `vision.md` / `tech_stac
 ### change.fix
 
 - 目标 task 的 `spec.md` / `plan.json` / 最近 `review.md`
-- `global/error_memory.json`
+- `global/lesson_memory.json`
 - `global/tech_stack.md`
 - `global/map.json`
 - 只返回需要后续协议读取的源码路径候选，不读取源码
@@ -207,7 +207,7 @@ Global guide 只覆盖结构化 JSON 文件，不覆盖 `vision.md` / `tech_stac
 
 - `global/roadmap.json`
 - `global/map.json`
-- `global/error_memory.json`
+- `global/lesson_memory.json`
 - 根据用户问题按需追加文件
 
 ## Feature-Specific Snapshots
@@ -243,7 +243,7 @@ Global guide 只覆盖结构化 JSON 文件，不覆盖 `vision.md` / `tech_stac
 - `task_blocked`
 - `spec_missing`
 - `map_stale`
-- `error_memory_match`
+- `lesson_memory_match`
 
 ## Hard Limits
 

@@ -134,7 +134,7 @@ INCLUDE → WHEN → SUBAGENT → NO-SUBAGENT → SKILL → NO-SKILL → NO-COMM
 | `dictionary.json` | 领域术语、命名、组件/动作词注册 | init / plan / code / change |
 | `error_codes.json` | 错误码契约 | init / plan / code / change |
 | `env_registry.json` | 环境变量注册 | init / plan / code / change |
-| `error_memory.json` | 构建/运行/测试失败经验和检查点 | code / change(fix) |
+| `lesson_memory.json` | 可复用教训，来源包括构建/运行/测试失败、用户纠错、错误假设和流程失误 | code / change(fix) |
 | `data_snapshot.json` | 数据实体与关系快照 | data feature |
 | `api_snapshot.json` | API endpoint 快照 | api feature |
 | `command_api.json` | CLI 命令契约 | cli feature |
@@ -152,9 +152,9 @@ INCLUDE → WHEN → SUBAGENT → NO-SUBAGENT → SKILL → NO-SKILL → NO-COMM
 
 当前 guides：
 
-`api_snapshot.md`、`command_api.md`、`data_snapshot.md`、`design_tokens.md`、`dictionary.md`、`env_registry.md`、`error_codes.md`、`error_memory.md`、`map.md`、`public_api.md`、`roadmap.md`。
+`api_snapshot.md`、`command_api.md`、`data_snapshot.md`、`design_tokens.md`、`dictionary.md`、`env_registry.md`、`error_codes.md`、`lesson_memory.md`、`map.md`、`public_api.md`、`roadmap.md`。
 
-Context Fetch 规则：如果后续协议要写某个 global JSON，对应 guide 进入 `must_read`；只读时进入 `optional_read`。高漂移文件（roadmap/map/dictionary/error_memory）读写都优先带 guide。
+Context Fetch 规则：如果后续协议要写某个 global JSON，对应 guide 进入 `must_read`；只读时进入 `optional_read`。高漂移文件（roadmap/map/dictionary/lesson_memory）读写都优先带 guide。
 
 ---
 

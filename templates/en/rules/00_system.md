@@ -134,7 +134,7 @@ When loading protocol, follow:
 | `global/dictionary.json` | Naming, terminology, business concept consistency | Sync after plan/change/code |
 | `global/error_codes.json` | Before error handling and adding error codes | Sync after plan/change/code |
 | `global/env_registry.json` | Before adding env vars or reading config | Sync after code/change |
-| `global/error_memory.json` | When encountering errors, failed checks, or user pointing out AI misjudgment/misoperation | After error fix, or after user points out AI reusable error experience |
+| `global/lesson_memory.json` | When encountering errors, failed checks, or user points out AI misjudgment/misoperation | Append reusable lessons after fixes or user corrections |
 [[WHEN: ui | | `global/design_tokens.json` | Before writing interface/styles in UI project | Sync after init/ui/change | ]]
 [[WHEN: ui | | `global/ui_context.md` | Locate screens and navigation in UI project | Sync after ui/change | ]]
 [[WHEN: data | | `global/data_snapshot.json` | Before designing/implementing entity fields in data project | Sync after plan/change/code | ]]

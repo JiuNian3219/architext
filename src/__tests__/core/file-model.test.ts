@@ -223,7 +223,9 @@ describe("resolveFiles", () => {
       expect(result.seedFiles).toContain(".architext/global/map.json");
       expect(result.seedFiles).toContain(".architext/global/dictionary.json");
       expect(result.seedFiles).toContain(".architext/global/error_codes.json");
-      expect(result.seedFiles).toContain(".architext/global/error_memory.json");
+      expect(result.seedFiles).toContain(
+        ".architext/global/lesson_memory.json",
+      );
     });
 
     it("条件 seeds 应受 features 过滤", () => {

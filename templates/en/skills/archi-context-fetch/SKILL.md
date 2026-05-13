@@ -77,7 +77,7 @@ Global guide only covers structured JSON files, does not cover `vision.md` / `te
 | `global/dictionary.json` | `global/guides/dictionary.md` |
 | `global/error_codes.json` | `global/guides/error_codes.md` |
 | `global/env_registry.json` | `global/guides/env_registry.md` |
-| `global/error_memory.json` | `global/guides/error_memory.md` |
+| `global/lesson_memory.json` | `global/guides/lesson_memory.md` |
 | `global/api_snapshot.json` | `global/guides/api_snapshot.md` |
 | `global/command_api.json` | `global/guides/command_api.md` |
 | `global/data_snapshot.json` | `global/guides/data_snapshot.md` |
@@ -87,7 +87,7 @@ Global guide only covers structured JSON files, does not cover `vision.md` / `te
 Rules:
 - When subsequent protocol writes some global JSON, corresponding guide must enter `must_read`.
 - When only reading global JSON, corresponding guide enters `optional_read`.
-- `roadmap.json` / `map.json` / `dictionary.json` / `error_memory.json` prone to drift, when reading their guide also enters `must_read`.
+- `roadmap.json` / `map.json` / `dictionary.json` / `lesson_memory.json` prone to drift, when reading their guide also enters `must_read`.
 - Guide only for field structure and invariants, does not replace global file content.
 
 ## Baseline Reads
@@ -108,7 +108,7 @@ All non-init, non-normal-Q&A intent at minimum consider:
 - `global/map.json`: Locate modules, featureRelations, directory mappings.
 - `global/tech_stack.md`: Technical constraints, test/build commands, prohibited patterns.
 - `global/vision.md`: Direction, boundaries, target users.
-- `global/error_memory.json`: Historical errors and user correction experience.
+- `global/lesson_memory.json`: Historical reusable lessons from errors, user corrections, misjudgments, and process mistakes.
 
 Normal explanation, summary, discussion not involving project files can return empty Context Pack.
 
@@ -135,7 +135,7 @@ Normal explanation, summary, discussion not involving project files can return e
 ### change.fix
 
 - Target task's `spec.md` / `plan.json` / latest `review.md`
-- `global/error_memory.json`
+- `global/lesson_memory.json`
 - `global/tech_stack.md`
 - `global/map.json`
 - Only return source code path candidates for subsequent protocol to read, do not read source code
@@ -207,7 +207,7 @@ Normal explanation, summary, discussion not involving project files can return e
 
 - `global/roadmap.json`
 - `global/map.json`
-- `global/error_memory.json`
+- `global/lesson_memory.json`
 - Append files as needed based on user question
 
 ## Feature-Specific Snapshots
@@ -243,7 +243,7 @@ Write as needed:
 - `task_blocked`
 - `spec_missing`
 - `map_stale`
-- `error_memory_match`
+- `lesson_memory_match`
 
 ## Hard Limits
 

@@ -28,8 +28,7 @@ export type MigrationFn = (
 /** 迁移注册表 */
 const MIGRATIONS: Record<string, MigrationFn> = {
   "1->2": migrateV1ToV2,
-  // 未来添加:
-  // "2->3": migrateV2ToV3,
+  "2->3": migrateV2ToV3,
 };
 
 /**
@@ -286,6 +285,36 @@ async function migrateV1ToV2(
       );
       migrated.push("map.json (removed governance/featureDocs)");
     }
+  }
+
+  return { migrated };
+}
+
+/**
+ * v2 -> v3 迁移：将可复用教训文件从 error_memory 重命名为 lesson_memory。
+ */
+async function migrateV2ToV3(
+  config: ArchitextConfig,
+  cwd: string,
+): Promise<{ migrated: string[] }> {
+  const migrated: string[] = [];
+  const docDir = path.resolve(cwd, config.docDir);
+  const oldPath = path.join(docDir, "global", "error_memory.json");
+  const newPath = path.join(docDir, "global", "lesson_memory.json");
+  const oldGuidePath = path.join(docDir, "global", "guides", "error_memory.md");
+
+  if (await fs.pathExists(oldPath)) {
+    if (await fs.pathExists(newPath)) {
+      migrated.push("error_memory.json (skipped; lesson_memory.json exists)");
+    } else {
+      await fs.move(oldPath, newPath);
+      migrated.push("lesson_memory.json (renamed from error_memory.json)");
+    }
+  }
+
+  if (await fs.pathExists(oldGuidePath)) {
+    await fs.remove(oldGuidePath);
+    migrated.push("error_memory.md (v2 guide removed)");
   }
 
   return { migrated };

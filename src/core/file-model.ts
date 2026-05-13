@@ -15,6 +15,10 @@
  * - rules 从 7 个减少到 2 个（删除 01/03/04/99，移动 02）
  * - globalSeeds 新增 tech_stack.md（从 rule 降级为 seed）
  * - 新增 globalDocs 字段：框架拥有的参考文档（可随 update 刷新），部署到 global/references/
+ *
+ * v2 → v3 变更摘要：
+ * - global/error_memory.json 重命名为 global/lesson_memory.json
+ * - global/guides/error_memory.md 重命名为 global/guides/lesson_memory.md
  */
 
 import type { ProjectFeature, SupportedEditor } from "../types/index.ts";
@@ -222,9 +226,80 @@ export const FILE_MODELS: FileModel[] = [
       "90_custom_rules": "neverTouch",
     },
   },
+  {
+    version: 3,
+    rules: ["00_system", "90_custom_rules"],
+    prompts: [
+      "change",
+      "code",
+      "help",
+      "init",
+      "plan",
+      "ref",
+      "remove",
+      "review",
+      "ui",
+    ],
+    promptDirs: ["change", "init", "plan", "ref", "review"],
+    skills: [
+      "archi-brief-scan",
+      "archi-code-survey",
+      "archi-context-fetch",
+      "archi-constitution-draft",
+      "archi-data-sync",
+      "archi-decompose-roadmap",
+      "archi-design-patterns",
+      "archi-feature-relations",
+      "archi-intent-normalizer",
+      "archi-interview-protocol",
+      "archi-plan-options",
+      "archi-silent-audit",
+      "archi-task-state-reconcile",
+      "archi-ui-wireframe",
+    ],
+    docTemplates: [
+      "design.template.md",
+      "plan.template.json",
+      "scope-brief.template.md",
+      "spec.template.md",
+      "ui.template.md",
+    ],
+    globalSeeds: [
+      "dictionary.json",
+      "error_codes.json",
+      "lesson_memory.json",
+      "map.json",
+      "roadmap.json",
+      "env_registry.json",
+      "vision.md",
+      "tech_stack.md",
+      { file: "api_snapshot.json", feature: "api" },
+      { file: "command_api.json", feature: "cli" },
+      { file: "data_snapshot.json", feature: "data" },
+      { file: "design_tokens.json", feature: "ui" },
+      { file: "public_api.json", feature: "lib" },
+    ],
+    globalDocs: ["cli_reference.md"],
+    globalGuides: [
+      "api_snapshot.md",
+      "command_api.md",
+      "data_snapshot.md",
+      "design_tokens.md",
+      "dictionary.md",
+      "env_registry.md",
+      "error_codes.md",
+      "lesson_memory.md",
+      "map.md",
+      "public_api.md",
+      "roadmap.md",
+    ],
+    rulePolicy: {
+      "90_custom_rules": "neverTouch",
+    },
+  },
 ];
 
-export const CURRENT_FILE_MODEL_VERSION = 2;
+export const CURRENT_FILE_MODEL_VERSION = 3;
 
 export function getFileModel(version: number): FileModel | undefined {
   return FILE_MODELS.find((m) => m.version === version);

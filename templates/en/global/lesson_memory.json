@@ -3,19 +3,19 @@
   "status": "template-uninitialized",
   "lastUpdated": "TEMPLATE",
   "_fieldGuide": {
-    "errorPatterns[]": {
-      "id": "Stable issue pattern ID",
+    "lessons[]": {
+      "id": "Stable lesson ID",
       "watchFor": "Scenario to watch before execution",
-      "matchWhen": "Keywords matched after an error",
-      "cause": "Root cause",
-      "solution": "Resolution",
+      "matchWhen": "Keywords, symptoms, or user corrections that trigger this lesson",
+      "cause": "Root cause or repeated mistake",
+      "solution": "Reusable fix or behavioral adjustment",
       "lesson": "Rule to avoid repeating the mistake"
     },
     "checkpoints[]": {
       "before": "Pre-execution scenario",
-      "check": "Array of errorPatterns.id values to check"
+      "check": "Array of lessons.id values to check"
     }
   },
-  "errorPatterns": [],
+  "lessons": [],
   "checkpoints": []
 }

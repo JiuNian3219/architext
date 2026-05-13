@@ -25,7 +25,7 @@ Resolve Target:
 - `Spec-Status: Stub` / `spec.md` clearly lacks behavior boundaries → Stop, do not supplement docs in fix; prompt user to first run `/archi.change <ID> complete spec: <current bug related behavior boundaries>`, then return to fix.
 - `spec.md` missing → Stop, prompt user to first run `/archi.change <ID> complete missing spec`.
 
-Read all docs and related code under target directory, and project context (tech_stack / vision / error_memory, see 00_system.md data governance rules). Combine [context] with code logic to locate potential failure points, enter step_2.
+Read all docs and related code under target directory, and project context (tech_stack / vision / lesson_memory, see 00_system.md data governance rules). Combine [context] with code logic to locate potential failure points, enter step_2.
 </step_1_load>
 
 <step_2_diagnose>

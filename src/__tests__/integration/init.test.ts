@@ -311,7 +311,7 @@ describe("Scaffolder Integration", () => {
       "dictionary.json",
       "env_registry.json",
       "error_codes.json",
-      "error_memory.json",
+      "lesson_memory.json",
       "map.json",
       "public_api.json",
       "roadmap.json",
@@ -342,11 +342,11 @@ describe("Scaffolder Integration", () => {
     expect(dictionary.entities).toEqual([]);
     expect(dictionary.verbs).toEqual([]);
 
-    const errorMemory = await fs.readJSON(
-      path.join(globalDir, "error_memory.json"),
+    const lessonMemory = await fs.readJSON(
+      path.join(globalDir, "lesson_memory.json"),
     );
-    expect(errorMemory.errorPatterns).toEqual([]);
-    expect(errorMemory.checkpoints).toEqual([]);
+    expect(lessonMemory.lessons).toEqual([]);
+    expect(lessonMemory.checkpoints).toEqual([]);
   });
 
   it("/archi.init 前置 Context Fetch 应将 scaffold seed 排除为项目事实", async () => {

@@ -134,7 +134,7 @@ Context Pack 处理规则：
 | `global/dictionary.json` | 命名、术语、业务概念一致性 | plan/change/code 后同步 |
 | `global/error_codes.json` | 错误处理和错误码新增前 | plan/change/code 后同步 |
 | `global/env_registry.json` | 新增环境变量或读取配置前 | code/change 后同步 |
-| `global/error_memory.json` | 遇到报错、失败检查、或用户指出 AI 误判/误操作时查经验 | 报错修复后，或用户指出 AI 可复用错误经验后追加 |
+| `global/lesson_memory.json` | 遇到报错、失败检查、或用户指出 AI 误判/误操作时查可复用教训 | 修复后，或用户指出可复用经验后追加 |
 [[WHEN: ui | | `global/design_tokens.json` | UI 项目写界面/样式前 | init/ui/change 后同步 | ]]
 [[WHEN: ui | | `global/ui_context.md` | UI 项目定位屏幕与导航 | ui/change 后同步 | ]]
 [[WHEN: data | | `global/data_snapshot.json` | data 项目设计/实现实体字段前 | plan/change/code 后同步 | ]]
