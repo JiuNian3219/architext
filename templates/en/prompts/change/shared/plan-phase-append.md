@@ -25,6 +25,18 @@ Each Task must be verifiable (has clear done criteria), do not write subjective 
 
 ## fix Bugfix Phase Three-Piece Set (Mandatory)
 
+Bugfix Phase must add lightweight root-cause metadata on the phase itself:
+
+```json
+"problemCause": {
+  "summary": "<why the bug happened; do not describe the fix>",
+  "evidence": ["<short references only: file, log id, test name, user report>"],
+  "confidence": 0.7
+}
+```
+
+Do not duplicate spec, logs, reproduction steps, fix strategy, lessons, or affected file lists in `problemCause`.
+
 1. Reproduction Test — Create reproduction test case (Red state)
 2. Fix Implementation — Fix code (Green)
 3. Regression Test — Regression test suite passes

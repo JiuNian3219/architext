@@ -35,6 +35,14 @@ export function renderPlan(data: PlanData, lang: LocaleLang = "zh"): string {
     const phaseDone = phase.tasks.every((task) => task.done);
     const phaseCheck = phaseDone ? "x" : " ";
     lines.push(`* [${phaseCheck}] **${phase.name}**`);
+    if (phase.problemCause) {
+      lines.push(
+        `  - Root Cause (${phase.problemCause.confidence}): ${phase.problemCause.summary}`,
+      );
+      if (phase.problemCause.evidence.length > 0) {
+        lines.push(`    - Evidence: ${phase.problemCause.evidence.join("; ")}`);
+      }
+    }
     for (const task of phase.tasks) {
       const check = task.done ? "x" : " ";
       lines.push(`  - [${check}] ${task.title}`);

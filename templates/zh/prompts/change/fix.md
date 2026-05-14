@@ -40,6 +40,8 @@ Resolve Target:
 
 追加 plan.json 一个 Bugfix Phase，强制三件套（Reproduction Test → Fix Implementation → Regression Test）。
 
+Bugfix Phase 必须包含 `problemCause`：短 `summary`、字符串数组 `evidence`、0 到 1 的数字 `confidence`。
+
 [[INCLUDE: prompts/change/shared/plan-phase-append.md]]
 </step_3_plan>
 

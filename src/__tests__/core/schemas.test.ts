@@ -236,6 +236,51 @@ describe("Tier 1: PlanDataSchema", () => {
 
 // ── Tier 2: 宽松校验 — 顶层 key 存在即可，item 内可自由扩展 ──
 
+describe("PlanPhase problemCause", () => {
+  it("should be optional", () => {
+    const data = makeValidPlan();
+    expect(() => validateJson(PlanDataSchema, data, "plan.json")).not.toThrow();
+  });
+
+  it("should allow summary evidence and numeric confidence", () => {
+    const data = makeValidPlan();
+    data.phases[0].problemCause = {
+      summary: "Schema and prompt drift caused invalid fix planning.",
+      evidence: ["src/core/schemas/plan.schema.ts", "bug report"],
+      confidence: 0.7,
+    };
+
+    const result = validateJson<PlanData>(PlanDataSchema, data, "plan.json");
+    expect(result.phases[0].problemCause?.confidence).toBe(0.7);
+  });
+
+  it("should reject confidence outside 0..1", () => {
+    const data = makeValidPlan();
+    data.phases[0].problemCause = {
+      summary: "Invalid confidence.",
+      evidence: ["test"],
+      confidence: 1.1,
+    };
+
+    expect(() => validateJson(PlanDataSchema, data, "plan.json")).toThrow(
+      AppError,
+    );
+  });
+
+  it("should reject non-array evidence", () => {
+    const data = makeValidPlan();
+    (data.phases[0] as unknown as Record<string, unknown>).problemCause = {
+      summary: "Invalid evidence.",
+      evidence: "src/example.ts",
+      confidence: 0.5,
+    };
+
+    expect(() => validateJson(PlanDataSchema, data, "plan.json")).toThrow(
+      AppError,
+    );
+  });
+});
+
 describe("Tier 2: DictionarySchema", () => {
   it("合法的 dictionary 数据应通过校验", () => {
     const data = {

@@ -9,9 +9,16 @@ export const PlanTaskSchema = z.object({
   done: z.boolean(),
 });
 
+export const PlanProblemCauseSchema = z.object({
+  summary: z.string().min(1),
+  evidence: z.array(z.string().min(1)),
+  confidence: z.number().min(0).max(1),
+});
+
 /** plan.json 中的一个实施阶段 */
 export const PlanPhaseSchema = z.object({
   name: z.string().min(1),
+  problemCause: PlanProblemCauseSchema.optional(),
   tasks: z.array(PlanTaskSchema),
 });
 

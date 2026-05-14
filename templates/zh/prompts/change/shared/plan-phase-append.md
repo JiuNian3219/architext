@@ -25,6 +25,18 @@
 
 ## fix Bugfix Phase 三件套（强制）
 
+Bugfix Phase 必须在 phase 本身添加轻量根因元数据：
+
+```json
+"problemCause": {
+  "summary": "<为什么发生；不要写修复方案>",
+  "evidence": ["<只写短引用：文件、日志标识、测试名、用户反馈>"],
+  "confidence": 0.7
+}
+```
+
+不要在 `problemCause` 里复制 spec、日志、复现步骤、修复策略、lesson 或受影响文件列表。
+
 1. Reproduction Test — 创建复现测试用例（Red 状态）
 2. Fix Implementation — 修复代码（Green）
 3. Regression Test — 回归测试套件通过

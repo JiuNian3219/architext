@@ -111,6 +111,37 @@ describe("renderPlan", () => {
       expect(output).toContain("- [ ] Configure ESLint");
     });
 
+    it("should render phase problemCause when present", () => {
+      const data: PlanData = {
+        ...makeValidPlan(),
+        phases: [
+          {
+            name: "Bugfix: Slow website (2026-05-14)",
+            problemCause: {
+              summary: "The page initialized heavy assets before first paint.",
+              evidence: ["website/src/pages/index.astro", "user report"],
+              confidence: 0.8,
+            },
+            tasks: [
+              {
+                id: "fix-1",
+                title: "Add a regression test",
+                done: false,
+              },
+            ],
+          },
+        ],
+      };
+
+      const output = renderPlan(data, "en");
+      expect(output).toContain(
+        "Root Cause (0.8): The page initialized heavy assets before first paint.",
+      );
+      expect(output).toContain(
+        "Evidence: website/src/pages/index.astro; user report",
+      );
+    });
+
     it("Phase 全部完成时应显示勾选", () => {
       const data: PlanData = {
         ...makeValidPlan(),

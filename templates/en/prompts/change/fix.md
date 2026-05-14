@@ -40,6 +40,8 @@ Propose 1-3 root cause Hypotheses, each must include: failure hypothesis descrip
 
 Append a Bugfix Phase to plan.json, mandatory three-piece set (Reproduction Test → Fix Implementation → Regression Test).
 
+Bugfix Phase must include `problemCause` with short `summary`, string-array `evidence`, and numeric `confidence` from 0 to 1.
+
 [[INCLUDE: prompts/change/shared/plan-phase-append.md]]
 </step_3_plan>
 

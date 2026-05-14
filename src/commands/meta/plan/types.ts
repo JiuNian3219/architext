@@ -12,10 +12,17 @@ export interface PlanTask {
   done: boolean;
 }
 
+export interface PlanProblemCause {
+  summary: string;
+  evidence: string[];
+  confidence: number;
+}
+
 /** plan.json 中的一个实施阶段 */
 export interface PlanPhase {
   /** 阶段名称 */
   name: string;
+  problemCause?: PlanProblemCause;
   /** 阶段下的任务列表 */
   tasks: PlanTask[];
 }
